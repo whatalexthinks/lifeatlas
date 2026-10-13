@@ -30,6 +30,17 @@ const milestones: { value: NonNullable<FutureMessageFormValues["milestone"]>; la
   { value: "custom", label: "Another milestone" },
 ];
 
+/** Interval and milestone releases derive their date; a chosen date is left alone. */
+function withDerivedDate(v: FutureMessageFormValues, birthYear: string): FutureMessageFormValues {
+  if (v.releaseKind === "interval" && v.intervalYears) return { ...v, releaseDate: addYears(todayIso(), v.intervalYears) };
+  const m = milestones.find((x) => x.value === v.milestone);
+  if (v.releaseKind === "milestone" && m?.age && /^\d{4}$/.test(birthYear)) {
+    const d = `${Number(birthYear) + m.age}-06-01`;
+    if (d > todayIso()) return { ...v, releaseDate: d };
+  }
+  return v;
+}
+
 function ComposerInner() {
   const params = useSearchParams();
   const router = useRouter();
@@ -62,23 +73,9 @@ function ComposerInner() {
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [busy, setBusy] = React.useState<null | "save" | "seal">(null);
   const [preview, setPreview] = React.useState(false);
-  const set = (p: Partial<FutureMessageFormValues>) => setV((x) => ({ ...x, ...p }));
+  const set = (p: Partial<FutureMessageFormValues>) => setV((x) => withDerivedDate({ ...x, ...p }, birthYear));
   const photoChoices = memories.filter((m) => m.capsuleId === capsuleId && !m.deletedAt && m.photoIds.length).flatMap((m) => m.photoIds).slice(0, 18);
   const [birthYear, setBirthYear] = React.useState<string>(existing?.recipient.birthYear ? String(existing.recipient.birthYear) : "");
-
-  React.useEffect(() => {
-    if (v.releaseKind === "interval" && v.intervalYears) set({ releaseDate: addYears(todayIso(), v.intervalYears) });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v.releaseKind, v.intervalYears]);
-
-  React.useEffect(() => {
-    const m = milestones.find((x) => x.value === v.milestone);
-    if (v.releaseKind === "milestone" && m?.age && birthYear && /^\d{4}$/.test(birthYear)) {
-      const d = `${Number(birthYear) + m.age}-06-01`;
-      if (d > todayIso()) set({ releaseDate: d });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v.releaseKind, v.milestone, birthYear]);
 
   const save = async (andSeal: boolean) => {
     const r = futureMessageSchema.safeParse(v);
@@ -256,7 +253,10 @@ function ComposerInner() {
                     </Select>
                   </Field>
                   <Field label="Their birth year" htmlFor="f-by" optional hint="Helps estimate birthday milestones.">
-                    <Input id="f-by" type="number" inputMode="numeric" value={birthYear} onChange={(e) => setBirthYear(e.target.value)} />
+                    <Input id="f-by" type="number" inputMode="numeric" value={birthYear} onChange={(e) => {
+                      setBirthYear(e.target.value);
+                      setV((x) => withDerivedDate(x, e.target.value));
+                    }} />
                   </Field>
                   <Field label="Expected date" htmlFor="f-msdate" error={errors.releaseDate} hint="An estimate — the real date can be confirmed later.">
                     <Input id="f-msdate" type="date" value={v.releaseDate} min={todayIso()} onChange={(e) => set({ releaseDate: e.target.value })} invalid={!!errors.releaseDate} />

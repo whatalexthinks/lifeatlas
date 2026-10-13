@@ -16,6 +16,7 @@ function unavailable<T extends object>(service: ServiceName): T {
       }
       if (prop === "tileStyle") return () => notConfigured(service, "Map tiles are not configured.");
       if (prop === "getCheckout") return () => notConfigured(service, "Billing is not configured.");
+      if (prop === "toCartLine") return () => notConfigured(service, "Heirloom ordering is not configured.");
       if (prop === "track") return () => undefined;
       return async () => notConfigured(service, `The ${service} service is not configured for production yet.`);
     },
@@ -41,5 +42,6 @@ export function createProductionServices(): Services {
     fulfillment: unavailable("fulfillment"),
     analytics: unavailable("analytics"),
     support: unavailable("support"),
+    heirlooms: unavailable("heirlooms"),
   };
 }

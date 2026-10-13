@@ -8,6 +8,7 @@ import { mockBilling, mockFulfillment, mockGifts, mockOrders } from "./mock/comm
 import { mockCommunications } from "./mock/communications";
 import { mockExport } from "./mock/export";
 import { mockFutureDelivery } from "./mock/future";
+import { mockHeirlooms } from "./mock/heirlooms";
 import { mockMedia, mockTranscription } from "./mock/media";
 import { mockAccount, mockAnalytics, mockAuth, mockGeocoding, mockPreservation, mockSupport } from "./mock/misc";
 
@@ -33,6 +34,7 @@ const demoServices: Services = {
   fulfillment: mockFulfillment,
   analytics: mockAnalytics,
   support: mockSupport,
+  heirlooms: mockHeirlooms,
 };
 
 let instance: Services | null = null;

@@ -1,4 +1,5 @@
 import type { ID, ISODateTime, Timestamps } from "./common";
+import type { ChapterKey } from "./capsule";
 
 export type HeirloomKind = "book" | "keepsake_box" | "legacy_capsule_concept";
 
@@ -18,7 +19,7 @@ export interface BookConfiguration {
   coverPlateId?: string;
   coverMediaId?: ID;
   storyIds: ID[];
-  chapterOrder: string[];
+  chapterOrder: ChapterKey[];
   layout: "editorial" | "full_bleed" | "mixed";
   includeCaptions: boolean;
   includeTimeline: boolean;

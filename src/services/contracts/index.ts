@@ -1,5 +1,8 @@
 import type {
   AccountPreferences,
+  BookConfiguration,
+  BoxConfiguration,
+  HeirloomConfiguration,
   Capsule,
   CartLine,
   CheckoutSession,
@@ -51,7 +54,8 @@ export type ServiceName =
   | "futureDelivery"
   | "fulfillment"
   | "analytics"
-  | "support";
+  | "support"
+  | "heirlooms";
 
 export type ServiceErrorCode = "validation" | "not_found" | "forbidden" | "conflict" | "quota" | "unsupported" | "unknown";
 
@@ -351,6 +355,23 @@ export interface SupportProvider {
 
 /* ------------------------------------------------------------------ */
 
+export interface HeirloomInput {
+  id?: string;
+  kind: HeirloomConfiguration["kind"];
+  capsuleId: string;
+  name: string;
+  book?: BookConfiguration;
+  box?: BoxConfiguration;
+}
+
+/** Saved book and keepsake-box configurations, and turning one into a checkout line. */
+export interface HeirloomRepository {
+  save(input: HeirloomInput): Promise<ServiceResult<HeirloomConfiguration>>;
+  remove(id: string): Promise<ServiceResult<null>>;
+  /** Prices the configuration from the catalog and returns a checkout line. */
+  toCartLine(id: string): ServiceResult<CartLine>;
+}
+
 export interface Services {
   mode: "demo" | "production";
   auth: AuthProvider;
@@ -369,4 +390,5 @@ export interface Services {
   fulfillment: FulfillmentProvider;
   analytics: AnalyticsProvider;
   support: SupportProvider;
+  heirlooms: HeirloomRepository;
 }

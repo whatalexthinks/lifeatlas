@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     return [
       {
         // Private token routes must never be indexed, even in the demo.
-        source: "/:prefix(contribute|gift|future|view|app|demo|checkout)/:path*",
+        source: "/:prefix(contribute|gift|future|view|app|demo|checkout|proof)/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
       {

@@ -24,9 +24,11 @@ export function PageHeader({
     <div className={cn("mb-8 flex flex-col gap-5 lg:mb-10 lg:flex-row lg:items-end lg:justify-between", className)}>
       <div className="min-w-0 max-w-3xl">
         {back ? (
-          <Link href={back.href} className="mb-4 inline-flex items-center gap-1 text-[0.875rem] text-ink-3 hover:text-ink">
-            <ChevronLeft className="size-4" /> {back.label}
-          </Link>
+          <div className="mb-4">
+            <Link href={back.href} className="inline-flex min-h-9 items-center gap-1 text-[0.875rem] text-ink-3 hover:text-ink">
+              <ChevronLeft className="size-4" /> {back.label}
+            </Link>
+          </div>
         ) : null}
         {eyebrow ? <p className="eyebrow mb-3">{eyebrow}</p> : null}
         <h1 className="font-serif text-[clamp(2.1rem,1.6rem+1.8vw,3.2rem)] leading-[1.04] tracking-[-0.022em]">{title}</h1>

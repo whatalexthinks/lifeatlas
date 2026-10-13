@@ -12,6 +12,56 @@ import { cn } from "@/lib/utils";
  * this device). Shows a calm placeholder while loading and an honest message
  * when the file isn't on this device.
  */
+/**
+ * Print mode: vector plates use SVG filters (grain, softening) that browsers
+ * rasterise at print resolution, producing huge PDFs. Inside a print context
+ * each plate is drawn once to a canvas and embedded as a JPEG instead.
+ */
+const PrintContext = React.createContext(false);
+export function PrintQuality({ children }: { children: React.ReactNode }) {
+  return <PrintContext.Provider value>{children}</PrintContext.Provider>;
+}
+
+const rasterCache = new Map<string, Promise<string>>();
+function rasterize(svgUrl: string, width = 1800): Promise<string> {
+  let p = rasterCache.get(svgUrl);
+  if (!p) {
+    p = new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const ratio = img.naturalHeight / img.naturalWidth || 0.75;
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = Math.round(width * ratio);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(svgUrl);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.86));
+      };
+      img.onerror = () => resolve(svgUrl);
+      img.src = svgUrl;
+    });
+    rasterCache.set(svgUrl, p);
+  }
+  return p;
+}
+
+function usePrintSafeUrl(url: string | null | undefined) {
+  const print = React.useContext(PrintContext);
+  const needs = print && !!url && url.startsWith("data:image/svg");
+  const [raster, setRaster] = React.useState<{ from: string; to: string } | null>(null);
+  React.useEffect(() => {
+    if (!needs || !url) return;
+    let live = true;
+    void rasterize(url).then((to) => live && setRaster({ from: url, to }));
+    return () => {
+      live = false;
+    };
+  }, [needs, url]);
+  if (!needs) return url;
+  return raster?.from === url ? raster.to : null;
+}
+
 export function MediaImage({
   mediaId,
   asset: assetProp,
@@ -38,7 +88,9 @@ export function MediaImage({
 }) {
   const fromStore = useMediaAsset(assetProp ? undefined : mediaId);
   const asset = assetProp ?? fromStore;
-  const { url, error } = useMediaUrl(asset);
+  const { url: rawUrl, error } = useMediaUrl(asset);
+  const url = usePrintSafeUrl(rawUrl);
+  const print = React.useContext(PrintContext);
   const [loaded, setLoaded] = React.useState(false);
   return (
     <div className={cn("relative overflow-hidden bg-linen", className)} style={intrinsic && asset?.width && asset?.height ? { aspectRatio: `${asset.width} / ${asset.height}` } : undefined}>
@@ -47,7 +99,7 @@ export function MediaImage({
           src={url}
           alt={alt ?? asset?.alt ?? ""}
           sizes={sizes}
-          loading={priority ? "eager" : "lazy"}
+          loading={priority || print ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={priority ? "high" : undefined}
           onLoad={() => setLoaded(true)}

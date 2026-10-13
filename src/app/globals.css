@@ -512,6 +512,26 @@
 /* Motion                                                              */
 /* ------------------------------------------------------------------ */
 
+@keyframes turn-next {
+  from {
+    opacity: 0.35;
+    transform: perspective(1800px) rotateY(-7deg) translateX(1.5%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes turn-prev {
+  from {
+    opacity: 0.35;
+    transform: perspective(1800px) rotateY(7deg) translateX(-1.5%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 @keyframes fade-up {
   from {
     opacity: 0;
