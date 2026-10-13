@@ -97,7 +97,7 @@ export function SealedLetter({ to, openOn, className, tone = "paper" }: { to: st
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#7a6a52]">For</p>
           <p className="font-serif text-[clamp(1rem,2.2vw,1.35rem)] text-[#3b3226]">{to}</p>
         </div>
-        <div className="absolute left-1/2 top-[47%] grid size-[17%] min-w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#b5513c,#7a2a1c_70%)] text-[#f1cdb7] shadow-[0_6px_14px_-4px_rgb(90_20_10/0.6),inset_0_-2px_6px_rgb(0_0_0/0.3)]">
+        <div className="absolute left-1/2 top-[47%] grid aspect-square w-[15%] min-w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#b5513c,#7a2a1c_70%)] text-[#f1cdb7] shadow-[0_6px_14px_-4px_rgb(90_20_10/0.6),inset_0_-2px_6px_rgb(0_0_0/0.3)]">
           <BrandMark className="size-[55%]" />
         </div>
       </div>

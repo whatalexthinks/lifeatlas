@@ -29,6 +29,7 @@ export const mockFutureDelivery: FutureDeliveryProvider = {
         relationship: v.recipientRelationship,
         contact: v.recipientContact || undefined,
         contactStatus: v.recipientContact ? "unverified" : "not_provided",
+        birthYear: opts.recipientBirthYear,
       },
       backupRecipient: v.backupName ? { name: v.backupName, relationship: "Backup recipient", contactStatus: "not_provided" } : undefined,
       release: {
