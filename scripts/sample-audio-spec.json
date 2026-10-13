@@ -1,0 +1,51 @@
+[
+ {
+  "id": "aud_bread",
+  "memoryId": "mem_bread",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "text": "My mother never used a recipe. She knew the dough by the way it felt under her palms — too wet, too tired, just right. I would stand on a wooden stool beside her, convinced that being allowed to dust the counter with flour was the most important job in the world.\n\nThe radio was always on, low, tuned to whatever station my father had left it on. She hummed along to songs she didn't know the words to. On Saturdays there were two loaves: one for us, and one wrapped in a dish towel for whichever neighbor needed it that week.\n\nNow, whenever I bake, I leave a little flour on the counter for her."
+ },
+ {
+  "id": "aud_letter",
+  "memoryId": "mem_letter",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "text": "My first journey without my parents was the train to Montréal, to spend the summer with my aunt Colette. I was eighteen and trying very hard to look like I did this sort of thing all the time.\n\nBefore I boarded, my father slipped a letter into my coat. I didn't find it until we were past the border. It said only: Be curious. Be kind. Write home. I carried that letter for years — through two moves, a wedding, and the birth of both children — until the fold wore through."
+ },
+ {
+  "id": "aud_seat",
+  "memoryId": "mem_seat",
+  "voice": "af_heart",
+  "speed": 0.9,
+  "text": "Thomas asked whether the seat beside me was taken, even though the rest of the café was empty. I told him it depended on whether he had anything interesting to say.\n\nHe laughed, sat down, and explained — at some length — why the sky is blue. It was not the most romantic opening. But he drew the diagram on a napkin, and I kept the napkin.\n\nFor the next fifty years, he kept finding things to tell me."
+ },
+ {
+  "id": "aud_summer",
+  "memoryId": "mem_summer",
+  "voice": "af_heart",
+  "speed": 0.88,
+  "text": "We packed sandwiches, a blanket, and a little red bucket. Sarah spent the whole afternoon looking for the perfect shell. Thomas told her there was no such thing, and she told him he simply hadn't looked long enough.\n\nWe stayed until the light turned gold and the tide came in around our blanket. Nobody wanted to be the one to say it was time to go. I can still hear her laughing."
+ },
+ {
+  "id": "aud_know",
+  "memoryId": "mem_know",
+  "voice": "af_heart",
+  "speed": 0.86,
+  "text": "Take the photograph, but put the camera down too. Ask the question you keep saving for later. Leave the dishes; they will wait, and people won't.\n\nAnd when someone tells you a story for the third time, listen for the part you did not hear before."
+ },
+ {
+  "id": "aud_dock",
+  "memoryId": "mem_t_dock",
+  "voice": "af_heart",
+  "speed": 0.88,
+  "text": "That last summer we rented a cottage near Portland, and Thomas sat on the dock most evenings with his feet in the water. He said he was doing research. When I asked on what, he said, \"How long the light lasts.\" I sat with him. It lasted a long time."
+ },
+ {
+  "id": "aud_bluebowl",
+  "memoryId": "mem_bluebowl",
+  "voice": "af_bella",
+  "speed": 0.95,
+  "text": "Every time I visited Grandma, the blue bowl on the windowsill was full of something different: lemons, sea glass, little folded notes, once a very confused hermit crab.\n\nI asked her once why she never just put fruit in it like a normal person. She said a bowl is a place to keep whatever the week gives you. I think that bowl holds the story of our family."
+ }
+]
