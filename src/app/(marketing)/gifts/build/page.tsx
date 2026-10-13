@@ -111,7 +111,7 @@ export default function GiftBuilder() {
               </h2>
               <div className="flex flex-wrap gap-2">
                 {occasions.map((o) => (
-                  <button key={o.value} type="button" onClick={() => set({ occasion: o.value })} aria-pressed={v.occasion === o.value} className={cn("h-10 rounded-full border px-4 text-[0.9rem] font-medium", v.occasion === o.value ? "border-evergreen bg-evergreen text-[#f8f6f1]" : "border-line-strong hover:border-ink-3")}>
+                  <button key={o.value} type="button" onClick={() => set({ occasion: o.value })} aria-pressed={v.occasion === o.value} className={cn("h-10 rounded-full border px-4 text-[0.9rem] font-medium", v.occasion === o.value ? "border-evergreen bg-evergreen text-on-evergreen" : "border-line-strong hover:border-ink-3")}>
                     {o.label}
                   </button>
                 ))}

@@ -184,7 +184,7 @@ export function MapView({
       </div>
 
       {journeyOn && currentJourneyPlace ? (
-        <div className={cn("mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[16px] px-4 py-3", night ? "bg-white/[0.06] text-night-ink" : "bg-evergreen text-[#f2eee5]")} role="status" aria-live="polite">
+        <div className={cn("mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[16px] px-4 py-3", night ? "bg-white/[0.06] text-night-ink" : "bg-evergreen text-on-evergreen")} role="status" aria-live="polite">
           <p className="text-[0.9375rem]">
             <span className="font-mono text-[0.75rem] uppercase tracking-[0.14em] opacity-75">
               Stop {journeyIndex + 1} of {journey.length}

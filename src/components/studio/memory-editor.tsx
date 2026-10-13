@@ -209,7 +209,7 @@ export function MemoryEditor({ memory, capsule, onDone }: { memory: Memory; caps
                   type="button"
                   aria-pressed={on}
                   onClick={() => setPeopleIds(on ? peopleIds.filter((x) => x !== p.id) : [...peopleIds, p.id])}
-                  className={cn("h-8 rounded-full border px-3 text-[0.8125rem]", on ? "border-evergreen bg-evergreen text-[#f8f6f1]" : "border-line-strong text-ink-2 hover:border-ink-3")}
+                  className={cn("h-8 rounded-full border px-3 text-[0.8125rem]", on ? "border-evergreen bg-evergreen text-on-evergreen" : "border-line-strong text-ink-2 hover:border-ink-3")}
                 >
                   {p.displayName}
                 </button>

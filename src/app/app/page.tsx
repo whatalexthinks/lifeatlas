@@ -171,7 +171,7 @@ export default function StudioHome() {
           </Panel>
 
           {nextQuestion ? (
-            <section className="relative overflow-hidden rounded-[20px] bg-evergreen p-6 text-[#f2eee5]">
+            <section className="relative overflow-hidden rounded-[20px] bg-[#213d31] p-6 text-[#f3f3e8]">
               <div className="topo-lines pointer-events-none absolute inset-0 opacity-20" aria-hidden />
               <p className="relative flex items-center gap-2 text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-[#d7bd8a]">
                 <MessageCircleQuestion className="size-4" /> Next question for {featuredCapsule.preferredName}
@@ -199,7 +199,7 @@ export default function StudioHome() {
           { href: "/gifts/build", icon: Gift, label: "Prepare a gift", sub: "For someone else" },
         ].map((a) => (
           <Link key={a.label} href={a.href} className="group card-quiet flex items-center gap-3.5 p-4 transition-colors hover:bg-surface">
-            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-evergreen shadow-sm ring-1 ring-line transition-colors group-hover:bg-evergreen group-hover:text-[#f8f6f1]">
+            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-evergreen shadow-sm ring-1 ring-line transition-colors group-hover:bg-evergreen group-hover:text-on-evergreen">
               <a.icon className="size-5" />
             </span>
             <span className="min-w-0">

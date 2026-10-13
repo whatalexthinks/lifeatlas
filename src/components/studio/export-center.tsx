@@ -98,7 +98,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
               ))}
             </div>
           ) : null}
-          <div className="max-h-[420px] space-y-1 overflow-y-auto pr-1">
+          <div className="max-h-[420px] space-y-1 overflow-y-auto pr-1 focus-visible:outline-2 focus-visible:outline-evergreen" tabIndex={0} role="region" aria-label="Files in this export">
             {included.map((i) => (
               <p key={i.id} className="flex items-center justify-between gap-3 rounded-[10px] px-2 py-1.5 text-[0.875rem]">
                 <span className="flex min-w-0 items-center gap-2">

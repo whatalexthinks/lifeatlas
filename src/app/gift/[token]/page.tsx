@@ -95,7 +95,7 @@ export default function GiftOpening() {
               </Button>
             ) : null}
 
-            <div className={cn("transition-[opacity,transform] duration-700", revealed ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0")} aria-hidden={!revealed}>
+            <div className={cn("transition-[opacity,transform] duration-700", revealed ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0")} inert={!revealed}>
               <div className="mx-auto mt-14 max-w-xl rounded-[28px] bg-surface p-7 text-left shadow-md sm:p-9">
                 <p className="eyebrow">Your memory capsule</p>
                 <h2 className="mt-4 font-serif text-[2.2rem] leading-tight">A place for your stories, in your own words.</h2>

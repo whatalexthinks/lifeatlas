@@ -187,7 +187,7 @@ function Orders() {
   const [busy, setBusy] = React.useState<string | null>(null);
   return (
     <section className="card-paper overflow-hidden" aria-label="Order queue">
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-evergreen" tabIndex={0} role="region" aria-label="Order queue">
         <table className="w-full min-w-[820px] text-[0.9375rem]">
           <thead>
             <tr className="border-b border-line text-left text-[0.8125rem] text-ink-3">

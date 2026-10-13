@@ -67,7 +67,7 @@ export default function FamilyPage() {
       </div>
 
       <Panel title="Who can do what, where" description="Change a role and the studio, viewer and invitations follow it immediately." bodyClassName="p-0 sm:p-0">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-evergreen" tabIndex={0} role="region" aria-label="Roles by capsule">
           <table className="w-full min-w-[640px] text-[0.9375rem]">
             <thead>
               <tr className="border-b border-line text-left">
@@ -135,7 +135,7 @@ export default function FamilyPage() {
       </Panel>
 
       <Panel title="What each role can do" className="mt-6" bodyClassName="p-0 sm:p-0">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-evergreen" tabIndex={0} role="region" aria-label="What each role can do">
           <table className="w-full min-w-[720px] text-[0.875rem]">
             <thead>
               <tr className="border-b border-line">

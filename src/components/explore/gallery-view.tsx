@@ -122,7 +122,7 @@ export function GalleryView({ capsule, scope, hrefFor, tone = "paper" }: { capsu
                     {formatFuzzyDate(current.asset.takenDate ?? current.memory.date)}
                     {current.asset.placeId || current.memory.placeId ? ` · ${places.find((p) => p.id === (current.asset.placeId ?? current.memory.placeId))?.name ?? ""}` : ""} · {current.asset.contributorName}
                   </p>
-                  {current.asset.sampleNotice ? <p className="mt-2 text-[0.75rem] text-[#8f8a80]">{current.asset.sampleNotice}</p> : null}
+                  {current.asset.sampleNotice ? <p className="mt-2 text-[0.75rem] text-[#bdb7aa]">{current.asset.sampleNotice}</p> : null}
                   <Link href={hrefFor(current.memory)} className="mt-4 inline-flex items-center gap-1.5 text-[0.9375rem] font-medium text-[#d2bb93] hover:underline" onClick={() => setIndex(null)}>
                     Read “{current.memory.title}” <ArrowUpRight className="size-4" />
                   </Link>

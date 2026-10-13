@@ -94,7 +94,7 @@ export function QuestionPicker({
               type="button"
               onClick={() => setCategory(c)}
               aria-pressed={category === c}
-              className={cn("h-8 shrink-0 rounded-full border px-3 text-[0.8125rem] font-medium", category === c ? "border-evergreen bg-evergreen text-[#f8f6f1]" : "border-line-strong text-ink-2 hover:border-ink-3")}
+              className={cn("h-8 shrink-0 rounded-full border px-3 text-[0.8125rem] font-medium", category === c ? "border-evergreen bg-evergreen text-on-evergreen" : "border-line-strong text-ink-2 hover:border-ink-3")}
             >
               {c}
             </button>

@@ -132,7 +132,7 @@ export function AudioPlayer({
       className={cn(
         "relative grid shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 hover:scale-[1.04] active:scale-95 disabled:opacity-40",
         variant === "mini" ? "size-10" : "size-14",
-        light ? "bg-[#f2ebdc] text-[#1b221e]" : "bg-evergreen text-[#f8f6f1] [:root[data-theme=evening]_&]:text-[#131815]",
+        light ? "bg-[#f2ebdc] text-[#1b221e]" : "bg-evergreen text-on-evergreen",
       )}
     >
       {playing ? <Pause className={variant === "mini" ? "size-4" : "size-5"} fill="currentColor" /> : <Play className={cn(variant === "mini" ? "size-4" : "size-5", "translate-x-[1px]")} fill="currentColor" />}
@@ -230,8 +230,8 @@ export function AudioPlayer({
           <p className="whitespace-pre-line">{transcript.text}</p>
         </div>
       ) : null}
-      {showNotice && asset.sampleNotice ? <p className={cn("mt-3 text-[0.75rem] leading-snug", light ? "text-[#8f8a80]" : "text-ink-3")}>{asset.sampleNotice}</p> : null}
-      {showNotice && asset.storage === "this_device" ? <p className={cn("mt-3 text-[0.75rem] leading-snug", light ? "text-[#8f8a80]" : "text-ink-3")}>Recorded on this device · stored only in this browser · not backed up</p> : null}
+      {showNotice && asset.sampleNotice ? <p className={cn("mt-3 text-[0.75rem] leading-snug", light ? "text-[#bdb7aa]" : "text-ink-3")}>{asset.sampleNotice}</p> : null}
+      {showNotice && asset.storage === "this_device" ? <p className={cn("mt-3 text-[0.75rem] leading-snug", light ? "text-[#bdb7aa]" : "text-ink-3")}>Recorded on this device · stored only in this browser · not backed up</p> : null}
     </div>
   );
 }

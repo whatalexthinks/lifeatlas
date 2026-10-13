@@ -83,7 +83,19 @@ export function MemoryMap({
         }),
     [points, projection, view],
   );
-  const clusters = React.useMemo(() => clusterPoints(projected, view === "world" ? 34 : 26), [projected, view]);
+  // Markers are ~28–36px on screen whatever the map's size, so cluster anything closer than
+  // ~40px as rendered — otherwise neighbours overlap and become hard to tap.
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const [renderedWidth, setRenderedWidth] = React.useState(W);
+  React.useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(([entry]) => setRenderedWidth(Math.max(1, entry.contentRect.width)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const minRadius = (40 * W) / renderedWidth;
+  const clusters = React.useMemo(() => clusterPoints(projected, Math.max(view === "world" ? 34 : 26, minRadius)), [projected, view, minRadius]);
   const offscreen = points.filter((p) => !inView(view, p.lat, p.lng));
 
   const journeyPath = React.useMemo(() => {
@@ -110,7 +122,7 @@ export function MemoryMap({
     : { sea: "var(--mat)", land: "var(--linen)", landFocus: "color-mix(in srgb, var(--linen) 70%, var(--sage))", border: "var(--line-strong)", grat: "color-mix(in srgb, var(--line) 70%, transparent)", ink: "var(--ink)" };
 
   return (
-    <div className={cn("relative isolate overflow-hidden rounded-[inherit]", className)} style={{ aspectRatio: `${aspect}` }} role="group" aria-label={label}>
+    <div ref={rootRef} className={cn("relative isolate overflow-hidden rounded-[inherit]", className)} style={{ aspectRatio: `${aspect}` }} role="group" aria-label={label}>
       <svg viewBox={`0 0 ${W} ${H}`} className="absolute inset-0 size-full" aria-hidden preserveAspectRatio="xMidYMid slice">
         <rect width={W} height={H} fill={colors.sea} />
         <path d={graticule} fill="none" stroke={colors.grat} strokeWidth={0.8} />
@@ -154,7 +166,7 @@ export function MemoryMap({
             <span
               className={cn(
                 "relative grid place-items-center rounded-full border-2 font-mono text-[11px] font-medium tabular-nums shadow-[0_6px_14px_-6px_rgb(0_0_0/0.5)] transition-[transform,background-color] duration-200 group-hover:scale-110",
-                active ? "size-9 border-[#fbf7ee] bg-terracotta text-white" : single ? "size-7 border-[#fbf7ee] bg-evergreen text-[#f8f6f1]" : "size-9 border-[#fbf7ee] bg-ink text-[#f8f6f1]",
+                active ? "size-9 border-[#fbf7ee] bg-terracotta text-white" : single ? "size-7 border-[#fbf7ee] bg-evergreen text-on-evergreen" : "size-9 border-[#fbf7ee] bg-ink text-[#f8f6f1]",
                 night && !active && "bg-[#c4ad86] text-[#1b221e] border-[#1b221e]",
               )}
             >
@@ -188,13 +200,13 @@ export function MemoryMap({
         <button
           type="button"
           onClick={() => setView("world")}
-          className={cn("absolute bottom-3 left-3 z-20 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium shadow-sm", night ? "bg-black/50 text-[#eee9de]" : "bg-surface/95 text-ink-2 hover:text-ink")}
+          className={cn("absolute left-3 top-3 z-20 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium shadow-sm", night ? "bg-black/50 text-[#eee9de]" : "bg-surface/95 text-ink-2 hover:text-ink")}
         >
           <Route className="size-3.5" />
           {offscreen.length} more {offscreen.length === 1 ? "place" : "places"} further away
         </button>
       ) : null}
-      <span className={cn("pointer-events-none absolute bottom-2 right-3 z-20 text-[10px]", night ? "text-[#8f8a80]" : "text-ink-4")}>
+      <span className={cn("pointer-events-none absolute bottom-2 right-3 z-20 text-[10px]", night ? "text-[#bdb7aa]" : "text-ink-4")}>
         {failed ? "Map outlines unavailable — places still listed" : "Natural Earth · US Census"}
       </span>
     </div>
@@ -209,7 +221,7 @@ function MapControl({ label, onClick, active, children }: { label: string; onCli
       aria-label={label}
       title={label}
       aria-pressed={active}
-      className={cn("grid size-9 place-items-center rounded-full bg-surface/95 text-ink-2 shadow-sm ring-1 ring-line transition-colors hover:text-ink", active && "bg-evergreen text-[#f8f6f1] ring-evergreen")}
+      className={cn("grid size-9 place-items-center rounded-full bg-surface/95 text-ink-2 shadow-sm ring-1 ring-line transition-colors hover:text-ink", active && "bg-evergreen text-on-evergreen ring-evergreen")}
     >
       {children}
     </button>

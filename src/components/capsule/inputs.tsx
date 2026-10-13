@@ -44,7 +44,7 @@ export function FuzzyDateInput({ id, value, onChange }: { id: string; value: Fuz
             onClick={() => set({ precision: o.value })}
             className={cn(
               "h-9 rounded-full border px-3.5 text-[0.8125rem] font-medium transition-colors",
-              value.precision === o.value ? "border-evergreen bg-evergreen text-[#f8f6f1]" : "border-line-strong bg-surface text-ink-2 hover:border-ink-3",
+              value.precision === o.value ? "border-evergreen bg-evergreen text-on-evergreen" : "border-line-strong bg-surface text-ink-2 hover:border-ink-3",
             )}
           >
             {o.label}

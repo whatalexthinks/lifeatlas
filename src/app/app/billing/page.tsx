@@ -191,7 +191,7 @@ export default function BillingPage() {
         {invoices.length === 0 ? (
           <p className="px-6 py-8 text-center text-ink-3">No invoices yet.</p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-evergreen" tabIndex={0} role="region" aria-label="Invoices">
             <table className="w-full min-w-[560px] text-[0.9375rem]">
               <thead>
                 <tr className="border-b border-line text-left text-[0.8125rem] text-ink-3">

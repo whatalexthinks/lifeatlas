@@ -231,7 +231,7 @@ function ComposerInner() {
               {v.releaseKind === "interval" ? (
                 <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Years from now">
                   {([5, 10, 20, 30] as const).map((y) => (
-                    <button key={y} type="button" role="radio" aria-checked={v.intervalYears === y} onClick={() => set({ intervalYears: y })} className={cn("h-11 rounded-full border px-5 font-medium", v.intervalYears === y ? "border-evergreen bg-evergreen text-[#f8f6f1]" : "border-line-strong")}>
+                    <button key={y} type="button" role="radio" aria-checked={v.intervalYears === y} onClick={() => set({ intervalYears: y })} className={cn("h-11 rounded-full border px-5 font-medium", v.intervalYears === y ? "border-evergreen bg-evergreen text-on-evergreen" : "border-line-strong")}>
                       {y} years
                     </button>
                   ))}
