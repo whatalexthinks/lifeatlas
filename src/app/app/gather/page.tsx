@@ -24,16 +24,15 @@ function GatherInner() {
   const [capsuleId, setCapsuleId] = React.useState<string | null>(params.get("capsule"));
   const capsule = capsules.find((c) => c.id === capsuleId);
   const first = params.get("first") === "1";
-  const [who, setWho] = React.useState<"storyteller" | "me">(capsule?.relationshipKind === "self" ? "me" : "storyteller");
+  // Who's speaking defaults from the capsule; an explicit choice only applies to the capsule it was made for.
+  const [whoChoice, setWhoChoice] = React.useState<{ capsuleId?: string; who: "storyteller" | "me" } | null>(null);
+  const who: "storyteller" | "me" = whoChoice && whoChoice.capsuleId === capsule?.id ? whoChoice.who : capsule?.relationshipKind === "self" ? "me" : "storyteller";
+  const setWho = (w: "storyteller" | "me") => setWhoChoice({ capsuleId: capsule?.id, who: w });
   const [handOver, setHandOver] = React.useState(false);
   const [pickerOpen, setPickerOpen] = React.useState(false);
   const [chosen, setChosen] = React.useState<string[] | null>(params.get("question") ? [params.get("question")!] : null);
   const [freeform, setFreeform] = React.useState(params.get("mode") === "photo");
   const [started, setStarted] = React.useState(first || !!params.get("question") || params.get("mode") === "photo");
-
-  React.useEffect(() => {
-    if (capsule) setWho(capsule.relationshipKind === "self" ? "me" : "storyteller");
-  }, [capsule]);
 
   if (!capsule) {
     return (

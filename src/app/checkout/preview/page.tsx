@@ -23,49 +23,37 @@ function CheckoutInner() {
   const profile = useDb((d) => d.account.profile);
   const email = useDb((d) => d.account.user.email);
   const mutate = useDemoStore((s) => s.mutate);
-  const [session, setSession] = React.useState<CheckoutSession | null>(null);
-  const [error, setError] = React.useState<string | null>(null);
   const [form, setForm] = React.useState({ name: profile.displayName, email, acknowledgeDemo: false });
   const [ship, setShip] = React.useState({ name: profile.displayName, line1: "", line2: "", city: "", region: "", postalCode: "", country: "United States" });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [busy, setBusy] = React.useState(false);
   const [outcome, setOutcome] = React.useState<null | "declined" | "canceled">(null);
+  const checkouts = useDb((d) => d.checkouts);
+  const [createError, setCreateError] = React.useState<string | null>(null);
   const started = React.useRef(false);
 
+  // The session is read live from the store, so completing it updates this page by itself.
+  const sid = params.get("session");
+  const productId = params.get("product");
+  const product = productId ? catalog.find((c) => c.id === productId) : undefined;
+  const productError = productId && (!product || product.availability !== "available_demo" || product.price.amount === 0) ? (product ? `${product.name} isn't available to order yet.` : "We couldn't find that product.") : null;
+  const session: CheckoutSession | null = sid ? (checkouts.find((c) => c.id === sid) ?? null) : null;
+  const error = !hydrated ? null : sid ? (session ? null : "This checkout preview has expired. Start again from your bag.") : productId ? (productError ?? createError) : "Your bag is empty.";
+
   React.useEffect(() => {
-    if (!hydrated || started.current) return;
+    if (!hydrated || sid || !product || productError || started.current) return;
     started.current = true;
-    const sid = params.get("session");
-    const product = params.get("product");
-    if (sid) {
-      const r = services().billing.getCheckout(sid);
-      if (r.status === "ok") setSession(r.data);
-      else setError(r.status === "error" ? r.message : "Checkout unavailable");
-      return;
-    }
-    if (product) {
-      const p = catalog.find((c) => c.id === product);
-      if (!p || p.availability !== "available_demo" || p.price.amount === 0) {
-        setError(p ? `${p.name} isn't available to order yet.` : "We couldn't find that product.");
-        return;
-      }
-      const lines: CartLine[] = [{ id: uid("cl"), productId: p.id, quantity: 1, extrasAmount: 0 }];
-      mutate((d) => {
-        d.cart = { id: d.cart.id, lines, purpose: "self" };
+    const lines: CartLine[] = [{ id: uid("cl"), productId: product.id, quantity: 1, extrasAmount: 0 }];
+    mutate((d) => {
+      d.cart = { id: d.cart.id, lines, purpose: "self" };
+    });
+    void services()
+      .billing.createCheckout(lines, "self")
+      .then((r) => {
+        if (r.status === "ok") router.replace(r.data.url, { scroll: false });
+        else setCreateError(r.status === "error" ? r.message : "Checkout unavailable");
       });
-      services()
-        .billing.createCheckout(lines, "self")
-        .then((r) => {
-          if (r.status === "ok") {
-            const s = services().billing.getCheckout(r.data.checkoutId);
-            if (s.status === "ok") setSession(s.data);
-            router.replace(r.data.url, { scroll: false });
-          } else setError(r.status === "error" ? r.message : "Checkout unavailable");
-        });
-      return;
-    }
-    setError("Your bag is empty.");
-  }, [hydrated, params, catalog, mutate, router]);
+  }, [hydrated, sid, product, productError, mutate, router]);
 
   const quote = React.useMemo(() => (session ? quoteCart(session.lines, catalog) : null), [session, catalog]);
 

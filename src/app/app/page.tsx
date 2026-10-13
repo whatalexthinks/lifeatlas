@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, AudioLines, Gift, HardDrive, ImagePlus, MailPlus, MessageCircleQuestion, Sparkles } from "lucide-react";
-import { useDb, usePendingReviewCount } from "@/hooks/use-data";
+import { useDb, useHydrated, usePendingReviewCount } from "@/hooks/use-data";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge, DemoNotice } from "@/components/ui/feedback";
 import { CapsuleCover } from "@/components/capsule/capsule-cover";
@@ -13,8 +13,8 @@ import { InvitationStatusBadge, MemoryStatusBadge, Panel } from "@/components/st
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, pluralize, relativeTime } from "@/lib/utils";
 
-function greeting() {
-  const h = new Date().getHours();
+function greeting(now: number) {
+  const h = new Date(now).getHours();
   return h < 5 ? "Good evening" : h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
 }
 
@@ -28,6 +28,9 @@ export default function StudioHome() {
   const profile = useDb((d) => d.account.profile);
   const media = useDb((d) => d.media);
   const pending = usePendingReviewCount();
+  const hydrated = useHydrated();
+  // One timestamp per visit keeps render pure; the greeting waits for the device clock.
+  const [now] = React.useState(() => Date.now());
 
   const active = capsules.filter((c) => c.status !== "deletion_pending");
   const featuredCapsule = active.find((c) => c.id === "cap_margaret") ?? active[0];
@@ -45,7 +48,7 @@ export default function StudioHome() {
         .map((a) => questions.find((q) => q.id === a.questionId))
         .find(Boolean)
     : undefined;
-  const thisWeek = live.filter((m) => Date.now() - new Date(m.createdAt).getTime() < 7 * 86400_000).length;
+  const thisWeek = live.filter((m) => now - new Date(m.createdAt).getTime() < 7 * 86400_000).length;
   const voices = approved.filter((m) => m.audioId).length;
   const photos = media.filter((m) => m.kind === "image").length;
 
@@ -69,7 +72,7 @@ export default function StudioHome() {
         <div>
           <p className="eyebrow">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
           <h1 className="mt-4 font-serif text-[clamp(2.4rem,1.8rem+2.4vw,3.8rem)] leading-[1.02] tracking-[-0.025em]">
-            {greeting()}, <em>{profile.givenName}.</em>
+            {hydrated ? greeting(now) : "Welcome back"}, <em>{profile.givenName}.</em>
           </h1>
           <p className="mt-3 max-w-xl text-[1.0625rem] leading-relaxed text-ink-2">
             {thisWeek > 0

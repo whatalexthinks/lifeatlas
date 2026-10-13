@@ -1,7 +1,7 @@
 "use client";
 
 import { strToU8, zipSync, type Zippable } from "fflate";
-import type { ArchiveManifest, DemoDatabase, ExportFormat, ExportJob, ExportOptions, MediaAsset, Memory } from "@/domain/models";
+import type { ArchiveManifest, DemoDatabase, ExportJob, ExportOptions, MediaAsset, Memory } from "@/domain/models";
 import { isExportEligible } from "@/domain/policies/permissions";
 import { chapterById } from "@/data/chapters";
 import { formatFuzzyDate, sortKey } from "@/lib/dates";

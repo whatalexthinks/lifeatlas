@@ -28,8 +28,11 @@ export function PhotoAdder({ photos, onChange, max = 6, size = "standard" }: { p
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const big = size === "senior";
+  // Remember the latest photos so their previews can be released on unmount.
   const latest = React.useRef(photos);
-  latest.current = photos;
+  React.useEffect(() => {
+    latest.current = photos;
+  }, [photos]);
 
   React.useEffect(
     () => () => {

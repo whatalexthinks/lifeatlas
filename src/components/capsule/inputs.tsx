@@ -122,31 +122,29 @@ export function PlacePicker({ id, value, onChange, capsuleId }: { id: string; va
   const memories = useDb((d) => d.memories);
   const selected = places.find((p) => p.id === value);
   const [q, setQ] = React.useState("");
-  const [results, setResults] = React.useState<GeocodeResult[]>([]);
-  const [loading, setLoading] = React.useState(false);
+  // Results remember the query they answer, so stale and loading states are derived, not synced.
+  const [found, setFound] = React.useState<{ q: string; results: GeocodeResult[] }>({ q: "", results: [] });
+  const term = q.trim();
+  const searching = term.length >= 2;
+  const results = searching && found.q === term ? found.results : [];
+  const loading = searching && found.q !== term;
   const used = React.useMemo(() => {
     const ids = new Set(memories.filter((m) => !capsuleId || m.capsuleId === capsuleId).map((m) => m.placeId).filter(Boolean));
     return places.filter((p) => ids.has(p.id));
   }, [places, memories, capsuleId]);
 
   React.useEffect(() => {
-    if (q.trim().length < 2) {
-      setResults([]);
-      return;
-    }
+    if (term.length < 2) return;
     let alive = true;
-    setLoading(true);
     const t = setTimeout(async () => {
-      const r = await services().geocoding.search(q);
-      if (!alive) return;
-      setLoading(false);
-      setResults(r.status === "ok" ? r.data.results : []);
+      const r = await services().geocoding.search(term);
+      if (alive) setFound({ q: term, results: r.status === "ok" ? r.data.results : [] });
     }, 160);
     return () => {
       alive = false;
       clearTimeout(t);
     };
-  }, [q]);
+  }, [term]);
 
   const choose = async (g: GeocodeResult) => {
     const r = await services().capsules.addPlace({

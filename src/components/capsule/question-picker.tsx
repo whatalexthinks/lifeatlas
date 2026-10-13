@@ -35,9 +35,12 @@ export function QuestionPicker({
   const [term, setTerm] = React.useState("");
   const [category, setCategory] = React.useState<string>("All");
 
-  React.useEffect(() => {
+  // Start from the caller's selection each time the picker opens (React's "adjust state on prop change" pattern).
+  const [wasOpen, setWasOpen] = React.useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) setPicked(selected);
-  }, [open, selected]);
+  }
 
   const cats = ["All", ...questionCategories, ...(questions.some((q) => q.custom) ? ["Your questions"] : [])];
   const list = questions.filter((q) => {
