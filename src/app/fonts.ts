@@ -1,20 +1,12 @@
 import localFont from "next/font/local";
 
-/** Instrument Serif (OFL) — editorial display. Self-hosted, no network at build. */
-export const instrument = localFont({
+/** Newsreader, SIL Open Font License. Local variable files; no runtime font requests. */
+export const editorial = localFont({
   src: [
-    { path: "./fonts/instrument-serif.ttf", weight: "400", style: "normal" },
-    { path: "./fonts/instrument-serif-italic.ttf", weight: "400", style: "italic" },
+    { path: "./fonts/newsreader.woff2", weight: "200 800", style: "normal" },
+    { path: "./fonts/newsreader-italic.woff2", weight: "200 800", style: "italic" },
   ],
-  variable: "--font-instrument",
+  variable: "--font-editorial",
   display: "swap",
-  fallback: ["Iowan Old Style", "Palatino Linotype", "Georgia", "serif"],
-});
-
-/** DM Sans (OFL) — interface sans, variable 400–700. */
-export const dmSans = localFont({
-  src: [{ path: "./fonts/dm-sans.ttf", weight: "100 1000", style: "normal" }],
-  variable: "--font-dm-sans",
-  display: "swap",
-  fallback: ["ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+  fallback: ["Georgia", "serif"],
 });

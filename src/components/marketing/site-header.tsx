@@ -12,7 +12,7 @@ import { services } from "@/services/factory";
 
 const nav = [
   { href: "/how-it-works", label: "How it works" },
-  { href: "/demo", label: "Sample story" },
+  { href: "/demo", label: "The experience" },
   { href: "/heirlooms", label: "Heirlooms" },
   { href: "/gifts", label: "Gifts" },
   { href: "/pricing", label: "Pricing" },
@@ -44,11 +44,11 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
       data-site-header
       className={cn(
         "sticky top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-300",
-        scrolled || tone === "paper" ? "bg-paper/82 backdrop-blur-xl backdrop-saturate-150" : "bg-transparent",
+        scrolled || tone === "paper" ? "bg-paper/95 backdrop-blur-xl backdrop-saturate-150" : "bg-transparent",
         scrolled && "shadow-[0_1px_0_var(--line)]",
       )}
     >
-      <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between gap-6 px-5 sm:px-8">
+      <div className="mx-auto flex h-[84px] max-w-[1380px] items-center justify-between gap-6 px-5 sm:px-8">
         <Logo />
         <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
           {nav.map((n) => (
@@ -56,14 +56,14 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
               key={n.href}
               href={n.href}
               aria-current={pathname === n.href ? "page" : undefined}
-              className={cn("rounded-full px-3.5 py-2 text-[0.9375rem] text-ink-2 transition-colors hover:text-ink", pathname === n.href && "text-ink")}
+              className={cn("rounded-full px-3 py-2 text-[0.8125rem] text-ink-2 transition-colors hover:text-ink", pathname === n.href && "text-ink")}
             >
               <span className="link-underline">{n.label}</span>
             </Link>
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link href="/app" className="hidden rounded-full px-3.5 py-2 text-[0.9375rem] text-ink-2 hover:text-ink sm:inline-flex">
+          <Link href="/app" className="hidden rounded-full px-3 py-2 text-[0.8125rem] text-ink-2 hover:text-ink sm:inline-flex">
             Open studio
           </Link>
           <ButtonLink
@@ -83,7 +83,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
             </RD.Trigger>
             <RD.Portal>
               <RD.Overlay className="fixed inset-0 z-[80] bg-black/30 backdrop-blur-sm" />
-              <RD.Content className="fixed inset-y-0 right-0 z-[81] flex w-full max-w-sm flex-col bg-paper px-6 pb-8 pt-5 shadow-lg data-[state=open]:animate-[fade-in_200ms_ease-out]">
+              <RD.Content className="fixed inset-y-0 right-0 z-[81] flex w-full max-w-sm flex-col overflow-y-auto bg-paper px-6 pb-8 pt-5 shadow-lg data-[state=open]:animate-[fade-in_200ms_ease-out]">
                 <div className="flex items-center justify-between">
                   <RD.Title asChild>
                     <span>
@@ -97,9 +97,9 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
                     </button>
                   </RD.Close>
                 </div>
-                <nav aria-label="Mobile" className="mt-10 flex flex-col">
+                <nav aria-label="Mobile" className="mt-7 flex flex-col">
                   {[...nav, ...moreNav].map((n) => (
-                    <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="border-b border-line py-3.5 font-serif text-[1.6rem] leading-tight text-ink">
+                    <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="border-b border-line py-3 font-sans text-[1.15rem] leading-tight text-ink">
                       {n.label}
                     </Link>
                   ))}

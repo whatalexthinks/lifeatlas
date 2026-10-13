@@ -21,7 +21,7 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /mobile\.spec\.ts/ },
   ],
   webServer: {
-    command: `npx next start -p ${PORT}`,
+    command: `npx next start --hostname 127.0.0.1 -p ${PORT}`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: true,
     timeout: 120_000,
