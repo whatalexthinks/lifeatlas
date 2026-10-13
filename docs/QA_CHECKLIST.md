@@ -9,8 +9,9 @@ Results below were produced on this branch with the commands shown. Re-run them 
 | TypeScript (strict) | `npm run typecheck` | ✅ No errors |
 | ESLint incl. React compiler rules | `npm run lint` | ✅ 0 errors, 0 warnings (the 14 inherited errors were fixed at the root, not suppressed) |
 | Unit, service and component tests | `npm test` | ✅ 86 passed in 9 files |
-| Production build | `npm run build` | ✅ Compiles, type-checks, 52 static pages generated |
-| Browser tests (production server) | `npm run test:e2e` | ✅ 14 passed — desktop and Pixel 7 |
+| Production build | `npm run build` | ✅ Compiles, type-checks, 54 static pages generated |
+| Browser tests (production server) | `npm run test:e2e` | ✅ 20 passed — desktop and Pixel 7 |
+| Accessibility (axe-core, WCAG 2.2 AA) | part of `npm run test:e2e` | ✅ 0 violations — 33 routes on desktop, evening theme, and phone |
 
 ### What the tests cover
 
@@ -46,12 +47,17 @@ Performed in headless Chromium with screenshots at 1440px and 390px.
 | Browser check | Operations tab links ignored `#support` once a tab was clicked | URL hash is the single source of truth |
 | Browser check | Catalog notice claimed edits reach the public pricing page | Copy corrected (pricing shows the published catalog) |
 | Lint | 14 React-rule violations (state synced in effects, impure render, refs in render) | Derived state, `useSyncExternalStore`, `useEffectEvent` |
+| axe audit | Text contrast below 4.5:1 on 31 pages (`ink-4`, night tones, small marketing captions) | Tokens adjusted by the smallest passing step; hierarchy kept |
+| axe audit (evening) | Hard-coded cream text on evergreen and white on danger failed when the theme flipped (1.8:1) | `on-evergreen` / `on-danger` tokens |
+| Manual review of axe "incomplete" | Featured-question card unreadable in evening (axe couldn't compute its background) | Card uses a fixed deep green in both themes |
+| axe audit | Overlapping map markers; a map pill covering a marker | Clustering by on-screen marker size; pill moved |
+| axe audit | Sideways-scrolling tables and the export list not keyboard reachable; hidden gift panel focusable | Focusable labelled regions; `inert` |
+| Share metadata | Every page pointed `og:image` at `/og`, which didn't exist | `opengraph-image.tsx` |
 
 ## Known limitations
 
 - Everything is local to one browser; there are no accounts, so roles and private links are demonstrated, not secured.
 - Nothing is sent, charged, printed, shipped, transcribed or backed up — by design.
 - The public pricing page shows the published catalog; operations price edits apply to checkout and builders on the device only.
-- No social share (Open Graph) image route and no `/demo/style-guide` page.
 - Demo link tokens are short; see [SECURITY_PRIVACY_DECISIONS.md](SECURITY_PRIVACY_DECISIONS.md).
-- Automated accessibility auditing (e.g. axe) isn't in the suite yet; keyboard and screen-reader checks were spot checks.
+- Automated rules catch only part of accessibility. Screen-reader journeys (VoiceOver, NVDA) and full keyboard walkthroughs were spot checks, not a formal audit; axe "incomplete" results need a person to review.

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const tabs = [
   { href: "/demo/control-center", label: "Control center" },
   { href: "/demo/operations", label: "Operations" },
+  { href: "/demo/style-guide", label: "Style guide" },
 ];
 
 export function OpsHeader() {

@@ -21,6 +21,7 @@ Open http://localhost:3000. Good places to start:
 | `/demo` | Margaret Ellis's fictional archive in the family viewer |
 | `/app` | The organizer's studio |
 | `/demo/control-center` | Switch between family members' views, simulate events, reset |
+| `/demo/style-guide` | Colours, type and components, with live contrast readings |
 | `/app/heirlooms/book-builder` | Design a printed book, turn its pages, print a PDF proof |
 | `/app/together` | A pass-the-phone holiday session with a printable booklet |
 | `/future/open/example-opening` | What opening a future letter feels like |
@@ -34,7 +35,7 @@ npm run typecheck   # TypeScript, strict
 npm run lint        # ESLint incl. React compiler rules — currently 0 errors, 0 warnings
 npm test            # 86 unit, service and component tests (Vitest)
 npm run build       # Production build
-npm run test:e2e    # 14 browser tests (Playwright), desktop + phone, against the production build
+npm run test:e2e    # 20 browser tests (Playwright) incl. WCAG 2.2 AA audits, desktop + phone, against the production build
 npm run check       # typecheck + lint + test + build
 ```
 

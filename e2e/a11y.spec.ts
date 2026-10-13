@@ -35,6 +35,7 @@ const appRoutes = [
   "/checkout/preview?product=personal",
   "/demo/control-center",
   "/demo/operations",
+  "/demo/style-guide",
 ];
 
 async function audit(page: Page, routes: string[]) {

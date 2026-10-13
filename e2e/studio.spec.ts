@@ -32,6 +32,7 @@ const studioRoutes = [
   "/app/help",
   "/demo/control-center",
   "/demo/operations",
+  "/demo/style-guide",
   "/view/cap_margaret",
   "/view/cap_margaret/map",
   "/future/open/example-opening",

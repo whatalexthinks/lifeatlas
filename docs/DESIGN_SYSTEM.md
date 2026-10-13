@@ -23,14 +23,17 @@ Fluid type tokens: `text-display`, `text-title`, `text-heading`, `text-subheadin
 | `paper` | `#f8f8f3` | Page background |
 | `surface` | `#fefdf9` | Cards and panels (`.card-paper`) |
 | `ivory`, `linen`, `mat` | warm neutrals | Quiet fills, photo mounts |
-| `ink` → `ink-4` | `#202d27` → `#8c8981` | Text hierarchy; never use a series or status colour for text |
-| `evergreen` | `#294f3e` | Primary actions, selection, progress |
+| `ink` → `ink-4` | `#202d27` → `#6c6962` | Text hierarchy; every step passes 4.5:1 on paper and surfaces |
+| `evergreen` + `on-evergreen` | `#294f3e` / `#f8f6f1` | Primary actions, selection, progress. Text on an evergreen fill **always** uses `on-evergreen`, which flips with the theme |
+| `danger` + `on-danger` | `#9a362e` / `#ffffff` | Destructive actions; same pairing rule |
 | `brass`, `brass-ink` | `#ae9874`, `#765c36` | Demo markers, foil, eyebrows |
 | `terracotta`, `slate`, `smoke`, `moss` | | Chapter identities only |
 | `success` / `warning` / `danger` / `info` (+ `-soft`) | | Status only, always with an icon and a word |
 | `night`, `night-ink-*` | `#131815`… | Evening theme, the viewer's night tone, letter opening |
 
-Evening theme: `data-theme="evening"` (or *Match device*) remaps the same tokens; components never hard-code light colours for UI chrome.
+Evening theme: `data-theme="evening"` (or *Match device*, or the viewer's night tone via `.theme-evening`) remaps the same tokens, including lifted chapter colours. Components never hard-code light colours for UI chrome — a hard-coded colour on a token background is how contrast breaks when the theme flips. Panels that must stay dark in both themes (the featured-question card, PR #2's voice section) use a fixed deep green (`#213d31`) with fixed light text.
+
+**Contrast:** all text meets WCAG 2.2 AA (4.5:1, or 3:1 for large text), enforced by `e2e/a11y.spec.ts`. Chapter colours are for accents and dots — terracotta and smoke reach only large-text contrast on paper and brass is decorative, as the style guide shows. See every token live, with measured contrast, at **`/demo/style-guide`**.
 
 ## Shape, depth, motion
 
