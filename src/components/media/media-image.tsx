@@ -22,6 +22,7 @@ export function MediaImage({
   focalY = 50,
   develop,
   alt,
+  intrinsic,
 }: {
   mediaId?: string;
   asset?: MediaAsset;
@@ -32,13 +33,15 @@ export function MediaImage({
   focalY?: number;
   develop?: boolean;
   alt?: string;
+  /** Size the frame to the asset's own aspect ratio (masonry, lightbox). */
+  intrinsic?: boolean;
 }) {
   const fromStore = useMediaAsset(assetProp ? undefined : mediaId);
   const asset = assetProp ?? fromStore;
   const { url, error } = useMediaUrl(asset);
   const [loaded, setLoaded] = React.useState(false);
   return (
-    <div className={cn("relative overflow-hidden bg-linen", className)}>
+    <div className={cn("relative overflow-hidden bg-linen", className)} style={intrinsic && asset?.width && asset?.height ? { aspectRatio: `${asset.width} / ${asset.height}` } : undefined}>
       {url ? (
         <img
           src={url}
@@ -89,4 +92,12 @@ export function Mounted({ children, caption, meta, className, tilt = 0 }: { chil
       ) : null}
     </figure>
   );
+}
+
+/** Uncropped image for lightboxes. */
+export function LightboxImage({ asset, className }: { asset: MediaAsset; className?: string }) {
+  const { url, error } = useMediaUrl(asset);
+  if (error) return <p className="text-[0.9375rem] text-[#bdb7aa]">{error}</p>;
+  if (!url) return <div className="skeleton h-[50dvh] w-[min(80vw,900px)] rounded-[8px] opacity-20" aria-hidden />;
+  return <img src={url} alt={asset.alt} className={cn("max-h-[72dvh] max-w-full rounded-[4px] object-contain shadow-2xl", className)} />;
 }
