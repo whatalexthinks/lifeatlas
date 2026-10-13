@@ -54,7 +54,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
   const opt = (k: keyof ExportOptions) => (v: boolean) => setOptions((o) => ({ ...o, [k]: v }));
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       <div className="space-y-6">
         <Panel title="Choose a format">
           <ChoiceCards

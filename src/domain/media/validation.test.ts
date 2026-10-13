@@ -3,7 +3,10 @@ import { sniffMime, validateFileDeep, validateMediaFile } from "./validation";
 
 const bytes = (...v: (number | string)[]) => {
   const out: number[] = [];
-  for (const x of v) typeof x === "string" ? out.push(...[...x].map((c) => c.charCodeAt(0))) : out.push(x);
+  for (const x of v) {
+    if (typeof x === "string") out.push(...[...x].map((c) => c.charCodeAt(0)));
+    else out.push(x);
+  }
   while (out.length < 16) out.push(0);
   return new Uint8Array(out);
 };

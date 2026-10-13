@@ -240,6 +240,12 @@
 /* ------------------------------------------------------------------ */
 
 @layer base {
+  /* Grid items may shrink to their track. Without this, a single-column grid on phones
+     grows to its widest content and the whole page scrolls sideways. */
+  .grid > * {
+    min-width: 0;
+  }
+
   *,
   *::before,
   *::after {

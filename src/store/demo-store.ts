@@ -96,6 +96,7 @@ function scheduleSave() {
   if (persistence === "memory" || typeof window === "undefined") return;
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
+    saveTimer = null;
     const { db, hydrated } = useDemoStore.getState();
     if (!hydrated) return;
     try {
@@ -110,10 +111,16 @@ function scheduleSave() {
 /** Flush pending writes immediately (used before navigation-critical moments). */
 export async function flushSave() {
   if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = null;
   const { db, hydrated, persistence } = useDemoStore.getState();
   if (!hydrated || persistence === "memory" || !idbAvailable()) return;
   await saveState(db);
   useDemoStore.setState({ lastSavedAt: new Date().toISOString() });
+}
+
+/** Write only if a debounced save is still waiting — used when the tab is hidden or closing. */
+export function flushPendingSave() {
+  if (saveTimer) void flushSave().catch(() => undefined);
 }
 
 export const getDb = () => useDemoStore.getState().db;

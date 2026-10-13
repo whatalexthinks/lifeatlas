@@ -56,10 +56,11 @@ export default function StudioQuestions() {
           ) : (
             <ol className="space-y-2">
               {queued.map((a, i) => (
-                <li key={a.id} className="flex items-start gap-3 rounded-[16px] border border-line bg-surface p-4">
+                <li key={a.id} className="flex flex-wrap items-start gap-x-3 gap-y-1 rounded-[16px] border border-line bg-surface p-4">
                   <span className="catalog mt-1 w-5">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="flex-1 font-serif text-[1.25rem] leading-snug">{qText(a.questionId)}</span>
-                  <span className="flex shrink-0 items-center">
+                  <span className="min-w-0 flex-1 basis-[calc(100%-2rem)] font-serif text-[1.25rem] leading-snug sm:basis-0">{qText(a.questionId)}</span>
+                  {/* On phones the actions drop below the question so it can use the full width. */}
+                  <span className="-ml-2 flex shrink-0 items-center pl-8 sm:ml-0 sm:pl-0">
                     <button className="grid size-8 place-items-center rounded-full hover:bg-ivory disabled:opacity-30" disabled={i === 0} onClick={() => void reorder(i, -1)} aria-label="Move earlier">
                       <ArrowUp className="size-4" />
                     </button>

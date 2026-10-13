@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useDemoStore } from "@/store/demo-store";
+import { flushPendingSave, useDemoStore } from "@/store/demo-store";
 import { Toaster } from "@/components/ui/feedback";
 
 /** Loads local demo data and applies display preferences to <html>. */
@@ -13,6 +13,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     void hydrate();
   }, [hydrate]);
+
+  // Saves are debounced; don't lose the last edit if the tab is hidden, reloaded or closed.
+  React.useEffect(() => {
+    const onHide = () => {
+      if (document.visibilityState === "hidden") flushPendingSave();
+    };
+    window.addEventListener("pagehide", flushPendingSave);
+    document.addEventListener("visibilitychange", onHide);
+    return () => {
+      window.removeEventListener("pagehide", flushPendingSave);
+      document.removeEventListener("visibilitychange", onHide);
+    };
+  }, []);
 
   React.useEffect(() => {
     if (!hydrated) return;

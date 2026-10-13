@@ -68,7 +68,7 @@ export default function OrdersPage() {
       {orders.length === 0 ? (
         <EmptyState title="No orders yet" body="Plans, gifts and heirlooms you order in the demo will appear here." action={<ButtonLink href="/pricing">See plans</ButtonLink>} />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.4fr)]">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.4fr)]">
           <ul className="space-y-2.5" aria-label="Orders">
             {orders.map((o) => {
               const Icon = kindIcon[o.kind];
