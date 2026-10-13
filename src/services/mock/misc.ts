@@ -135,6 +135,15 @@ export const mockPreservation: PreservationProvider = {
     }, { actor: actorName(), action: "successor.designated_demo", detail: s.name });
     return ok(s);
   },
+
+  async removeSuccessor(id) {
+    const s = db().successors.find((x) => x.id === id);
+    if (!s) return fail("not_found", "That successor isn't on this device.");
+    store().mutate((d) => {
+      d.successors = d.successors.filter((x) => x.id !== id);
+    }, { actor: actorName(), action: "successor.removed_demo", detail: s.name });
+    return ok(null);
+  },
 };
 
 export const mockAnalytics: AnalyticsProvider = {

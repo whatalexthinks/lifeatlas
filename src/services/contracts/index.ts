@@ -308,6 +308,7 @@ export interface PreservationProvider {
   runLocalIntegrityCheck(capsuleId: string): Promise<ServiceResult<IntegrityCheck & { details: { id: string; ok: boolean; reason?: string }[] }>>;
   runRestoreTest(capsuleId: string): Promise<ServiceResult<never>>;
   saveSuccessor(input: Omit<SuccessorDesignation, "id" | "createdAt" | "status">): Promise<ServiceResult<SuccessorDesignation>>;
+  removeSuccessor(id: string): Promise<ServiceResult<null>>;
 }
 
 /* ------------------------------------------------------------------ */

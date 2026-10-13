@@ -853,6 +853,7 @@
 .la-final p:not(.la-kicker) { font-size: .94rem; color: #6b7660; line-height: 1.8; margin-bottom: 28px; }
 .la-final .la-link { display: flex; width: fit-content; margin: 22px auto 0; }
 [data-studio] h1 { font-family: var(--font-geist-sans), sans-serif; font-weight: 450; letter-spacing: -.045em; }
+[data-studio] h1 em { font-family: var(--font-editorial), Georgia, serif; font-weight: 400; letter-spacing: -.035em; }
 [data-studio] .eyebrow { letter-spacing: .1em; font-size: .65rem; }
 .la-page-hero { padding: 65px 0 75px; border-bottom: 1px solid var(--la-rule); }
 .la-page-hero h1 { margin: 28px 0; max-width: 930px; }
