@@ -57,6 +57,17 @@ test("private routes are never indexed", async ({ request }) => {
   expect(robots).toContain("Disallow: /app");
 });
 
+test("every page shares a working preview image", async ({ request }) => {
+  for (const path of ["/", "/pricing", "/app"]) {
+    const html = await (await request.get(path)).text();
+    const og = /<meta property="og:image" content="([^"]+)"/.exec(html)?.[1];
+    expect(og, path).toBeTruthy();
+    const image = await request.get(new URL(og!).pathname + new URL(og!).search);
+    expect(image.status(), path).toBe(200);
+    expect(image.headers()["content-type"]).toContain("image/png");
+  }
+});
+
 test("a relative's story travels from invitation to review to the family viewer", async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto("/app/invitations?new=1");
