@@ -1,5 +1,16 @@
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+
+/** tailwind-merge must know our custom type scale, or it drops `text-heading` next to `text-ink`. */
+const twMerge = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      "font-size": [{ text: ["display", "title", "heading", "subheading", "lead", "body", "senior", "micro"] }],
+    },
+  },
+  // We always pair sizes with explicit leading; never let a size class silently drop it.
+  override: { conflictingClassGroups: { "font-size": [] } },
+});
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

@@ -163,7 +163,7 @@ export interface MediaStorageProvider {
   resolveUrl(asset: MediaAsset): Promise<ServiceResult<string>>;
   getBlob(asset: MediaAsset): Promise<ServiceResult<Blob>>;
   remove(mediaId: string): Promise<ServiceResult<null>>;
-  updateMeta(mediaId: string, patch: Partial<Pick<MediaAsset, "caption" | "alt">>): Promise<ServiceResult<MediaAsset>>;
+  updateMeta(mediaId: string, patch: Partial<Pick<MediaAsset, "caption" | "alt" | "capsuleId">>): Promise<ServiceResult<MediaAsset>>;
 }
 
 /* ------------------------------------------------------------------ */
