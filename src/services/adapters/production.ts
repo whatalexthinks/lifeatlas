@@ -43,5 +43,6 @@ export function createProductionServices(): Services {
     analytics: unavailable("analytics"),
     support: unavailable("support"),
     heirlooms: unavailable("heirlooms"),
+    operations: unavailable("operations"),
   };
 }

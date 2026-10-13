@@ -1,5 +1,6 @@
 import type {
   AccountPreferences,
+  Product,
   Role,
   BookConfiguration,
   BoxConfiguration,
@@ -56,7 +57,8 @@ export type ServiceName =
   | "fulfillment"
   | "analytics"
   | "support"
-  | "heirlooms";
+  | "heirlooms"
+  | "operations";
 
 export type ServiceErrorCode = "validation" | "not_found" | "forbidden" | "conflict" | "quota" | "unsupported" | "unknown";
 
@@ -376,6 +378,15 @@ export interface HeirloomRepository {
   toCartLine(id: string): ServiceResult<CartLine>;
 }
 
+export type SimulatedEvent = "contribution" | "invitation_opened" | "proof_ready" | "storage_warning";
+
+/** Staff tools for the operations demo. In production these sit behind staff sign-in. */
+export interface OperationsService {
+  updateProduct(id: string, patch: { amount?: number; availability?: Product["availability"]; note?: string }): Promise<ServiceResult<Product>>;
+  /** Plays a realistic event through the same code paths a real one would use. */
+  simulate(event: SimulatedEvent): Promise<ServiceResult<string>>;
+}
+
 export interface Services {
   mode: "demo" | "production";
   auth: AuthProvider;
@@ -395,4 +406,5 @@ export interface Services {
   analytics: AnalyticsProvider;
   support: SupportProvider;
   heirlooms: HeirloomRepository;
+  operations: OperationsService;
 }
