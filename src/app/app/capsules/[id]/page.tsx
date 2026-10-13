@@ -35,8 +35,9 @@ export default function CapsuleOverview() {
         {featured ? (
           <div>
             <p className="catalog mb-3">Featured on the cover</p>
-            <button type="button" onClick={() => openMemory(featured.id)} className="block w-full text-left">
-              <MemoryReveal memory={featured} subjectName={capsule.subjectName} animate={false} />
+            <MemoryReveal memory={featured} subjectName={capsule.subjectName} animate={false} />
+            <button type="button" onClick={() => openMemory(featured.id)} className="mt-3 text-[0.875rem] font-medium text-evergreen hover:underline">
+              Edit this story
             </button>
           </div>
         ) : (

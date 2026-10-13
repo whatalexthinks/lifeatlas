@@ -106,6 +106,7 @@ export function Checkbox({
         id={id}
         checked={checked}
         disabled={disabled}
+        aria-describedby={description ? `${id}-desc` : undefined}
         onCheckedChange={(v) => onCheckedChange(v === true)}
         className="mt-0.5 grid size-[22px] shrink-0 place-items-center rounded-[6px] border border-line-strong bg-surface transition-colors data-[state=checked]:border-evergreen data-[state=checked]:bg-evergreen disabled:opacity-50"
       >
@@ -113,10 +114,16 @@ export function Checkbox({
           <Check className="size-3.5 text-paper" strokeWidth={3} />
         </RadixCheckbox.Indicator>
       </RadixCheckbox.Root>
-      <label htmlFor={id} className="min-w-0 cursor-pointer">
-        <span className="block text-[0.9375rem] font-medium leading-snug text-ink">{label}</span>
-        {description ? <span className="mt-0.5 block text-[0.875rem] leading-snug text-ink-3">{description}</span> : null}
-      </label>
+      <div className="min-w-0">
+        <label htmlFor={id} className="block cursor-pointer text-[0.9375rem] font-medium leading-snug text-ink">
+          {label}
+        </label>
+        {description ? (
+          <span id={`${id}-desc`} className="mt-0.5 block text-[0.875rem] leading-snug text-ink-3">
+            {description}
+          </span>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -138,14 +145,21 @@ export function Switch({
 }) {
   return (
     <div className="flex items-start justify-between gap-6">
-      <label htmlFor={id} className="min-w-0 cursor-pointer">
-        <span className="block text-[0.9375rem] font-medium text-ink">{label}</span>
-        {description ? <span className="mt-0.5 block text-[0.875rem] leading-snug text-ink-3">{description}</span> : null}
-      </label>
+      <div className="min-w-0">
+        <label htmlFor={id} className="block cursor-pointer text-[0.9375rem] font-medium text-ink">
+          {label}
+        </label>
+        {description ? (
+          <span id={`${id}-desc`} className="mt-0.5 block text-[0.875rem] leading-snug text-ink-3">
+            {description}
+          </span>
+        ) : null}
+      </div>
       <RadixSwitch.Root
         id={id}
         checked={checked}
         disabled={disabled}
+        aria-describedby={description ? `${id}-desc` : undefined}
         onCheckedChange={onCheckedChange}
         className="relative mt-0.5 h-7 w-12 shrink-0 rounded-full bg-line-strong transition-colors data-[state=checked]:bg-evergreen disabled:opacity-50"
       >

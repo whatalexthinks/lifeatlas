@@ -110,8 +110,9 @@ export default function ViewerCover() {
           {featured ? (
             <div>
               <p className={cn("catalog mb-3", night && "text-night-ink-3")}>A place to begin</p>
-              <Link href={`${base}/stories/${featured.id}`} className="block transition-transform hover:-translate-y-0.5">
-                <MemoryReveal memory={featured} subjectName={capsule.subjectName} animate={false} />
+              <MemoryReveal memory={featured} subjectName={capsule.subjectName} animate={false} />
+              <Link href={`${base}/stories/${featured.id}`} className={cn("mt-4 inline-flex items-center gap-1.5 font-medium hover:underline", night ? "text-[#d2bb93]" : "text-evergreen")}>
+                Read the story <ArrowUpRight className="size-4" />
               </Link>
             </div>
           ) : null}
