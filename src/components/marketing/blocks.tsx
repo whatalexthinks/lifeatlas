@@ -91,7 +91,7 @@ export function PricingCards({ catalog = defaultCatalog, compact = false }: { ca
             ) : null}
             <div className="mt-auto pt-8">
               <ButtonLink
-                href={p.id === "living" ? "/app/billing" : `/checkout/preview?product=${p.id}`}
+                href={p.id === "living" ? "/pricing#renewal" : `/checkout/preview?product=${p.id}`}
                 variant={featured ? "light" : "secondary"}
                 size="lg"
                 block

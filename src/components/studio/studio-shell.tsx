@@ -120,7 +120,7 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
   const nonOrganizer = hydrated && persona.kind !== "organizer" && persona.kind !== "operations";
 
   return (
-    <div className="min-h-dvh bg-paper lg:grid lg:grid-cols-[272px_1fr] md:max-lg:grid md:max-lg:grid-cols-[76px_1fr]">
+    <div data-studio className="min-h-dvh bg-paper lg:grid lg:grid-cols-[272px_1fr] md:max-lg:grid md:max-lg:grid-cols-[76px_1fr]">
       {/* Desktop rail */}
       <aside className="sticky top-0 hidden h-dvh flex-col border-r border-line bg-ivory/50 px-4 pb-4 pt-5 lg:flex" aria-label="Studio navigation">
         <div className="flex items-center justify-between px-2">

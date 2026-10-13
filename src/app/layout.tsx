@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { GeistMono } from "geist/font/mono";
-import { dmSans, instrument } from "./fonts";
+import { editorial } from "./fonts";
+import { GeistSans } from "geist/font/sans";
 import { Providers } from "@/components/shared/providers";
 import { appConfig } from "@/lib/config";
 import "./globals.css";
@@ -38,7 +39,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="light" className={`${instrument.variable} ${dmSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+    <html lang="en" data-theme="light" className={`${editorial.variable} ${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
       <head>
         {/* Progressive enhancement: reveal animations only when JS runs. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />

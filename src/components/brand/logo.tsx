@@ -21,8 +21,8 @@ export function BrandMark({ className, src, title = "LifeAtlas" }: { className?:
 
 export function Wordmark({ className }: { className?: string }) {
   return (
-    <span className={cn("font-serif text-[1.55rem] leading-none tracking-[-0.02em]", className)}>
-      Life<span className="italic">Atlas</span>
+    <span className={cn("font-sans text-[1.4rem] font-semibold leading-none tracking-[-0.065em]", className)}>
+      Life<span>Atlas</span>
     </span>
   );
 }
