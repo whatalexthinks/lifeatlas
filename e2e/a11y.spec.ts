@@ -21,6 +21,7 @@ const appRoutes = [
   "/app/heirlooms/book-builder",
   "/app/heirlooms/capsule-builder",
   "/app/together",
+  "/app/future-messages/new",
   "/app/preservation",
   "/app/orders",
   "/app/billing",
@@ -28,6 +29,8 @@ const appRoutes = [
   "/app/help",
   "/view/cap_margaret",
   "/view/cap_margaret/stories",
+  "/view/cap_margaret/stories?q=bread",
+  "/view/cap_margaret/stories?saved=1",
   "/view/cap_margaret/map",
   "/contribute/emma-blue-bowl",
   "/gift/for-grandpa-walt",
@@ -55,6 +58,24 @@ test("public pages meet WCAG 2.2 AA automated checks", async ({ page }) => {
 
 test("studio, family and demo pages meet WCAG 2.2 AA automated checks", async ({ page }) => {
   expect(await audit(page, appRoutes)).toEqual([]);
+});
+
+test("pages added for drafts, sessions, restore and proofs pass too", async ({ page }) => {
+  // Make the states exist first: a saved box design, a paused holiday session, a draft answer.
+  await page.goto("/app/heirlooms/capsule-builder");
+  await page.getByRole("button", { name: "Save design" }).click();
+  const proof = await page.getByRole("link", { name: "Proof" }).getAttribute("href");
+  await page.goto("/app/together");
+  await page.getByRole("button", { name: "Begin" }).click();
+  await page.waitForURL(/session=/);
+  const session = new URL(page.url()).search;
+  await page.goto("/app/family");
+  await page.getByRole("button", { name: "Preview as Jonah Reed" }).click();
+  await page.waitForURL(/\/view\//);
+  const preview = await audit(page, ["/view/cap_margaret", "/view/cap_margaret/stories?q=harbor"]);
+  await page.getByRole("button", { name: "Back to Sarah" }).click();
+  await page.waitForTimeout(300);
+  expect([...preview, ...(await audit(page, [proof!, `/app/together${session}`, "/app/together", "/contribute/emma-blue-bowl"]))]).toEqual([]);
 });
 
 test("the evening theme keeps its contrast", async ({ page }) => {

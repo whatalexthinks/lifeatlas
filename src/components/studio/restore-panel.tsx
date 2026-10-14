@@ -48,7 +48,7 @@ export function RestorePanel() {
 
   const chooser = (
     <div className="flex flex-wrap items-center gap-3">
-      <input ref={input} id="restore-file" type="file" accept=".zip,.json,application/zip,application/json" className="sr-only" onChange={(e) => void inspect(e.target.files?.[0])} />
+      <input ref={input} id="restore-file" aria-label="Choose an export file to restore" tabIndex={-1} type="file" accept=".zip,.json,application/zip,application/json" className="sr-only" onChange={(e) => void inspect(e.target.files?.[0])} />
       <Button variant="secondary" leading={<FileUp className="size-4" />} onClick={() => input.current?.click()} loading={state.kind === "checking"}>
         {state.kind === "idle" ? "Choose an export file" : "Choose a different file"}
       </Button>

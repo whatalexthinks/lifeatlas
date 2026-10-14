@@ -8,7 +8,7 @@ import { MediaImage } from "@/components/media/media-image";
 import { MemoryReveal } from "@/components/capture/memory-reveal";
 import { RiseText } from "@/components/shared/reveal";
 import { typographyClass, paletteStyles } from "@/components/capsule/capsule-cover";
-import { useCapsuleMemories, useDb, usePlace } from "@/hooks/use-data";
+import { useCapsuleMemories, useDb, usePlace, useRole } from "@/hooks/use-data";
 import { chapterById } from "@/data/chapters";
 import { decadesOf } from "@/lib/memory-utils";
 import { cn, pluralize } from "@/lib/utils";
@@ -17,6 +17,8 @@ export default function ViewerCover() {
   const { capsule, tone, base } = useViewer();
   const memories = useCapsuleMemories(capsule.id, { scope: "viewer" });
   const media = useDb((d) => d.media);
+  const role = useRole(capsule.id);
+  const canManage = role === "owner" || role === "organizer";
   const birthplace = usePlace(capsule.birthplaceId);
   const [entered, setEntered] = React.useState(false);
   const night = tone === "night";
@@ -83,13 +85,23 @@ export default function ViewerCover() {
           <div>
             <p className={cn("eyebrow", night && "text-[#c4ad86]")}>{entered ? "Welcome in" : "An archive of one life"}</p>
             <h2 id="explore-h" className={cn("mt-4 font-serif text-[clamp(2.4rem,1.8rem+2vw,3.6rem)] leading-[1.02]", night ? "text-night-ink" : "text-ink")}>
-              {pluralize(memories.length, "story", "stories")}, {decades.length ? `${decades[0]}s to ${decades[decades.length - 1]}s` : "and counting"}.
+              {memories.length ? `${pluralize(memories.length, "story", "stories")}, ${decades.length ? `${decades[0]}s to ${decades[decades.length - 1]}s` : "and counting"}.` : "The first stories are on their way."}
             </h2>
-            <p className={cn("mt-4 text-lead", night ? "text-night-ink-2" : "text-ink-2")}>
+            {memories.length === 0 ? (
+              <div className={cn("mt-4 text-lead", night ? "text-night-ink-2" : "text-ink-2")}>
+                <p>{canManage ? `Once you add or approve a story, it appears here for the family — with its photographs, places and ${capsule.preferredName}'s voice.` : `When stories are added and approved, they'll appear here — with photographs, places and ${capsule.preferredName}'s voice.`}</p>
+                {canManage ? (
+                  <Link href={`/app/gather?capsule=${capsule.id}`} className={cn("mt-6 inline-flex h-12 items-center gap-2 rounded-full px-6 text-[1rem] font-medium", night ? "bg-[#f8f6f1] text-[#1b221e]" : "bg-evergreen text-on-evergreen")}>
+                    Gather the first memory <ArrowUpRight className="size-4" />
+                  </Link>
+                ) : null}
+              </div>
+            ) : null}
+            <p hidden={!memories.length} className={cn("mt-4 text-lead", night ? "text-night-ink-2" : "text-ink-2")}>
               {voices ? `${pluralize(voices, "recording")}, ` : ""}
               {pluralize(photos, "photograph")} and {pluralize(places, "place")}. Wander however you like.
             </p>
-            <div className="mt-8 grid grid-cols-2 gap-3">
+            <div hidden={!memories.length} className="mt-8 grid grid-cols-2 gap-3">
               {[
                 { href: `${base}/timeline`, label: "Timeline", sub: "Decade by decade", icon: Rows3 },
                 { href: `${base}/map`, label: "Memory map", sub: "The places that shaped them", icon: Map },

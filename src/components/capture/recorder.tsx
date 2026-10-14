@@ -156,7 +156,7 @@ export function Recorder({
             Upload a recording
           </Button>
         </div>
-        <input ref={fileRef} type="file" accept="audio/*" className="sr-only" tabIndex={-1} onChange={(e) => void onUpload(e.target.files?.[0])} />
+        <input ref={fileRef} type="file" accept="audio/*" className="sr-only" tabIndex={-1} aria-label="Upload a recording" onChange={(e) => void onUpload(e.target.files?.[0])} />
         {uploadError ? <p className="mt-3 text-[0.9rem] font-medium text-danger">{uploadError}</p> : null}
       </div>
     );
@@ -223,7 +223,7 @@ export function Recorder({
           <button type="button" onClick={() => fileRef.current?.click()} className="mt-4 inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-ink-3 underline-offset-4 hover:text-ink hover:underline">
             <Upload className="size-4" /> or upload a recording
           </button>
-          <input ref={fileRef} type="file" accept="audio/*" className="sr-only" tabIndex={-1} onChange={(e) => void onUpload(e.target.files?.[0])} />
+          <input ref={fileRef} type="file" accept="audio/*" className="sr-only" tabIndex={-1} aria-label="Upload a recording" onChange={(e) => void onUpload(e.target.files?.[0])} />
           {uploadError ? <p className="mt-3 text-[0.9rem] font-medium text-danger">{uploadError}</p> : null}
         </>
       )}

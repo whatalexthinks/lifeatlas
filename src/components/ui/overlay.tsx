@@ -6,6 +6,27 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 
+/**
+ * Our dialogs open from ordinary buttons, not Radix triggers, so Radix doesn't know where
+ * to put focus when they close and drops it on <body>. Remember what had focus as the
+ * dialog opened (focus hasn't moved inside yet at that moment) and hand it back.
+ */
+function useReturnFocus() {
+  const opener = React.useRef<HTMLElement | null>(null);
+  return {
+    onOpenAutoFocus: () => {
+      opener.current = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : null;
+    },
+    onCloseAutoFocus: (e: Event) => {
+      const el = opener.current;
+      if (el?.isConnected) {
+        e.preventDefault();
+        el.focus();
+      }
+    },
+  };
+}
+
 export const DialogRoot = RD.Root;
 export const DialogTrigger = RD.Trigger;
 export const DialogClose = RD.Close;
@@ -32,11 +53,13 @@ export function Dialog({
   hideTitle?: boolean;
   className?: string;
 }) {
+  const focus = useReturnFocus();
   return (
     <RD.Root open={open} onOpenChange={onOpenChange}>
       <RD.Portal>
         <RD.Overlay className="fixed inset-0 z-[80] bg-[rgb(18_23_20/0.45)] backdrop-blur-[3px] data-[state=open]:animate-[fade-in_200ms_ease-out]" />
         <RD.Content
+          {...focus}
           className={cn(
             "fixed z-[81] flex max-h-[92dvh] flex-col overflow-hidden bg-surface text-ink shadow-lg outline-none",
             "inset-x-0 bottom-0 rounded-t-[24px] data-[state=open]:animate-[sheet-up_320ms_var(--ease-out)]",
@@ -88,11 +111,13 @@ export function Sheet({
   side?: "right" | "left";
   width?: "md" | "lg";
 }) {
+  const focus = useReturnFocus();
   return (
     <RD.Root open={open} onOpenChange={onOpenChange}>
       <RD.Portal>
         <RD.Overlay className="fixed inset-0 z-[80] bg-[rgb(18_23_20/0.35)] backdrop-blur-[2px] data-[state=open]:animate-[fade-in_200ms_ease-out]" />
         <RD.Content
+          {...focus}
           className={cn(
             "fixed inset-y-0 z-[81] flex w-full flex-col bg-surface shadow-lg outline-none",
             side === "right" ? "right-0" : "left-0",

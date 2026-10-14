@@ -4,6 +4,7 @@ import type { CartLine, HeirloomConfiguration } from "@/domain/models";
 import { estimateBookPages, quoteBook, quoteBox } from "@/domain/commerce/pricing";
 import { uid } from "@/lib/utils";
 import { fail, ok, type HeirloomRepository } from "../contracts";
+import { flushSave } from "@/store/demo-store";
 import { actorName, db, latency, store } from "./shared";
 
 function bookPages(h: HeirloomConfiguration) {
@@ -53,6 +54,8 @@ export const mockHeirlooms: HeirloomRepository = {
       { actor: actorName(), action: "heirloom.saved", target: config.id, detail: config.name },
     );
     store().track("heirloom_configured", { kind: config.kind });
+    // Proofs open in a new tab, which reads from storage — write now, not after the debounce.
+    await flushSave().catch(() => undefined);
     return ok(config);
   },
 
