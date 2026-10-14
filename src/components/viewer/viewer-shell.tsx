@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { ArrowUpRight, Lock, Moon, Sun } from "lucide-react";
+import { ArrowUpRight, Lock, Moon, Search, Sun } from "lucide-react";
 import type { Capsule, Memory } from "@/domain/models";
 import { BrandMark } from "@/components/brand/logo";
 import { Button, ButtonLink } from "@/components/ui/button";
@@ -155,6 +155,9 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
               })}
             </nav>
             <div className="ml-auto flex items-center gap-1 md:ml-2">
+              <Link href={`${base}/stories?find=1`} className={cn("grid size-10 place-items-center rounded-full", night ? "text-night-ink-2 hover:bg-white/10" : "text-ink-2 hover:bg-ivory")} aria-label="Search the archive" title="Search">
+                <Search className="size-[18px]" />
+              </Link>
               <button onClick={toggleTone} className={cn("grid size-10 place-items-center rounded-full", night ? "text-night-ink-2 hover:bg-white/10" : "text-ink-2 hover:bg-ivory")} aria-label={night ? "Switch to daylight reading" : "Switch to evening reading"} title={night ? "Daylight" : "Evening"}>
                 {night ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />}
               </button>
