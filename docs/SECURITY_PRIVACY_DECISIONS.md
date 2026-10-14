@@ -21,6 +21,8 @@ LifeAtlas holds some of the most personal material a family has. These decisions
 - **Consent per memory and media:** `print`, `export`, `share`. Books include only approved, print-consented stories; exports respect export consent and exclude private stories unless the person exporting opts in.
 - **Contributions are reviewed:** anything from a relative or guest arrives as `submitted` and waits for an organizer.
 - **Roles are demonstrated, not enforced** in Part One (`enforcement: "simulated"`); the Family page says so. The owner can't be demoted, and only the subject can be a capsule's storyteller.
+- **Previews** ("Preview as …" on the Family page) switch the demo identity and show a banner with a one-click way back. They demonstrate what each role would see; they are not a security boundary.
+- **Restoring an export** never overwrites existing data (it creates a new capsule), refuses files whose bytes don't match their recorded SHA-256, refuses SVG files (they can carry scripts) and switches print permission off for restored stories, because the manifest doesn't record whether the storyteller agreed to print.
 - **Successors** get no access. In Part Two a successor acts only after verification by a person and a waiting period in which the owner can object.
 - **Places** are city-level by default; precise points are stored internally and displayed rounded.
 
