@@ -96,10 +96,14 @@ function withNewFields(stored: DemoDatabase): DemoDatabase {
   return out as unknown as DemoDatabase;
 }
 
-function describeError(e: unknown) {
+/** Plain-language storage problems — never a raw browser error. Exported for tests. */
+export function describeError(e: unknown) {
   if (isQuotaError(e)) return "This device is out of storage space for LifeAtlas. Remove a recording or download your archive, then try again.";
-  if (e instanceof Error) return e.message;
-  return "Could not save on this device.";
+  const name = e instanceof DOMException || e instanceof Error ? e.name : "";
+  if (name === "SecurityError" || name === "NotAllowedError") return "This browser is blocking LifeAtlas from saving — usually a private window or a setting that blocks site data.";
+  if (name === "InvalidStateError" || name === "UnknownError" || name === "AbortError" || name === "TransactionInactiveError") return "This browser's storage stopped responding. Your earlier changes are safe; reload the page and try again.";
+  if (name === "VersionError") return "LifeAtlas is open in another tab with a different version. Close the other tab and reload.";
+  return "LifeAtlas couldn't save on this device just now. Your earlier changes are safe; try again in a moment.";
 }
 
 function scheduleSave() {
@@ -125,8 +129,13 @@ export async function flushSave() {
   saveTimer = null;
   const { db, hydrated, persistence } = useDemoStore.getState();
   if (!hydrated || persistence === "memory" || !idbAvailable()) return;
-  await saveState(db);
-  useDemoStore.setState({ lastSavedAt: new Date().toISOString() });
+  try {
+    await saveState(db);
+    useDemoStore.setState({ lastSavedAt: new Date().toISOString(), saveError: undefined, persistence: "indexeddb" });
+  } catch (e) {
+    useDemoStore.setState({ saveError: describeError(e), persistence: "error" });
+    throw e;
+  }
 }
 
 /** Write only if a debounced save is still waiting — used when the tab is hidden or closing. */

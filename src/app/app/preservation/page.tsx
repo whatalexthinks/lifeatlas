@@ -6,6 +6,7 @@ import { AlertTriangle, ArrowRight, CheckCircle2, Cloud, Download, HardDrive, La
 import type { IntegrityCheck } from "@/domain/models";
 import { PageHeader, Panel } from "@/components/studio/primitives";
 import { ExportCenter } from "@/components/studio/export-center";
+import { RestorePanel } from "@/components/studio/restore-panel";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge, Skeleton, toast } from "@/components/ui/feedback";
 import { Select } from "@/components/ui/field";
@@ -229,6 +230,8 @@ export default function PreservationPage() {
         </div>
         {capsule ? <ExportCenter capsule={capsule} /> : null}
       </section>
+
+      <RestorePanel />
 
       <div className="mt-12 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
         <Panel title="A good habit: three copies">

@@ -8,6 +8,7 @@ import type { Capsule, Invitation } from "@/domain/models";
 import { BrandMark } from "@/components/brand/logo";
 import { ButtonLink } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/feedback";
+import { StorageAlert } from "@/components/ui/storage-alert";
 import { useDb, useHydrated } from "@/hooks/use-data";
 import { useDemoStore } from "@/store/demo-store";
 import { services } from "@/services/factory";
@@ -85,7 +86,10 @@ export function ContributeShell({ children }: { children: React.ReactNode }) {
         ) : state.kind === "error" || !fresh || !capsule ? (
           <TokenProblem code={state.kind === "error" ? state.code : "not_found"} message={state.kind === "error" ? state.message : "We couldn't find this invitation."} />
         ) : (
-          <ContributeCtx.Provider value={{ invitation: fresh, capsule, organizerName: profile.displayName }}>{children}</ContributeCtx.Provider>
+          <ContributeCtx.Provider value={{ invitation: fresh, capsule, organizerName: profile.displayName }}>
+            <StorageAlert audience="guest" className="mt-6" />
+            {children}
+          </ContributeCtx.Provider>
         )}
       </main>
     </div>

@@ -92,7 +92,8 @@ export interface ArchiveManifest {
     title: string;
     narrative: string;
     quote?: string;
-    date: { display: string; precision: string; year?: number; month?: number; day?: number };
+    /** `display` is for people; the other fields restore the date exactly. Season, decade, lifeStage and note were added within v1 and may be absent in older exports. */
+    date: { display: string; precision: string; year?: number; month?: number; day?: number; season?: string; decade?: number; lifeStage?: string; note?: string };
     chapter: string;
     placeId?: ID;
     peopleIds: ID[];

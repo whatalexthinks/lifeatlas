@@ -27,6 +27,7 @@ import { BrandMark, Logo } from "@/components/brand/logo";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { useBackToSelf, useOwnPersona } from "./preview-banner";
 import { Skeleton } from "@/components/ui/feedback";
+import { StorageAlert } from "@/components/ui/storage-alert";
 import { useDb, useHydrated, usePendingReviewCount, usePersistence, usePersona } from "@/hooks/use-data";
 import { cn, relativeTime } from "@/lib/utils";
 import { NotificationsButton } from "./notifications";
@@ -102,7 +103,7 @@ export function SaveStatus({ compact }: { compact?: boolean }) {
         Demo · this device only
       </p>
       <p className="mt-1 text-[0.75rem] leading-snug text-ink-3" role="status">
-        {label}. Not backed up.{" "}
+        {label.replace(/\.$/, "")}. Not backed up.{" "}
         <Link href="/app/preservation" className="underline underline-offset-2">
           Download a copy
         </Link>
@@ -198,7 +199,10 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
           ) : nonOrganizer ? (
             <NotOrganizer />
           ) : (
-            children
+            <>
+              <StorageAlert className="mx-auto mb-6 max-w-[1240px]" />
+              {children}
+            </>
           )}
         </main>
       </div>

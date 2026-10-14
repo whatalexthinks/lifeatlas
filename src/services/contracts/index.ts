@@ -304,9 +304,32 @@ export interface ExportPreview {
   warnings: string[];
 }
 
+export interface ArchiveInspection {
+  /** Hands the checked archive to restoreArchive. Valid until the page is closed. */
+  token: string;
+  fileName: string;
+  format: "zip" | "json";
+  capsuleName: string;
+  generatedAt: string;
+  stories: number;
+  people: number;
+  places: number;
+  /** Files whose bytes match the SHA-256 recorded at export. */
+  verified: { photos: number; recordings: number };
+  /** Captions of files whose bytes no longer match — they won't be restored. */
+  damaged: string[];
+  /** Files listed in the manifest but not in this archive (or a records-only export). */
+  notInArchive: number;
+  warnings: string[];
+}
+
 export interface ExportBuilder {
   preview(capsuleId: string, options: ExportOptions): Promise<ServiceResult<ExportPreview>>;
   build(capsuleId: string, options: ExportOptions, format: ExportFormat): Promise<ServiceResult<{ job: ExportJob; blob: Blob }>>;
+  /** Reads a LifeAtlas export (.zip or .json) and checks every file against its recorded checksum. Changes nothing. */
+  inspectArchive(file: File): Promise<ServiceResult<ArchiveInspection>>;
+  /** Restores an inspected archive as a new capsule. Never overwrites anything already on this device. */
+  restoreArchive(token: string): Promise<ServiceResult<{ capsuleId: string; stories: number; files: number; skipped: string[] }>>;
 }
 
 /* ------------------------------------------------------------------ */

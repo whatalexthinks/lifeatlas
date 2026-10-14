@@ -8,6 +8,7 @@ import { formatFuzzyDate, sortKey } from "@/lib/dates";
 import { sha256Hex, uid } from "@/lib/utils";
 import { fail, ok, type ExportBuilder, type ExportPreview, type ExportPreviewItem } from "../contracts";
 import { mockMedia } from "./media";
+import { restoreMethods } from "./restore";
 import { actorName, db, latency, pushNotification, store } from "./shared";
 
 const EXT: Record<string, string> = {
@@ -117,7 +118,17 @@ function toManifestMemory(m: Memory, d: DemoDatabase): ArchiveManifest["memories
     title: m.title,
     narrative: m.narrative,
     quote: m.quote,
-    date: { display: formatFuzzyDate(m.date), precision: m.date.precision, year: m.date.year ?? (m.date.decade !== undefined ? m.date.decade : undefined), month: m.date.month, day: m.date.day },
+    date: {
+      display: formatFuzzyDate(m.date),
+      precision: m.date.precision,
+      year: m.date.year ?? (m.date.decade !== undefined ? m.date.decade : undefined),
+      month: m.date.month,
+      day: m.date.day,
+      season: m.date.season,
+      decade: m.date.decade,
+      lifeStage: m.date.lifeStage,
+      note: m.date.note,
+    },
     chapter: chapterById(m.chapter).title,
     placeId: m.placeId,
     peopleIds: m.peopleIds,
@@ -141,6 +152,7 @@ async function blobToDataUri(blob: Blob) {
 }
 
 export const mockExport: ExportBuilder = {
+  ...restoreMethods,
   async preview(capsuleId, options) {
     const d = db();
     const capsule = d.capsules.find((c) => c.id === capsuleId);

@@ -104,7 +104,7 @@ export interface MemoryAttribution {
   personId?: ID;
   displayName: string;
   relationship?: string; // "Granddaughter"
-  via: "organizer" | "storyteller" | "invitation" | "recording_session" | "sample";
+  via: "organizer" | "storyteller" | "invitation" | "recording_session" | "sample" | "restored";
   invitationId?: ID;
 }
 
