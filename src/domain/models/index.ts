@@ -27,7 +27,7 @@ import type { Contribution, Invitation, ShareGrant } from "./collaboration";
 import type { Gift } from "./gifting";
 import type { FutureMessage, SuccessorDesignation } from "./future";
 import type { ExportJob, IntegrityCheck } from "./preservation";
-import type { Cart, CheckoutSession, Invoice, Order, Product, Refund, Subscription } from "./commerce";
+import type { Cart, CheckoutSession, Invoice, Order, Product, Refund, Subscription, CreditEntry, Promotion, PromotionRedemption, ReferralState } from "./commerce";
 import type { HeirloomConfiguration, PrintProject } from "./heirloom";
 import type { AnalyticsEvent, AuditEvent, Notification, SupportRequest } from "./ops";
 
@@ -78,6 +78,12 @@ export interface DemoDatabase {
   analytics: AnalyticsEvent[];
   supportRequests: SupportRequest[];
   catalog: Product[];
+  /** Bumped when the default catalog changes shape or prices; older saved catalogs are replaced. */
+  catalogVersion: number;
+  promotions: Promotion[];
+  promotionRedemptions: PromotionRedemption[];
+  referrals: ReferralState;
+  credits: CreditEntry[];
   bookmarks: { capsuleId: string; memoryId: string; at: string }[];
   /** Answers in progress and family gathering sessions — autosaved, resumable. */
   captureDrafts: CaptureDraft[];

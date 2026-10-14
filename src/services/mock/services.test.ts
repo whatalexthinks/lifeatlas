@@ -140,8 +140,8 @@ describe("contributor resubmission", () => {
 describe("operations", () => {
   it("stores prices as whole cents only", async () => {
     const s = services().operations;
-    expect((await s.updateProduct("personal", { amount: 39.5 })).status).toBe("error");
-    const r = await s.updateProduct("personal", { amount: 4400 });
+    expect((await s.updateProduct("digital", { amount: 39.5 })).status).toBe("error");
+    const r = await s.updateProduct("digital", { amount: 4400 });
     expect(r.status === "ok" && r.data.price.amount).toBe(4400);
   });
   it("can't put the untested Legacy Capsule on sale", async () => {
@@ -176,5 +176,75 @@ describe("letters and preservation", () => {
     const withPrivate = selectExportContent(d, "cap_margaret", { ...base, includePrivate: true, includeDrafts: true });
     if (priv) expect(without.memories.some((m) => m.id === priv.id)).toBe(false);
     expect(withPrivate.memories.length).toBeGreaterThanOrEqual(without.memories.length);
+  });
+});
+
+describe("plans, promotions and credit at checkout", () => {
+  const customer = { name: "Sarah Ellis", email: "sarah@example.com" };
+  const shipping = { name: "Sarah Ellis", line1: "12 Sample St", city: "Portland", region: "ME", postalCode: "04101", country: "United States" };
+
+  it("a promo code is checked, shown, recorded and counted once", async () => {
+    const b = services().billing;
+    const c = await b.createCheckout([{ id: "l1", productId: "digital", quantity: 1, extrasAmount: 0, interval: "year" }], "self");
+    if (c.status !== "ok") throw new Error("no checkout");
+    expect((await b.applyPromoCode(c.data.checkoutId, "nope")).status).toBe("error");
+    const applied = await b.applyPromoCode(c.data.checkoutId, " founders ");
+    expect(applied.status === "ok" && applied.data.quote.discount?.amount).toBe(1980);
+    const before = db().promotions.find((p) => p.id === "promo_founders")!.redemptions;
+    await b.setUseCredit(c.data.checkoutId, false);
+    const o = await b.completeMockCheckout(c.data.checkoutId, customer);
+    if (o.status !== "ok") throw new Error("not completed");
+    expect(o.data).toMatchObject({ total: 9900 - 1980, payment: "mock_uncharged", discount: { promotionId: "promo_founders", amount: 1980 } });
+    expect(db().promotions.find((p) => p.id === "promo_founders")!.redemptions).toBe(before + 1);
+    expect(db().promotionRedemptions[0]).toMatchObject({ promotionId: "promo_founders", orderId: o.data.id });
+    // The plan becomes this account's subscription; nothing renews or charges.
+    expect(db().subscriptions.find((s) => s.productId === "digital")).toMatchObject({ status: "preview_active", interval: "year", orderId: o.data.id });
+  });
+
+  it("your own referral code is refused kindly", async () => {
+    const b = services().billing;
+    const c = await b.createCheckout([{ id: "l1", productId: "family", quantity: 1, extrasAmount: 0 }], "self");
+    if (c.status !== "ok") throw new Error("no checkout");
+    const own = await b.applyPromoCode(c.data.checkoutId, db().referrals.code);
+    expect(own.status === "error" && own.message).toMatch(/your own referral code/);
+    const friend = await b.applyPromoCode(c.data.checkoutId, "PRIYA-7KQ2");
+    expect(friend.status === "ok" && friend.data.quote.discount?.amount).toBe(3580);
+  });
+
+  it("credit is used once and recorded", async () => {
+    const b = services().billing;
+    const balance = () => db().credits.reduce((s, x) => s + x.amount, 0);
+    expect(balance()).toBe(2000);
+    const c = await b.createCheckout([{ id: "l1", productId: "keepsake_box", quantity: 1, extrasAmount: 0 }], "self");
+    if (c.status !== "ok") throw new Error("no checkout");
+    const o = await b.completeMockCheckout(c.data.checkoutId, { ...customer, shipping });
+    if (o.status !== "ok") throw new Error("not completed");
+    expect(o.data).toMatchObject({ creditApplied: 2000, total: 24900 - 2000 });
+    expect(balance()).toBe(0);
+  });
+
+  it("a ready-made kit waits for shipping; a personalised book waits for its proof", async () => {
+    const b = services().billing;
+    const kit = await b.createCheckout([{ id: "l1", productId: "keepsake_box", quantity: 1, extrasAmount: 0 }], "self");
+    if (kit.status !== "ok") throw new Error("no checkout");
+    const k = await b.completeMockCheckout(kit.data.checkoutId, { ...customer, shipping });
+    expect(k.status === "ok" && k.data.status).toBe("ready_for_fulfillment");
+    const bookId = db().heirlooms.find((h) => h.kind === "book")!.id;
+    const book = await b.createCheckout([{ id: "l2", productId: "book", quantity: 1, extrasAmount: 0, configurationId: bookId }], "self");
+    if (book.status !== "ok") throw new Error("no checkout");
+    const bo = await b.completeMockCheckout(book.data.checkoutId, { ...customer, shipping });
+    expect(bo.status === "ok" && bo.data.status).toBe("proof_required");
+  });
+
+  it("subscriptions switch billing and cancel at the end of the term without deleting anything", async () => {
+    const b = services().billing;
+    const sub = db().subscriptions[0];
+    const m = await b.changeInterval(sub.id, "month");
+    expect(m.status === "ok" && m.data.interval).toBe("month");
+    const cancel = await b.setCancelAtPeriodEnd(sub.id, true);
+    expect(cancel.status === "ok" && cancel.data.cancelAtPeriodEnd).toBe(true);
+    expect(db().capsules.length).toBeGreaterThan(0);
+    const keep = await b.setCancelAtPeriodEnd(sub.id, false);
+    expect(keep.status === "ok" && keep.data.cancelAtPeriodEnd).toBe(false);
   });
 });

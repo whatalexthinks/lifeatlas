@@ -172,7 +172,7 @@ export default function StyleGuidePage() {
                 <p className="eyebrow">Eyebrow · Geist 600, tracked</p>
                 <p className="mt-3 font-sans text-[1.6rem] font-medium tracking-[-0.03em]">Section title · Geist 500</p>
                 <p className="mt-3 text-[1.0625rem] leading-relaxed text-ink-2">Body · Geist 400, 17px, generous line height for older eyes. Long reading uses Newsreader.</p>
-                <p className="mt-3 font-mono text-[0.8125rem] text-ink-3">Metadata · Geist Mono · LA-DEMO-1002</p>
+                <p className="mt-3 font-mono text-[0.8125rem] text-ink-3">Metadata · Geist Mono · OLC-DEMO-1002</p>
               </div>
               <div>
                 <p className="font-serif text-[1.9rem] leading-tight">The kitchen always smelled of bread</p>

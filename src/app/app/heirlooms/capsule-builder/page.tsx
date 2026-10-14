@@ -124,7 +124,7 @@ function CapsuleBuilder() {
     <div className="mx-auto max-w-[1320px]">
       <PageHeader
         back={{ href: "/app/heirlooms", label: "Heirlooms" }}
-        eyebrow="Keepsake Box · Preview"
+        eyebrow="Physical LifeCapsule · Preview"
         title={
           <>
             A place to keep <em>what matters.</em>
@@ -330,7 +330,7 @@ function CapsuleBuilder() {
             </Button>
             <p className="mt-3 text-center text-[0.8125rem] text-ink-3">Preview only — no payment is charged and nothing is made.</p>
           </section>
-          <DemoNotice title="The Keepsake Box isn't available to order yet">You can design it and walk through a demo order. Real orders open once a workshop partner is chosen and samples are approved.</DemoNotice>
+          <DemoNotice title="Nothing ships from this preview">You can design it and walk through a demo order. Real orders open once a workshop partner is chosen and samples are approved.</DemoNotice>
         </div>
       </div>
     </div>

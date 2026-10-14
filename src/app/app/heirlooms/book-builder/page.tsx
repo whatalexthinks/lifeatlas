@@ -171,7 +171,7 @@ function BookBuilder() {
     <div className="mx-auto max-w-[1320px]">
       <PageHeader
         back={{ href: "/app/heirlooms", label: "Heirlooms" }}
-        eyebrow="Printed Heirloom Book · Preview"
+        eyebrow="Printed Legacy Book · Preview"
         title={
           <>
             Design <em>{config.title || "the book"}</em>

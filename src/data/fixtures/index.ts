@@ -1,9 +1,11 @@
 import type { DemoDatabase, FeatureFlag } from "@/domain/models";
-import { defaultCatalog } from "@/data/product-catalog";
+import { CATALOG_VERSION, defaultCatalog } from "@/data/product-catalog";
 import { questionLibrary } from "@/data/prompts/questions";
 import { capsules, familyGroups, memberships } from "./capsules";
 import { assignments, contributions, invitations, questionCollections, sessions } from "./collaboration";
-import { futureMessages, gifts, heirlooms, invoices, notifications, orders, printProjects, subscriptions, successors, supportRequests } from "./business";
+import { futureMessages, gifts, heirlooms, invoices, notifications, orders, printProjects, sampleCredits, sampleReferralEvents, subscriptions, successors, supportRequests } from "./business";
+import { defaultPromotions } from "@/data/promotions";
+import { makeReferralCode } from "@/domain/commerce/referrals";
 import { media, transcripts } from "./media";
 import { memories } from "./memories";
 import { lifeEvents, people, personas, relationships } from "./people";
@@ -76,6 +78,11 @@ export function buildSeed(now = new Date()): DemoDatabase {
     analytics: [],
     supportRequests,
     catalog: defaultCatalog,
+    catalogVersion: CATALOG_VERSION,
+    promotions: defaultPromotions,
+    promotionRedemptions: [],
+    referrals: { code: makeReferralCode("Sarah", "usr_sarah"), events: sampleReferralEvents },
+    credits: sampleCredits,
     bookmarks: [{ capsuleId: "cap_margaret", memoryId: "mem_seat", at: "2026-10-01T09:00:00.000Z" }],
     captureDrafts: [],
     letterDrafts: [],

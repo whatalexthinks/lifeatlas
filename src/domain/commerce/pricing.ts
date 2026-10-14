@@ -1,4 +1,5 @@
 import type { BookConfiguration, BoxConfiguration, CartLine, Product } from "@/domain/models";
+import { unitAmount } from "./plans";
 
 /**
  * All amounts are integer cents. All prices are TEST prices.
@@ -6,13 +7,23 @@ import type { BookConfiguration, BoxConfiguration, CartLine, Product } from "@/d
  */
 
 export interface Quote {
-  lines: { id: string; label: string; quantity: number; unit: number; extras: number; total: number }[];
+  lines: { id: string; label: string; quantity: number; unit: number; extras: number; total: number; interval?: "year" | "month"; fulfillment?: Product["fulfillment"] }[];
   subtotal: number;
+  /** Promotion discount actually applied (cents). */
+  discount: { amount: number; label: string } | null;
+  /** Account credit actually applied (cents). */
+  credit: number;
   shipping: number | null;
   tax: number | null;
   total: number;
   hasPhysical: boolean;
   notes: string[];
+}
+
+export interface QuoteAdjustments {
+  discount?: { amount: number; label: string } | null;
+  /** Credit available on the account; only what's needed is used. */
+  availableCredit?: number;
 }
 
 export class PricingError extends Error {}
@@ -28,26 +39,52 @@ export function lineTotal(unit: number, extras: number, quantity: number) {
   return (unit + extras) * quantity;
 }
 
-export function quoteCart(lines: CartLine[], catalog: Product[]): Quote {
+export function quoteCart(lines: CartLine[], catalog: Product[], adjust: QuoteAdjustments = {}): Quote {
   const out: Quote["lines"] = [];
   let hasPhysical = false;
   for (const line of lines) {
     const p = catalog.find((c) => c.id === line.productId);
     if (!p) throw new PricingError(`Unknown product ${line.productId}`);
+    if (p.availability === "not_available") throw new PricingError(`${p.name} isn't available`);
     if (p.kind === "physical") hasPhysical = true;
+    const interval = p.kind === "plan" ? (line.interval ?? "year") : undefined;
+    let unit: number;
+    try {
+      unit = unitAmount(p, interval);
+    } catch (e) {
+      throw new PricingError(e instanceof Error ? e.message : "Invalid billing interval");
+    }
     out.push({
       id: line.id,
       label: line.label ?? p.name,
       quantity: line.quantity,
-      unit: p.price.amount,
+      unit,
       extras: line.extrasAmount,
-      total: lineTotal(p.price.amount, line.extrasAmount, line.quantity),
+      total: lineTotal(unit, line.extrasAmount, line.quantity),
+      interval,
+      fulfillment: p.fulfillment,
     });
   }
   const subtotal = out.reduce((s, l) => s + l.total, 0);
+  const discountAmount = adjust.discount ? Math.min(subtotal, Math.max(0, adjust.discount.amount)) : 0;
+  if (adjust.discount) assertValidAmount(adjust.discount.amount, "discount");
+  const afterDiscount = subtotal - discountAmount;
+  const credit = Math.min(afterDiscount, Math.max(0, adjust.availableCredit ?? 0));
   const notes = ["Test prices — no payment is collected in this preview."];
   if (hasPhysical) notes.push("Shipping and tax will be calculated once fulfillment is connected.");
-  return { lines: out, subtotal, shipping: null, tax: null, total: subtotal, hasPhysical, notes };
+  if (out.some((l) => l.interval === "month")) notes.push("Monthly plans renew each month until canceled; annual plans save about 17%.");
+  if (lines.some((l) => l.asGift)) notes.push("Gifted plans are one prepaid term and never renew automatically.");
+  return {
+    lines: out,
+    subtotal,
+    discount: discountAmount ? { amount: discountAmount, label: adjust.discount!.label } : null,
+    credit,
+    shipping: null,
+    tax: null,
+    total: afterDiscount - credit,
+    hasPhysical,
+    notes,
+  };
 }
 
 /* ------------------------------- Books ------------------------------ */

@@ -3,7 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import { ArrowRight, Check, CircleSlash, Lock } from "lucide-react";
-import type { AnalyticsEventName, Product } from "@/domain/models";
+import type { AnalyticsEventName, Product, Promotion } from "@/domain/models";
+import { canActivate } from "@/domain/commerce/promotions";
 import { defaultFeatureFlags } from "@/data/fixtures";
 import { canTransition, orderTransitions } from "@/domain/workflows/state-machines";
 import { OrderStatusBadge } from "@/components/studio/primitives";
@@ -18,6 +19,7 @@ const tabs = [
   { id: "orders", label: "Orders" },
   { id: "support", label: "Support" },
   { id: "catalog", label: "Catalog" },
+  { id: "promotions", label: "Promotions" },
   { id: "platform", label: "Integrations" },
   { id: "audit", label: "Audit log" },
 ] as const;
@@ -104,6 +106,8 @@ export default function OperationsPage() {
           <Support />
         ) : tab === "catalog" ? (
           <Catalog />
+        ) : tab === "promotions" ? (
+          <Promotions />
         ) : tab === "platform" ? (
           <Platform />
         ) : (
@@ -471,5 +475,105 @@ function Audit() {
         <Check className="size-4" /> Kept on this device; capped at the latest 300 actions.
       </p>
     </section>
+  );
+}
+
+/* ------------------------------ Promotions ------------------------------- */
+
+const promoKindLabel: Record<Promotion["kind"], string> = { percent_off: "Percent off", amount_off: "Amount off", free_period: "Free period", referral_reward: "Referral reward", giveaway: "Giveaway" };
+
+function Promotions() {
+  const promotions = useDb((d) => d.promotions);
+  const redemptions = useDb((d) => d.promotionRedemptions);
+  const [reviewer, setReviewer] = React.useState<Record<string, string>>({});
+
+  const set = async (id: string, status: Promotion["status"]) => {
+    const r = await services().operations.setPromotionStatus(id, status);
+    if (r.status === "ok") toast.success(`${r.data.name}: ${status}`);
+    else toast.error("Not changed", r.status === "error" ? r.message : undefined);
+  };
+
+  return (
+    <div className="space-y-6">
+      <DemoNotice title="Promotions are rules, not code changes">
+        Every offer here runs through the same evaluator at checkout: eligibility, limits, dates and one-per-order. Giveaways can&rsquo;t be switched on until a legal and eligibility review is recorded — and they&rsquo;re awarded under their rules, never typed in as a code.
+      </DemoNotice>
+      <ul className="space-y-4">
+        {promotions.map((p) => {
+          const gate = canActivate(p);
+          const used = redemptions.filter((r) => r.promotionId === p.id).length;
+          return (
+            <li key={p.id} className="rounded-[16px] border border-line bg-surface p-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="flex flex-wrap items-center gap-2 font-medium">
+                    {p.name}
+                    {p.code ? <span className="rounded-[6px] bg-ivory px-2 py-0.5 font-mono text-[0.75rem]">{p.code}</span> : <span className="text-[0.8125rem] text-ink-3">no code</span>}
+                    <Badge tone={p.status === "active" ? "success" : p.status === "ended" ? "neutral" : p.status === "draft" ? "warning" : "info"}>{p.status}</Badge>
+                  </p>
+                  <p className="mt-1 text-[0.9375rem] text-ink-2">{p.description}</p>
+                  <p className="mt-1 text-[0.8125rem] text-ink-3">
+                    {promoKindLabel[p.kind]} · {p.redemptions} redeemed{p.limits.maxRedemptions ? ` of ${p.limits.maxRedemptions}` : ""}
+                    {used ? ` (${used} on this device)` : ""}
+                    {p.endsAt ? ` · ends ${formatDate(p.endsAt)}` : ""}
+                    {p.eligibility.newCustomersOnly ? " · new members only" : ""}
+                    {p.limits.perCustomer ? ` · ${p.limits.perCustomer} per customer` : ""}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {p.status !== "active" && p.status !== "ended" ? (
+                    <Button size="sm" variant="secondary" disabled={!gate.ok} onClick={() => void set(p.id, "active")} title={gate.ok ? undefined : gate.reason}>
+                      Activate
+                    </Button>
+                  ) : null}
+                  {p.status === "active" ? (
+                    <Button size="sm" variant="ghost" onClick={() => void set(p.id, "paused")}>
+                      Pause
+                    </Button>
+                  ) : null}
+                  {p.status !== "ended" ? (
+                    <Button size="sm" variant="ghost" onClick={() => void set(p.id, "ended")}>
+                      End
+                    </Button>
+                  ) : null}
+                </div>
+              </div>
+              {p.requiresLegalReview ? (
+                <div className="mt-4 rounded-[12px] bg-warning-soft px-4 py-3 text-[0.875rem]">
+                  {p.legalReview ? (
+                    <p>
+                      Review recorded by {p.legalReview.reviewedBy} on {formatDate(p.legalReview.approvedAt)} (demo record).
+                    </p>
+                  ) : (
+                    <>
+                      <p className="font-medium">Needs a legal and eligibility review before it can run.</p>
+                      {p.rulesSummary ? <p className="mt-1 text-ink-2">{p.rulesSummary}</p> : null}
+                      <form
+                        className="mt-3 flex flex-wrap gap-2"
+                        onSubmit={async (e) => {
+                          e.preventDefault();
+                          const r = await services().operations.recordLegalReview(p.id, reviewer[p.id] ?? "");
+                          if (r.status === "ok") toast.success("Review recorded", "A demo record only — not legal advice.");
+                          else toast.error("Not recorded", r.status === "error" ? r.message : undefined);
+                        }}
+                      >
+                        <label htmlFor={`rev-${p.id}`} className="sr-only">
+                          Reviewed by
+                        </label>
+                        <input id={`rev-${p.id}`} className="h-9 rounded-[8px] border border-line-strong bg-surface px-3" placeholder="Reviewed by (counsel)" value={reviewer[p.id] ?? ""} onChange={(e) => setReviewer({ ...reviewer, [p.id]: e.target.value })} />
+                        <Button size="sm" type="submit" variant="secondary">
+                          Record review
+                        </Button>
+                      </form>
+                    </>
+                  )}
+                </div>
+              ) : null}
+              {!gate.ok && !p.requiresLegalReview ? <p className="mt-2 text-[0.8125rem] text-warning">{gate.reason}</p> : null}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }

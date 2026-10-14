@@ -1,4 +1,8 @@
+import type { Quote } from "@/domain/commerce/pricing";
 import type {
+  BillingInterval,
+  Promotion,
+  Subscription,
   AccountPreferences,
   CaptureDraft,
   GatheringSession,
@@ -235,15 +239,30 @@ export interface CheckoutCustomer {
   shipping?: ShippingAddress;
 }
 
+export interface CheckoutQuote {
+  quote: Quote;
+  /** The code on this checkout and whether it currently applies. */
+  promo: { code: string; ok: true; label: string } | { code: string; ok: false; reason: string } | null;
+  creditAvailable: number;
+}
+
 export interface BillingProvider {
-  createCheckout(lines: CartLine[], purpose: "self" | "gift"): Promise<ServiceResult<{ checkoutId: string; url: string }>>;
+  createCheckout(lines: CartLine[], purpose: "self" | "gift", opts?: { promoCode?: string }): Promise<ServiceResult<{ checkoutId: string; url: string }>>;
   getCheckout(checkoutId: string): ServiceResult<CheckoutSession>;
+  /** Totals for a checkout, with its promotion re-checked against the current rules. */
+  quoteCheckout(checkoutId: string): ServiceResult<CheckoutQuote>;
+  /** Validate and attach a promotion or referral code. Invalid codes are explained, not attached. */
+  applyPromoCode(checkoutId: string, code: string): Promise<ServiceResult<CheckoutQuote>>;
+  removePromoCode(checkoutId: string): Promise<ServiceResult<CheckoutQuote>>;
+  setUseCredit(checkoutId: string, use: boolean): Promise<ServiceResult<CheckoutQuote>>;
   completeMockCheckout(checkoutId: string, customer: CheckoutCustomer): Promise<ServiceResult<Order>>;
   cancelCheckout(checkoutId: string): Promise<ServiceResult<null>>;
   verifyWebhook(payload: string, signature: string): Promise<ServiceResult<{ eventId: string }>>;
   listPaymentMethods(): Promise<ServiceResult<{ brand: string; last4: string }[]>>;
-  startLivingArchivePreview(): Promise<ServiceResult<null>>;
-  cancelLivingArchivePreview(): Promise<ServiceResult<null>>;
+  /** Switch between monthly and annual billing from the next renewal. */
+  changeInterval(subscriptionId: string, interval: BillingInterval): Promise<ServiceResult<Subscription>>;
+  /** Cancel at the end of the paid term (nothing is deleted), or undo that. */
+  setCancelAtPeriodEnd(subscriptionId: string, cancel: boolean): Promise<ServiceResult<Subscription>>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -412,6 +431,10 @@ export type SimulatedEvent = "contribution" | "invitation_opened" | "proof_ready
 /** Staff tools for the operations demo. In production these sit behind staff sign-in. */
 export interface OperationsService {
   updateProduct(id: string, patch: { amount?: number; availability?: Product["availability"]; note?: string }): Promise<ServiceResult<Product>>;
+  /** Activate, pause or end a promotion. Activation is refused until required reviews exist. */
+  setPromotionStatus(id: string, status: Promotion["status"]): Promise<ServiceResult<Promotion>>;
+  /** Record that a promotion's legal and eligibility review is complete (demo record only). */
+  recordLegalReview(id: string, reviewedBy: string, notes?: string): Promise<ServiceResult<Promotion>>;
   /** Plays a realistic event through the same code paths a real one would use. */
   simulate(event: SimulatedEvent): Promise<ServiceResult<string>>;
 }

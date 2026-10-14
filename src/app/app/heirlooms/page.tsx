@@ -70,7 +70,7 @@ export default function HeirloomsPage() {
           </div>
           <div className="flex flex-1 flex-col p-6 sm:p-7">
             <div className="flex items-baseline justify-between gap-4">
-              <h2 className="font-serif text-[2rem] leading-tight">The Keepsake Box</h2>
+              <h2 className="font-serif text-[2rem] leading-tight">The Physical LifeCapsule</h2>
               <p className="shrink-0 text-[0.9375rem] text-ink-2">from {box ? formatMoney(box.price.amount) : "—"}</p>
             </div>
             <p className="mt-2 text-ink-2">A finished wooden box for display: the book, printed letters, photographs, a preservation guide and an archive copy.</p>

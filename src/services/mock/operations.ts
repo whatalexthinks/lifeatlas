@@ -1,11 +1,42 @@
 "use client";
 
+import { canActivate } from "@/domain/commerce/promotions";
 import { fail, ok, type OperationsService } from "../contracts";
 import { mockCapsules } from "./capsules";
 import { mockFulfillment } from "./commerce";
 import { actorName, db, latency, pushNotification, store } from "./shared";
 
 export const mockOperations: OperationsService = {
+  async setPromotionStatus(id, status) {
+    const p = db().promotions.find((x) => x.id === id);
+    if (!p) return fail("not_found", "Promotion not found.");
+    if (status === "active") {
+      const gate = canActivate(p);
+      if (!gate.ok) return fail("forbidden", gate.reason);
+      if (p.endsAt && new Date(p.endsAt) < new Date()) return fail("conflict", "This promotion's end date has passed. Set a new window first.");
+    }
+    store().mutate(
+      (d) => {
+        d.promotions.find((x) => x.id === id)!.status = status;
+      },
+      { actor: actorName(), action: `promotion.${status}`, target: id, detail: p.name },
+    );
+    return ok({ ...db().promotions.find((x) => x.id === id)! });
+  },
+
+  async recordLegalReview(id, reviewedBy, notes) {
+    const p = db().promotions.find((x) => x.id === id);
+    if (!p) return fail("not_found", "Promotion not found.");
+    if (!reviewedBy.trim()) return fail("validation", "Record who completed the review.");
+    store().mutate(
+      (d) => {
+        d.promotions.find((x) => x.id === id)!.legalReview = { reviewedBy: reviewedBy.trim(), approvedAt: new Date().toISOString(), notes: notes?.trim() || undefined };
+      },
+      { actor: actorName(), action: "promotion.legal_review_recorded", target: id, detail: `${p.name} — demo record, not legal advice` },
+    );
+    return ok({ ...db().promotions.find((x) => x.id === id)! });
+  },
+
   async updateProduct(id, patch) {
     const product = db().catalog.find((p) => p.id === id);
     if (!product) return fail("not_found", "Product not found.");

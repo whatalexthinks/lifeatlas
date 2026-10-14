@@ -51,7 +51,7 @@ export function PageHero({ eyebrow, title, lead, children, className }: { eyebro
   );
 }
 
-const planOrder = ["personal", "family", "living"];
+const planOrder = ["preview", "digital", "family"];
 
 export function PricingCards({ catalog = defaultCatalog, compact = false }: { catalog?: Product[]; compact?: boolean }) {
   const plans = planOrder.map((id) => catalog.find((p) => p.id === id)).filter((p): p is Product => !!p);
@@ -68,7 +68,7 @@ export function PricingCards({ catalog = defaultCatalog, compact = false }: { ca
             <h3 className="mt-4 font-serif text-[2rem] leading-tight">{p.name}</h3>
             <p className="mt-4 flex items-baseline gap-2">
               <span className="font-serif text-[3.25rem] leading-none tracking-[-0.03em]">{formatMoney(p.price.amount)}</span>
-              <span className={cn("text-[0.9375rem]", featured ? "text-night-ink-2" : "text-ink-3")}>{p.price.interval === "year" ? "per year, optional" : "one time"}</span>
+              <span className={cn("text-[0.9375rem]", featured ? "text-night-ink-2" : "text-ink-3")}>{p.price.interval === "year" ? `per year${p.monthly ? ` · or ${formatMoney(p.monthly.amount)}/mo` : ""}` : p.price.amount === 0 ? "free, on this device" : "one time"}</span>
             </p>
             <p className={cn("mt-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em]", featured ? "text-night-ink-3" : "text-ink-4")}>Test price · not charged in this preview</p>
             <p className={cn("mt-5 text-[0.9875rem] leading-relaxed", featured ? "text-night-ink-2" : "text-ink-2")}>{p.description}</p>
@@ -91,13 +91,13 @@ export function PricingCards({ catalog = defaultCatalog, compact = false }: { ca
             ) : null}
             <div className="mt-auto pt-8">
               <ButtonLink
-                href={p.id === "living" ? "/pricing#renewal" : `/checkout/preview?product=${p.id}`}
+                href={p.id === "preview" ? "/app/capsules/new" : `/checkout/preview?product=${p.id}`}
                 variant={featured ? "light" : "secondary"}
                 size="lg"
                 block
                 trailing={<ArrowUpRight className="size-4" />}
               >
-                {p.id === "living" ? "Learn about renewal" : `Choose ${p.name}`}
+                {p.id === "preview" ? "Start on this device" : `Choose ${p.name}`}
               </ButtonLink>
             </div>
           </Reveal>

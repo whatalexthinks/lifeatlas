@@ -163,7 +163,7 @@ export const giftSchema = z
     color: z.enum(["evergreen", "terracotta", "slate", "brass", "ink"]),
     deliveryMode: z.enum(["share_link_myself", "scheduled_preview", "in_person"]),
     notifyOn: z.string().optional(),
-    productId: z.enum(["personal", "family"]),
+    productId: z.enum(["digital", "family"]),
     addPrintedCard: z.boolean(),
     addBook: z.boolean(),
   })
