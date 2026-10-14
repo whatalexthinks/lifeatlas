@@ -1,6 +1,7 @@
 "use client";
 
 import type { Capsule, ChapterKey, Memory, MemoryRevision, Place } from "@/domain/models";
+import { roleLabels } from "@/domain/policies/permissions";
 import { capsuleTransitions, canTransition, memoryTransitions } from "@/domain/workflows/state-machines";
 import { memoryFormSchema } from "@/domain/schemas";
 import { defaultChapterOrder } from "@/data/chapters";
@@ -354,6 +355,30 @@ export const mockCapsules: CapsuleRepository = {
         if (memoryId) a.memoryId = memoryId;
       } else d.assignments.push({ id: uid("as"), capsuleId, questionId, order: d.assignments.length + 1, status, memoryId });
     });
+    return ok(null);
+  },
+
+  async setMemberRole(capsuleId, personId, role) {
+    const d = db();
+    const capsule = d.capsules.find((c) => c.id === capsuleId);
+    if (!capsule) return fail("not_found", "Capsule not found.");
+    const current = d.memberships.find((x) => x.capsuleId === capsuleId && x.personId === personId && x.status === "active");
+    if (current?.role === "owner" || role === "owner") return fail("forbidden", "Ownership can't be changed here. It moves only through a verified transfer.");
+    if (role === "storyteller" && capsule.subjectPersonId && capsule.subjectPersonId !== personId) return fail("validation", "Only the person this capsule is about can be its storyteller.");
+    const person = d.people.find((p) => p.id === personId);
+    await latency(120);
+    store().mutate(
+      (x) => {
+        const m = x.memberships.find((y) => y.capsuleId === capsuleId && y.personId === personId && y.status === "active");
+        if (!role) {
+          if (m) m.status = "removed";
+          return;
+        }
+        if (m) m.role = role;
+        else x.memberships.push({ id: uid("mb"), capsuleId, personId, role, status: "active", grantedAt: new Date().toISOString(), enforcement: "simulated" });
+      },
+      { actor: actorName(), action: role ? "membership.role_set" : "membership.removed", target: capsuleId, detail: `${person?.displayName ?? personId}${role ? ` → ${roleLabels[role].label}` : ""}` },
+    );
     return ok(null);
   },
 };

@@ -2,14 +2,15 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Eye, Lock, LockOpen, PenLine, Plus, ShieldCheck, Trash2, UserCheck } from "lucide-react";
+import { Eye, Lock, LockOpen, PenLine, Plus, ShieldCheck, Trash2 } from "lucide-react";
 import type { FutureMessage } from "@/domain/models";
 import { PageHeader, FutureStatusBadge, futureStatusCopy, Panel } from "@/components/studio/primitives";
 import { SealedLetter } from "@/components/marketing/objects";
 import { LetterOpening } from "@/components/future/letter-opening";
+import { SuccessorPanel } from "@/components/studio/successor-panel";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { Badge, DemoNotice, EmptyState, toast } from "@/components/ui/feedback";
-import { Field, Input, Segmented, Select } from "@/components/ui/field";
+import { DemoNotice, EmptyState, toast } from "@/components/ui/feedback";
+import { Segmented } from "@/components/ui/field";
 import { ConfirmDialog, Dialog } from "@/components/ui/overlay";
 import { useDb } from "@/hooks/use-data";
 import { services } from "@/services/factory";
@@ -20,11 +21,9 @@ type Tab = "draft" | "prepared" | "sealed_demo" | "pending" | "example";
 
 export default function FutureMessagesPage() {
   const letters = useDb((d) => d.futureMessages);
-  const successors = useDb((d) => d.successors);
   const [tab, setTab] = React.useState<Tab>("draft");
   const [preview, setPreview] = React.useState<FutureMessage | null>(null);
   const [del, setDel] = React.useState<FutureMessage | null>(null);
-  const [succ, setSucc] = React.useState({ name: "", relationship: "", contact: "", scope: "both" as "future_messages" | "capsule_stewardship" | "both" });
 
   const byTab: Record<Tab, FutureMessage[]> = {
     draft: letters.filter((l) => !l.isExample && l.status === "draft"),
@@ -177,54 +176,7 @@ export default function FutureMessagesPage() {
         </div>
       )}
 
-      <Panel title="Your successor" description="A trusted person who could act for you if you can't. In this preview, nothing is granted or verified." className="mt-10">
-        {successors.length ? (
-          <ul className="mb-6 space-y-2">
-            {successors.map((s) => (
-              <li key={s.id} className="flex items-center justify-between gap-3 rounded-[12px] bg-ivory/60 px-4 py-3">
-                <span className="flex items-center gap-3">
-                  <UserCheck className="size-5 text-evergreen" />
-                  <span>
-                    <span className="block font-medium">{s.name}</span>
-                    <span className="text-[0.8125rem] text-ink-3">
-                      {s.relationship} · {s.scope === "both" ? "Letters and capsule stewardship" : s.scope === "future_messages" ? "Letters" : "Capsule stewardship"}
-                    </span>
-                  </span>
-                </span>
-                <Badge tone="demo">{s.status === "acknowledged_demo" ? "Acknowledged · demo" : "Draft"}</Badge>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-        <form
-          className="grid gap-4 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end"
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const r = await services().preservation.saveSuccessor(succ);
-            if (r.status === "ok") {
-              toast.success("Successor saved on this device", "No message was sent to them.");
-              setSucc({ name: "", relationship: "", contact: "", scope: "both" });
-            } else toast.error(r.status === "error" ? r.message : "Couldn't save");
-          }}
-        >
-          <Field label="Name" htmlFor="s-name">
-            <Input id="s-name" value={succ.name} onChange={(e) => setSucc({ ...succ, name: e.target.value })} />
-          </Field>
-          <Field label="Relationship" htmlFor="s-rel">
-            <Input id="s-rel" value={succ.relationship} onChange={(e) => setSucc({ ...succ, relationship: e.target.value })} />
-          </Field>
-          <Field label="Responsible for" htmlFor="s-scope">
-            <Select id="s-scope" value={succ.scope} onChange={(e) => setSucc({ ...succ, scope: e.target.value as typeof succ.scope })}>
-              <option value="both">Letters and capsules</option>
-              <option value="future_messages">Letters only</option>
-              <option value="capsule_stewardship">Capsules only</option>
-            </Select>
-          </Field>
-          <Button type="submit" disabled={!succ.name || !succ.relationship}>
-            Save
-          </Button>
-        </form>
-      </Panel>
+      <SuccessorPanel className="mt-10" defaultScope="future_messages" />
 
       <Dialog open={!!preview} onOpenChange={(v) => !v && setPreview(null)} title="Opening preview" hideTitle size="xl" className="bg-night">
         <div className="-mx-6 -mb-6 bg-night px-6 py-10 sm:-mx-8 sm:px-8">{preview ? <LetterOpening message={preview} mode={preview.isExample ? "example" : "preview"} /> : null}</div>

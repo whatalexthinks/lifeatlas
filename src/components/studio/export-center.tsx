@@ -17,20 +17,20 @@ const defaults: ExportOptions = { includeAudio: true, includePhotos: true, inclu
 export function ExportCenter({ capsule }: { capsule: Capsule }) {
   const [options, setOptions] = React.useState<ExportOptions>(defaults);
   const [format, setFormat] = React.useState<ExportFormat>("zip");
-  const [preview, setPreview] = React.useState<ExportPreview | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  // The preview remembers what it was built for; while a new one builds, the last one stays visible.
+  const key = `${capsule.id}:${JSON.stringify(options)}`;
+  const [built, setBuilt] = React.useState<{ key: string; preview: ExportPreview | null } | null>(null);
+  const preview = built?.preview ?? null;
+  const loading = built?.key !== key;
   const [building, setBuilding] = React.useState(false);
   const jobs = useDb((d) => d.exportJobs).filter((j) => j.capsuleId === capsule.id);
 
   React.useEffect(() => {
     let alive = true;
-    setLoading(true);
-    services()
+    void services()
       .export.preview(capsule.id, options)
       .then((r) => {
-        if (!alive) return;
-        setLoading(false);
-        if (r.status === "ok") setPreview(r.data);
+        if (alive) setBuilt((prev) => ({ key: `${capsule.id}:${JSON.stringify(options)}`, preview: r.status === "ok" ? r.data : (prev?.preview ?? null) }));
       });
     return () => {
       alive = false;
@@ -54,7 +54,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
   const opt = (k: keyof ExportOptions) => (v: boolean) => setOptions((o) => ({ ...o, [k]: v }));
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       <div className="space-y-6">
         <Panel title="Choose a format">
           <ChoiceCards
@@ -98,7 +98,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
               ))}
             </div>
           ) : null}
-          <div className="max-h-[420px] space-y-1 overflow-y-auto pr-1">
+          <div className="max-h-[420px] space-y-1 overflow-y-auto pr-1 focus-visible:outline-2 focus-visible:outline-evergreen" tabIndex={0} role="region" aria-label="Files in this export">
             {included.map((i) => (
               <p key={i.id} className="flex items-center justify-between gap-3 rounded-[10px] px-2 py-1.5 text-[0.875rem]">
                 <span className="flex min-w-0 items-center gap-2">

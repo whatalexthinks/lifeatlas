@@ -460,7 +460,7 @@ function PreviewDialog({ invitationId, onClose, onOpenAs }: { invitationId: stri
           </div>
         ) : (
           <div className="mx-auto max-w-sm rounded-[24px] bg-ivory p-5">
-            <p className="ml-auto max-w-[85%] rounded-[18px] rounded-br-[6px] bg-evergreen px-4 py-3 text-[0.9375rem] leading-snug text-[#f8f6f1]">{preview.sms}</p>
+            <p className="ml-auto max-w-[85%] rounded-[18px] rounded-br-[6px] bg-evergreen px-4 py-3 text-[0.9375rem] leading-snug text-on-evergreen">{preview.sms}</p>
           </div>
         )
       ) : null}

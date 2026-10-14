@@ -73,7 +73,7 @@ export function PersonaSwitcher({ compact = false, align = "start", side = "bott
   );
 }
 
-const kindColor = { organizer: "bg-evergreen text-[#f8f6f1]", storyteller: "bg-terracotta text-white", contributor: "bg-slate text-white", viewer: "bg-smoke text-white", operations: "bg-ink text-paper" } as const;
+const kindColor = { organizer: "bg-evergreen text-on-evergreen", storyteller: "bg-terracotta text-white", contributor: "bg-slate text-white", viewer: "bg-[#6b665f] text-white", operations: "bg-ink text-paper" } as const;
 
 export function Avatar({ name, kind, size = "md", className }: { name: string; kind?: keyof typeof kindColor; size?: "sm" | "md" | "lg"; className?: string }) {
   return (

@@ -35,11 +35,11 @@ export function Recorder({
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const fileRef = React.useRef<HTMLInputElement | null>(null);
   const big = size === "senior";
-  const onChangeRef = React.useRef(onChange);
-  onChangeRef.current = onChange;
+  // Always calls the latest onChange without re-running when the parent re-renders.
+  const emit = React.useEffectEvent(onChange);
 
   React.useEffect(() => {
-    if (r.recording) onChangeRef.current({ blob: r.recording.blob, durationSec: r.recording.durationSec, peaks: r.recording.peaks, source: "microphone" });
+    if (r.recording) emit({ blob: r.recording.blob, durationSec: r.recording.durationSec, peaks: r.recording.peaks, source: "microphone" });
   }, [r.recording]);
 
   React.useEffect(
@@ -107,7 +107,7 @@ export function Recorder({
           <button
             type="button"
             onClick={() => (audioRef.current?.paused ? void audioRef.current.play() : audioRef.current?.pause())}
-            className={cn("grid shrink-0 place-items-center rounded-full bg-evergreen text-[#f8f6f1]", big ? "size-16" : "size-12")}
+            className={cn("grid shrink-0 place-items-center rounded-full bg-evergreen text-on-evergreen", big ? "size-16" : "size-12")}
             aria-label={playing ? "Pause your recording" : "Play your recording"}
           >
             {playing ? <Pause className="size-6" fill="currentColor" /> : <Play className="size-6 translate-x-0.5" fill="currentColor" />}

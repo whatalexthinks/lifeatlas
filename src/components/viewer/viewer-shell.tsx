@@ -28,6 +28,24 @@ export function useViewer() {
 }
 
 const TONE_KEY = "lifeatlas.viewer.tone";
+const TONE_EVENT = "lifeatlas:viewer-tone";
+
+/** The viewer's paper/night preference lives in localStorage; read it as an external store. */
+function readTone(): "paper" | "night" {
+  try {
+    return localStorage.getItem(TONE_KEY) === "paper" ? "paper" : "night";
+  } catch {
+    return "night";
+  }
+}
+function subscribeTone(cb: () => void) {
+  window.addEventListener("storage", cb);
+  window.addEventListener(TONE_EVENT, cb);
+  return () => {
+    window.removeEventListener("storage", cb);
+    window.removeEventListener(TONE_EVENT, cb);
+  };
+}
 
 export function ViewerShell({ children }: { children: React.ReactNode }) {
   const params = useParams<{ capsuleId: string }>();
@@ -36,21 +54,12 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
   const capsule = useCapsule(params.capsuleId);
   const persona = usePersona();
   const role = useRole(params.capsuleId);
-  const [tone, setTone] = React.useState<"paper" | "night">("night");
-
-  React.useEffect(() => {
-    try {
-      const t = localStorage.getItem(TONE_KEY);
-      if (t === "paper" || t === "night") setTone(t);
-    } catch {
-      /* storage unavailable — default is fine */
-    }
-  }, []);
+  const tone = React.useSyncExternalStore(subscribeTone, readTone, () => "night" as const);
   const toggleTone = () => {
     const next = tone === "night" ? "paper" : "night";
-    setTone(next);
     try {
       localStorage.setItem(TONE_KEY, next);
+      window.dispatchEvent(new Event(TONE_EVENT));
     } catch {
       /* ignore */
     }

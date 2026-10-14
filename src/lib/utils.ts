@@ -104,6 +104,7 @@ export function pluralize(n: number, one: string, many = `${one}s`) {
 export function initials(name: string) {
   return name
     .split(/\s+/)
+    .map((p) => p.replace(/[^\p{L}]/gu, ""))
     .filter(Boolean)
     .slice(0, 2)
     .map((p) => p[0]?.toUpperCase())

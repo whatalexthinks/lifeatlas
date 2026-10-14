@@ -70,7 +70,7 @@ export default function CapsulesPage() {
             );
           })}
           <Link href="/app/capsules/new" className="group flex aspect-[4/5] flex-col items-center justify-center gap-3 rounded-[22px] border-2 border-dashed border-line-strong text-ink-3 transition-colors hover:border-evergreen hover:text-evergreen">
-            <span className="grid size-14 place-items-center rounded-full bg-ivory transition-colors group-hover:bg-evergreen group-hover:text-[#f8f6f1]">
+            <span className="grid size-14 place-items-center rounded-full bg-ivory transition-colors group-hover:bg-evergreen group-hover:text-on-evergreen">
               <Plus className="size-6" />
             </span>
             <span className="font-serif text-[1.4rem]">Start another life story</span>

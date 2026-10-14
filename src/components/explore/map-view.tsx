@@ -45,9 +45,9 @@ export function MapView({
   const night = tone === "night";
 
   const base = useCapsuleMemories(capsule.id, { scope: scope === "viewer" ? "viewer" : "studio", chapter: chapter || undefined, personId: person || undefined });
-  const memories = base.filter((m) => !decade || decadeOf(m.date) === Number(decade));
-  const located = memories.filter((m) => m.placeId && places.some((p) => p.id === m.placeId && p.visibility !== "hidden"));
-  const unlocated = memories.filter((m) => !located.includes(m));
+  const memories = React.useMemo(() => base.filter((m) => !decade || decadeOf(m.date) === Number(decade)), [base, decade]);
+  const located = React.useMemo(() => memories.filter((m) => m.placeId && places.some((p) => p.id === m.placeId && p.visibility !== "hidden")), [memories, places]);
+  const unlocated = React.useMemo(() => memories.filter((m) => !located.includes(m)), [memories, located]);
   const points = React.useMemo(() => placesToPoints(located, places), [located, places]);
   const journey = React.useMemo(() => journeyOrder(located), [located]);
   const decades = decadesOf(base);
@@ -66,27 +66,23 @@ export function MapView({
     if (scroll) requestAnimationFrame(() => listRef.current?.querySelector(`[data-place="${placeId}"]`)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }));
   };
 
-  // Journey stepping
-  React.useEffect(() => {
-    if (!journeyOn || !journey.length) return;
-    const pid = journey[Math.min(journeyIndex, journey.length - 1)];
-    select(pid);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [journeyOn, journeyIndex]);
+  // Journey stepping: moving to a stop and selecting its place happen together.
+  const goTo = (i: number) => {
+    if (!journey.length) return;
+    const next = Math.max(0, Math.min(journey.length - 1, i));
+    setJourneyIndex(next);
+    select(journey[next]);
+  };
+  const advance = React.useEffectEvent(() => {
+    if (journeyIndex >= journey.length - 1) setPlaying(false);
+    else goTo(journeyIndex + 1);
+  });
 
   React.useEffect(() => {
     if (!playing) return;
-    const t = setInterval(() => {
-      setJourneyIndex((i) => {
-        if (i >= journey.length - 1) {
-          setPlaying(false);
-          return i;
-        }
-        return i + 1;
-      });
-    }, 2600);
+    const t = setInterval(() => advance(), 2600);
     return () => clearInterval(t);
-  }, [playing, journey.length]);
+  }, [playing]);
 
   // Sync marker with scrolled list (desktop)
   React.useEffect(() => {
@@ -173,10 +169,12 @@ export function MapView({
           className="ml-auto"
           leading={<Route className="size-4" />}
           onClick={() => {
-            setJourneyOn((v) => !v);
-            setJourneyIndex(0);
+            const on = !journeyOn;
+            setJourneyOn(on);
             setPlaying(false);
             setMode("map");
+            if (on) goTo(0);
+            else setJourneyIndex(0);
           }}
           aria-pressed={journeyOn}
           disabled={journey.length < 2}
@@ -186,7 +184,7 @@ export function MapView({
       </div>
 
       {journeyOn && currentJourneyPlace ? (
-        <div className={cn("mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[16px] px-4 py-3", night ? "bg-white/[0.06] text-night-ink" : "bg-evergreen text-[#f2eee5]")} role="status" aria-live="polite">
+        <div className={cn("mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[16px] px-4 py-3", night ? "bg-white/[0.06] text-night-ink" : "bg-evergreen text-on-evergreen")} role="status" aria-live="polite">
           <p className="text-[0.9375rem]">
             <span className="font-mono text-[0.75rem] uppercase tracking-[0.14em] opacity-75">
               Stop {journeyIndex + 1} of {journey.length}
@@ -194,13 +192,13 @@ export function MapView({
             <span className="ml-3 font-serif text-[1.25rem]">{currentJourneyPlace.name}</span>
           </p>
           <div className="flex items-center gap-1.5">
-            <button className="grid size-9 place-items-center rounded-full hover:bg-white/15" aria-label="Previous stop" onClick={() => setJourneyIndex((i) => Math.max(0, i - 1))}>
+            <button className="grid size-9 place-items-center rounded-full hover:bg-white/15" aria-label="Previous stop" onClick={() => goTo(journeyIndex - 1)}>
               <ChevronLeft className="size-5" />
             </button>
             <button className="grid size-9 place-items-center rounded-full hover:bg-white/15" aria-label={playing ? "Pause journey" : "Play journey"} onClick={() => setPlaying((v) => !v)}>
               {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
             </button>
-            <button className="grid size-9 place-items-center rounded-full hover:bg-white/15" aria-label="Next stop" onClick={() => setJourneyIndex((i) => Math.min(journey.length - 1, i + 1))}>
+            <button className="grid size-9 place-items-center rounded-full hover:bg-white/15" aria-label="Next stop" onClick={() => goTo(journeyIndex + 1)}>
               <ChevronRight className="size-5" />
             </button>
           </div>

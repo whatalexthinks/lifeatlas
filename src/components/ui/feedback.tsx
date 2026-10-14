@@ -69,7 +69,7 @@ export function Toaster() {
               </button>
             ) : null}
           </div>
-          <button onClick={() => dismiss(t.id)} aria-label="Dismiss" className="-mr-1 grid size-7 place-items-center rounded-full text-[#8f8a80] hover:bg-white/10 hover:text-white">
+          <button onClick={() => dismiss(t.id)} aria-label="Dismiss" className="-mr-1 grid size-7 place-items-center rounded-full text-[#bdb7aa] hover:bg-white/10 hover:text-white">
             <X className="size-4" />
           </button>
         </div>

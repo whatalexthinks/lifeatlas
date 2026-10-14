@@ -21,7 +21,7 @@ export type BookPage =
   | { kind: "contents"; entries: { title: string; page: number }[] }
   | { kind: "chapter"; n: number; title: string; subtitle: string; chapter: ChapterKey }
   | { kind: "photo"; mediaId: string; fullBleed: boolean; chapterTitle: string }
-  | { kind: "story"; memory: Memory; placeName?: string; paragraphs: string[]; start: boolean; chapterTitle: string }
+  | { kind: "story"; memory: Memory; placeName?: string; paragraphs: string[]; start: boolean; end: boolean; chapterTitle: string }
   | { kind: "timeline"; items: { year: string; title: string }[] }
   | { kind: "colophon"; title: string };
 
@@ -30,9 +30,9 @@ export const bookSizeLabel: Record<BookConfiguration["size"], string> = { "8x10"
 
 /** Words that comfortably fit on a page at the body size, by trim. */
 const WORDS: Record<BookConfiguration["size"], { start: number; cont: number }> = {
-  "8x10": { start: 150, cont: 270 },
-  "10x10": { start: 130, cont: 240 },
-  "11x8.5": { start: 105, cont: 200 },
+  "8x10": { start: 125, cont: 235 },
+  "10x10": { start: 100, cont: 200 },
+  "11x8.5": { start: 62, cont: 140 },
 };
 
 function paginate(text: string, firstMax: number, nextMax: number) {
@@ -40,8 +40,8 @@ function paginate(text: string, firstMax: number, nextMax: number) {
   let remaining = paras.reduce((n, p) => n + p.split(" ").length, 0);
   const pages: string[][] = [[]];
   let room = firstMax;
-  // A page may stretch ~15% rather than strand a few words on a page of their own.
-  const slack = (max: number) => Math.round(max * 0.15);
+  // A page may stretch ~10% rather than strand a few words on a page of their own.
+  const slack = (max: number) => Math.round(max * 0.1);
   for (const para of paras) {
     let words = para.split(" ");
     while (words.length) {
@@ -90,8 +90,8 @@ export function buildBookPages(config: BookConfiguration, memories: Memory[], pl
   const groups = config.chapterOrder.map((c) => ({ chapter: c, stories: chosen.filter((m) => m.chapter === c) })).filter((g) => g.stories.length);
   let photoToggle = false;
   groups.forEach((g, gi) => {
-    // Chapter openers start on a right-hand (odd) page.
-    if (pages.length % 2 === 0) pages.push({ kind: "blank" });
+    // Chapter openers start on a right-hand page: page 1 is index 0, so right-hand pages have even indexes.
+    if (pages.length % 2 === 1) pages.push({ kind: "blank" });
     const ch = chapterById(g.chapter);
     entries.push({ title: ch.title, page: pages.length + 1 });
     pages.push({ kind: "chapter", n: gi + 1, title: ch.title, subtitle: ch.subtitle, chapter: g.chapter });
@@ -100,7 +100,7 @@ export function buildBookPages(config: BookConfiguration, memories: Memory[], pl
       const photo = m.photoIds[0];
       const fullBleed = config.layout === "full_bleed" || (config.layout === "mixed" && (photoToggle = !photoToggle));
       const chunks = paginate(m.narrative, words.start, words.cont);
-      const storyPages: BookPage[] = chunks.map((paragraphs, i) => ({ kind: "story", memory: m, placeName: place?.nickname ?? place?.name, paragraphs, start: i === 0, chapterTitle: ch.title }));
+      const storyPages: BookPage[] = chunks.map((paragraphs, i) => ({ kind: "story", memory: m, placeName: place?.nickname ?? place?.name, paragraphs, start: i === 0, end: i === chunks.length - 1, chapterTitle: ch.title }));
       // Photographs face their story: the photo takes the left-hand page whenever it can.
       const nextIsLeft = pages.length % 2 === 1;
       if (photo && nextIsLeft) pages.push({ kind: "photo", mediaId: photo, fullBleed, chapterTitle: ch.title }, ...storyPages);
@@ -112,7 +112,7 @@ export function buildBookPages(config: BookConfiguration, memories: Memory[], pl
   });
 
   if (config.includeTimeline && chosen.length) {
-    if (pages.length % 2 === 0) pages.push({ kind: "blank" });
+    if (pages.length % 2 === 1) pages.push({ kind: "blank" });
     entries.push({ title: "A timeline", page: pages.length + 1 });
     const items = [...chosen].sort((a, b) => sortKey(a.date) - sortKey(b.date)).map((m) => ({ year: formatFuzzyDate(m.date, "short"), title: m.title }));
     for (let i = 0; i < items.length; i += 14) pages.push({ kind: "timeline", items: items.slice(i, i + 14) });
@@ -244,7 +244,7 @@ function PageBody({ page, config }: { page: BookPage; config: BookConfiguration 
       return page.fullBleed ? (
         <MediaImage mediaId={page.mediaId} className="absolute inset-0 size-full" />
       ) : (
-        <div className="absolute inset-0 flex flex-col justify-center px-[11cqw]">
+        <div className={cn("absolute inset-0 flex flex-col justify-center", config.size === "11x8.5" ? "px-[21cqw]" : "px-[11cqw]")}>
           <div className="bg-white p-[2.4cqw] shadow-[0_1px_2px_rgb(0_0_0/0.08),0_8px_20px_-12px_rgb(0_0_0/0.25)]">
             <MediaImage mediaId={page.mediaId} className="aspect-[4/3] w-full" />
           </div>
@@ -283,8 +283,8 @@ function PageBody({ page, config }: { page: BookPage; config: BookConfiguration 
               </p>
             ))}
           </div>
-          {page.start ? (
-            <p className="absolute bottom-[9cqw] font-serif italic" style={{ fontSize: "2.3cqw", color: muted }}>
+          {page.end ? (
+            <p className="mt-[3cqw] font-serif italic" style={{ fontSize: "2.3cqw", color: muted }}>
               — told by {m.attribution.displayName}
             </p>
           ) : null}

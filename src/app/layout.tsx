@@ -15,12 +15,12 @@ export const metadata: Metadata = {
   description:
     "Save their voice. Gather their photographs. Remember the places that shaped them. Create a private family archive to revisit and pass down.",
   applicationName: "LifeAtlas",
+  // The share image comes from app/opengraph-image.tsx (Next adds og:image automatically).
   openGraph: {
     type: "website",
     siteName: "LifeAtlas",
-    title: "LifeAtlas — Every life has a story worth keeping",
+    title: "LifeAtlas — A whole life. In their words.",
     description: "A private family archive of voices, photographs, places and letters.",
-    images: [{ url: "/og", width: 1200, height: 630, alt: "LifeAtlas" }],
   },
   twitter: { card: "summary_large_image" },
   icons: { icon: "/icon.svg" },

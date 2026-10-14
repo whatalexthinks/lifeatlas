@@ -1,5 +1,7 @@
 import type {
   AccountPreferences,
+  Product,
+  Role,
   BookConfiguration,
   BoxConfiguration,
   HeirloomConfiguration,
@@ -55,7 +57,8 @@ export type ServiceName =
   | "fulfillment"
   | "analytics"
   | "support"
-  | "heirlooms";
+  | "heirlooms"
+  | "operations";
 
 export type ServiceErrorCode = "validation" | "not_found" | "forbidden" | "conflict" | "quota" | "unsupported" | "unknown";
 
@@ -142,6 +145,8 @@ export interface CapsuleRepository {
   addCustomQuestion(capsuleId: string, text: string, category: string): Promise<ServiceResult<string>>;
   setAssignments(capsuleId: string, questionIds: string[]): Promise<ServiceResult<null>>;
   markAssignment(capsuleId: string, questionId: string, status: "queued" | "answered" | "skipped", memoryId?: string): Promise<ServiceResult<null>>;
+  /** Grant, change or (with null) remove a person's role on a capsule. The owner can't be changed here. */
+  setMemberRole(capsuleId: string, personId: string, role: Role | null): Promise<ServiceResult<null>>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -308,6 +313,7 @@ export interface PreservationProvider {
   runLocalIntegrityCheck(capsuleId: string): Promise<ServiceResult<IntegrityCheck & { details: { id: string; ok: boolean; reason?: string }[] }>>;
   runRestoreTest(capsuleId: string): Promise<ServiceResult<never>>;
   saveSuccessor(input: Omit<SuccessorDesignation, "id" | "createdAt" | "status">): Promise<ServiceResult<SuccessorDesignation>>;
+  removeSuccessor(id: string): Promise<ServiceResult<null>>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -372,6 +378,15 @@ export interface HeirloomRepository {
   toCartLine(id: string): ServiceResult<CartLine>;
 }
 
+export type SimulatedEvent = "contribution" | "invitation_opened" | "proof_ready" | "storage_warning";
+
+/** Staff tools for the operations demo. In production these sit behind staff sign-in. */
+export interface OperationsService {
+  updateProduct(id: string, patch: { amount?: number; availability?: Product["availability"]; note?: string }): Promise<ServiceResult<Product>>;
+  /** Plays a realistic event through the same code paths a real one would use. */
+  simulate(event: SimulatedEvent): Promise<ServiceResult<string>>;
+}
+
 export interface Services {
   mode: "demo" | "production";
   auth: AuthProvider;
@@ -391,4 +406,5 @@ export interface Services {
   analytics: AnalyticsProvider;
   support: SupportProvider;
   heirlooms: HeirloomRepository;
+  operations: OperationsService;
 }

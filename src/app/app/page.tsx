@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, AudioLines, Gift, HardDrive, ImagePlus, MailPlus, MessageCircleQuestion, Sparkles } from "lucide-react";
-import { useDb, usePendingReviewCount } from "@/hooks/use-data";
+import { useDb, useHydrated, usePendingReviewCount } from "@/hooks/use-data";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge, DemoNotice } from "@/components/ui/feedback";
 import { CapsuleCover } from "@/components/capsule/capsule-cover";
@@ -13,8 +13,8 @@ import { InvitationStatusBadge, MemoryStatusBadge, Panel } from "@/components/st
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, pluralize, relativeTime } from "@/lib/utils";
 
-function greeting() {
-  const h = new Date().getHours();
+function greeting(now: number) {
+  const h = new Date(now).getHours();
   return h < 5 ? "Good evening" : h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
 }
 
@@ -28,6 +28,9 @@ export default function StudioHome() {
   const profile = useDb((d) => d.account.profile);
   const media = useDb((d) => d.media);
   const pending = usePendingReviewCount();
+  const hydrated = useHydrated();
+  // One timestamp per visit keeps render pure; the greeting waits for the device clock.
+  const [now] = React.useState(() => Date.now());
 
   const active = capsules.filter((c) => c.status !== "deletion_pending");
   const featuredCapsule = active.find((c) => c.id === "cap_margaret") ?? active[0];
@@ -45,7 +48,7 @@ export default function StudioHome() {
         .map((a) => questions.find((q) => q.id === a.questionId))
         .find(Boolean)
     : undefined;
-  const thisWeek = live.filter((m) => Date.now() - new Date(m.createdAt).getTime() < 7 * 86400_000).length;
+  const thisWeek = live.filter((m) => now - new Date(m.createdAt).getTime() < 7 * 86400_000).length;
   const voices = approved.filter((m) => m.audioId).length;
   const photos = media.filter((m) => m.kind === "image").length;
 
@@ -69,7 +72,7 @@ export default function StudioHome() {
         <div>
           <p className="eyebrow">{new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
           <h1 className="mt-4 font-serif text-[clamp(2.4rem,1.8rem+2.4vw,3.8rem)] leading-[1.02] tracking-[-0.025em]">
-            {greeting()}, <em>{profile.givenName}.</em>
+            {hydrated ? greeting(now) : "Welcome back"}, <em>{profile.givenName}.</em>
           </h1>
           <p className="mt-3 max-w-xl text-[1.0625rem] leading-relaxed text-ink-2">
             {thisWeek > 0
@@ -168,7 +171,7 @@ export default function StudioHome() {
           </Panel>
 
           {nextQuestion ? (
-            <section className="relative overflow-hidden rounded-[20px] bg-evergreen p-6 text-[#f2eee5]">
+            <section className="relative overflow-hidden rounded-[20px] bg-[#213d31] p-6 text-[#f3f3e8]">
               <div className="topo-lines pointer-events-none absolute inset-0 opacity-20" aria-hidden />
               <p className="relative flex items-center gap-2 text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-[#d7bd8a]">
                 <MessageCircleQuestion className="size-4" /> Next question for {featuredCapsule.preferredName}
@@ -196,7 +199,7 @@ export default function StudioHome() {
           { href: "/gifts/build", icon: Gift, label: "Prepare a gift", sub: "For someone else" },
         ].map((a) => (
           <Link key={a.label} href={a.href} className="group card-quiet flex items-center gap-3.5 p-4 transition-colors hover:bg-surface">
-            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-evergreen shadow-sm ring-1 ring-line transition-colors group-hover:bg-evergreen group-hover:text-[#f8f6f1]">
+            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-evergreen shadow-sm ring-1 ring-line transition-colors group-hover:bg-evergreen group-hover:text-on-evergreen">
               <a.icon className="size-5" />
             </span>
             <span className="min-w-0">

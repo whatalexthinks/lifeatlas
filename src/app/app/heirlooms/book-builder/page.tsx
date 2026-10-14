@@ -281,9 +281,9 @@ function BookBuilder() {
                         {inChapter.map((m) => {
                           const reason = ineligibleReason(m);
                           return (
-                            <li key={m.id} className={cn("flex items-center gap-4 px-5 py-3 sm:px-6", reason && "opacity-60")}>
+                            <li key={m.id} className="flex items-center gap-4 px-5 py-3 sm:px-6">
                               <Checkbox id={`st-${m.id}`} checked={!reason && config.storyIds.includes(m.id)} disabled={!!reason} onCheckedChange={(v) => toggleStory(m.id, v)} label={m.title} description={reason ? reason : `${formatFuzzyDate(m.date)} · ${m.attribution.displayName}`} className="min-w-0 flex-1" />
-                              {m.photoIds[0] ? <MediaImage mediaId={m.photoIds[0]} className="size-12 shrink-0 rounded-[6px]" /> : null}
+                              {m.photoIds[0] ? <MediaImage mediaId={m.photoIds[0]} className={cn("size-12 shrink-0 rounded-[6px]", reason && "opacity-45 grayscale")} /> : null}
                             </li>
                           );
                         })}
@@ -539,7 +539,7 @@ function PreviewTabs({ config, pages, title }: { config: BookConfiguration; page
             {config.coverMediaId ? (
               <figure className="absolute -bottom-6 -right-16 hidden w-[150px] rotate-[4deg] bg-white p-2 shadow-[0_20px_40px_-20px_rgb(0_0_0/0.5)] sm:block">
                 <MediaImage mediaId={config.coverMediaId} className="aspect-[4/5]" />
-                <figcaption className="pt-1.5 text-center font-serif text-[0.8rem] italic text-ink-3">Frontispiece</figcaption>
+                <figcaption className="pt-1.5 text-center font-serif text-[0.8rem] italic text-[#565952]">Frontispiece</figcaption>
               </figure>
             ) : null}
           </div>

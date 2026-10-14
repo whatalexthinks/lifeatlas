@@ -150,7 +150,7 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
           <BrandMark className="size-8" />
         </Link>
         <PersonaSwitcher compact side="right" />
-        <Link href="/app/gather" aria-label="Gather a memory" title="Gather a memory" className="my-3 grid size-11 place-items-center rounded-full bg-evergreen text-[#f8f6f1] shadow-md">
+        <Link href="/app/gather" aria-label="Gather a memory" title="Gather a memory" className="my-3 grid size-11 place-items-center rounded-full bg-evergreen text-on-evergreen shadow-md">
           <Plus className="size-5" />
         </Link>
         {[...primary, ...secondary].map((i) => (
@@ -207,7 +207,7 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto grid h-[68px] max-w-md grid-cols-5 items-center px-2">
           <TabLink href="/app" label="Home" icon={Home} active={pathname === "/app"} />
           <TabLink href="/app/capsules" label="Capsules" icon={LayoutGrid} active={pathname.startsWith("/app/capsules")} />
-          <Link href="/app/gather" aria-label="Gather a memory" className="mx-auto -mt-7 grid size-14 place-items-center rounded-full bg-evergreen text-[#f8f6f1] shadow-[0_12px_28px_-10px_rgb(30_50_40/0.7)] ring-4 ring-paper">
+          <Link href="/app/gather" aria-label="Gather a memory" className="mx-auto -mt-7 grid size-14 place-items-center rounded-full bg-evergreen text-on-evergreen shadow-[0_12px_28px_-10px_rgb(30_50_40/0.7)] ring-4 ring-paper">
             <Plus className="size-6" />
           </Link>
           <TabLink href="/app/invitations" label="Review" icon={MailOpen} active={pathname.startsWith("/app/invitations")} badge={pending} />

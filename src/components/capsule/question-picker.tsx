@@ -35,9 +35,12 @@ export function QuestionPicker({
   const [term, setTerm] = React.useState("");
   const [category, setCategory] = React.useState<string>("All");
 
-  React.useEffect(() => {
+  // Start from the caller's selection each time the picker opens (React's "adjust state on prop change" pattern).
+  const [wasOpen, setWasOpen] = React.useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (open) setPicked(selected);
-  }, [open, selected]);
+  }
 
   const cats = ["All", ...questionCategories, ...(questions.some((q) => q.custom) ? ["Your questions"] : [])];
   const list = questions.filter((q) => {
@@ -91,7 +94,7 @@ export function QuestionPicker({
               type="button"
               onClick={() => setCategory(c)}
               aria-pressed={category === c}
-              className={cn("h-8 shrink-0 rounded-full border px-3 text-[0.8125rem] font-medium", category === c ? "border-evergreen bg-evergreen text-[#f8f6f1]" : "border-line-strong text-ink-2 hover:border-ink-3")}
+              className={cn("h-8 shrink-0 rounded-full border px-3 text-[0.8125rem] font-medium", category === c ? "border-evergreen bg-evergreen text-on-evergreen" : "border-line-strong text-ink-2 hover:border-ink-3")}
             >
               {c}
             </button>

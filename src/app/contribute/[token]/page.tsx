@@ -104,7 +104,7 @@ export default function InvitationWelcome() {
             [isStoryteller ? "It becomes part of your story." : `${organizerName} sees it first.`, isStoryteller ? "Your family can read and listen. You can change or remove anything later." : `They add it to ${capsule.preferredName}'s archive once they've read it.`],
           ].map(([t, d], i) => (
             <li key={t} className="flex gap-4">
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-evergreen font-mono text-[0.9rem] text-[#f8f6f1]">{i + 1}</span>
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-evergreen font-mono text-[0.9rem] text-on-evergreen">{i + 1}</span>
               <span>
                 <strong className="font-medium">{t}</strong> <span className="text-ink-2">{d}</span>
               </span>

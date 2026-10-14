@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 /** Reveal-on-scroll. Respects reduced motion via CSS (.reveal is static there). */
 export function useReveal<T extends HTMLElement = HTMLDivElement>(options: { once?: boolean; rootMargin?: string } = {}) {
@@ -11,8 +11,9 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(options: { onc
     const el = ref.current;
     if (!el) return;
     if (typeof IntersectionObserver === "undefined") {
-      setRevealed(true);
-      return;
+      // Very old browsers: show everything on the next frame.
+      const id = requestAnimationFrame(() => setRevealed(true));
+      return () => cancelAnimationFrame(id);
     }
     const io = new IntersectionObserver(
       ([entry]) => {
@@ -29,26 +30,39 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(options: { onc
   return { ref, revealed };
 }
 
-export function usePrefersReducedMotion() {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduced(mq.matches || document.documentElement.dataset.motion === "reduced");
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return reduced;
+function subscribeMedia(query: string) {
+  return (cb: () => void) => {
+    const mq = window.matchMedia(query);
+    mq.addEventListener("change", cb);
+    return () => mq.removeEventListener("change", cb);
+  };
 }
 
+const reducedQuery = "(prefers-reduced-motion: reduce)";
+const subscribeReduced = subscribeMedia(reducedQuery);
+
+/** True when the device or the in-app setting asks for reduced motion. False during server render. */
+export function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    subscribeReduced,
+    () => window.matchMedia(reducedQuery).matches || document.documentElement.dataset.motion === "reduced",
+    () => false,
+  );
+}
+
+/** Live media-query match. False during server render. */
 export function useMediaQuery(query: string) {
-  const [match, setMatch] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia(query);
-    const update = () => setMatch(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, [query]);
-  return match;
+  const subscribe = subscribeFor(query);
+  return useSyncExternalStore(subscribe, () => window.matchMedia(query).matches, () => false);
+}
+
+/** One stable subscribe function per query, so React doesn't resubscribe on every render. */
+const subscribers = new Map<string, (cb: () => void) => () => void>();
+function subscribeFor(query: string) {
+  let sub = subscribers.get(query);
+  if (!sub) {
+    sub = subscribeMedia(query);
+    subscribers.set(query, sub);
+  }
+  return sub;
 }
