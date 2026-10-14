@@ -40,3 +40,18 @@ export interface GatheringSession {
   startedAt: ISODateTime;
   updatedAt: ISODateTime;
 }
+
+/**
+ * Writing in the letter composer that hasn't been saved as a letter yet (it may not pass
+ * validation). One per letter being edited, plus one for a new letter.
+ */
+export interface LetterDraft {
+  key: string;
+  letterId?: ID;
+  capsuleId: ID;
+  /** The composer's form values as typed. */
+  values: Record<string, unknown>;
+  attachmentIds: ID[];
+  birthYear: string;
+  updatedAt: ISODateTime;
+}

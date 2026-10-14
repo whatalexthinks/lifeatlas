@@ -111,12 +111,30 @@ describe("gathering sessions", () => {
   });
 });
 
+describe("letter writing", () => {
+  const letter = { key: "letter:new", capsuleId: "cap_margaret", values: { title: "For Leo", body: "Dear Leo" }, attachmentIds: [], birthYear: "" };
+  it("keeps unfinished writing, even when it isn't a valid letter yet", async () => {
+    const d = services().drafts;
+    await d.saveLetterDraft(letter);
+    await d.saveLetterDraft({ ...letter, values: { title: "For Leo", body: "Dear Leo, I remember" } });
+    expect(db().letterDrafts).toHaveLength(1);
+    expect(db().letterDrafts[0].values.body).toBe("Dear Leo, I remember");
+  });
+  it("is discarded on request", async () => {
+    const d = services().drafts;
+    await d.saveLetterDraft(letter);
+    await d.discardLetterDraft("letter:new");
+    expect(db().letterDrafts).toEqual([]);
+  });
+});
+
 describe("saved data from before drafts existed", () => {
   it("loads with the new collections filled in empty instead of being wiped", async () => {
     const old = seed() as Partial<DemoDatabase>;
     old.memories = old.memories!.slice(0, 2);
     delete old.captureDrafts;
     delete old.gatherings;
+    delete old.letterDrafts;
     __resetIdbForTests();
     await saveState(old as DemoDatabase);
     useDemoStore.setState({ hydrated: false });
@@ -124,5 +142,6 @@ describe("saved data from before drafts existed", () => {
     expect(db().memories).toHaveLength(2); // the person's own data survives
     expect(db().captureDrafts).toEqual([]);
     expect(db().gatherings).toEqual([]);
+    expect(db().letterDrafts).toEqual([]);
   });
 });

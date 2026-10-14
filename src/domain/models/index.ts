@@ -35,7 +35,7 @@ import type { AnalyticsEvent, AuditEvent, Notification, SupportRequest } from ".
  * The full local demonstration database. Persisted to IndexedDB.
  * Each top-level collection maps to a future Postgres table.
  */
-import type { CaptureDraft, GatheringSession } from "./drafts";
+import type { CaptureDraft, GatheringSession, LetterDraft } from "./drafts";
 
 export interface DemoDatabase {
   schemaVersion: number;
@@ -81,6 +81,7 @@ export interface DemoDatabase {
   bookmarks: { capsuleId: string; memoryId: string; at: string }[];
   /** Answers in progress and family gathering sessions — autosaved, resumable. */
   captureDrafts: CaptureDraft[];
+  letterDrafts: LetterDraft[];
   gatherings: GatheringSession[];
   /** Capsule wizard draft — persisted so users can leave and resume. */
   wizardDraft: unknown | null;

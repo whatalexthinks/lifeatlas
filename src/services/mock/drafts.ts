@@ -1,6 +1,6 @@
 "use client";
 
-import type { CaptureDraft, GatheringSession } from "@/domain/models";
+import type { CaptureDraft, GatheringSession, LetterDraft } from "@/domain/models";
 import { deleteBlob, getBlob, idbAvailable, isQuotaError, putBlob } from "@/lib/storage/idb";
 import { uid } from "@/lib/utils";
 import { fail, ok, type DraftRepository } from "../contracts";
@@ -98,6 +98,21 @@ export const mockDrafts: DraftRepository = {
       Object.assign(g, patch, { updatedAt: new Date().toISOString() });
     });
     return ok({ ...db().gatherings.find((g) => g.id === id)! });
+  },
+
+  async saveLetterDraft(fields) {
+    const draft: LetterDraft = { ...fields, updatedAt: new Date().toISOString() };
+    store().mutate((d) => {
+      d.letterDrafts = [draft, ...d.letterDrafts.filter((x) => x.key !== draft.key)].slice(0, 20);
+    });
+    return ok(draft);
+  },
+
+  async discardLetterDraft(key) {
+    store().mutate((d) => {
+      d.letterDrafts = d.letterDrafts.filter((x) => x.key !== key);
+    });
+    return ok(null);
   },
 
   async removeGathering(id) {

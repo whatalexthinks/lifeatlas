@@ -2,6 +2,7 @@ import type {
   AccountPreferences,
   CaptureDraft,
   GatheringSession,
+  LetterDraft,
   Product,
   Role,
   BookConfiguration,
@@ -411,6 +412,9 @@ export interface DraftRepository {
   discardCaptureDraft(key: string): Promise<ServiceResult<null>>;
   startGathering(input: Pick<GatheringSession, "capsuleId" | "occasion" | "guests" | "questionIds">): Promise<ServiceResult<GatheringSession>>;
   updateGathering(id: string, patch: Partial<Pick<GatheringSession, "index" | "turn" | "answers" | "status" | "guests">>): Promise<ServiceResult<GatheringSession>>;
+  /** Letter composer writing, kept until it's saved as a letter. */
+  saveLetterDraft(draft: Omit<LetterDraft, "updatedAt">): Promise<ServiceResult<LetterDraft>>;
+  discardLetterDraft(key: string): Promise<ServiceResult<null>>;
   removeGathering(id: string): Promise<ServiceResult<null>>;
 }
 

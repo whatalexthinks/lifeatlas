@@ -78,6 +78,7 @@ export function buildSeed(now = new Date()): DemoDatabase {
     catalog: defaultCatalog,
     bookmarks: [{ capsuleId: "cap_margaret", memoryId: "mem_seat", at: "2026-10-01T09:00:00.000Z" }],
     captureDrafts: [],
+    letterDrafts: [],
     gatherings: [],
     wizardDraft: null,
   };
