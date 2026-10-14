@@ -3,13 +3,13 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, BookOpen, Box, FlaskConical, HardDrive, Image as ImageIcon, Mail, ScrollText, ShoppingBag } from "lucide-react";
+import { AlertTriangle, BookOpen, Box, FileText, FlaskConical, HardDrive, Image as ImageIcon, Mail, ScrollText, ShoppingBag } from "lucide-react";
 import type { BoxConfiguration } from "@/domain/models";
 import { boxEngravingExtras, boxFinishExtras, quoteBox } from "@/domain/commerce/pricing";
 import { PageHeader, Panel } from "@/components/studio/primitives";
 import { KeepsakeBox, boxFinishes } from "@/components/marketing/objects";
 import { MediaImage } from "@/components/media/media-image";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge, DemoNotice, Skeleton, toast } from "@/components/ui/feedback";
 import { ChoiceCards, Field, Input, Segmented, Select, Switch } from "@/components/ui/field";
 import { useDb, useHydrated } from "@/hooks/use-data";
@@ -132,19 +132,26 @@ function CapsuleBuilder() {
         }
         description="A finished box for the shelf or the mantel — the book, letters, photographs and an archive copy, together. Designed for display, not burial."
         actions={
-          <Button
-            variant="secondary"
-            loading={busy === "save"}
-            disabled={!!busy}
-            onClick={async () => {
-              setBusy("save");
-              const id = await save();
-              setBusy(null);
-              if (id) toast.success("Box design saved on this device");
-            }}
-          >
-            Save design
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {savedId ? (
+              <ButtonLink variant="ghost" href={`/proof/box/${savedId}`} target="_blank" leading={<FileText className="size-4" />}>
+                Proof
+              </ButtonLink>
+            ) : null}
+            <Button
+              variant="secondary"
+              loading={busy === "save"}
+              disabled={!!busy}
+              onClick={async () => {
+                setBusy("save");
+                const id = await save();
+                setBusy(null);
+                if (id) toast.success("Box design saved on this device", "Open the proof to check the engraving and contents.");
+              }}
+            >
+              Save design
+            </Button>
+          </div>
         }
       />
 

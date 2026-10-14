@@ -138,11 +138,9 @@ export default function HeirloomsPage() {
                       <ButtonLink size="sm" variant="secondary" href={editHref} leading={<PenLine className="size-4" />}>
                         {h.status === "ordered_demo" ? "Open design" : "Edit"}
                       </ButtonLink>
-                      {h.kind === "book" ? (
-                        <ButtonLink size="sm" variant="ghost" href={`/proof/book/${h.id}`} target="_blank" leading={<FileText className="size-4" />}>
-                          Proof
-                        </ButtonLink>
-                      ) : null}
+                      <ButtonLink size="sm" variant="ghost" href={h.kind === "book" ? `/proof/book/${h.id}` : `/proof/box/${h.id}`} target="_blank" leading={<FileText className="size-4" />}>
+                        Proof
+                      </ButtonLink>
                       {project?.orderId ? (
                         <ButtonLink size="sm" variant="ghost" href={`/app/orders#${project.orderId}`}>
                           View order

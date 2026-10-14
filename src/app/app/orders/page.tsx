@@ -218,11 +218,13 @@ function OrderDetail({ order }: { order: Order }) {
           <p className="text-ink-2">
             {latestProof.status === "approved_demo"
               ? "You approved this proof. In the real service, it would now go to the printer — here, the order stops before anything is made."
-              : "Turn every page before approving. Once approved, a real order would go to print and can no longer be changed."}
+              : config?.kind === "keepsake_box"
+                ? "Check the lid engraving letter by letter and everything that goes inside. Once approved, a real order would go to the workshop and can no longer be changed."
+                : "Turn every page before approving. Once approved, a real order would go to print and can no longer be changed."}
           </p>
           <div className="mt-5 flex flex-wrap gap-2.5">
-            {config?.kind === "book" ? (
-              <ButtonLink variant="secondary" href={`/proof/book/${config.id}`} target="_blank" leading={<FileText className="size-4" />}>
+            {config ? (
+              <ButtonLink variant="secondary" href={config.kind === "book" ? `/proof/book/${config.id}` : `/proof/box/${config.id}`} target="_blank" leading={<FileText className="size-4" />}>
                 Open proof
               </ButtonLink>
             ) : null}
