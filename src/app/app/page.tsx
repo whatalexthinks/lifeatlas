@@ -30,6 +30,7 @@ export default function StudioHome() {
   const pending = usePendingReviewCount();
   const personId = useDb((d) => d.account.profile.personId);
   // Only the organizer's own drafts — contributors see theirs on their invitation link.
+  const paused = useDb((d) => d.gatherings.find((g) => g.status === "in_progress"));
   const unfinished = useDb((d) => d.captureDrafts).filter((d) => d.key.endsWith(`:person:${personId}`) || d.key.endsWith(":person:organizer"));
   const hydrated = useHydrated();
   // One timestamp per visit keeps render pure; the greeting waits for the device clock.
@@ -353,12 +354,16 @@ export default function StudioHome() {
             <Sparkles className="size-5" />
           </span>
           <div>
-            <p className="font-serif text-[1.5rem] leading-tight">Gathering for the holidays?</p>
-            <p className="mt-1 text-ink-3">A pass-the-device session with five questions, made for the dinner table.</p>
+            <p className="font-serif text-[1.5rem] leading-tight">{paused ? `${paused.occasion} is waiting` : "Gathering for the holidays?"}</p>
+            <p className="mt-1 text-ink-3">
+              {paused
+                ? `Question ${Math.min(paused.index + 1, paused.questionIds.length)} of ${paused.questionIds.length} · ${pluralize(paused.answers.length, "answer")} kept so far. Pick up where the table left off.`
+                : "A pass-the-device session for the dinner table — one question each, and a booklet at the end."}
+            </p>
           </div>
         </div>
-        <ButtonLink href="/app/together" variant="secondary" trailing={<ArrowRight className="size-4" />}>
-          Plan a session
+        <ButtonLink href={paused ? `/app/together?session=${paused.id}` : "/app/together"} variant="secondary" trailing={<ArrowRight className="size-4" />}>
+          {paused ? "Resume the session" : "Plan a session"}
         </ButtonLink>
       </section>
     </div>
