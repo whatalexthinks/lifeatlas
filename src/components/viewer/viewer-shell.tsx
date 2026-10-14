@@ -12,6 +12,7 @@ import { PersonaSwitcher } from "@/components/studio/persona-switcher";
 import { PreviewBanner, useBackToSelf, useOwnPersona } from "@/components/studio/preview-banner";
 import { useCapsule, useHydrated, usePersona, useRole } from "@/hooks/use-data";
 import { cn } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 interface ViewerCtx {
   capsule: Capsule;
@@ -81,7 +82,7 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
     return (
       <Shell night>
         <div className="mx-auto max-w-xl py-32 text-center">
-          <p className="font-mono text-[0.75rem] uppercase tracking-[0.18em] text-[#c4ad86]">Not found</p>
+          <p className="font-mono text-[0.75rem] uppercase tracking-[0.18em] text-[#d7bc92]">Not found</p>
           <h1 className="mt-5 font-serif text-[3rem] leading-tight text-night-ink">We couldn&rsquo;t find this archive.</h1>
           <p className="mt-4 text-night-ink-2">It may have been removed, or it was created in a different browser. Archives in this preview live only on the device where they were made.</p>
           <ButtonLink href="/demo" variant="light" className="mt-8">
@@ -99,7 +100,7 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
     return (
       <Shell night>
         <div className="mx-auto max-w-xl py-32 text-center">
-          <span className="mx-auto grid size-14 place-items-center rounded-full bg-white/10 text-[#c4ad86]">
+          <span className="mx-auto grid size-14 place-items-center rounded-full bg-white/10 text-[#d7bc92]">
             <Lock className="size-6" />
           </span>
           <h1 className="mt-6 font-serif text-[2.8rem] leading-tight text-night-ink">This archive isn&rsquo;t shared with {persona.name.split(" ")[0]} yet.</h1>
@@ -132,7 +133,7 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
       <div className={cn("min-h-dvh", night ? "theme-evening bg-night text-night-ink" : "bg-paper text-ink")}>
         <header className={cn("sticky top-0 z-50 border-b backdrop-blur-xl", night ? "border-white/[0.07] bg-night/80" : "border-line bg-paper/85")}>
           <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-8">
-            <Link href={base} className={cn("flex min-w-0 items-center gap-2.5", night ? "text-[#c4ad86]" : "text-evergreen")} aria-label={`${capsule.subjectName} — archive cover`}>
+            <Link href={base} className={cn("flex min-w-0 items-center gap-2.5", night ? "text-[#d7bc92]" : "text-evergreen")} aria-label={`${capsule.subjectName} — archive cover`}>
               <BrandMark className="size-7 shrink-0" />
               <span className={cn("truncate font-serif text-[1.3rem]", night ? "text-night-ink" : "text-ink")}>{capsule.subjectName}</span>
             </Link>
@@ -182,9 +183,9 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
         <PreviewBanner capsuleId={capsule.id} tone={night ? "night" : "paper"} />
         <main id="main">{children}</main>
         <footer className={cn("border-t px-4 py-10 text-center text-[0.8125rem] sm:px-8", night ? "border-white/[0.07] text-night-ink-3" : "border-line text-ink-3")}>
-          A private LifeAtlas archive{capsule.isSample ? " · Fictional sample family" : ""} · Never publicly listed ·{" "}
+          A private {brand.name} archive{capsule.isSample ? " · Fictional sample family" : ""} · Never publicly listed ·{" "}
           <Link href="/" className="underline underline-offset-2">
-            LifeAtlas
+            {brand.name}
           </Link>
         </footer>
       </div>
@@ -196,7 +197,7 @@ function Shell({ children, night }: { children: React.ReactNode; night?: boolean
   return (
     <div className={cn("min-h-dvh px-6", night ? "bg-night" : "bg-paper")}>
       <div className="pt-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-[#c4ad86]" aria-label="LifeAtlas home">
+        <Link href="/" className="inline-flex items-center gap-2 text-[#d7bc92]" aria-label={`${brand.name} home`}>
           <BrandMark className="size-7" />
         </Link>
       </div>
@@ -211,7 +212,7 @@ export function ViewerPage({ title, eyebrow, lead, children, wide }: { title: Re
   return (
     <div className={cn("mx-auto px-4 pb-24 pt-12 sm:px-8 sm:pt-16", wide ? "max-w-[1440px]" : "max-w-[1180px]")}>
       <header className="mb-10 max-w-3xl">
-        {eyebrow ? <p className={cn("eyebrow", night && "text-[#c4ad86]")}>{eyebrow}</p> : null}
+        {eyebrow ? <p className={cn("eyebrow", night && "text-[#d7bc92]")}>{eyebrow}</p> : null}
         <h1 className={cn("mt-4 font-serif text-[clamp(2.6rem,2rem+2.4vw,4.2rem)] leading-[1] tracking-[-0.025em]", night ? "text-night-ink" : "text-ink")}>{title}</h1>
         {lead ? <div className={cn("mt-4 text-lead", night ? "text-night-ink-2" : "text-ink-2")}>{lead}</div> : null}
       </header>

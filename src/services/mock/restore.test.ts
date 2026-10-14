@@ -61,7 +61,7 @@ describe("restoring from an export", () => {
     const zip = await exportOne("zip");
     const before = db().capsules.length;
     const x = services().export;
-    const inspected = await x.inspectArchive(await asFile(zip, "lifeatlas-sarah.zip"));
+    const inspected = await x.inspectArchive(await asFile(zip, "ourlifecapsule-sarah.zip"));
     if (inspected.status !== "ok") throw new Error(inspected.status === "error" ? inspected.message : "not inspected");
     expect(inspected.data).toMatchObject({ format: "zip", capsuleName: "Sarah Ellis", stories: 1, verified: { photos: 1, recordings: 0 }, damaged: [] });
     expect(db().capsules).toHaveLength(before); // inspecting changes nothing
@@ -100,7 +100,7 @@ describe("restoring from an export", () => {
 
   it("restores stories from a records-only JSON export and says the files aren't in it", async () => {
     const json = await exportOne("json");
-    const r = await services().export.inspectArchive(await asFile(json, "lifeatlas-sarah.json"));
+    const r = await services().export.inspectArchive(await asFile(json, "ourlifecapsule-sarah.json"));
     if (r.status !== "ok") throw new Error("not inspected");
     expect(r.data.format).toBe("json");
     expect(r.data.warnings[0]).toMatch(/records-only/);
@@ -130,7 +130,7 @@ describe("restoring from an export", () => {
     const html = await x.inspectArchive(new File(["<!doctype html><html></html>"], "copy.html"));
     expect(html.status === "error" && html.message).toMatch(/offline reading copy/);
     const other = await x.inspectArchive(new File([JSON.stringify({ hello: "world" })], "notes.json"));
-    expect(other.status === "error" && other.message).toBe("This file isn't a LifeAtlas export.");
+    expect(other.status === "error" && other.message).toBe("This file isn't an OurLifeCapsule export.");
     const broken = await x.inspectArchive(new File([new Uint8Array([0x50, 0x4b, 0x03, 0x04, 9, 9, 9])], "broken.zip"));
     expect(broken.status === "error" && broken.message).toMatch(/damaged or incomplete/);
     const noManifest = await x.inspectArchive(new File([zipSync({ "a.txt": strToU8("hi") }) as BlobPart], "other.zip"));

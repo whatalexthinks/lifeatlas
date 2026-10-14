@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { usePersistence } from "@/hooks/use-data";
 import { flushSave } from "@/store/demo-store";
 import { cn } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 /**
  * Shown whenever this browser can't keep what people add. Saving problems must never be
@@ -33,7 +34,7 @@ export function StorageAlert({ audience = "organizer", className }: { audience?:
           {cantSave
             ? audience === "guest"
               ? "Anything you record or write here will be lost when this page closes. Try opening the link in a regular (not private) browser window."
-              : "Anything you add will disappear when this tab closes. This usually means a private window, or a setting that blocks site data. Open LifeAtlas in a regular window to keep your work."
+              : `Anything you add will disappear when this tab closes. This usually means a private window, or a setting that blocks site data. Open ${brand.name} in a regular window to keep your work.`
             : error}
         </p>
         {!cantSave || audience === "organizer" ? (

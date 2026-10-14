@@ -8,9 +8,10 @@ import { LifeExplorer } from "@/components/marketing/home/life-explorer";
 import { BookObject, SealedLetter } from "@/components/marketing/objects";
 import { MobileStickyCta } from "@/components/marketing/site-header";
 import { AudioPlayer } from "@/components/audio/audio-player";
+import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: { absolute: "LifeAtlas — A whole life. In their words." },
+  title: { absolute: `${brand.name} — A whole life. In their words.` },
   description: "Turn the stories, voices, photographs, and places of someone you love into a family archive. Start with a question. Create a keepsake together.",
   alternates: { canonical: "/" },
 };
@@ -79,7 +80,7 @@ export default function HomePage() {
 
       <section className="la-section la-future"><Container size="wide" className="la-two-column"><div><p className="la-kicker">A little of today, for tomorrow</p><h2>Some words are meant<br /><em>for a future beginning.</em></h2><p>A letter for a milestone. A story for someone not yet old enough to understand. Prepare something personal for a day you’re imagining.</p><Link href="/letters-through-time" className="la-link">Discover Letters Through Time <ArrowRight className="size-4" /></Link><p className="la-caption">Local drafts only. Nothing is scheduled for delivery.</p></div><div className="la-envelope-stage"><SealedLetter to="Emma" openOn="Your next great adventure" /></div></Container></section>
 
-      <section className="la-trust-section"><Container size="wide"><div className="la-trust-heading"><LockKeyhole size={26} strokeWidth={1.3} /><h2>Deeply personal.<br /><em>Always your decisions.</em></h2></div><div className="la-trust-grid"><article><h3>Your circle</h3><p>Choose who a memory is for, and whether it belongs in a printed or shared edition. Secure family access is planned for launch.</p></article><article><h3>Your copy</h3><p>Export stories and available media as ordinary files. Keep a copy outside LifeAtlas, in a place you trust.</p></article><article><h3>A clear picture</h3><p>This demo stores new content on your device. No cloud backup is active. Preservation should begin with honesty.</p></article></div><Link href="/preservation" className="la-link">Our approach to keeping memories <ArrowRight className="size-4" /></Link></Container></section>
+      <section className="la-trust-section"><Container size="wide"><div className="la-trust-heading"><LockKeyhole size={26} strokeWidth={1.3} /><h2>Deeply personal.<br /><em>Always your decisions.</em></h2></div><div className="la-trust-grid"><article><h3>Your circle</h3><p>Choose who a memory is for, and whether it belongs in a printed or shared edition. Secure family access is planned for launch.</p></article><article><h3>Your copy</h3><p>Export stories and available media as ordinary files. Keep a copy outside {brand.name}, in a place you trust.</p></article><article><h3>A clear picture</h3><p>This demo stores new content on your device. No cloud backup is active. Preservation should begin with honesty.</p></article></div><Link href="/preservation" className="la-link">Our approach to keeping memories <ArrowRight className="size-4" /></Link></Container></section>
 
       <section className="la-section la-pricing"><Container size="wide"><div className="la-section-head"><p className="la-kicker">A meaningful beginning</p><h2>One person. A whole family.<br /><em>Room for every story.</em></h2><p>Explore the product freely. These are proposed prices for the future service—nothing is charged in this preview.</p></div><PricingCards /><div className="la-pricing-note"><Download size={16} /><span>Portable copies are part of the experience.</span><Link href="/pricing">Compare the details <ArrowRight size={15} /></Link></div></Container></section>
 

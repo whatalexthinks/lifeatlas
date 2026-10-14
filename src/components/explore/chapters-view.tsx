@@ -233,7 +233,7 @@ export function ChaptersView({ capsule, scope, hrefFor, tone = "paper", initial 
                 return (
                   <article key={m.id} className="mb-16 scroll-mt-28">
                     <div className="mb-4 flex items-center justify-between gap-3">
-                      <p className={cn("catalog", night && "text-[#c4ad86]")}>
+                      <p className={cn("catalog", night && "text-[#d7bc92]")}>
                         {formatFuzzyDate(m.date)}
                         {place ? ` · ${place.name}` : ""} · {readingMinutes(m.narrative)} min
                       </p>
@@ -306,7 +306,7 @@ function BookmarkButton({ capsuleId, memory, on, night }: { capsuleId: string; m
       onClick={() => void services().capsules.toggleBookmark(capsuleId, memory.id)}
       aria-pressed={on}
       aria-label={on ? `Remove bookmark from ${memory.title}` : `Bookmark ${memory.title}`}
-      className={cn("grid size-9 shrink-0 place-items-center rounded-full", night ? "text-night-ink-3 hover:bg-white/10" : "text-ink-3 hover:bg-ivory", on && (night ? "text-[#c4ad86]" : "text-terracotta"))}
+      className={cn("grid size-9 shrink-0 place-items-center rounded-full", night ? "text-night-ink-3 hover:bg-white/10" : "text-ink-3 hover:bg-ivory", on && (night ? "text-[#d7bc92]" : "text-terracotta"))}
     >
       {on ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
     </button>

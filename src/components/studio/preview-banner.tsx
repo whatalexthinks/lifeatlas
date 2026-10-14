@@ -24,7 +24,7 @@ export function useBackToSelf() {
 }
 
 /**
- * Shown while looking at LifeAtlas as someone else, so a preview is never mistaken for
+ * Shown while looking at OurLifeCapsule as someone else, so a preview is never mistaken for
  * your own view — and getting back is one click.
  */
 export function PreviewBanner({ capsuleId, tone = "paper" }: { capsuleId?: string; tone?: "paper" | "night" }) {
@@ -37,9 +37,9 @@ export function PreviewBanner({ capsuleId, tone = "paper" }: { capsuleId?: strin
   const sees = role === "owner" || role === "organizer" ? "everything, including private stories" : role ? "approved, family-visible stories only" : "nothing here yet";
 
   return (
-    <div role="status" className={cn("border-b text-[0.875rem]", night ? "border-white/[0.07] bg-[#c4ad86]/[0.12] text-night-ink" : "border-brass/30 bg-brass-soft/60 text-ink")}>
+    <div role="status" className={cn("border-b text-[0.875rem]", night ? "border-white/[0.07] bg-[#d7bc92]/[0.12] text-night-ink" : "border-brass/30 bg-brass-soft/60 text-ink")}>
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 sm:px-8">
-        <Eye className={cn("size-4 shrink-0", night ? "text-[#c4ad86]" : "text-brass-ink")} aria-hidden />
+        <Eye className={cn("size-4 shrink-0", night ? "text-[#d7bc92]" : "text-brass-ink")} aria-hidden />
         <p className="min-w-0 flex-1">
           <strong className="font-semibold">Previewing as {persona.name}</strong>
           {capsuleId ? (

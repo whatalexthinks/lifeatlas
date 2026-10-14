@@ -51,15 +51,15 @@ export function Toaster() {
         <div
           key={t.id}
           role={t.tone === "error" ? "alert" : "status"}
-          className="pointer-events-auto flex w-full max-w-sm animate-[fade-up_320ms_var(--ease-out)] items-start gap-3 rounded-[16px] bg-[#1b221e] px-4 py-3.5 text-[#eee9de] shadow-[0_20px_50px_-20px_rgb(0_0_0/0.6)] ring-1 ring-white/5"
+          className="pointer-events-auto flex w-full max-w-sm animate-[fade-up_320ms_var(--ease-out)] items-start gap-3 rounded-[16px] bg-[#1b1a18] px-4 py-3.5 text-[#f1ede6] shadow-[0_20px_50px_-20px_rgb(0_0_0/0.6)] ring-1 ring-white/5"
         >
           <span className="mt-0.5">{toneIcon[t.tone]}</span>
           <div className="min-w-0 flex-1">
             <p className="text-[0.9375rem] font-medium leading-snug">{t.title}</p>
-            {t.body ? <p className="mt-0.5 text-[0.875rem] leading-snug text-[#bdb7aa]">{t.body}</p> : null}
+            {t.body ? <p className="mt-0.5 text-[0.875rem] leading-snug text-[#c4bdb1]">{t.body}</p> : null}
             {t.action ? (
               <button
-                className="mt-2 text-[0.875rem] font-medium text-[#d2bb93] underline underline-offset-4"
+                className="mt-2 text-[0.875rem] font-medium text-[#d7bc92] underline underline-offset-4"
                 onClick={() => {
                   t.action!.onClick();
                   dismiss(t.id);
@@ -69,7 +69,7 @@ export function Toaster() {
               </button>
             ) : null}
           </div>
-          <button onClick={() => dismiss(t.id)} aria-label="Dismiss" className="-mr-1 grid size-7 place-items-center rounded-full text-[#bdb7aa] hover:bg-white/10 hover:text-white">
+          <button onClick={() => dismiss(t.id)} aria-label="Dismiss" className="-mr-1 grid size-7 place-items-center rounded-full text-[#c4bdb1] hover:bg-white/10 hover:text-white">
             <X className="size-4" />
           </button>
         </div>

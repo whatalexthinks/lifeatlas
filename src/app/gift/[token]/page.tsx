@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowRight, Gift as GiftIcon, Mic, PenLine, Users } from "lucide-react";
 import type { Gift } from "@/domain/models";
-import { BrandMark } from "@/components/brand/logo";
+import { BrandMark, Wordmark } from "@/components/brand/logo";
 import { GiftEnvelope } from "@/components/gifting/envelope";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { DemoNotice, Skeleton } from "@/components/ui/feedback";
@@ -13,6 +13,7 @@ import { useHydrated } from "@/hooks/use-data";
 import { usePrefersReducedMotion } from "@/hooks/use-reveal";
 import { services } from "@/services/factory";
 import { cn } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 const occasionText: Record<Gift["occasion"], string> = {
   christmas: "Merry Christmas",
@@ -61,10 +62,8 @@ export default function GiftOpening() {
     <div className="min-h-dvh bg-[radial-gradient(120%_80%_at_50%_0%,#efe6d4,#f8f6f1_60%)]">
       <header className="mx-auto flex h-20 max-w-5xl items-center justify-between px-5 sm:px-8">
         <span className="inline-flex items-center gap-2.5 text-evergreen">
-          <BrandMark className="size-8" />
-          <span className="font-serif text-[1.4rem] text-ink">
-            Life<em>Atlas</em>
-          </span>
+          <BrandMark className="size-8 text-oxblood" title="" />
+          <Wordmark className="text-ink" />
         </span>
       </header>
       <main id="main" className="mx-auto max-w-3xl px-5 pb-24 sm:px-8">
@@ -77,7 +76,7 @@ export default function GiftOpening() {
             <h1 className="font-serif text-[2.6rem] leading-tight">We couldn&rsquo;t find this gift.</h1>
             <p className="mx-auto mt-4 max-w-md text-[1.1rem] text-ink-2">{error} Gift links in this preview open only in the browser where the gift was made.</p>
             <ButtonLink href="/gifts" variant="secondary" size="lg" className="mt-8">
-              About LifeAtlas gifts
+              About {brand.name} gifts
             </ButtonLink>
           </div>
         ) : (
@@ -124,7 +123,7 @@ export default function GiftOpening() {
             </div>
             <p className="mt-16 text-[0.875rem] text-ink-3">
               <Link href="/" className="text-link">
-                What is LifeAtlas?
+                What is {brand.name}?
               </Link>
             </p>
           </div>

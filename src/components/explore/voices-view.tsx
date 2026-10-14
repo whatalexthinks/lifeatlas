@@ -48,13 +48,13 @@ export function VoicesView({ capsule, scope, hrefFor, tone = "paper" }: { capsul
           <li key={m.id} className={cn("rounded-[20px] p-5", night ? "bg-white/[0.04] ring-1 ring-white/10" : "card-paper")}>
             <div className="mb-4 flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className={cn("catalog", night && "text-[#c4ad86]")}>
+                <p className={cn("catalog", night && "text-[#d7bc92]")}>
                   {formatFuzzyDate(m.date)} · {chapterById(m.chapter).title}
                 </p>
                 <h3 className={cn("mt-1 font-serif text-[1.45rem] leading-tight", night ? "text-night-ink" : "text-ink")}>{m.title}</h3>
                 <p className={cn("mt-0.5 text-[0.8125rem]", night ? "text-night-ink-3" : "text-ink-3")}>Told by {m.attribution.displayName}</p>
               </div>
-              <Link href={hrefFor(m)} className={cn("inline-flex shrink-0 items-center gap-1 text-[0.8125rem] font-medium hover:underline", night ? "text-[#d2bb93]" : "text-evergreen")}>
+              <Link href={hrefFor(m)} className={cn("inline-flex shrink-0 items-center gap-1 text-[0.8125rem] font-medium hover:underline", night ? "text-[#d7bc92]" : "text-evergreen")}>
                 Story <ArrowUpRight className="size-3.5" />
               </Link>
             </div>

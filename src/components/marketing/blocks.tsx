@@ -30,7 +30,7 @@ export function SectionHeading({
 }) {
   return (
     <Reveal className={cn(align === "center" && "mx-auto text-center", "max-w-3xl", className)}>
-      {eyebrow ? <p className={cn("eyebrow", align === "center" && "justify-center", tone === "light" && "text-[#c4ad86]")}>{eyebrow}</p> : null}
+      {eyebrow ? <p className={cn("eyebrow", align === "center" && "justify-center", tone === "light" && "text-[#d7bc92]")}>{eyebrow}</p> : null}
       <H className={cn("mt-5 font-serif text-heading", H === "h1" && "text-title", tone === "light" ? "text-night-ink" : "text-ink")}>{title}</H>
       {lead ? <div className={cn("mt-5 text-lead", tone === "light" ? "text-night-ink-2" : "text-ink-2", align === "center" && "mx-auto max-w-2xl")}>{lead}</div> : null}
     </Reveal>
@@ -62,8 +62,8 @@ export function PricingCards({ catalog = defaultCatalog, compact = false }: { ca
         return (
           <Reveal key={p.id} delay={i * 80} className={cn("relative flex flex-col rounded-[24px] p-7 sm:p-8", featured ? "bg-night text-night-ink shadow-lg" : "card-paper")}>
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className={cn("eyebrow plain", featured && "text-[#c4ad86]")}>{p.tagline}</p>
-              {featured ? <span className="rounded-full bg-[#c4ad86] px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-[#1b221e]">For the whole family</span> : null}
+              <p className={cn("eyebrow plain", featured && "text-[#d7bc92]")}>{p.tagline}</p>
+              {featured ? <span className="rounded-full bg-[#d7bc92] px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-[#1b1a18]">For the whole family</span> : null}
             </div>
             <h3 className="mt-4 font-serif text-[2rem] leading-tight">{p.name}</h3>
             <p className="mt-4 flex items-baseline gap-2">
@@ -76,7 +76,7 @@ export function PricingCards({ catalog = defaultCatalog, compact = false }: { ca
               <ul className="mt-6 space-y-2.5">
                 {p.inclusions.map((x) => (
                   <li key={x} className="flex gap-2.5 text-[0.9375rem] leading-snug">
-                    <Check className={cn("mt-0.5 size-4 shrink-0", featured ? "text-[#c4ad86]" : "text-evergreen")} />
+                    <Check className={cn("mt-0.5 size-4 shrink-0", featured ? "text-[#d7bc92]" : "text-evergreen")} />
                     <span className={featured ? "text-night-ink" : "text-ink"}>{x}</span>
                   </li>
                 ))}
@@ -153,7 +153,7 @@ export function FeatureList({ items, tone = "ink" }: { items: string[]; tone?: "
     <ul className="space-y-3">
       {items.map((x) => (
         <li key={x} className="flex gap-3 text-[1rem] leading-snug">
-          <span className={cn("mt-1 grid size-5 shrink-0 place-items-center rounded-full", tone === "light" ? "bg-white/10 text-[#c4ad86]" : "bg-evergreen-soft text-evergreen")}>
+          <span className={cn("mt-1 grid size-5 shrink-0 place-items-center rounded-full", tone === "light" ? "bg-white/10 text-[#d7bc92]" : "bg-evergreen-soft text-evergreen")}>
             <Check className="size-3" strokeWidth={3} />
           </span>
           <span className={tone === "light" ? "text-night-ink" : "text-ink"}>{x}</span>
@@ -165,7 +165,7 @@ export function FeatureList({ items, tone = "ink" }: { items: string[]; tone?: "
 
 export function TextLink({ href, children, tone = "ink" }: { href: string; children: React.ReactNode; tone?: "ink" | "light" }) {
   return (
-    <Link href={href} className={cn("group inline-flex items-center gap-1.5 text-[1rem] font-medium", tone === "light" ? "text-[#d2bb93]" : "text-evergreen")}>
+    <Link href={href} className={cn("group inline-flex items-center gap-1.5 text-[1rem] font-medium", tone === "light" ? "text-[#d7bc92]" : "text-evergreen")}>
       <span className="link-underline">{children}</span>
       <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
     </Link>

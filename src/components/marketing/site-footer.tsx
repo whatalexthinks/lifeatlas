@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BrandMark, Wordmark } from "@/components/brand/logo";
+import { brand } from "@/config/brand";
 
 const cols = [
   {
@@ -37,7 +38,7 @@ const cols = [
     ],
   },
   {
-    title: "LifeAtlas",
+    title: `${brand.name}`,
     links: [
       ["About", "/about"],
       ["Questions", "/faq"],
@@ -55,7 +56,7 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-[1320px] px-5 pb-10 pt-20 sm:px-8">
         <div className="grid gap-14 lg:grid-cols-[1.2fr_2fr]">
           <div className="max-w-sm">
-            <div className="flex items-center gap-2.5 text-[#c4ad86]">
+            <div className="flex items-center gap-2.5 text-[#d7bc92]">
               <BrandMark className="size-[30px]" />
               <Wordmark className="text-night-ink" />
             </div>
@@ -67,7 +68,7 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
             {cols.map((c) => (
               <nav key={c.title} aria-label={c.title}>
-                <p className="mb-4 text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-[#c4ad86]">{c.title}</p>
+                <p className="mb-4 text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-[#d7bc92]">{c.title}</p>
                 <ul className="space-y-2.5">
                   {c.links.map(([label, href]) => (
                     <li key={href}>
@@ -84,9 +85,9 @@ export function SiteFooter() {
         <div className="mt-16 grid gap-4 border-t border-night-line pt-8 text-[0.8125rem] leading-relaxed text-night-ink-3 md:grid-cols-[1fr_auto]">
           <p>
             This is a preview build. The Ellis family is fictional. Payments, emails, cloud storage, backups, printing and future delivery are not connected — nothing on this site charges, sends, ships or
-            stores anything beyond your own browser. LifeAtlas is a working name; branding and trademark are pending.
+            stores anything beyond your own browser. {brand.name} is a working name; branding and trademark are pending.
           </p>
-          <p className="md:text-right">© 2026 LifeAtlas (preview)</p>
+          <p className="md:text-right">© 2026 {brand.name} (preview)</p>
         </div>
       </div>
     </footer>

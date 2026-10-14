@@ -10,9 +10,10 @@ import { fail, ok, type ArchiveInspection, type ExportBuilder } from "../contrac
 import { mockCapsules } from "./capsules";
 import { mockMedia } from "./media";
 import { actorName, db, store } from "./shared";
+import { brand } from "@/config/brand";
 
 /**
- * Restoring from a LifeAtlas export. The manifest (schema `lifeatlas.archive` v1) is the
+ * Restoring from a OurLifeCapsule export. The manifest (schema `lifeatlas.archive` v1) is the
  * contract: it lists every story and file with a SHA-256, so a restore can say exactly
  * what came back intact. A restore always creates a new capsule — it never merges into
  * or overwrites what's already on the device.
@@ -75,7 +76,7 @@ async function inspectArchive(file: File) {
       return fail("validation", "This zip file is damaged or incomplete, so it can't be opened. Try another copy of your export.");
     }
     const m = files.get("manifest.json");
-    if (!m) return fail("validation", "This zip doesn't contain a LifeAtlas manifest.json, so it isn't a LifeAtlas export.");
+    if (!m) return fail("validation", `This zip doesn't contain an ${brand.name} manifest.json, so it isn't an ${brand.name} export.`);
     manifestText = strFromU8(m);
   } else {
     format = "json";
@@ -87,13 +88,13 @@ async function inspectArchive(file: File) {
   try {
     raw = JSON.parse(manifestText);
   } catch {
-    return fail("validation", "This file isn't a LifeAtlas export — its contents couldn't be read as an archive manifest.");
+    return fail("validation", `This file isn't an ${brand.name} export — its contents couldn't be read as an archive manifest.`);
   }
   const parsed = manifestSchema.safeParse(raw);
   if (!parsed.success) {
     const schema = (raw as { schema?: unknown; schemaVersion?: unknown } | null)?.schema;
     if (schema === "lifeatlas.archive") return fail("validation", "This export uses a format version this preview doesn't recognise, or parts of it are missing.");
-    return fail("validation", "This file isn't a LifeAtlas export.");
+    return fail("validation", `This file isn't an ${brand.name} export.`);
   }
   const manifest = parsed.data;
 
@@ -180,7 +181,7 @@ async function restoreArchive(token: string) {
   const mediaIds = new Map<string, string>();
   const samples = db().media.filter((a) => a.sampleNotice && a.source.kind !== "local");
   for (const m of manifest.media) {
-    // Sample illustrations and narration ship with LifeAtlas: point at the app's copy —
+    // Sample illustrations and narration ship with OurLifeCapsule: point at the app's copy —
     // if the export included them (a records-only export never carries files).
     const sample = m.sampleNotice && (m.included || recordsOnly) ? samples.find((a) => a.id === m.id) : undefined;
     if (sample) {

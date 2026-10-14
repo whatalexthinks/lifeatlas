@@ -9,6 +9,7 @@ import { YourStories } from "@/components/contribute/your-stories";
 import { CaptureFlow } from "@/components/capture/capture-flow";
 import { ButtonLink } from "@/components/ui/button";
 import { useDb } from "@/hooks/use-data";
+import { brand } from "@/config/brand";
 
 export default function ContributeRecord() {
   const { invitation, capsule, organizerName } = useInvitation();
@@ -65,7 +66,7 @@ export default function ContributeRecord() {
           <p className="text-[0.9375rem] text-ink-3">
             Is there someone whose stories you&rsquo;d like to keep?{" "}
             <Link href="/" className="text-link text-ink-2">
-              Learn about LifeAtlas
+              Learn about {brand.name}
             </Link>
           </p>
         </div>

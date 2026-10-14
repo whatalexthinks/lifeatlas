@@ -12,6 +12,7 @@ import { useDb, useHydrated } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { addYears } from "@/lib/dates";
 import { formatBytes, formatDate, formatMoney } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 const PLAN_IDS = ["personal", "family"] as const;
 
@@ -181,7 +182,7 @@ export default function BillingPage() {
               <p className="text-[0.875rem] text-ink-2">{methodsNote ?? "No card on file."}</p>
             </div>
             <p className="mt-3 flex items-start gap-2 text-[0.8125rem] text-ink-3">
-              <ShieldCheck className="mt-0.5 size-4 shrink-0" /> LifeAtlas never asks for card details in this preview. If anything ever does, don&rsquo;t enter them.
+              <ShieldCheck className="mt-0.5 size-4 shrink-0" /> {brand.name} never asks for card details in this preview. If anything ever does, don&rsquo;t enter them.
             </p>
           </Panel>
         </div>

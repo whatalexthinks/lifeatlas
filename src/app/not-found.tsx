@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { ButtonLink } from "@/components/ui/button";
+import { brand } from "@/config/brand";
 
 export default function NotFound() {
   return (
@@ -19,7 +20,7 @@ export default function NotFound() {
         <p className="mt-6 max-w-xl text-[1.0625rem] leading-relaxed text-ink-2">The link may be mistyped, or it was a private link that only opens in the browser where it was made.</p>
         <div className="mt-9 flex flex-wrap items-center gap-6">
           <ButtonLink href="/" size="lg">
-            Back to LifeAtlas
+            Back to {brand.name}
           </ButtonLink>
           <Link href="/demo" className="la-link">
             Explore a sample archive <ArrowRight className="size-4" />

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   LifeAtlas design tokens
+   OurLifeCapsule design tokens
    Semantic CSS variables first; Tailwind theme maps onto them so every
    utility (bg-paper, text-ink-2, border-line…) follows light/evening.
    ------------------------------------------------------------------ */
@@ -9,70 +9,78 @@
 :root {
   color-scheme: light;
 
-  /* Materials */
-  --paper: #f8f8f3;
-  --ivory: #f0ece3;
-  --surface: #fefdf9;
-  --linen: #e9e3d6;
-  --mat: #f3efe6;
+  /* Materials — porcelain and soft paper */
+  --paper: #f8f6f1;
+  --ivory: #f0ece4;
+  --surface: #fcfbf8;
+  --linen: #e8e2d7;
+  --mat: #f3f0ea;
 
-  /* Ink hierarchy (all ≥ 4.5:1 on --paper except ink-4, decorative only) */
-  --ink: #202d27;
-  --ink-2: #474b45;
-  --ink-3: #565952;
-  --ink-4: #6c6962;
+  /* Ink hierarchy — charcoal. Every step ≥ 4.5:1 on paper, ivory and surface. */
+  --ink: #252421;
+  --ink-2: #4a4741;
+  --ink-3: #5c5850;
+  --ink-4: #6b665d;
 
-  /* Brand */
-  --evergreen: #294f3e;
-  --evergreen-deep: #22302a;
-  --evergreen-soft: #e3e8e1;
-  /* Text that sits on an evergreen fill; flips with the theme. */
+  /* Brand.
+     Muted forest marks selection, progress and quiet emphasis ("evergreen" is its
+     historical token name). Oxblood is the editorial accent: kickers, the record
+     button, a single highlighted word. Taupe is decorative only (2.5:1). */
+  --evergreen: #586354;
+  --evergreen-deep: #434c40;
+  --evergreen-soft: #e6e8e0;
   --on-evergreen: #f8f6f1;
-  --sage: #a4b2a4;
-  --stone: #8c8981;
-  --brass: #ae9874;
-  --brass-ink: #765c36;
-  --brass-soft: #efe7d8;
+  --oxblood: #763f43;
+  --oxblood-deep: #5e3135;
+  --oxblood-soft: #f2e6e4;
+  --on-oxblood: #fbf8f4;
+  --taupe: #a99b89;
+  --sage: #b9c0ae;
+  --stone: #8d867b;
+  --brass: #a99b89;
+  --brass-ink: #6b5a47;
+  --brass-soft: #efe9df;
 
   /* Chapters */
-  --terracotta: #a85f45;
+  --terracotta: #a3593f;
   --slate: #56697c;
-  --smoke: #7f7a74;
+  --smoke: #7d766d;
   --moss: #66734a;
 
   /* Lines & depth */
-  --line: #ded9cf;
-  --line-strong: #cbc3b4;
-  --shadow-color: 52 40 22;
+  --line: #e2dcd1;
+  --line-strong: #cfc6b8;
+  --shadow-color: 48 40 30;
   --shadow-sm: 0 1px 2px rgb(var(--shadow-color) / 0.05), 0 1px 1px rgb(var(--shadow-color) / 0.03);
   --shadow-md: 0 1px 2px rgb(var(--shadow-color) / 0.04), 0 8px 24px -12px rgb(var(--shadow-color) / 0.16);
   --shadow-lg: 0 2px 4px rgb(var(--shadow-color) / 0.04), 0 24px 60px -24px rgb(var(--shadow-color) / 0.28);
   --shadow-object: 0 1px 1px rgb(var(--shadow-color) / 0.08), 0 18px 40px -18px rgb(var(--shadow-color) / 0.38), 0 50px 90px -50px rgb(var(--shadow-color) / 0.4);
 
   /* Status */
-  --focus: #2f5d4c;
+  --focus: #434c40;
   --danger: #9a362e;
   --on-danger: #ffffff;
   --danger-soft: #f6e5e1;
   --warning: #7a5b14;
   --warning-soft: #f5ecd5;
-  --success: #355f45;
-  --success-soft: #e2ece3;
+  --success: #3f5f45;
+  --success-soft: #e3ebe2;
   --info: #3d5a6c;
   --info-soft: #e3eaee;
 
   /* Overlays */
   --on-image: #fbf9f4;
-  --scrim: rgb(18 23 20 / 0.55);
+  --scrim: rgb(24 22 20 / 0.55);
 
-  /* Gallery / night surfaces (also used in light mode for dark sections) */
-  --night: #131815;
-  --night-2: #1b221e;
-  --night-3: #242d28;
-  --night-line: #323c36;
-  --night-ink: #eee9de;
-  --night-ink-2: #bdb7aa;
-  --night-ink-3: #a09c94;
+  /* Night surfaces — warm charcoal (also used in light mode for dark sections) */
+  --night: #1b1a18;
+  --night-2: #23211e;
+  --night-3: #2c2a26;
+  --night-line: #3a3733;
+  --night-ink: #f1ede6;
+  --night-ink-2: #c4bdb1;
+  --night-ink-3: #a79f93;
+  --night-accent: #d7bc92;
 
   --radius-sm: 6px;
   --radius: 10px;
@@ -90,38 +98,42 @@
 :root[data-theme="evening"],
 .theme-evening {
   color-scheme: dark;
-  --paper: #131815;
-  --ivory: #1b221e;
-  --surface: #1f2722;
-  --linen: #29322d;
-  --mat: #1a201c;
-  --ink: #eee9de;
-  --ink-2: #cfc9bc;
-  --ink-3: #a8a296;
-  --ink-4: #928d84;
-  --on-evergreen: #131815;
+  --paper: #1b1a18;
+  --ivory: #23211e;
+  --surface: #272522;
+  --linen: #312e2a;
+  --mat: #201e1c;
+  --ink: #f1ede6;
+  --ink-2: #d4cec3;
+  --ink-3: #b3aca0;
+  --ink-4: #a0998d;
+  --on-evergreen: #1b1a18;
   /* Chapter colours, lifted so they read as text on dark paper. */
-  --slate: #6d849a;
-  --terracotta: #b86e53;
-  --moss: #778757;
-  --smoke: #86817b;
-  --evergreen: #a9bfae;
-  --evergreen-deep: #d3e0d5;
-  --evergreen-soft: #24302a;
-  --brass: #c4ad86;
-  --brass-ink: #d2bb93;
-  --brass-soft: #2d2a22;
-  --line: #2f3833;
-  --line-strong: #414c45;
+  --slate: #7d93a8;
+  --terracotta: #c27a5f;
+  --moss: #8a9a66;
+  --smoke: #958e84;
+  --evergreen: #b3bea9;
+  --evergreen-deep: #d6ddcf;
+  --evergreen-soft: #2b2f28;
+  --oxblood: #e0a9ab;
+  --oxblood-deep: #ecc3c4;
+  --oxblood-soft: #3a2729;
+  --on-oxblood: #1b1a18;
+  --brass: #b9a98f;
+  --brass-ink: #d1bfa5;
+  --brass-soft: #2e2a24;
+  --line: #34312d;
+  --line-strong: #46423c;
   --shadow-color: 0 0 0;
-  --focus: #b7d0bf;
-  --danger: #e59a8f;
-  --on-danger: #131815;
-  --danger-soft: #3a2421;
+  --focus: #d6ddcf;
+  --danger: #eba197;
+  --on-danger: #1b1a18;
+  --danger-soft: #3c2522;
   --warning: #e0c27e;
   --warning-soft: #352d1c;
-  --success: #a7cdb1;
-  --success-soft: #1f3127;
+  --success: #abcdb1;
+  --success-soft: #223127;
   --info: #a9c3d3;
   --info-soft: #1f2b33;
 }
@@ -129,38 +141,42 @@
 @media (prefers-color-scheme: dark) {
   :root[data-theme="system"] {
     color-scheme: dark;
-    --paper: #131815;
-    --ivory: #1b221e;
-    --surface: #1f2722;
-    --linen: #29322d;
-    --mat: #1a201c;
-    --ink: #eee9de;
-    --ink-2: #cfc9bc;
-    --ink-3: #a8a296;
-    --ink-4: #928d84;
-  --on-evergreen: #131815;
-  /* Chapter colours, lifted so they read as text on dark paper. */
-  --slate: #6d849a;
-  --terracotta: #b86e53;
-  --moss: #778757;
-  --smoke: #86817b;
-    --evergreen: #a9bfae;
-    --evergreen-deep: #d3e0d5;
-    --evergreen-soft: #24302a;
-    --brass: #c4ad86;
-    --brass-ink: #d2bb93;
-    --brass-soft: #2d2a22;
-    --line: #2f3833;
-    --line-strong: #414c45;
+    --paper: #1b1a18;
+    --ivory: #23211e;
+    --surface: #272522;
+    --linen: #312e2a;
+    --mat: #201e1c;
+    --ink: #f1ede6;
+    --ink-2: #d4cec3;
+    --ink-3: #b3aca0;
+    --ink-4: #a0998d;
+    --on-evergreen: #1b1a18;
+    /* Chapter colours, lifted so they read as text on dark paper. */
+    --slate: #7d93a8;
+    --terracotta: #c27a5f;
+    --moss: #8a9a66;
+    --smoke: #958e84;
+    --evergreen: #b3bea9;
+    --evergreen-deep: #d6ddcf;
+    --evergreen-soft: #2b2f28;
+    --oxblood: #e0a9ab;
+    --oxblood-deep: #ecc3c4;
+    --oxblood-soft: #3a2729;
+    --on-oxblood: #1b1a18;
+    --brass: #b9a98f;
+    --brass-ink: #d1bfa5;
+    --brass-soft: #2e2a24;
+    --line: #34312d;
+    --line-strong: #46423c;
     --shadow-color: 0 0 0;
-    --focus: #b7d0bf;
-    --danger: #e59a8f;
-  --on-danger: #131815;
-    --danger-soft: #3a2421;
+    --focus: #d6ddcf;
+    --danger: #eba197;
+    --on-danger: #1b1a18;
+    --danger-soft: #3c2522;
     --warning: #e0c27e;
     --warning-soft: #352d1c;
-    --success: #a7cdb1;
-    --success-soft: #1f3127;
+    --success: #abcdb1;
+    --success-soft: #223127;
     --info: #a9c3d3;
     --info-soft: #1f2b33;
   }
@@ -181,6 +197,12 @@
   --color-evergreen-soft: var(--evergreen-soft);
   --color-on-evergreen: var(--on-evergreen);
   --color-on-danger: var(--on-danger);
+  --color-oxblood: var(--oxblood);
+  --color-oxblood-deep: var(--oxblood-deep);
+  --color-oxblood-soft: var(--oxblood-soft);
+  --color-on-oxblood: var(--on-oxblood);
+  --color-taupe: var(--taupe);
+  --color-night-accent: var(--night-accent);
   --color-sage: var(--sage);
   --color-stone: var(--stone);
   --color-brass: var(--brass);
@@ -364,7 +386,7 @@
     letter-spacing: 0.13em;
     line-height: 1.4;
     text-transform: uppercase;
-    color: var(--brass-ink);
+    color: var(--oxblood);
   }
   .eyebrow::before {
     content: "";
@@ -401,7 +423,7 @@
     font-size: 4.1em;
     line-height: 0.82;
     padding: 0.06em 0.1em 0 0;
-    color: var(--evergreen);
+    color: var(--oxblood);
   }
   .hairline {
     border-color: var(--line);

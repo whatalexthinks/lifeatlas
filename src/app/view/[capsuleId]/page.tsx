@@ -44,9 +44,9 @@ export default function ViewerCover() {
             <div className="topo-lines absolute inset-0 opacity-30" />
           </div>
         )}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0d110f] via-[#0d110f]/55 to-[#0d110f]/10" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#12110f] via-[#12110f]/55 to-[#12110f]/10" />
         <div className="mx-auto w-full max-w-[1440px] px-5 pb-14 sm:px-10 sm:pb-20">
-          <p className="font-mono text-[0.75rem] uppercase tracking-[0.22em] text-[#d7bd8a] animate-[fade-in_1200ms_var(--ease-out)_200ms_both]">
+          <p className="font-mono text-[0.75rem] uppercase tracking-[0.22em] text-[#d7bc92] animate-[fade-in_1200ms_var(--ease-out)_200ms_both]">
             {capsule.title}
             {capsule.isSample ? " · A fictional sample archive" : ""}
           </p>
@@ -56,7 +56,7 @@ export default function ViewerCover() {
           <div className="mt-6 flex flex-wrap items-end justify-between gap-8">
             <div className="max-w-xl animate-[fade-up_1000ms_var(--ease-out)_700ms_both]">
               {capsule.dedication ? <p className="font-serif text-[1.45rem] italic leading-snug text-[#e9e3d6]">{capsule.dedication}</p> : null}
-              <p className="mt-4 font-mono text-[0.8125rem] tracking-[0.14em] text-[#bdb7aa]">
+              <p className="mt-4 font-mono text-[0.8125rem] tracking-[0.14em] text-[#c4bdb1]">
                 {capsule.birthYear ? `${capsule.birthYear} — ` : ""}
                 {birthplace ? `Born in ${birthplace.name}` : capsule.birthplaceLabel ? `Born in ${capsule.birthplaceLabel}` : ""}
               </p>
@@ -67,11 +67,11 @@ export default function ViewerCover() {
                   setEntered(true);
                   exploreRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="inline-flex h-14 items-center gap-2.5 rounded-full bg-[#f8f6f1] px-7 text-[1.05rem] font-medium text-[#1b221e] shadow-lg transition-transform hover:-translate-y-0.5"
+                className="inline-flex h-14 items-center gap-2.5 rounded-full bg-[#f8f6f1] px-7 text-[1.05rem] font-medium text-[#1b1a18] shadow-lg transition-transform hover:-translate-y-0.5"
               >
                 Explore this life <ArrowDown className="size-5" />
               </button>
-              <Link href={`${base}/timeline`} className="inline-flex h-14 items-center rounded-full border border-white/30 px-6 text-[1rem] text-[#f2eee5] hover:bg-white/10">
+              <Link href={`${base}/timeline`} className="inline-flex h-14 items-center rounded-full border border-white/30 px-6 text-[1rem] text-[#f3efe7] hover:bg-white/10">
                 Skip the introduction
               </Link>
             </div>
@@ -83,7 +83,7 @@ export default function ViewerCover() {
       <section ref={exploreRef} className="mx-auto max-w-[1180px] scroll-mt-16 px-4 pb-24 pt-20 sm:px-8" aria-labelledby="explore-h">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
           <div>
-            <p className={cn("eyebrow", night && "text-[#c4ad86]")}>{entered ? "Welcome in" : "An archive of one life"}</p>
+            <p className={cn("eyebrow", night && "text-[#d7bc92]")}>{entered ? "Welcome in" : "An archive of one life"}</p>
             <h2 id="explore-h" className={cn("mt-4 font-serif text-[clamp(2.4rem,1.8rem+2vw,3.6rem)] leading-[1.02]", night ? "text-night-ink" : "text-ink")}>
               {memories.length ? `${pluralize(memories.length, "story", "stories")}, ${decades.length ? `${decades[0]}s to ${decades[decades.length - 1]}s` : "and counting"}.` : "The first stories are on their way."}
             </h2>
@@ -91,7 +91,7 @@ export default function ViewerCover() {
               <div className={cn("mt-4 text-lead", night ? "text-night-ink-2" : "text-ink-2")}>
                 <p>{canManage ? `Once you add or approve a story, it appears here for the family — with its photographs, places and ${capsule.preferredName}'s voice.` : `When stories are added and approved, they'll appear here — with photographs, places and ${capsule.preferredName}'s voice.`}</p>
                 {canManage ? (
-                  <Link href={`/app/gather?capsule=${capsule.id}`} className={cn("mt-6 inline-flex h-12 items-center gap-2 rounded-full px-6 text-[1rem] font-medium", night ? "bg-[#f8f6f1] text-[#1b221e]" : "bg-evergreen text-on-evergreen")}>
+                  <Link href={`/app/gather?capsule=${capsule.id}`} className={cn("mt-6 inline-flex h-12 items-center gap-2 rounded-full px-6 text-[1rem] font-medium", night ? "bg-[#f8f6f1] text-[#1b1a18]" : "bg-evergreen text-on-evergreen")}>
                     Gather the first memory <ArrowUpRight className="size-4" />
                   </Link>
                 ) : null}
@@ -110,7 +110,7 @@ export default function ViewerCover() {
                 { href: `${base}/photos`, label: "Photographs", sub: `${photos} images`, icon: Images },
               ].map((x) => (
                 <Link key={x.href} href={x.href} className={cn("group flex items-center gap-3 rounded-[16px] p-4 transition-colors", night ? "bg-white/[0.04] ring-1 ring-white/10 hover:bg-white/[0.08]" : "card-paper hover:bg-surface")}>
-                  <x.icon className={cn("size-5 shrink-0", night ? "text-[#c4ad86]" : "text-evergreen")} />
+                  <x.icon className={cn("size-5 shrink-0", night ? "text-[#d7bc92]" : "text-evergreen")} />
                   <span className="min-w-0">
                     <span className={cn("block font-medium", night ? "text-night-ink" : "text-ink")}>{x.label}</span>
                     <span className={cn("block truncate text-[0.8125rem]", night ? "text-night-ink-3" : "text-ink-3")}>{x.sub}</span>
@@ -123,7 +123,7 @@ export default function ViewerCover() {
             <div>
               <p className={cn("catalog mb-3", night && "text-night-ink-3")}>A place to begin</p>
               <MemoryReveal memory={featured} subjectName={capsule.subjectName} animate={false} />
-              <Link href={`${base}/stories/${featured.id}`} className={cn("mt-4 inline-flex items-center gap-1.5 font-medium hover:underline", night ? "text-[#d2bb93]" : "text-evergreen")}>
+              <Link href={`${base}/stories/${featured.id}`} className={cn("mt-4 inline-flex items-center gap-1.5 font-medium hover:underline", night ? "text-[#d7bc92]" : "text-evergreen")}>
                 Read the story <ArrowUpRight className="size-4" />
               </Link>
             </div>
@@ -132,11 +132,11 @@ export default function ViewerCover() {
 
         {chaptersWith.length ? (
           <div className="mt-20">
-            <p className={cn("eyebrow", night && "text-[#c4ad86]")}>Contents</p>
+            <p className={cn("eyebrow", night && "text-[#d7bc92]")}>Contents</p>
             <ol className={cn("mt-6 grid gap-x-10 sm:grid-cols-2", night ? "text-night-ink" : "text-ink")}>
               {chaptersWith.map(({ ch, n }, i) => (
                 <li key={ch.id}>
-                  <Link href={`${base}/stories#ch-${ch.id}`} className={cn("flex items-baseline justify-between gap-4 border-b py-4", night ? "border-white/10 hover:text-[#d7bd8a]" : "border-line hover:text-evergreen")}>
+                  <Link href={`${base}/stories#ch-${ch.id}`} className={cn("flex items-baseline justify-between gap-4 border-b py-4", night ? "border-white/10 hover:text-[#d7bc92]" : "border-line hover:text-evergreen")}>
                     <span className="font-serif text-[1.6rem]">
                       <span className={cn("mr-3 font-mono text-[0.75rem]", night ? "text-night-ink-3" : "text-ink-4")}>{String(i + 1).padStart(2, "0")}</span>
                       {ch.title}

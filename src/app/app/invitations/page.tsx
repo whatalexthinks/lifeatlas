@@ -21,6 +21,7 @@ import type { MessagePreview } from "@/services/contracts";
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, formatDate, relativeTime } from "@/lib/utils";
 import { roleLabels } from "@/domain/policies/permissions";
+import { brand } from "@/config/brand";
 
 function InvitationsInner() {
   const params = useSearchParams();
@@ -413,7 +414,7 @@ function PreviewDialog({ invitationId, onClose, onOpenAs }: { invitationId: stri
       /* clipboard unavailable */
     }
     if (invitation.status === "prepared") await services().communications.simulateSend(invitation.id);
-    toast.success("Link copied", "Share it however you like. LifeAtlas didn't send anything.");
+    toast.success("Link copied", `Share it however you like. ${brand.name} didn't send anything.`);
   };
   return (
     <Dialog

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useParams } from "next/navigation";
 import type { Capsule, Gift, MemoryAttribution, Question } from "@/domain/models";
-import { BrandMark } from "@/components/brand/logo";
+import { BrandMark, Wordmark } from "@/components/brand/logo";
 import { CaptureFlow } from "@/components/capture/capture-flow";
 import { ButtonLink } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/feedback";
@@ -69,10 +69,8 @@ export default function GiftBegin() {
     <div className="min-h-dvh bg-paper">
       <header className="mx-auto flex h-20 max-w-3xl items-center px-5 sm:px-8">
         <span className="inline-flex items-center gap-2.5 text-evergreen">
-          <BrandMark className="size-8" />
-          <span className="font-serif text-[1.4rem] text-ink">
-            Life<em>Atlas</em>
-          </span>
+          <BrandMark className="size-8 text-oxblood" title="" />
+          <Wordmark className="text-ink" />
         </span>
       </header>
       <main id="main" className="mx-auto max-w-3xl px-5 pb-24 sm:px-8">

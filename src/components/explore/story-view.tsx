@@ -61,12 +61,12 @@ export function StoryView({ capsule, memory, scope, hrefFor, tone = "paper", bac
 
       <header className={cn("grid items-end gap-10", lead ? "lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]" : "")}>
         {lead ? (
-          <Mounted caption={media.find((a) => a.id === lead)?.caption} meta={formatFuzzyDate(memory.date, "short")} className={night ? "bg-[#1f2722]" : undefined}>
+          <Mounted caption={media.find((a) => a.id === lead)?.caption} meta={formatFuzzyDate(memory.date, "short")} className={night ? "bg-[#272522]" : undefined}>
             <MediaImage mediaId={lead} className="aspect-[4/3]" priority develop />
           </Mounted>
         ) : null}
         <div>
-          <p className={cn("flex flex-wrap items-center gap-x-2.5 font-mono text-[0.75rem] uppercase tracking-[0.14em]", night ? "text-[#c4ad86]" : "text-brass-ink")}>
+          <p className={cn("flex flex-wrap items-center gap-x-2.5 font-mono text-[0.75rem] uppercase tracking-[0.14em]", night ? "text-[#d7bc92]" : "text-brass-ink")}>
             <span className="inline-flex items-center gap-1.5">
               <span className="size-1.5 rounded-full" style={{ background: chapterColorVar[chapter.color] }} />
               {chapter.title}
@@ -83,7 +83,7 @@ export function StoryView({ capsule, memory, scope, hrefFor, tone = "paper", bac
             ) : null}
           </p>
           <h1 className={cn("mt-5 font-serif text-[clamp(2.6rem,1.9rem+2.8vw,4.6rem)] leading-[1] tracking-[-0.028em]", night ? "text-night-ink" : "text-ink")}>{memory.title}</h1>
-          {memory.quote ? <p className={cn("mt-6 border-l-2 pl-5 font-serif text-[1.45rem] italic leading-snug", night ? "border-[#c4ad86] text-night-ink-2" : "border-evergreen text-ink-2")}>&ldquo;{memory.quote}&rdquo;</p> : null}
+          {memory.quote ? <p className={cn("mt-6 border-l-2 pl-5 font-serif text-[1.45rem] italic leading-snug", night ? "border-[#d7bc92] text-night-ink-2" : "border-evergreen text-ink-2")}>&ldquo;{memory.quote}&rdquo;</p> : null}
           <p className={cn("mt-6 text-[0.9375rem]", night ? "text-night-ink-3" : "text-ink-3")}>
             Shared by <span className={night ? "text-night-ink" : "text-ink"}>{memory.attribution.displayName}</span>
             {memory.attribution.relationship && memory.attribution.relationship !== "Storyteller" ? ` · ${memory.attribution.relationship}` : ""} · {readingMinutes(memory.narrative)} min read
@@ -113,7 +113,7 @@ export function StoryView({ capsule, memory, scope, hrefFor, tone = "paper", bac
           {rest.length ? (
             <div className="mt-12 grid gap-5 sm:grid-cols-2">
               {rest.map((id) => (
-                <Mounted key={id} caption={media.find((a) => a.id === id)?.caption} className={night ? "bg-[#1f2722]" : undefined}>
+                <Mounted key={id} caption={media.find((a) => a.id === id)?.caption} className={night ? "bg-[#272522]" : undefined}>
                   <MediaImage mediaId={id} className="aspect-[4/3]" />
                 </Mounted>
               ))}

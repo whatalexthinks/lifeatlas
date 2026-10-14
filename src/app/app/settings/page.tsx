@@ -14,6 +14,7 @@ import { useMediaQuery } from "@/hooks/use-reveal";
 import { services } from "@/services/factory";
 import { useDemoStore } from "@/store/demo-store";
 import { cn } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 export default function SettingsPage() {
   const hydrated = useHydrated();
@@ -35,7 +36,7 @@ function Settings() {
 
   return (
     <div className="mx-auto max-w-[980px]">
-      <PageHeader eyebrow="Account" title="Settings" description="How LifeAtlas looks and feels for you, and what's kept on this device." />
+      <PageHeader eyebrow="Account" title="Settings" description={`How ${brand.name} looks and feels for you, and what's kept on this device.`} />
 
       <div className="space-y-6">
         <Panel title="Profile" description="How you appear on stories you add and invitations you prepare.">
@@ -77,9 +78,9 @@ function Settings() {
               <div className="mt-3 grid grid-cols-3 gap-3" role="radiogroup" aria-label="Theme">
                 {(
                   [
-                    { value: "light", label: "Daylight", icon: Sun, swatch: "bg-[#f8f8f3] border-[#dfe2d6]", ink: "bg-[#202d27]" },
+                    { value: "light", label: "Daylight", icon: Sun, swatch: "bg-[#f8f6f1] border-[#dfe2d6]", ink: "bg-[#252421]" },
                     { value: "evening", label: "Evening", icon: Moon, swatch: "bg-[#141a17] border-[#2c3631]", ink: "bg-[#e8e6dc]" },
-                    { value: "system", label: "Match device", icon: Monitor, swatch: "bg-[linear-gradient(135deg,#f8f8f3_50%,#141a17_50%)] border-[#cfd3c6]", ink: "bg-[#7a8278]" },
+                    { value: "system", label: "Match device", icon: Monitor, swatch: "bg-[linear-gradient(135deg,#f8f6f1_50%,#141a17_50%)] border-[#cfd3c6]", ink: "bg-[#7a8278]" },
                   ] as const
                 ).map((t) => (
                   <button

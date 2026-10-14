@@ -1,7 +1,7 @@
 import type { Product } from "@/domain/models";
 
 /**
- * The editable LifeAtlas catalog. ALL PRICES ARE TEST PRICES.
+ * The editable OurLifeCapsule catalog. ALL PRICES ARE TEST PRICES.
  * Amounts are integer cents. Operations can edit a local copy in /demo/operations;
  * these defaults are restored on reset.
  */

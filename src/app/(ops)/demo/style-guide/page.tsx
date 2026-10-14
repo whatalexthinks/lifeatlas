@@ -202,7 +202,7 @@ export default function StyleGuidePage() {
               </Button>
             ))}
           </div>
-          <div className="mt-5 flex flex-wrap items-center gap-3 rounded-[16px] bg-[#213d31] p-5">
+          <div className="mt-5 flex flex-wrap items-center gap-3 rounded-[16px] bg-[#2e312a] p-5">
             <Button variant="light">On dark · light</Button>
             <Button variant="outlineLight">On dark · outline</Button>
           </div>

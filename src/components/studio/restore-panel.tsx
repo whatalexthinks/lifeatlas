@@ -17,7 +17,7 @@ type State =
   | { kind: "error"; message: string };
 
 /**
- * Bring an archive back from a LifeAtlas export. The file is checked first — every photo
+ * Bring an archive back from a OurLifeCapsule export. The file is checked first — every photo
  * and recording against the fingerprint recorded when it was exported — and nothing
  * changes until the person confirms. A restore always becomes a new capsule.
  */

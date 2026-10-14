@@ -2,7 +2,7 @@ import type { LifeEvent, Persona, Person, Relationship } from "@/domain/models";
 
 /**
  * THE ELLIS FAMILY — a fictional sample family.
- * These people do not exist and have not endorsed LifeAtlas.
+ * These people do not exist and have not endorsed OurLifeCapsule.
  *
  * Family graph (all dates internally consistent):
  *   Walter Hale (1909–1981) ── Eleanor Hale (1912–1996)

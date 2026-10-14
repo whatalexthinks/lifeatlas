@@ -108,7 +108,7 @@ export function MapView({
       <span className={cn("flex items-center gap-3.5 rounded-[14px] p-2.5 transition-colors", night ? "hover:bg-white/[0.06]" : "hover:bg-ivory/80")}>
         <span className="relative size-16 shrink-0 overflow-hidden rounded-[10px] bg-linen">{m.photoIds[0] ? <MediaImage mediaId={m.photoIds[0]} className="absolute inset-0" /> : null}</span>
         <span className="min-w-0">
-          <span className={cn("catalog block", night && "text-[#c4ad86]")}>{formatFuzzyDate(m.date, "short")}</span>
+          <span className={cn("catalog block", night && "text-[#d7bc92]")}>{formatFuzzyDate(m.date, "short")}</span>
           <span className={cn("block font-serif text-[1.2rem] leading-snug", night ? "text-night-ink" : "text-ink")}>{m.title}</span>
           <span className={cn("block text-[0.8125rem]", night ? "text-night-ink-3" : "text-ink-3")}>{chapterById(m.chapter).title}</span>
         </span>
@@ -219,7 +219,7 @@ export function MapView({
           </div>
           <div ref={listRef} className="lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto lg:pr-1">
             {groups.map((g) => (
-              <section key={g.place.id} data-place={g.place.id} className={cn("mb-4 scroll-mt-4 rounded-[20px] p-4 transition-colors", activePlace === g.place.id ? (night ? "bg-white/[0.06] ring-1 ring-[#c4ad86]/40" : "bg-surface shadow-sm ring-1 ring-line") : "")}>
+              <section key={g.place.id} data-place={g.place.id} className={cn("mb-4 scroll-mt-4 rounded-[20px] p-4 transition-colors", activePlace === g.place.id ? (night ? "bg-white/[0.06] ring-1 ring-[#d7bc92]/40" : "bg-surface shadow-sm ring-1 ring-line") : "")}>
                 <button type="button" onClick={() => select(g.place.id, false)} className="flex w-full items-start justify-between gap-3 text-left">
                   <span>
                     <span className={cn("flex items-center gap-2 font-serif text-[1.45rem] leading-tight", night ? "text-night-ink" : "text-ink")}>

@@ -92,7 +92,7 @@ export default function BoxProofPage() {
         A demonstration proof made in your browser. Nothing is engraved, printed or shipped, and every sheet is marked &ldquo;Demo proof&rdquo;.
       </div>
       <PrintQuality>
-        <main id="main" className="mx-auto flex max-w-3xl flex-col items-center gap-8 px-5 py-10 text-[#202d27] print:block print:p-0">
+        <main id="main" className="mx-auto flex max-w-3xl flex-col items-center gap-8 px-5 py-10 text-[#252421] print:block print:p-0">
           {/* Sheet 1 — the lid */}
           <Sheet title="The lid" heirloomName={heirloom.name} sheet={1}>
             <div className="grid gap-8 sm:grid-cols-[1.1fr_1fr] sm:items-center">
@@ -110,7 +110,7 @@ export default function BoxProofPage() {
               </dl>
             </div>
             <figure className="mt-10">
-              <figcaption className="text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-[#5b6b55]">Engraving at actual proportions</figcaption>
+              <figcaption className="text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-[#5b564d]">Engraving at actual proportions</figcaption>
               <div className="mt-3 grid aspect-[3/1] place-items-center rounded-[6px] p-6" style={{ background: finish.top }}>
                 {engraving ? (
                   <p className="text-center font-serif text-[clamp(1.1rem,0.8rem+1.6vw,1.9rem)] tracking-[0.04em]" style={{ color: box.finish === "white_oak" || box.finish === "linen_wrapped" ? "#3d2c1c" : "#e9dcc6" }}>
@@ -123,15 +123,15 @@ export default function BoxProofPage() {
                 )}
               </div>
             </figure>
-            <section className="mt-10 rounded-[10px] border border-[#d8dccd] p-5" aria-labelledby="checks">
+            <section className="mt-10 rounded-[10px] border border-[#ddd6ca] p-5" aria-labelledby="checks">
               <h2 id="checks" className="flex items-center gap-2 text-[0.9375rem] font-semibold">
-                {warnings ? <AlertTriangle className="size-4 text-[#8a5a12]" /> : <Check className="size-4 text-[#2f6b45]" />}
+                {warnings ? <AlertTriangle className="size-4 text-[#8a5a12]" /> : <Check className="size-4 text-[#3f5f45]" />}
                 {warnings ? `Before you approve: ${pluralize(warnings, "thing")} to check` : "Pre-flight checks passed"}
               </h2>
               <ul className="mt-3 space-y-2 text-[0.9375rem]">
                 {checks.map((c) => (
                   <li key={c.text} className="flex gap-2.5">
-                    {c.ok ? <Check className="mt-0.5 size-4 shrink-0 text-[#2f6b45]" aria-label="OK" /> : <AlertTriangle className="mt-0.5 size-4 shrink-0 text-[#8a5a12]" aria-label="Check" />}
+                    {c.ok ? <Check className="mt-0.5 size-4 shrink-0 text-[#3f5f45]" aria-label="OK" /> : <AlertTriangle className="mt-0.5 size-4 shrink-0 text-[#8a5a12]" aria-label="Check" />}
                     <span>{c.text}</span>
                   </li>
                 ))}
@@ -141,7 +141,7 @@ export default function BoxProofPage() {
 
           {/* Sheet 2 — inside the box */}
           <Sheet title="Inside the box" heirloomName={heirloom.name} sheet={2}>
-            <ol className="divide-y divide-[#e2e4d8]">
+            <ol className="divide-y divide-[#e6e0d5]">
               <Item icon={<BookOpen className="size-5" />} title="Printed book" on={box.contents.book}>
                 {book ? (
                   <>
@@ -161,14 +161,14 @@ export default function BoxProofPage() {
                     {chosenLetters.map((l) => (
                       <li key={l.id}>
                         &ldquo;{l.title}&rdquo; — for {l.recipient.name}
-                        <span className="text-[#5f6a58]"> · {l.status === "draft" ? "draft" : l.sealedAt ? `sealed ${formatDate(l.sealedAt)}` : l.status.replace("_", " ")}</span>
+                        <span className="text-[#5f5a52]"> · {l.status === "draft" ? "draft" : l.sealedAt ? `sealed ${formatDate(l.sealedAt)}` : l.status.replace("_", " ")}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
                   "No letters chosen."
                 )}
-                <p className="mt-1 text-[0.8125rem] text-[#5f6a58]">Printed on cotton paper and tied with linen. Delivery dates aren&rsquo;t scheduled by printing them.</p>
+                <p className="mt-1 text-[0.8125rem] text-[#5f5a52]">Printed on cotton paper and tied with linen. Delivery dates aren&rsquo;t scheduled by printing them.</p>
               </Item>
               <Item icon={<ImageIcon className="size-5" />} title={`Photograph prints · 5 × 7 in`} on={box.contents.photoPrints > 0}>
                 {chosenPhotos.length ? (
@@ -176,7 +176,7 @@ export default function BoxProofPage() {
                     {chosenPhotos.map((p) => (
                       <figure key={p.id} className="bg-white p-1 shadow-[0_1px_3px_rgb(0_0_0/0.2)]">
                         <MediaImage asset={p} className="aspect-[5/7]" />
-                        <figcaption className="mt-1 truncate text-[0.625rem] text-[#5f6a58]">{p.caption || p.alt}</figcaption>
+                        <figcaption className="mt-1 truncate text-[0.625rem] text-[#5f5a52]">{p.caption || p.alt}</figcaption>
                       </figure>
                     ))}
                   </div>
@@ -200,10 +200,10 @@ export default function BoxProofPage() {
 
 function Sheet({ title, heirloomName, sheet, children }: { title: string; heirloomName: string; sheet: number; children: React.ReactNode }) {
   return (
-    <article className="proof-sheet relative w-full bg-[#fbfaf4] px-8 py-10 shadow-[0_20px_40px_-24px_rgb(0_0_0/0.45)] sm:px-12 sm:py-12">
-      <header className="mb-8 flex items-baseline justify-between gap-4 border-b border-[#d8dccd] pb-4">
+    <article className="proof-sheet relative w-full bg-[#fbf9f5] px-8 py-10 shadow-[0_20px_40px_-24px_rgb(0_0_0/0.45)] sm:px-12 sm:py-12">
+      <header className="mb-8 flex items-baseline justify-between gap-4 border-b border-[#ddd6ca] pb-4">
         <h1 className="font-serif text-[1.9rem] leading-none">{title}</h1>
-        <p className="text-right font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[#5f6a58]">
+        <p className="text-right font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-[#5f5a52]">
           {heirloomName} · sheet {sheet} of 2
         </p>
       </header>
@@ -216,7 +216,7 @@ function Sheet({ title, heirloomName, sheet, children }: { title: string; heirlo
 function Spec({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#5b6b55]">{label}</dt>
+      <dt className="text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#5b564d]">{label}</dt>
       <dd className="mt-1">{children}</dd>
     </div>
   );
@@ -231,7 +231,7 @@ function Item({ icon, title, on, children }: { icon: React.ReactNode; title: str
       <div className="min-w-0 flex-1 text-[0.9375rem]">
         <p className="flex flex-wrap items-baseline justify-between gap-2 font-medium">
           {title}
-          <span className={on ? "text-[0.8125rem] font-normal text-[#2f6b45]" : "text-[0.8125rem] font-normal text-[#5f6a58]"}>{on ? "Included" : "Not included"}</span>
+          <span className={on ? "text-[0.8125rem] font-normal text-[#3f5f45]" : "text-[0.8125rem] font-normal text-[#5f5a52]"}>{on ? "Included" : "Not included"}</span>
         </p>
         {on ? <div className="mt-1 text-[#3b4740]">{children}</div> : null}
       </div>

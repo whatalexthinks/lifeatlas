@@ -1,7 +1,7 @@
 import type { ChapterKey, Question, QuestionCategory } from "@/domain/models";
 
 /**
- * The LifeAtlas question library — 85 authored prompts across 17 sections.
+ * The OurLifeCapsule question library — 85 authored prompts across 17 sections.
  * Follow-ups are scripted (no AI) and offered gently after an answer.
  */
 

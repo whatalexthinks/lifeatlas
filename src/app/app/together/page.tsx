@@ -18,6 +18,7 @@ import { useDb, useHydrated } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { flushSave } from "@/store/demo-store";
 import { cn, formatDate, formatDuration, pluralize, relativeTime } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 const deckCategories: { value: QuestionCategory; label: string }[] = [
   { value: "Holidays", label: "Holidays" },
@@ -189,12 +190,12 @@ function Setup({ onStart }: { onStart: (s: GatheringSession) => void }) {
               </Field>
             </div>
           </Panel>
-          <div className="rounded-[16px] bg-[#213d31] p-6 text-[#f3f3e8]">
-            <p className="text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#bdc9aa]">Tonight</p>
+          <div className="rounded-[16px] bg-[#2e312a] p-6 text-[#f3efe7]">
+            <p className="text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#c9c2b3]">Tonight</p>
             <p className="mt-3 font-serif text-[1.9rem] leading-tight">
               {pluralize(guests.length, "person", "people")}, {Math.min(Number(length), pool.length)} questions
             </p>
-            <p className="mt-2 text-[0.9375rem] text-[#c0cbbb]">
+            <p className="mt-2 text-[0.9375rem] text-[#c9c2b3]">
               {guests.length === 0 ? "Add at least one person to begin." : pool.length === 0 ? "Choose at least one kind of question." : `${pool.length} questions in the deck. Everyone takes a turn in order; anyone can pass.`}
             </p>
             <Button size="lg" variant="light" block className="mt-6" disabled={guests.length < 1 || pool.length === 0} loading={starting} trailing={<ArrowRight className="size-4" />} onClick={() => void begin()}>
@@ -325,12 +326,12 @@ function Table({ session }: { session: GatheringSession }) {
       </div>
 
       {handoff ? (
-        <div className="grid min-h-[460px] place-items-center rounded-[20px] bg-[#213d31] px-6 py-16 text-center text-[#f3f3e8]" aria-live="polite">
+        <div className="grid min-h-[460px] place-items-center rounded-[20px] bg-[#2e312a] px-6 py-16 text-center text-[#f3efe7]" aria-live="polite">
           <div>
-            <span className="mx-auto grid size-14 place-items-center rounded-full bg-[#f3f3e8]/10">
+            <span className="mx-auto grid size-14 place-items-center rounded-full bg-[#f3efe7]/10">
               <Check className="size-6" />
             </span>
-            <p className="mt-6 text-[0.8125rem] font-semibold uppercase tracking-[0.12em] text-[#bdc9aa]">Kept</p>
+            <p className="mt-6 text-[0.8125rem] font-semibold uppercase tracking-[0.12em] text-[#c9c2b3]">Kept</p>
             <p className="mx-auto mt-3 max-w-md font-serif text-[clamp(2rem,1.6rem+1.6vw,3rem)] leading-[1.08]">
               Pass it to <em>{speaker.name}.</em>
             </p>
@@ -586,30 +587,30 @@ function Booklet({ session }: { session: GatheringSession }) {
         </div>
       </div>
 
-      <article className="rounded-[6px] bg-[#fbfaf4] px-7 py-12 text-[#202d27] shadow-[0_30px_60px_-40px_rgb(33_61_49/0.5)] print:shadow-none sm:px-16 sm:py-16">
-        <header className="border-b border-[#d8dccd] pb-10 text-center">
-          <p className="text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-[#5b6b55]">{formatDate(session.startedAt, "long")}</p>
+      <article className="rounded-[6px] bg-[#fbf9f5] px-7 py-12 text-[#252421] shadow-[0_30px_60px_-40px_rgb(33_61_49/0.5)] print:shadow-none sm:px-16 sm:py-16">
+        <header className="border-b border-[#ddd6ca] pb-10 text-center">
+          <p className="text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-[#5b564d]">{formatDate(session.startedAt, "long")}</p>
           <h1 className="mx-auto mt-5 max-w-xl !font-serif text-[clamp(2.4rem,1.8rem+2.4vw,3.6rem)] !font-normal leading-[1.04] tracking-[-0.035em]">{session.occasion}</h1>
-          <p className="mt-4 font-serif text-[1.15rem] italic text-[#55604f]">With {joinNames(session.guests.map((g) => g.name))}</p>
+          <p className="mt-4 font-serif text-[1.15rem] italic text-[#55504a]">With {joinNames(session.guests.map((g) => g.name))}</p>
         </header>
         {answers.length === 0 ? (
-          <p className="py-16 text-center text-[#55604f]">The table was quiet tonight. That&rsquo;s alright — try again another evening.</p>
+          <p className="py-16 text-center text-[#55504a]">The table was quiet tonight. That&rsquo;s alright — try again another evening.</p>
         ) : (
-          <ol className="divide-y divide-[#e2e4d8]">
+          <ol className="divide-y divide-[#e6e0d5]">
             {answers.map((a, i) => {
               const audio = a.memory.audioId ? media.find((m) => m.id === a.memory.audioId) : undefined;
               return (
                 <li key={a.memory.id} className="break-inside-avoid py-10">
-                  <p className="font-mono text-[0.75rem] text-[#5f6a58]">{String(i + 1).padStart(2, "0")}</p>
+                  <p className="font-mono text-[0.75rem] text-[#5f5a52]">{String(i + 1).padStart(2, "0")}</p>
                   <h2 className="mt-2 font-serif text-[1.7rem] leading-tight tracking-[-0.02em]">{a.question}</h2>
-                  <p className="mt-2 text-[0.875rem] font-medium text-[#476049]">{a.speakerName}</p>
-                  {a.memory.narrative ? <p className="mt-4 whitespace-pre-line font-serif text-[1.15rem] leading-[1.65] text-[#2c332d]">{a.memory.narrative}</p> : null}
+                  <p className="mt-2 text-[0.875rem] font-medium text-[#586354]">{a.speakerName}</p>
+                  {a.memory.narrative ? <p className="mt-4 whitespace-pre-line font-serif text-[1.15rem] leading-[1.65] text-[#2c2a27]">{a.memory.narrative}</p> : null}
                   {audio ? (
                     <>
                       <div className="no-print mt-4">
                         <AudioPlayer asset={audio} title={`${a.speakerName}'s answer`} variant="inline" />
                       </div>
-                      <p className="mt-3 hidden font-serif italic text-[#55604f] print:block">A recorded answer ({formatDuration(audio.durationSec ?? 0)}) — listen in the family archive.</p>
+                      <p className="mt-3 hidden font-serif italic text-[#55504a] print:block">A recorded answer ({formatDuration(audio.durationSec ?? 0)}) — listen in the family archive.</p>
                     </>
                   ) : null}
                 </li>
@@ -617,7 +618,7 @@ function Booklet({ session }: { session: GatheringSession }) {
             })}
           </ol>
         )}
-        <footer className="border-t border-[#d8dccd] pt-8 text-center text-[0.8125rem] text-[#5f6a58]">Kept in {capsule?.subjectName}&rsquo;s capsule with LifeAtlas</footer>
+        <footer className="border-t border-[#ddd6ca] pt-8 text-center text-[0.8125rem] text-[#5f5a52]">Kept in {capsule?.subjectName}&rsquo;s capsule with {brand.name}</footer>
       </article>
       <p className="no-print mt-6 text-center text-[0.875rem] text-ink-3">
         Answers from guests are waiting in <Link href="/app/invitations?tab=review" className="text-link">review</Link> — tidy titles, add dates, and choose who sees them.

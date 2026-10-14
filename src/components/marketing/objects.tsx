@@ -3,7 +3,7 @@ import { BrandMark } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 export const bookColors = {
-  evergreen: { cloth: "#2f4339", edge: "#22322a", foil: "#d7bd8a" },
+  evergreen: { cloth: "#2f4339", edge: "#22322a", foil: "#d7bc92" },
   oat: { cloth: "#d9cdb3", edge: "#c3b494", foil: "#6f5a36" },
   terracotta: { cloth: "#9a5238", edge: "#7a3f2a", foil: "#f0d9a8" },
   slate: { cloth: "#4b5d6e", edge: "#394856", foil: "#e6d3a8" },

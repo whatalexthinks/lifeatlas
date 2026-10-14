@@ -1,5 +1,5 @@
 /**
- * Shared primitives for the LifeAtlas domain.
+ * Shared primitives for the OurLifeCapsule domain.
  * Every entity uses string IDs with a readable prefix and ISO-8601 timestamps,
  * which maps 1:1 onto a future Postgres schema (text PK / timestamptz).
  */

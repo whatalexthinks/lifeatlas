@@ -32,6 +32,7 @@ import { useDb, useHydrated, usePendingReviewCount, usePersistence, usePersona }
 import { cn, relativeTime } from "@/lib/utils";
 import { NotificationsButton } from "./notifications";
 import { PersonaSwitcher } from "./persona-switcher";
+import { brand } from "@/config/brand";
 
 type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }>; badge?: number; match?: (p: string) => boolean };
 
@@ -148,7 +149,7 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
 
       {/* Tablet compressed rail */}
       <aside className="sticky top-0 hidden h-dvh flex-col items-center gap-1 border-r border-line bg-ivory/50 py-4 md:flex lg:hidden" aria-label="Studio navigation">
-        <Link href="/app" aria-label="LifeAtlas studio home" className="mb-3 text-evergreen">
+        <Link href="/app" aria-label={`${brand.name} studio home`} className="mb-3 text-evergreen">
           <BrandMark className="size-8" />
         </Link>
         <PersonaSwitcher compact side="right" />

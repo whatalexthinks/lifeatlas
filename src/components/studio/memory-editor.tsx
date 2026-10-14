@@ -20,6 +20,7 @@ import { chapters } from "@/data/chapters";
 import { useDb, usePersona, useRole } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { cn, relativeTime } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 export function MemoryEditorSheet({ memory, capsule, open, onOpenChange }: { memory: Memory | undefined; capsule: Capsule; open: boolean; onOpenChange: (v: boolean) => void }) {
   // The editor writes whether it has unsaved changes; closing then asks before discarding them.
@@ -324,7 +325,7 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
                   Remove recording
                 </Button>
               </div>
-              <Field label="Transcript" htmlFor="ed-transcript" optional hint="Typed by family. LifeAtlas never invents a transcript.">
+              <Field label="Transcript" htmlFor="ed-transcript" optional hint={`Typed by family. ${brand.name} never invents a transcript.`}>
                 <Textarea id="ed-transcript" value={transcript} onChange={(e) => setTranscript(e.target.value)} className="min-h-28" />
               </Field>
             </>

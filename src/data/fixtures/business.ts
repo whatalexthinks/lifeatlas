@@ -10,6 +10,7 @@ import type {
   SuccessorDesignation,
   SupportRequest,
 } from "@/domain/models";
+import { brand } from "@/config/brand";
 
 /* ----------------------------- Orders ----------------------------- */
 
@@ -280,7 +281,7 @@ export const notifications: Notification[] = [
 /* ----------------------------- Support ---------------------------- */
 
 export const supportRequests: SupportRequest[] = [
-  { id: "sup_1", createdAt: "2026-10-08T10:00:00.000Z", from: "Sample customer A", topic: "export", subject: "Will my export open without LifeAtlas?", body: "If the company disappeared, could I still open the files?", status: "resolved_demo", isSample: true },
+  { id: "sup_1", createdAt: "2026-10-08T10:00:00.000Z", from: "Sample customer A", topic: "export", subject: `Will my export open without ${brand.name}?`, body: "If the company disappeared, could I still open the files?", status: "resolved_demo", isSample: true },
   { id: "sup_2", createdAt: "2026-10-10T14:00:00.000Z", from: "Sample customer B", topic: "print", subject: "Can I change a photo after approving the proof?", body: "I noticed a typo in a caption.", status: "open_demo", isSample: true },
   { id: "sup_3", createdAt: "2026-10-11T09:30:00.000Z", from: "Sample customer C", topic: "access", subject: "My father can't hear the record prompt", body: "He uses hearing aids. Is there a larger-text, no-audio mode?", status: "new_demo", isSample: true },
   { id: "sup_4", createdAt: "2026-10-12T16:45:00.000Z", from: "Sample customer D", topic: "privacy", subject: "Remove a story my cousin added", body: "How do I remove something someone else contributed?", status: "new_demo", isSample: true },

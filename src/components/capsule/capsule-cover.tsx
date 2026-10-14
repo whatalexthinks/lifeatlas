@@ -4,13 +4,14 @@ import * as React from "react";
 import type { Capsule } from "@/domain/models";
 import { MediaImage } from "@/components/media/media-image";
 import { cn } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 export const paletteStyles: Record<Capsule["theme"]["palette"], { bg: string; ink: string; accent: string; soft: string; label: string }> = {
-  evergreen: { bg: "#2f4339", ink: "#f2eee5", accent: "#d7bd8a", soft: "#e3e8e1", label: "Evergreen" },
+  evergreen: { bg: "#2f4339", ink: "#f3efe7", accent: "#d7bc92", soft: "#e3e8e1", label: "Evergreen" },
   terracotta: { bg: "#8e4b33", ink: "#fbf1e6", accent: "#f0d9a8", soft: "#f3e3da", label: "Terracotta" },
   slate: { bg: "#46586a", ink: "#eef1f3", accent: "#e6d3a8", soft: "#e2e7ec", label: "Slate" },
   linen: { bg: "#e7dfcf", ink: "#242824", accent: "#8a6d43", soft: "#f3eee3", label: "Linen" },
-  night: { bg: "#161c19", ink: "#eee9de", accent: "#c4ad86", soft: "#2a322d", label: "Night" },
+  night: { bg: "#161c19", ink: "#f1ede6", accent: "#d7bc92", soft: "#2a322d", label: "Night" },
 };
 
 export function typographyClass(t: Capsule["theme"]["typography"]) {
@@ -66,7 +67,7 @@ export function CapsuleCover({
     <div className={cn("relative isolate flex flex-col justify-between overflow-hidden p-5 sm:p-6", className)} style={{ backgroundColor: p.bg, color: p.ink }}>
       <div className="topo-lines pointer-events-none absolute inset-0 opacity-30" aria-hidden />
       <p className="relative font-mono text-[0.6875rem] uppercase tracking-[0.16em]" style={{ color: p.accent }}>
-        {showMeta ? capsule.title : "LifeAtlas"}
+        {showMeta ? capsule.title : `${brand.name}`}
       </p>
       <div className="relative">
         <p className={cn("leading-[0.98]", typographyClass(capsule.theme.typography), nameSize)}>{capsule.subjectName}</p>

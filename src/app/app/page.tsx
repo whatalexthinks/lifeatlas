@@ -198,9 +198,9 @@ export default function StudioHome() {
           </Panel>
 
           {nextQuestion ? (
-            <section className="relative overflow-hidden rounded-[20px] bg-[#213d31] p-6 text-[#f3f3e8]">
+            <section className="relative overflow-hidden rounded-[20px] bg-[#2e312a] p-6 text-[#f3efe7]">
               <div className="topo-lines pointer-events-none absolute inset-0 opacity-20" aria-hidden />
-              <p className="relative flex items-center gap-2 text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-[#d7bd8a]">
+              <p className="relative flex items-center gap-2 text-[0.75rem] font-semibold uppercase tracking-[0.16em] text-[#d7bc92]">
                 <MessageCircleQuestion className="size-4" /> Next question for {featuredCapsule.preferredName}
               </p>
               <p className="relative mt-4 font-serif text-[1.65rem] leading-[1.15]">{nextQuestion.text}</p>

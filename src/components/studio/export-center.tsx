@@ -11,6 +11,7 @@ import { useDb } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import type { ExportPreview } from "@/services/contracts";
 import { cn, downloadBlob, formatBytes, relativeTime } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 const defaults: ExportOptions = { includeAudio: true, includePhotos: true, includePrivate: false, includeDrafts: false, includeSamplePlates: true };
 
@@ -146,7 +147,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
               ))}
             </ul>
           )}
-          <p className="px-3 pb-1 text-[0.75rem] text-ink-4">Files aren&rsquo;t stored by LifeAtlas after download — build a fresh copy any time.</p>
+          <p className="px-3 pb-1 text-[0.75rem] text-ink-4">Files aren&rsquo;t stored by {brand.name} after download — build a fresh copy any time.</p>
         </Panel>
       </div>
     </div>

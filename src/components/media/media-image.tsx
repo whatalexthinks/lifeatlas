@@ -149,7 +149,7 @@ export function Mounted({ children, caption, meta, className, tilt = 0 }: { chil
 /** Uncropped image for lightboxes. */
 export function LightboxImage({ asset, className }: { asset: MediaAsset; className?: string }) {
   const { url, error } = useMediaUrl(asset);
-  if (error) return <p className="text-[0.9375rem] text-[#bdb7aa]">{error}</p>;
+  if (error) return <p className="text-[0.9375rem] text-[#c4bdb1]">{error}</p>;
   if (!url) return <div className="skeleton h-[50dvh] w-[min(80vw,900px)] rounded-[8px] opacity-20" aria-hidden />;
   return <img src={url} alt={asset.alt} className={cn("max-h-[72dvh] max-w-full rounded-[4px] object-contain shadow-2xl", className)} />;
 }

@@ -6,6 +6,7 @@ import { canTransition, invitationTransitions } from "@/domain/workflows/state-m
 import { token as makeToken, uid } from "@/lib/utils";
 import { fail, notConfigured, ok, type CommunicationsProvider } from "../contracts";
 import { actorName, db, latency, pushNotification, store } from "./shared";
+import { brand } from "@/config/brand";
 
 function setStatus(id: string, to: Invitation["status"], note?: string) {
   store().mutate(
@@ -86,7 +87,7 @@ export const mockCommunications: CommunicationsProvider = {
       subject: inv.role === "storyteller" ? `${from} would love to hear your stories` : `A story for ${about}?`,
       preheader: "One question, one story. No account needed.",
       body,
-      sms: `${from} invited you to add a story to ${about}'s LifeAtlas: ${link}`,
+      sms: `${from} invited you to add a story to ${about}'s ${brand.name}: ${link}`,
       link,
     });
   },
@@ -96,7 +97,7 @@ export const mockCommunications: CommunicationsProvider = {
     if (!inv) return fail("not_found", "Invitation not found.");
     if (!canTransition(invitationTransitions, inv.status, "simulated_sent")) return fail("conflict", "This invitation can't be marked as shared right now.");
     await latency();
-    const out = setStatus(invitationId, "simulated_sent", "Link shared from this device — no email or text was sent by LifeAtlas");
+    const out = setStatus(invitationId, "simulated_sent", `Link shared from this device — no email or text was sent by ${brand.name}`);
     pushNotification({ kind: "invitation", title: `Invitation ready for ${inv.recipientName}`, body: "Invitation preview only — no email was sent. Share the link yourself.", href: "/app/invitations" });
     return ok({ ...out });
   },

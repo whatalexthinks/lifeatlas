@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { OpsHeader } from "@/components/ops/ops-header";
+import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: { default: "Operations demo", template: "%s · LifeAtlas operations demo" },
+  title: { default: "Operations demo", template: `%s · ${brand.name} operations demo` },
   robots: { index: false, follow: false },
 };
 
