@@ -116,15 +116,12 @@ export const personas: Persona[] = [
     ],
   },
   {
-    id: "persona_daniel",
+    id: "persona_jonah",
     kind: "viewer",
-    name: "Daniel Ellis",
-    personId: "per_daniel",
+    name: "Jonah Reed",
+    personId: "per_jonah",
     description: "Family viewer. Sees approved, family-visible memories only.",
-    roles: [
-      { capsuleId: "cap_margaret", role: "viewer" },
-      { capsuleId: "cap_thomas", role: "contributor" },
-    ],
+    roles: [{ capsuleId: "cap_margaret", role: "viewer" }],
   },
   {
     id: "persona_ops",

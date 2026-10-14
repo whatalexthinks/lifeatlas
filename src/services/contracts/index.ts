@@ -102,6 +102,8 @@ export interface AuthProvider {
   getSession(): Promise<ServiceResult<Session>>;
   /** Demo only: switch the active persona. */
   switchPersona(personaId: string): Promise<ServiceResult<Session>>;
+  /** Demo only: see the studio and viewer as a family member, using their current roles. */
+  previewAsPerson(personId: string): Promise<ServiceResult<Session>>;
   signInWithEmail(email: string): Promise<ServiceResult<{ magicLinkSent: boolean }>>;
   enrollMfa(): Promise<ServiceResult<{ secretUri: string }>>;
   signOut(): Promise<ServiceResult<null>>;

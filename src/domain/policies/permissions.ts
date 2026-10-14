@@ -1,4 +1,4 @@
-import type { Capsule, Memory, MemoryPrivacy, Persona, Role } from "@/domain/models";
+import type { Capsule, CapsuleMembership, Memory, MemoryPrivacy, Persona, Role } from "@/domain/models";
 
 /**
  * Permission predicates. In Part One these drive what the UI shows for the
@@ -51,9 +51,24 @@ export const roleLabels: Record<Role, { label: string; description: string }> = 
   successor: { label: "Successor", description: "A designated future steward. No access until a verified handover (Part Two)." },
 };
 
-export function roleFor(persona: Persona | undefined, capsuleId: string): Role | null {
+/** Highest first. Successor is left out: it grants nothing until a verified handover. */
+const roleRank: Role[] = ["owner", "organizer", "storyteller", "contributor", "viewer"];
+
+/** A person's working role on a capsule, from their active memberships. */
+export function membershipRole(memberships: CapsuleMembership[], personId: string, capsuleId: string): Role | null {
+  const held = memberships.filter((m) => m.personId === personId && m.capsuleId === capsuleId && m.status === "active").map((m) => m.role);
+  return roleRank.find((r) => held.includes(r)) ?? null;
+}
+
+/**
+ * The role the selected demo identity holds on a capsule. When memberships are given they
+ * decide (so a role changed on the Family page shows everywhere at once); otherwise the
+ * persona's own list is used.
+ */
+export function roleFor(persona: Persona | undefined, capsuleId: string, memberships?: CapsuleMembership[]): Role | null {
   if (!persona) return null;
   if (persona.kind === "operations") return null;
+  if (persona.personId && memberships) return membershipRole(memberships, persona.personId, capsuleId);
   return persona.roles.find((r) => r.capsuleId === capsuleId)?.role ?? null;
 }
 

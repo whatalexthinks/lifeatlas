@@ -24,9 +24,10 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { BrandMark, Logo } from "@/components/brand/logo";
-import { ButtonLink } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { useBackToSelf, useOwnPersona } from "./preview-banner";
 import { Skeleton } from "@/components/ui/feedback";
-import { useHydrated, usePendingReviewCount, usePersistence, usePersona } from "@/hooks/use-data";
+import { useDb, useHydrated, usePendingReviewCount, usePersistence, usePersona } from "@/hooks/use-data";
 import { cn, relativeTime } from "@/lib/utils";
 import { NotificationsButton } from "./notifications";
 import { PersonaSwitcher } from "./persona-switcher";
@@ -265,12 +266,12 @@ function TabLink({ href, label, icon: Icon, active, badge }: { href: string; lab
 
 function NotOrganizer() {
   const persona = usePersona();
-  const target =
-    persona.kind === "storyteller"
-      ? { href: "/contribute/margaret-stories", label: "Open Margaret's invitation" }
-      : persona.kind === "contributor"
-        ? { href: "/contribute/emma-blue-bowl", label: "Open Emma's invitation" }
-        : { href: "/view/cap_margaret", label: "Open the family archive" };
+  const own = useOwnPersona();
+  const back = useBackToSelf();
+  const invitation = useDb((d) => d.invitations.find((i) => i.personId && i.personId === persona.personId && i.role !== "viewer" && !["revoked_demo", "expired_demo", "revoked", "expired"].includes(i.status)));
+  const capsuleId = useDb((d) => d.memberships.find((m) => m.personId === persona.personId && m.status === "active" && m.role !== "successor")?.capsuleId) ?? "cap_margaret";
+  const first = persona.name.split(" ")[0];
+  const target = invitation ? { href: `/contribute/${invitation.token}`, label: `Open ${first}'s invitation` } : { href: `/view/${capsuleId}`, label: "Open the family archive" };
   return (
     <div className="mx-auto max-w-xl py-16 text-center">
       <p className="eyebrow justify-center">Viewing as {persona.name}</p>
@@ -282,6 +283,9 @@ function NotOrganizer() {
         <ButtonLink href={target.href} size="lg">
           {target.label}
         </ButtonLink>
+        <Button size="lg" variant="secondary" onClick={() => void back()}>
+          Back to {own.name.split(" ")[0]}
+        </Button>
         <PersonaSwitcherInline />
       </div>
       <p className="mt-6 text-[0.8125rem] text-ink-3">This gating is a simulation of permissions. Real access control is enforced on the server in a later release.</p>

@@ -121,6 +121,7 @@ export const mockCommunications: CommunicationsProvider = {
     if (inv.status === "prepared") setStatus(inv.id, "simulated_sent", "Link opened on this device");
     const cur = db().invitations.find((i) => i.id === inv.id)!;
     if (!canTransition(invitationTransitions, cur.status, "accepted_demo")) return fail("conflict", "This invitation can't be accepted.");
+    joinFamily(inv.id);
     return ok({ ...setStatus(inv.id, "accepted_demo") });
   },
 
@@ -172,3 +173,24 @@ export const mockCommunications: CommunicationsProvider = {
     return ok({ ...db().contributions.find((c) => c.id === id)! });
   },
 };
+
+/**
+ * Opening an invitation makes the person part of the family: someone new is added to
+ * People, and they get the invited role on the capsule unless they already have one.
+ */
+function joinFamily(invitationId: string) {
+  store().mutate((d) => {
+    const inv = d.invitations.find((i) => i.id === invitationId);
+    if (!inv) return;
+    const now = new Date().toISOString();
+    if (!inv.personId || !d.people.some((p) => p.id === inv.personId)) {
+      const [givenName, ...rest] = inv.recipientName.trim().split(/\s+/);
+      const id = uid("per");
+      d.people.push({ id, displayName: inv.recipientName.trim(), givenName, familyName: rest.join(" "), shortBio: inv.relationship || undefined, isSample: false, createdAt: now, updatedAt: now });
+      inv.personId = id;
+    }
+    const personId = inv.personId;
+    if (!d.memberships.some((m) => m.capsuleId === inv.capsuleId && m.personId === personId && m.status === "active" && m.role !== "successor"))
+      d.memberships.push({ id: uid("mb"), capsuleId: inv.capsuleId, personId, role: inv.role, status: "active", grantedAt: now, enforcement: "simulated" });
+  });
+}

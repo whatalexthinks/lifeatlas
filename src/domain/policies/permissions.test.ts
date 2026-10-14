@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { can, canEditMemory, canViewMemory, isExportEligible, isPrintEligible } from "./permissions";
-import { memory } from "@/tests/fixtures";
+import { can, canEditMemory, canViewMemory, isExportEligible, isPrintEligible, membershipRole, roleFor } from "./permissions";
+import { memory, seed } from "@/tests/fixtures";
 
 describe("roles", () => {
   it("reserves billing and deletion for the owner", () => {
@@ -13,6 +13,20 @@ describe("roles", () => {
   });
   it("treats no role as no capability", () => {
     expect(can(null, "view_approved")).toBe(false);
+  });
+  it("takes the highest active role, and a successor designation alone grants nothing", () => {
+    const { memberships } = seed();
+    expect(membershipRole(memberships, "per_daniel", "cap_margaret")).toBe("contributor"); // also a successor
+    expect(membershipRole(memberships, "per_jonah", "cap_thomas")).toBeNull();
+    const onlySuccessor = memberships.filter((m) => !(m.personId === "per_daniel" && m.role === "contributor"));
+    expect(membershipRole(onlySuccessor, "per_daniel", "cap_margaret")).toBeNull();
+  });
+  it("follows memberships, so a role changed on the Family page applies everywhere", () => {
+    const { memberships, personas } = seed();
+    const jonah = personas.find((p) => p.personId === "per_jonah")!;
+    expect(roleFor(jonah, "cap_margaret", memberships)).toBe("viewer");
+    const removed = memberships.map((m) => (m.personId === "per_jonah" ? { ...m, status: "removed" as const } : m));
+    expect(roleFor(jonah, "cap_margaret", removed)).toBeNull();
   });
 });
 

@@ -6,9 +6,10 @@ import { useParams, usePathname } from "next/navigation";
 import { ArrowUpRight, Lock, Moon, Sun } from "lucide-react";
 import type { Capsule, Memory } from "@/domain/models";
 import { BrandMark } from "@/components/brand/logo";
-import { ButtonLink } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/feedback";
 import { PersonaSwitcher } from "@/components/studio/persona-switcher";
+import { PreviewBanner, useBackToSelf, useOwnPersona } from "@/components/studio/preview-banner";
 import { useCapsule, useHydrated, usePersona, useRole } from "@/hooks/use-data";
 import { cn } from "@/lib/utils";
 
@@ -92,7 +93,8 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
   }
 
   const canManage = role === "owner" || role === "organizer";
-  const allowed = canManage || (capsule.viewerEnabled && (role !== null || capsule.isSample));
+  // The sample archive is open to demo visitors; a family member still needs a role on it.
+  const allowed = canManage || (capsule.viewerEnabled && (role !== null || (capsule.isSample && !persona.personId)));
   if (!allowed) {
     return (
       <Shell night>
@@ -104,7 +106,8 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
           <p className="mt-4 text-night-ink-2">
             {capsule.viewerEnabled ? "Only people the organizer invites can open it." : "The organizer hasn't turned on the family viewer."} In this preview the check is simulated for the selected demo identity — real access control arrives with accounts.
           </p>
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <BackToSelfButton />
             <div className="rounded-full bg-white/10 px-1">
               <PersonaSwitcher tone="night" />
             </div>
@@ -173,6 +176,7 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
         </header>
+        <PreviewBanner capsuleId={capsule.id} tone={night ? "night" : "paper"} />
         <main id="main">{children}</main>
         <footer className={cn("border-t px-4 py-10 text-center text-[0.8125rem] sm:px-8", night ? "border-white/[0.07] text-night-ink-3" : "border-line text-ink-3")}>
           A private LifeAtlas archive{capsule.isSample ? " · Fictional sample family" : ""} · Never publicly listed ·{" "}
@@ -210,5 +214,17 @@ export function ViewerPage({ title, eyebrow, lead, children, wide }: { title: Re
       </header>
       {children}
     </div>
+  );
+}
+
+function BackToSelfButton() {
+  const persona = usePersona();
+  const own = useOwnPersona();
+  const back = useBackToSelf();
+  if (persona.id === own.id) return null;
+  return (
+    <Button variant="light" onClick={() => void back()}>
+      Back to {own.name.split(" ")[0]}
+    </Button>
   );
 }

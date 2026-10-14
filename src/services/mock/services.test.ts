@@ -98,6 +98,43 @@ describe("family roles", () => {
     expect(active()).toBeUndefined();
     expect(db().auditEvents[0].action).toBe("membership.removed");
   });
+  it("adds someone new to the family when they open their invitation", async () => {
+    const c = services().communications;
+    const inv = await c.prepareInvitation("cap_margaret", { recipientName: "Rosa Delgado", relationship: "Neighbour", recipientContact: "", role: "contributor", mode: "open", questionIds: [], message: "", channel: "link" });
+    if (inv.status !== "ok") throw new Error(inv.status === "error" ? inv.message : "not prepared");
+    expect((await c.accept(inv.data.token)).status).toBe("ok");
+    const personId = db().invitations.find((i) => i.id === inv.data.id)!.personId!;
+    expect(db().people.find((p) => p.id === personId)).toMatchObject({ displayName: "Rosa Delgado", givenName: "Rosa", familyName: "Delgado" });
+    expect(db().memberships.filter((m) => m.personId === personId && m.status === "active").map((m) => m.role)).toEqual(["contributor"]);
+    // Opening it again doesn't add them twice.
+    await c.accept(inv.data.token);
+    expect(db().people.filter((p) => p.displayName === "Rosa Delgado")).toHaveLength(1);
+  });
+  it("previews anyone using their current roles, and switches back", async () => {
+    const a = services().auth;
+    await services().capsules.setMemberRole("cap_thomas", "per_june", "viewer");
+    const r = await a.previewAsPerson("per_june");
+    expect(r.status === "ok" && r.data.persona).toMatchObject({ name: "June Whitaker", personId: "per_june", kind: "contributor" });
+    expect(db().personas.filter((p) => p.id === "persona_preview")).toHaveLength(1);
+    // A person who already has a demo identity uses it.
+    const e = await a.previewAsPerson("per_emma");
+    expect(e.status === "ok" && e.data.personaId).toBe("persona_emma");
+    await a.switchPersona("persona_sarah");
+    expect(db().activePersonaId).toBe("persona_sarah");
+  });
+});
+
+describe("contributor resubmission", () => {
+  it("a returned story can be edited and sent back to review", async () => {
+    const s = services().capsules;
+    const id = db().memories.find((m) => m.attribution.invitationId === "inv_emma")!.id;
+    await s.transitionMemory(id, "returned", "Roughly what year?", "Sarah Ellis");
+    expect(db().memories.find((m) => m.id === id)!.reviewNote).toBe("Roughly what year?");
+    await s.updateMemory(id, { narrative: "It was 2009." }, "Emma Ellis");
+    const r = await s.transitionMemory(id, "submitted", undefined, "Emma Ellis");
+    expect(r.status === "ok" && r.data).toMatchObject({ status: "submitted", narrative: "It was 2009." });
+    expect(db().contributions.find((c) => c.memoryId === id)!.reviews[0]).toMatchObject({ decision: "returned", note: "Roughly what year?" });
+  });
 });
 
 describe("operations", () => {

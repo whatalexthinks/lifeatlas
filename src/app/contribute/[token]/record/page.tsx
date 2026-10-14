@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Heart } from "lucide-react";
 import type { MemoryAttribution, Question } from "@/domain/models";
 import { useInvitation } from "@/components/contribute/contribute-shell";
+import { YourStories } from "@/components/contribute/your-stories";
 import { CaptureFlow } from "@/components/capture/capture-flow";
 import { ButtonLink } from "@/components/ui/button";
 import { useDb } from "@/hooks/use-data";
@@ -59,6 +60,7 @@ export default function ContributeRecord() {
             Add another memory
           </ButtonLink>
         </div>
+        <YourStories invitation={invitation} organizerName={organizerName} className="mx-auto mt-16 max-w-2xl text-left" />
         <div className="mx-auto mt-16 max-w-md border-t border-line pt-8">
           <p className="text-[0.9375rem] text-ink-3">
             Is there someone whose stories you&rsquo;d like to keep?{" "}

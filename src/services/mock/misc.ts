@@ -1,6 +1,7 @@
 "use client";
 
-import type { PreservationStatus } from "@/domain/models";
+import type { PersonaKind, PreservationStatus, Role } from "@/domain/models";
+import { membershipRole } from "@/domain/policies/permissions";
 import { searchGazetteer } from "@/data/gazetteer";
 import { sha256Hex, uid } from "@/lib/utils";
 import { contactSchema, successorSchema } from "@/domain/schemas";
@@ -15,8 +16,12 @@ import {
   type PreservationProvider,
   type SupportProvider,
 } from "../contracts";
+import { flushSave } from "@/store/demo-store";
 import { mockMedia } from "./media";
 import { actorName, activePersona, db, latency, pushNotification, store } from "./shared";
+
+const PREVIEW_ID = "persona_preview";
+const kindOrder: Role[] = ["owner", "organizer", "storyteller", "contributor", "viewer"];
 
 export const mockAuth: AuthProvider = {
   async getSession() {
@@ -29,7 +34,26 @@ export const mockAuth: AuthProvider = {
     store().mutate((d) => {
       d.activePersonaId = personaId;
     }, { actor: p.name, action: "demo.persona_switched", detail: "Simulated — not a sign-in" });
+    // Identity decides what every page shows, so write it now rather than after the save debounce.
+    await flushSave().catch(() => undefined);
     return ok({ userId: db().account.user.id, personaId, persona: p, assurance: "simulated" });
+  },
+  async previewAsPerson(personId) {
+    const person = db().people.find((x) => x.id === personId);
+    if (!person) return fail("not_found", "That person isn't in this family.");
+    const existing = db().personas.find((x) => x.personId === personId && x.id !== PREVIEW_ID);
+    if (existing) return mockAuth.switchPersona(existing.id);
+    // Anyone else gets a single, reusable preview identity built from their current roles.
+    const roles = [...new Set(db().memberships.filter((m) => m.personId === personId && m.status === "active").map((m) => m.capsuleId))]
+      .map((capsuleId) => ({ capsuleId, role: membershipRole(db().memberships, personId, capsuleId) }))
+      .filter((r): r is { capsuleId: string; role: Role } => !!r.role);
+    const top = roles.map((r) => r.role).sort((a, b) => kindOrder.indexOf(a) - kindOrder.indexOf(b))[0];
+    const kind: PersonaKind = top === "owner" || top === "organizer" ? "organizer" : top === "storyteller" || top === "contributor" ? top : "viewer";
+    store().mutate((d) => {
+      d.personas = d.personas.filter((x) => x.id !== PREVIEW_ID);
+      d.personas.push({ id: PREVIEW_ID, kind, name: person.displayName, personId, description: `Preview of ${person.givenName}'s view, from their roles on the Family page.`, roles });
+    });
+    return mockAuth.switchPersona(PREVIEW_ID);
   },
   async signInWithEmail() {
     return notConfigured("auth", "Secure sign-in arrives with real accounts. In this preview, use the demo identity switcher.");
