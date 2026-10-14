@@ -43,7 +43,7 @@ function CapsuleBuilder() {
   const mutate = useDemoStore((s) => s.mutate);
 
   const editingId = params.get("id") ?? undefined;
-  const [capsuleId, setCapsuleId] = React.useState(() => heirlooms.find((h) => h.id === editingId)?.capsuleId ?? params.get("capsule") ?? "cap_margaret");
+  const [capsuleId, setCapsuleId] = React.useState(() => heirlooms.find((h) => h.id === editingId)?.capsuleId ?? params.get("capsule") ?? (capsules.some((c) => c.id === "cap_margaret") ? "cap_margaret" : capsules[0]?.id ?? ""));
   const capsule = capsules.find((c) => c.id === capsuleId) ?? capsules[0];
   const [savedId, setSavedId] = React.useState<string | undefined>(() => heirlooms.find((h) => h.id === editingId && h.kind === "keepsake_box")?.id);
   const [busy, setBusy] = React.useState<null | "save" | "order">(null);

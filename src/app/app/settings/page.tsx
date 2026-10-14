@@ -15,6 +15,7 @@ import { services } from "@/services/factory";
 import { useDemoStore } from "@/store/demo-store";
 import { cn } from "@/lib/utils";
 import { brand } from "@/config/brand";
+import { removeSampleData } from "@/store/migrate";
 
 export default function SettingsPage() {
   const hydrated = useHydrated();
@@ -24,6 +25,9 @@ export default function SettingsPage() {
 function Settings() {
   const account = useDb((d) => d.account);
   const reset = useDemoStore((s) => s.reset);
+  const mutate = useDemoStore((s) => s.mutate);
+  const sampleCount = useDb((d) => d.capsules.filter((c) => c.isSample).length);
+  const [samplesOpen, setSamplesOpen] = React.useState(false);
   const [profile, setProfile] = React.useState({ displayName: account.profile.displayName, givenName: account.profile.givenName, pronouns: account.profile.pronouns ?? "" });
   const [savingProfile, setSavingProfile] = React.useState(false);
   const [eraseOpen, setEraseOpen] = React.useState(false);
@@ -181,6 +185,19 @@ function Settings() {
           </div>
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line py-5">
             <div className="max-w-lg">
+              <p className="font-medium">Remove the sample capsules</p>
+              <p className="mt-1 text-[0.9375rem] text-ink-2">
+                {sampleCount
+                  ? `Hides the ${sampleCount} example capsules about the fictional Ellis family, with their stories and pictures. Your own capsules stay exactly as they are.`
+                  : "The sample capsules have been removed. Erasing demo data below brings them back."}
+              </p>
+            </div>
+            <Button variant="secondary" disabled={!sampleCount} onClick={() => setSamplesOpen(true)}>
+              Remove samples
+            </Button>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line py-5">
+            <div className="max-w-lg">
               <p className="font-medium">Erase demo data on this device</p>
               <p className="mt-1 text-[0.9375rem] text-ink-2">Removes everything you&rsquo;ve added — stories, recordings, letters, orders — and restores the fictional Ellis family.</p>
             </div>
@@ -206,6 +223,24 @@ function Settings() {
         </Panel>
       </div>
 
+      <ConfirmDialog
+        open={samplesOpen}
+        onOpenChange={setSamplesOpen}
+        title="Remove the sample capsules?"
+        confirmLabel="Remove samples"
+        body="The example capsules and everything in them will be removed from this browser. Anything you created stays. You can bring the samples back by erasing demo data."
+        onConfirm={() => {
+          let removed = 0;
+          mutate(
+            (d) => {
+              removed = removeSampleData(d).capsules;
+            },
+            { actor: account.profile.displayName, action: "demo.samples_removed" },
+          );
+          setSamplesOpen(false);
+          toast.success(removed === 1 ? "Removed 1 sample capsule" : `Removed ${removed} sample capsules`, "Your own capsules are untouched.");
+        }}
+      />
       <ConfirmDialog
         open={eraseOpen}
         onOpenChange={setEraseOpen}

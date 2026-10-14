@@ -12,12 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/feedback";
 import { MemoryStatusBadge } from "@/components/studio/primitives";
 import { useCapsuleMemories, useDb } from "@/hooks/use-data";
-import { chapterById, chapterColorVar } from "@/data/chapters";
+import { chapterColorVar } from "@/data/chapters";
 import { formatFuzzyDate } from "@/lib/dates";
 import { readingMinutes } from "@/lib/memory-utils";
 import { services } from "@/services/factory";
 import { cn } from "@/lib/utils";
 import { ShareComposer } from "./share-composer";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 export function StoryView({ capsule, memory, scope, hrefFor, tone = "paper", backHref }: { capsule: Capsule; memory: Memory; scope: "studio" | "viewer"; hrefFor: (m: Memory) => string; tone?: "paper" | "night"; backHref: string }) {
   const ordered = useCapsuleMemories(capsule.id, { scope: scope === "viewer" ? "viewer" : "studio" });
@@ -28,7 +29,7 @@ export function StoryView({ capsule, memory, scope, hrefFor, tone = "paper", bac
   const [share, setShare] = React.useState(false);
   const night = tone === "night";
   const place = places.find((p) => p.id === memory.placeId);
-  const chapter = chapterById(memory.chapter);
+  const chapter = chapterFor(capsule, memory.chapter);
   const i = ordered.findIndex((m) => m.id === memory.id);
   const prev = i > 0 ? ordered[i - 1] : undefined;
   const next = i >= 0 && i < ordered.length - 1 ? ordered[i + 1] : undefined;

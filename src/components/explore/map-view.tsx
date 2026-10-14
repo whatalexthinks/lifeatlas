@@ -11,10 +11,11 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/feedback";
 import { Segmented, Select } from "@/components/ui/field";
 import { useCapsuleMemories, useDb, usePrefersReducedMotionSafe } from "./shared";
-import { chapterById, chapters } from "@/data/chapters";
+import { chapters } from "@/data/chapters";
 import { decadeOf, formatFuzzyDate } from "@/lib/dates";
 import { decadesOf, journeyOrder, placesToPoints } from "@/lib/memory-utils";
 import { cn, pluralize } from "@/lib/utils";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 export function MapView({
   capsule,
@@ -110,7 +111,7 @@ export function MapView({
         <span className="min-w-0">
           <span className={cn("catalog block", night && "text-[#d7bc92]")}>{formatFuzzyDate(m.date, "short")}</span>
           <span className={cn("block font-serif text-[1.2rem] leading-snug", night ? "text-night-ink" : "text-ink")}>{m.title}</span>
-          <span className={cn("block text-[0.8125rem]", night ? "text-night-ink-3" : "text-ink-3")}>{chapterById(m.chapter).title}</span>
+          <span className={cn("block text-[0.8125rem]", night ? "text-night-ink-3" : "text-ink-3")}>{chapterFor(capsule, m.chapter).title}</span>
         </span>
       </span>
     );

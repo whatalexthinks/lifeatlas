@@ -9,9 +9,10 @@ import { MemoryStatusBadge } from "@/components/studio/primitives";
 import { EmptyState } from "@/components/ui/feedback";
 import { Segmented, Select } from "@/components/ui/field";
 import { useCapsuleMemories, useDb } from "@/hooks/use-data";
-import { chapterById, chapterColorVar, chapters } from "@/data/chapters";
+import { chapterColorVar, chapters } from "@/data/chapters";
 import { approxYear, decadeOf, formatFuzzyDate } from "@/lib/dates";
 import { cn, excerpt } from "@/lib/utils";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 /**
  * Editorial biographical timeline: a ribbon of decades on top, then the life
@@ -81,7 +82,7 @@ export function TimelineView({
 
   const renderItem = (m: Memory) => {
     const place = places.find((p) => p.id === m.placeId);
-    const ch = chapterById(m.chapter);
+    const ch = chapterFor(capsule, m.chapter);
     const content = (
       <div
         id={`tl-${m.id}`}

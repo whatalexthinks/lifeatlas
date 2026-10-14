@@ -5,8 +5,9 @@ import { MapPin } from "lucide-react";
 import type { Memory } from "@/domain/models";
 import { MediaImage } from "@/components/media/media-image";
 import { AudioPlayer } from "@/components/audio/audio-player";
-import { usePlace } from "@/hooks/use-data";
-import { chapterById, chapterColorVar } from "@/data/chapters";
+import { useDb, usePlace } from "@/hooks/use-data";
+import { chapterColorVar } from "@/data/chapters";
+import { chapterFor } from "@/domain/capsule-kinds";
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, excerpt } from "@/lib/utils";
 
@@ -16,7 +17,8 @@ import { cn, excerpt } from "@/lib/utils";
  */
 export function MemoryReveal({ memory, subjectName, className, format = "card", animate = true }: { memory: Memory; subjectName?: string; className?: string; format?: "card" | "portrait" | "square"; animate?: boolean }) {
   const place = usePlace(memory.placeId);
-  const chapter = chapterById(memory.chapter);
+  const capsule = useDb((d) => d.capsules.find((c) => c.id === memory.capsuleId));
+  const chapter = chapterFor(capsule, memory.chapter);
   const photo = memory.photoIds[0];
   const aspect = format === "portrait" ? "aspect-[9/16]" : format === "square" ? "aspect-square" : "";
   const color = chapterColorVar[chapter.color];

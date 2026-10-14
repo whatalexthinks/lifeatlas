@@ -1,4 +1,4 @@
-import type { BillingInterval, Product, Subscription } from "@/domain/models";
+import type { BillingInterval, Capsule, Product, Subscription } from "@/domain/models";
 
 /**
  * Plans and entitlements — the one place that decides what each plan includes.
@@ -73,6 +73,12 @@ export function currentPlanId(subscriptions: Subscription[], catalog: Product[])
 
 export function entitlementsFor(subscriptions: Subscription[], catalog: Product[]) {
   return plans[currentPlanId(subscriptions, catalog)];
+}
+
+/** Capsules that count toward a plan: your own, not samples, not archived or being deleted. */
+export function countOwnedCapsules(capsules: Pick<Capsule, "isSample" | "ownerPersonId" | "status">[], personId: string | undefined) {
+  if (!personId) return 0;
+  return capsules.filter((c) => !c.isSample && c.ownerPersonId === personId && c.status !== "archived" && c.status !== "deletion_pending").length;
 }
 
 /**

@@ -10,11 +10,12 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/feedback";
 import { Input, Segmented, Select } from "@/components/ui/field";
 import { useCapsuleMemories, useDb } from "@/hooks/use-data";
-import { chapterById, chapterColorVar } from "@/data/chapters";
+import { chapterColorVar } from "@/data/chapters";
 import { formatFuzzyDate } from "@/lib/dates";
 import { readingMinutes } from "@/lib/memory-utils";
 import { services } from "@/services/factory";
 import { cn } from "@/lib/utils";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 type Kind = "all" | "audio" | "photo" | "text";
 const kindLabel: Record<Kind, string> = { all: "Any kind", audio: "With a voice", photo: "With photographs", text: "Written" };
@@ -37,7 +38,7 @@ export function ChaptersView({ capsule, scope, hrefFor, tone = "paper", initial 
   const [savedOnly, setSavedOnly] = React.useState(!!initial?.saved);
   const night = tone === "night";
   const order = capsule.chapterOrder;
-  const groups = order.map((id) => ({ chapter: chapterById(id), items: memories.filter((m) => m.chapter === id) })).filter((g) => g.items.length);
+  const groups = order.map((id) => ({ chapter: chapterFor(capsule, id), items: memories.filter((m) => m.chapter === id) })).filter((g) => g.items.length);
   const isMarked = (m: Memory) => bookmarks.some((b) => b.capsuleId === capsule.id && b.memoryId === m.id);
   const marked = memories.filter(isMarked);
   const decades = [...new Set(memories.map(decadeOf).filter((d): d is number => d !== null))].sort((a, b) => a - b);
@@ -132,7 +133,7 @@ export function ChaptersView({ capsule, scope, hrefFor, tone = "paper", initial 
           {results.length ? (
             <ol className={cn("divide-y rounded-[18px] border", night ? "divide-white/[0.07] border-white/[0.09]" : "divide-line border-line bg-surface")}>
               {results.map((m) => {
-                const ch = chapterById(m.chapter);
+                const ch = chapterFor(capsule, m.chapter);
                 const place = places.find((p) => p.id === m.placeId);
                 return (
                   <li key={m.id} className="flex items-start gap-3 px-4 py-4 sm:px-5">

@@ -25,7 +25,7 @@ const manifestSchema = z.object({
   schema: z.literal("lifeatlas.archive"),
   schemaVersion: z.literal(1),
   generatedAt: z.string(),
-  capsule: z.object({ id: z.string(), subjectName: z.string().min(1), title: z.string().optional(), birthYear: z.number().optional(), dedication: z.string().optional() }),
+  capsule: z.object({ id: z.string(), kind: z.enum(["personal", "couple", "family", "parent", "child", "someone"]).optional(), subjectName: z.string().min(1), title: z.string().optional(), description: z.string().optional(), birthYear: z.number().optional(), dedication: z.string().optional() }),
   people: z.array(z.object({ id: z.string(), name: z.string(), birthYear: z.number().optional(), deathYear: z.number().optional() })),
   places: z.array(z.object({ id: z.string(), name: z.string(), country: z.string(), precision: z.string(), lat: z.number(), lng: z.number() })),
   memories: z.array(
@@ -172,6 +172,10 @@ async function restoreArchive(token: string) {
     layout: "type_only",
     defaultPrivacy: "family",
     viewerEnabled: true,
+    // Older exports carry no kind; the restored capsule keeps its own title either way.
+    kind: manifest.capsule.kind ?? "someone",
+    title: manifest.capsule.title?.slice(0, 120),
+    description: manifest.capsule.description?.slice(0, 600),
   });
   if (created.status !== "ok") return created;
   const capsuleId = created.data.id;

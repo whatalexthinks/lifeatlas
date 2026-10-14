@@ -45,7 +45,7 @@ export default function PreservationPage() {
   const exportJobs = useDb((d) => d.exportJobs);
   const checks = useDb((d) => d.integrityChecks);
   const successors = useDb((d) => d.successors);
-  const [capsuleId, setCapsuleId] = React.useState("cap_margaret");
+  const [capsuleId, setCapsuleId] = React.useState(() => (capsules.some((c) => c.id === "cap_margaret") ? "cap_margaret" : capsules[0]?.id ?? ""));
   const capsule = capsules.find((c) => c.id === capsuleId) ?? capsules[0];
   const device = useDeviceStorage();
   const [running, setRunning] = React.useState(false);

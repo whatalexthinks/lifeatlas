@@ -1,6 +1,8 @@
 import type { Quote } from "@/domain/commerce/pricing";
 import type {
   BillingInterval,
+  CapsuleKind,
+  KeyDate,
   Promotion,
   Subscription,
   AccountPreferences,
@@ -138,8 +140,24 @@ export interface NewMemoryInput extends MemoryFormValues {
   status: MemoryStatus;
 }
 
+/** Optional details from onboarding. Capsules created without them get sensible defaults. */
+export interface CapsuleCreateExtras {
+  coverMediaId?: string;
+  kind?: CapsuleKind;
+  title?: string;
+  description?: string;
+  /** Couples: the other partner's name; a person record is created for them. */
+  partnerName?: string;
+  keyDates?: KeyDate[];
+  /**
+   * A gift arrives with its own plan, so the recipient's first capsule isn't held to the
+   * giver's limit. Everything else counts toward the plan in force.
+   */
+  includedWithGift?: boolean;
+}
+
 export interface CapsuleRepository {
-  createFromWizard(values: CapsuleWizardValues & { coverMediaId?: string }): Promise<ServiceResult<Capsule>>;
+  createFromWizard(values: CapsuleWizardValues & CapsuleCreateExtras): Promise<ServiceResult<Capsule>>;
   updateCapsule(id: string, patch: Partial<Capsule>): Promise<ServiceResult<Capsule>>;
   setCapsuleStatus(id: string, to: Capsule["status"]): Promise<ServiceResult<Capsule>>;
   reorderChapters(id: string, order: ChapterKey[]): Promise<ServiceResult<Capsule>>;

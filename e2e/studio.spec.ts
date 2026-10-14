@@ -182,5 +182,5 @@ test("preservation is honest and the archive downloads", async ({ page }) => {
   await page.getByText("Single offline page (.html)").click();
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: /Build & download/ }).click();
-  expect((await download).suggestedFilename()).toMatch(/^lifeatlas-.*\.html$/);
+  expect((await download).suggestedFilename()).toMatch(/^ourlifecapsule-.*\.html$/);
 });

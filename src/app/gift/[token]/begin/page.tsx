@@ -50,6 +50,7 @@ export default function GiftBegin() {
         layout: "type_only",
         defaultPrivacy: "family",
         viewerEnabled: true,
+        includedWithGift: true,
       } as never);
       if (c.status === "ok") {
         mutate((d) => {

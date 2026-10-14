@@ -1,4 +1,5 @@
 import type { ID, ISODateTime } from "./common";
+import type { CapsuleKind } from "./capsule";
 
 /**
  * Preservation health is never inferred. Each state must come from a provider
@@ -79,8 +80,11 @@ export interface ArchiveManifest {
   mode: "demo_local";
   capsule: {
     id: ID;
+    /** Added within v1; older exports omit it. */
+    kind?: CapsuleKind;
     subjectName: string;
     title: string;
+    description?: string;
     birthYear?: number;
     dedication?: string;
   };

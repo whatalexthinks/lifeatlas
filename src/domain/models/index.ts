@@ -80,6 +80,10 @@ export interface DemoDatabase {
   catalog: Product[];
   /** Bumped when the default catalog changes shape or prices; older saved catalogs are replaced. */
   catalogVersion: number;
+  /** Bumped when sample capsules or the question library change; new ones merge in by id. */
+  sampleVersion: number;
+  /** The person chose to remove the sample capsules; newer samples aren't added back. */
+  samplesRemoved?: boolean;
   promotions: Promotion[];
   promotionRedemptions: PromotionRedemption[];
   referrals: ReferralState;

@@ -21,13 +21,16 @@ test("create → contribute → approve → explore → export → restore", asy
 
   // 1. Create a capsule with the wizard and answer its first question.
   await page.goto("/app/capsules/new");
-  await page.getByRole("radio", { name: /Someone else/ }).click();
-  await page.getByLabel("How would you describe them?").fill("Neighbour");
+  await page.getByRole("radio", { name: /Someone special/ }).click();
   await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByLabel("Name", { exact: true }).fill("Rosa Delgado");
+  await page.getByLabel("Their name").fill("Rosa Delgado");
+  await page.getByLabel(/Who are they to you/).fill("Neighbour");
   await page.getByLabel(/Year born/).fill("1938");
-  for (let i = 0; i < 6 && !(await page.getByRole("button", { name: /Create & ask the first question/ }).isVisible()); i++) await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByRole("button", { name: /Create & ask the first question/ }).click();
+  await expect(page.getByLabel("Capsule name")).toHaveValue("The Stories of Rosa");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: /Surprise me with a question/ }).click();
+  await page.getByRole("button", { name: /Create & answer this/ }).click();
   await page.waitForURL(/\/app\/gather\?capsule=/);
   const capsuleId = new URL(page.url()).searchParams.get("capsule")!;
   await page.getByRole("tab", { name: "Type instead" }).click();
@@ -76,7 +79,7 @@ test("create → contribute → approve → explore → export → restore", asy
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: /Build & download/ }).click();
   const file = await download;
-  expect(file.suggestedFilename()).toMatch(/^lifeatlas-rosa-delgado-.*\.json$/);
+  expect(file.suggestedFilename()).toMatch(/^ourlifecapsule-rosa-delgado-.*\.json$/);
   const path = await file.path();
   const manifest = JSON.parse(await readFile(path, "utf8"));
   expect(manifest.schema).toBe("lifeatlas.archive");

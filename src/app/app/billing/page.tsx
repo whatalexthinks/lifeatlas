@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { ArrowUpRight, CalendarClock, CreditCard, FileText, Gift, HardDrive, Library, Mail, ShieldCheck, Sparkles, Users } from "lucide-react";
 import type { Product, Subscription } from "@/domain/models";
-import { annualSavings, capsuleAllowance, currentPlanId, plans } from "@/domain/commerce/plans";
+import { annualSavings, capsuleAllowance, countOwnedCapsules, currentPlanId, plans } from "@/domain/commerce/plans";
 import { planIds } from "@/data/product-catalog";
 import { PageHeader, Panel } from "@/components/studio/primitives";
 import { Button, ButtonLink } from "@/components/ui/button";
@@ -49,7 +49,7 @@ export default function BillingPage() {
   const ent = plans[planId];
   const sub: Subscription | undefined = subscriptions.find((s) => (s.status === "active" || s.status === "preview_active") && catalog.find((p) => p.id === s.productId)?.planId === planId);
   const plan = catalog.find((p) => p.planId === planId);
-  const owned = capsules.filter((c) => !c.isSample && c.ownerPersonId === ownPersonId && c.status !== "archived" && c.status !== "deletion_pending").length;
+  const owned = countOwnedCapsules(capsules, ownPersonId);
   const allowance = capsuleAllowance(planId, owned);
   const prepared = futureMessages.filter((m) => !m.isExample).length;
   const balance = credits.reduce((s, c) => s + c.amount, 0);

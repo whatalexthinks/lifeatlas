@@ -65,8 +65,31 @@ export interface CapsuleCover {
   focalY: number; // 0–100, object-position
 }
 
+/** Whose story a capsule holds. Shapes words, prompts and chapter names — not what it may contain. */
+export type CapsuleKind = "personal" | "couple" | "family" | "parent" | "child" | "someone";
+
+/** A date the capsule remembers every year (an anniversary) or once (a milestone). */
+export interface KeyDate {
+  id: ID;
+  label: string;
+  kind: "anniversary" | "birthday" | "milestone" | "remembrance";
+  month: number; // 1–12
+  day: number; // 1–31
+  /** The year it first happened, when known. Never invented. */
+  year?: number;
+  /** Recurs every year (anniversaries, birthdays). */
+  recurring: boolean;
+}
+
 export interface Capsule extends Timestamps {
   id: ID;
+  /** Missing on capsules saved before kinds existed; see capsuleKind(). */
+  kind?: CapsuleKind;
+  /** A sentence about the capsule, shown under its title. */
+  description?: string;
+  /** People this capsule is about (both partners, family members). The subject is first. */
+  peopleIds?: ID[];
+  keyDates?: KeyDate[];
   /** "Margaret Ellis" */
   subjectName: string;
   preferredName: string;
@@ -233,12 +256,24 @@ export type QuestionCategory =
   | "Recipes"
   | "Traditions"
   | "Small Ordinary Moments"
-  | "Messages to Descendants";
+  | "Messages to Descendants"
+  | "Our Story"
+  | "Us, Now"
+  | "Our Future"
+  | "Growing Up"
+  | "Family History"
+  | "Funny Memories"
+  | "Values"
+  | "Hopes & Dreams"
+  | "Adventures"
+  | "Advice";
 
 export interface Question {
   id: ID;
   text: string;
   category: QuestionCategory;
+  /** Capsule kinds this was written for. Absent = suits any life story. */
+  audiences?: CapsuleKind[];
   chapter: ChapterKey;
   followUps: string[];
   custom: boolean;

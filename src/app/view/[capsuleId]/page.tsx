@@ -9,9 +9,9 @@ import { MemoryReveal } from "@/components/capture/memory-reveal";
 import { RiseText } from "@/components/shared/reveal";
 import { typographyClass, paletteStyles } from "@/components/capsule/capsule-cover";
 import { useCapsuleMemories, useDb, usePlace, useRole } from "@/hooks/use-data";
-import { chapterById } from "@/data/chapters";
 import { decadesOf } from "@/lib/memory-utils";
 import { cn, pluralize } from "@/lib/utils";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 export default function ViewerCover() {
   const { capsule, tone, base } = useViewer();
@@ -31,7 +31,7 @@ export default function ViewerCover() {
   const p = paletteStyles[capsule.theme.palette];
   const exploreRef = React.useRef<HTMLDivElement | null>(null);
 
-  const chaptersWith = capsule.chapterOrder.map((id) => ({ ch: chapterById(id), n: memories.filter((m) => m.chapter === id).length })).filter((x) => x.n);
+  const chaptersWith = capsule.chapterOrder.map((id) => ({ ch: chapterFor(capsule, id), n: memories.filter((m) => m.chapter === id).length })).filter((x) => x.n);
 
   return (
     <>

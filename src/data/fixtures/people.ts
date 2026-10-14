@@ -91,6 +91,8 @@ export const personas: Persona[] = [
       { capsuleId: "cap_margaret", role: "owner" },
       { capsuleId: "cap_thomas", role: "owner" },
       { capsuleId: "cap_sarah", role: "owner" },
+      { capsuleId: "cap_us", role: "owner" },
+      { capsuleId: "cap_family", role: "owner" },
     ],
   },
   {
@@ -102,6 +104,7 @@ export const personas: Persona[] = [
     roles: [
       { capsuleId: "cap_margaret", role: "storyteller" },
       { capsuleId: "cap_thomas", role: "contributor" },
+      { capsuleId: "cap_family", role: "contributor" },
     ],
   },
   {
@@ -113,6 +116,8 @@ export const personas: Persona[] = [
     roles: [
       { capsuleId: "cap_margaret", role: "contributor" },
       { capsuleId: "cap_thomas", role: "contributor" },
+      { capsuleId: "cap_us", role: "viewer" },
+      { capsuleId: "cap_family", role: "contributor" },
     ],
   },
   {
@@ -120,8 +125,11 @@ export const personas: Persona[] = [
     kind: "viewer",
     name: "Jonah Reed",
     personId: "per_jonah",
-    description: "Family viewer. Sees approved, family-visible memories only.",
-    roles: [{ capsuleId: "cap_margaret", role: "viewer" }],
+    description: "Viewer on Margaret's capsule; co-editor of the couple's capsule he shares with Sarah.",
+    roles: [
+      { capsuleId: "cap_margaret", role: "viewer" },
+      { capsuleId: "cap_us", role: "organizer" },
+    ],
   },
   {
     id: "persona_ops",

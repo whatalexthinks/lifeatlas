@@ -248,3 +248,64 @@ describe("plans, promotions and credit at checkout", () => {
     expect(keep.status === "ok" && keep.data.cancelAtPeriodEnd).toBe(false);
   });
 });
+
+describe("creating a capsule for each kind of story", () => {
+  const base = {
+    relationshipKind: "other" as const,
+    relationship: "",
+    subjectName: "",
+    preferredName: "",
+    birthYear: "" as const,
+    birthplace: "",
+    dedication: "",
+    collectionMode: "in_person" as const,
+    startingChapter: "childhood" as const,
+    palette: "linen" as const,
+    typography: "classic" as const,
+    layout: "type_only" as const,
+    defaultPrivacy: "family" as const,
+    viewerEnabled: true,
+  };
+
+  it("a couple's capsule names both partners and records the partner as a person", async () => {
+    const r = await services().capsules.createFromWizard({ ...base, kind: "couple", subjectName: "Ana & Luis", partnerName: "Luis Ortega", relationship: "Husband", keyDates: [{ id: "kd1", label: "Our anniversary", kind: "anniversary", month: 5, day: 4, year: 2012, recurring: true }] });
+    expect(r.status).toBe("ok");
+    if (r.status !== "ok") return;
+    expect(r.data).toMatchObject({ kind: "couple", title: "Our Story", relationshipKind: "partner", startingChapter: "love" });
+    const luis = db().people.find((p) => p.displayName === "Luis Ortega")!;
+    expect(luis).toMatchObject({ givenName: "Luis", familyName: "Ortega", isSample: false });
+    expect(r.data.peopleIds).toContain(luis.id);
+    expect(db().relationships.some((x) => x.toPersonId === luis.id && x.kind === "partner")).toBe(true);
+    expect(r.data.keyDates?.[0].label).toBe("Our anniversary");
+  });
+
+  it("a grandparent's capsule gets a person, a fitting title and no invented parent link", async () => {
+    const r = await services().capsules.createFromWizard({ ...base, kind: "parent", subjectName: "Rosa Delgado", relationship: "Grandmother", birthYear: 1938 });
+    if (r.status !== "ok") throw new Error("expected ok");
+    expect(r.data).toMatchObject({ kind: "parent", title: "In Rosa's Own Words", relationshipKind: "grandparent" });
+    const rosa = db().people.find((p) => p.id === r.data.subjectPersonId)!;
+    expect(rosa).toMatchObject({ displayName: "Rosa Delgado", birthYear: 1938 });
+    expect(db().relationships.some((x) => x.fromPersonId === rosa.id)).toBe(false);
+  });
+
+  it("a child's capsule links the child to you; your own capsule is about you", async () => {
+    const child = await services().capsules.createFromWizard({ ...base, kind: "child", subjectName: "Mia", relationship: "Daughter" });
+    if (child.status !== "ok") throw new Error("expected ok");
+    expect(child.data.title).toBe("For Mia");
+    expect(db().relationships.some((x) => x.fromPersonId === "per_sarah" && x.toPersonId === child.data.subjectPersonId && x.kind === "parent")).toBe(true);
+    const mine = await services().capsules.createFromWizard({ ...base, kind: "personal", subjectName: "Sarah Ellis", title: "Notes for Emma" });
+    if (mine.status !== "ok") throw new Error("expected ok");
+    expect(mine.data).toMatchObject({ title: "Notes for Emma", subjectPersonId: "per_sarah", relationshipKind: "self" });
+  });
+
+  it("holds new capsules to the plan in force, and says why in plain words", async () => {
+    useDemoStore.setState((s) => ({ db: { ...s.db, subscriptions: [{ id: "s", productId: "digital", status: "preview_active" }] } }));
+    const first = await services().capsules.createFromWizard({ ...base, kind: "someone", subjectName: "Aunt Rose", relationship: "Aunt" });
+    expect(first.status).toBe("ok");
+    const second = await services().capsules.createFromWizard({ ...base, kind: "someone", subjectName: "Uncle Ray", relationship: "Uncle" });
+    expect(second).toMatchObject({ status: "error", code: "forbidden" });
+    if (second.status === "error") expect(second.message).toMatch(/Family plan makes room for five/);
+    // A gift's capsule comes with its own plan.
+    expect((await services().capsules.createFromWizard({ ...base, relationshipKind: "self", subjectName: "Gift", includedWithGift: true })).status).toBe("ok");
+  });
+});

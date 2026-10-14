@@ -4,6 +4,7 @@ import { strToU8, zipSync, type Zippable } from "fflate";
 import type { ArchiveManifest, DemoDatabase, ExportJob, ExportOptions, MediaAsset, Memory } from "@/domain/models";
 import { isExportEligible } from "@/domain/policies/permissions";
 import { chapterById } from "@/data/chapters";
+import { capsuleKind } from "@/domain/capsule-kinds";
 import { formatFuzzyDate, sortKey } from "@/lib/dates";
 import { sha256Hex, uid } from "@/lib/utils";
 import { fail, ok, type ExportBuilder, type ExportPreview, type ExportPreviewItem } from "../contracts";
@@ -238,7 +239,7 @@ export const mockExport: ExportBuilder = {
         generatedAt: new Date().toISOString(),
         generator: `${brand.name} Part One (local demonstration)`,
         mode: "demo_local",
-        capsule: { id: capsule.id, subjectName: capsule.subjectName, title: capsule.title, birthYear: capsule.birthYear, dedication: capsule.dedication },
+        capsule: { id: capsule.id, kind: capsuleKind(capsule), subjectName: capsule.subjectName, title: capsule.title, description: capsule.description, birthYear: capsule.birthYear, dedication: capsule.dedication },
         options,
         people: d.people.filter((p) => peopleIds.has(p.id)).map((p) => ({ id: p.id, name: p.displayName, birthYear: p.birthYear, deathYear: p.deathYear })),
         places: d.places.filter((p) => placeIds.has(p.id)).map((p) => ({ id: p.id, name: p.name, country: p.country, precision: p.precision, lat: Math.round(p.point.lat * 100) / 100, lng: Math.round(p.point.lng * 100) / 100 })),

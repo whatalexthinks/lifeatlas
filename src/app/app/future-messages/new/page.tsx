@@ -49,7 +49,7 @@ function ComposerInner() {
   const capsules = useDb((d) => d.capsules);
   const memories = useDb((d) => d.memories);
   const profile = useDb((d) => d.account.profile);
-  const [capsuleId, setCapsuleId] = React.useState<string>(existing?.capsuleId ?? capsules[0]?.id ?? "");
+  const [capsuleId, setCapsuleId] = React.useState<string>(existing?.capsuleId ?? (capsules.some((c) => c.id === params.get("capsule")) ? params.get("capsule")! : capsules[0]?.id) ?? "");
   const [v, setV] = React.useState<FutureMessageFormValues>(() => ({
     title: existing?.title ?? "",
     dedication: existing?.dedication ?? "",

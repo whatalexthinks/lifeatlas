@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { produce, type Draft } from "immer";
 import type { AnalyticsEventName, AuditEvent, DemoDatabase } from "@/domain/models";
 import { buildSeed, SCHEMA_VERSION } from "@/data/fixtures";
-import { CATALOG_VERSION } from "@/data/product-catalog";
+import { withNewFields } from "./migrate";
 import { clearAll, idbAvailable, isQuotaError, loadState, saveState } from "@/lib/storage/idb";
 import { uid } from "@/lib/utils";
 import { brand } from "@/config/brand";
@@ -62,7 +62,7 @@ export const useDemoStore = create<DemoStore>()((set, get) => ({
     try {
       const stored = await loadState();
       if (stored && stored.schemaVersion === SCHEMA_VERSION) {
-        set({ db: withNewFields(stored), hydrated: true, persistence: "indexeddb" });
+        set({ db: withNewFields(stored, buildSeed()), hydrated: true, persistence: "indexeddb" });
       } else {
         const fresh = buildSeed();
         set({ db: fresh, hydrated: true, persistence: "indexeddb" });
@@ -86,28 +86,6 @@ export const useDemoStore = create<DemoStore>()((set, get) => ({
     }
   },
 }));
-
-/**
- * Forward-compatible load: collections added after a device first saved its data are
- * filled in empty, so new features never require wiping someone's archive.
- */
-function withNewFields(stored: DemoDatabase): DemoDatabase {
-  const seed = buildSeed();
-  const fresh = seed as unknown as Record<string, unknown>;
-  const out = { ...stored } as unknown as Record<string, unknown>;
-  for (const [k, v] of Object.entries(fresh)) if (!(k in out)) out[k] = Array.isArray(v) && k !== "promotions" ? [] : v;
-  const db = out as unknown as DemoDatabase;
-  // A new catalog replaces an older saved one (operations' local price edits included),
-  // so nobody keeps seeing products or prices that no longer exist.
-  if (db.catalogVersion !== CATALOG_VERSION) {
-    db.catalog = seed.catalog;
-    db.catalogVersion = CATALOG_VERSION;
-    const known = new Set(seed.catalog.map((p) => p.id));
-    db.subscriptions = db.subscriptions.filter((s) => known.has(s.productId));
-    if (!db.subscriptions.length) db.subscriptions = seed.subscriptions;
-  }
-  return db;
-}
 
 /** Plain-language storage problems — never a raw browser error. Exported for tests. */
 export function describeError(e: unknown) {

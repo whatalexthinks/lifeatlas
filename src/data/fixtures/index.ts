@@ -10,8 +10,11 @@ import { media, transcripts } from "./media";
 import { memories } from "./memories";
 import { lifeEvents, people, personas, relationships } from "./people";
 import { places } from "./places";
+import { extraCapsules, extraFutureMessages, extraMedia, extraMemberships, extraMemories, extraPlaces } from "./samples-couple-family";
 
 export const SCHEMA_VERSION = 3;
+/** Bump when sample capsules or the question library change, so saved devices receive them. */
+export const SAMPLE_VERSION = 2;
 
 /** Every integration flag is locked off in Part One. */
 export const featureFlags: FeatureFlag[] = [
@@ -42,13 +45,13 @@ export function buildSeed(now = new Date()): DemoDatabase {
     people,
     relationships,
     lifeEvents,
-    familyGroups,
-    capsules,
-    memberships,
-    memories,
-    media,
+    familyGroups: familyGroups.map((g) => (g.id === "fam_ellis" ? { ...g, capsuleIds: [...g.capsuleIds, ...extraCapsules.map((c) => c.id)] } : g)),
+    capsules: [...capsules, ...extraCapsules],
+    memberships: [...memberships, ...extraMemberships],
+    memories: [...memories, ...extraMemories],
+    media: [...media, ...extraMedia],
     transcripts,
-    places,
+    places: [...places, ...extraPlaces],
     questions: questionLibrary,
     questionCollections,
     assignments,
@@ -57,7 +60,7 @@ export function buildSeed(now = new Date()): DemoDatabase {
     contributions,
     shareGrants: [],
     gifts,
-    futureMessages,
+    futureMessages: [...futureMessages, ...extraFutureMessages],
     successors,
     heirlooms,
     printProjects,
@@ -79,6 +82,7 @@ export function buildSeed(now = new Date()): DemoDatabase {
     supportRequests,
     catalog: defaultCatalog,
     catalogVersion: CATALOG_VERSION,
+    sampleVersion: SAMPLE_VERSION,
     promotions: defaultPromotions,
     promotionRedemptions: [],
     referrals: { code: makeReferralCode("Sarah", "usr_sarah"), events: sampleReferralEvents },

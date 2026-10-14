@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowDown, ArrowUp, BookOpen, Check, FileText, Image as ImageIcon, Info, Minus, Plus, ShoppingBag } from "lucide-react";
 import type { BookConfiguration, ChapterKey, Memory } from "@/domain/models";
-import { chapterById, defaultChapterOrder } from "@/data/chapters";
+import { defaultChapterOrder } from "@/data/chapters";
 import { estimateBookPages, quoteBook, bookMaterialExtras, bookPageExtras, bookSizeExtras } from "@/domain/commerce/pricing";
 import { isPrintEligible } from "@/domain/policies/permissions";
 import { PageHeader, Panel } from "@/components/studio/primitives";
@@ -20,6 +20,7 @@ import { services } from "@/services/factory";
 import { useDemoStore } from "@/store/demo-store";
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, formatMoney, pluralize } from "@/lib/utils";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 type Step = "stories" | "cover" | "layout" | "review";
 const steps: { id: Step; label: string }[] = [
@@ -64,7 +65,7 @@ function BookBuilder() {
 
   const editingId = params.get("id") ?? undefined;
   const existing = heirlooms.find((h) => h.id === editingId && h.kind === "book");
-  const [capsuleId, setCapsuleId] = React.useState<string>(existing?.capsuleId ?? params.get("capsule") ?? "cap_margaret");
+  const [capsuleId, setCapsuleId] = React.useState<string>(existing?.capsuleId ?? params.get("capsule") ?? (capsules.some((c) => c.id === "cap_margaret") ? "cap_margaret" : capsules[0]?.id ?? ""));
   const capsule = capsules.find((c) => c.id === capsuleId) ?? capsules[0];
   const [step, setStep] = React.useState<Step>("stories");
   const [busy, setBusy] = React.useState<null | "save" | "order">(null);
@@ -260,7 +261,7 @@ function BookBuilder() {
                 {config.chapterOrder.map((c, ci) => {
                   const inChapter = capsuleMemories.filter((m) => m.chapter === c);
                   if (!inChapter.length) return null;
-                  const ch = chapterById(c);
+                  const ch = chapterFor(capsule, c);
                   return (
                     <div key={c} className="border-b border-line last:border-b-0">
                       <div className="flex items-center justify-between gap-3 bg-ivory/50 px-5 py-3 sm:px-6">

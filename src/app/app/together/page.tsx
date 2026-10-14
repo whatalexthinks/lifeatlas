@@ -74,7 +74,7 @@ function Setup({ onStart }: { onStart: (s: GatheringSession) => void }) {
   const capsules = useDb((d) => d.capsules);
   const people = useDb((d) => d.people);
   const questions = useDb((d) => d.questions);
-  const [capsuleId, setCapsuleId] = React.useState("cap_margaret");
+  const [capsuleId, setCapsuleId] = React.useState(() => (capsules.some((c) => c.id === "cap_margaret") ? "cap_margaret" : capsules[0]?.id ?? ""));
   const [occasion, setOccasion] = React.useState("Around the table");
   const [guests, setGuests] = React.useState<GatheringGuest[]>(() => people.filter((p) => ["per_margaret", "per_sarah", "per_emma"].includes(p.id)).map((p) => ({ key: p.id, name: p.givenName, personId: p.id, relationship: p.shortBio })));
   const [newGuest, setNewGuest] = React.useState("");
