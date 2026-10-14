@@ -60,7 +60,7 @@ export const useDemoStore = create<DemoStore>()((set, get) => ({
     try {
       const stored = await loadState();
       if (stored && stored.schemaVersion === SCHEMA_VERSION) {
-        set({ db: stored, hydrated: true, persistence: "indexeddb" });
+        set({ db: withNewFields(stored), hydrated: true, persistence: "indexeddb" });
       } else {
         const fresh = buildSeed();
         set({ db: fresh, hydrated: true, persistence: "indexeddb" });
@@ -84,6 +84,17 @@ export const useDemoStore = create<DemoStore>()((set, get) => ({
     }
   },
 }));
+
+/**
+ * Forward-compatible load: collections added after a device first saved its data are
+ * filled in empty, so new features never require wiping someone's archive.
+ */
+function withNewFields(stored: DemoDatabase): DemoDatabase {
+  const fresh = buildSeed() as unknown as Record<string, unknown>;
+  const out = { ...stored } as unknown as Record<string, unknown>;
+  for (const [k, v] of Object.entries(fresh)) if (!(k in out)) out[k] = Array.isArray(v) ? [] : v;
+  return out as unknown as DemoDatabase;
+}
 
 function describeError(e: unknown) {
   if (isQuotaError(e)) return "This device is out of storage space for LifeAtlas. Remove a recording or download your archive, then try again.";

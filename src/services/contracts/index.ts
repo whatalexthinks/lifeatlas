@@ -1,5 +1,7 @@
 import type {
   AccountPreferences,
+  CaptureDraft,
+  GatheringSession,
   Product,
   Role,
   BookConfiguration,
@@ -58,7 +60,8 @@ export type ServiceName =
   | "analytics"
   | "support"
   | "heirlooms"
-  | "operations";
+  | "operations"
+  | "drafts";
 
 export type ServiceErrorCode = "validation" | "not_found" | "forbidden" | "conflict" | "quota" | "unsupported" | "unknown";
 
@@ -387,6 +390,28 @@ export interface OperationsService {
   simulate(event: SimulatedEvent): Promise<ServiceResult<string>>;
 }
 
+export interface CaptureDraftFiles {
+  /** undefined = leave as saved; null = remove. */
+  audio?: { blob: Blob; durationSec: number; peaks: number[]; source: "microphone" | "upload" } | null;
+  photos?: { blob: Blob; caption: string; width?: number; height?: number; name: string }[];
+}
+
+export interface LoadedCaptureDraft {
+  draft: CaptureDraft;
+  audio?: { blob: Blob; durationSec: number; peaks: number[]; source: "microphone" | "upload" };
+  photos: { blob: Blob; caption: string; width?: number; height?: number; name: string }[];
+}
+
+/** Autosaved answers in progress and resumable family gatherings. Local-first by design. */
+export interface DraftRepository {
+  saveCaptureDraft(fields: Omit<CaptureDraft, "audio" | "photos" | "updatedAt">, files?: CaptureDraftFiles): Promise<ServiceResult<CaptureDraft>>;
+  loadCaptureDraft(key: string): Promise<ServiceResult<LoadedCaptureDraft | null>>;
+  discardCaptureDraft(key: string): Promise<ServiceResult<null>>;
+  startGathering(input: Pick<GatheringSession, "capsuleId" | "occasion" | "guests" | "questionIds">): Promise<ServiceResult<GatheringSession>>;
+  updateGathering(id: string, patch: Partial<Pick<GatheringSession, "index" | "turn" | "answers" | "status" | "guests">>): Promise<ServiceResult<GatheringSession>>;
+  removeGathering(id: string): Promise<ServiceResult<null>>;
+}
+
 export interface Services {
   mode: "demo" | "production";
   auth: AuthProvider;
@@ -407,4 +432,5 @@ export interface Services {
   support: SupportProvider;
   heirlooms: HeirloomRepository;
   operations: OperationsService;
+  drafts: DraftRepository;
 }

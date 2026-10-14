@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, AudioLines, Gift, HardDrive, ImagePlus, MailPlus, MessageCircleQuestion, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUpRight, AudioLines, Gift, HardDrive, History, ImagePlus, MailPlus, MessageCircleQuestion, Sparkles } from "lucide-react";
 import { useDb, useHydrated, usePendingReviewCount } from "@/hooks/use-data";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge, DemoNotice } from "@/components/ui/feedback";
@@ -28,6 +28,9 @@ export default function StudioHome() {
   const profile = useDb((d) => d.account.profile);
   const media = useDb((d) => d.media);
   const pending = usePendingReviewCount();
+  const personId = useDb((d) => d.account.profile.personId);
+  // Only the organizer's own drafts — contributors see theirs on their invitation link.
+  const unfinished = useDb((d) => d.captureDrafts).filter((d) => d.key.endsWith(`:person:${personId}`) || d.key.endsWith(":person:organizer"));
   const hydrated = useHydrated();
   // One timestamp per visit keeps render pure; the greeting waits for the device clock.
   const [now] = React.useState(() => Date.now());
@@ -134,6 +137,29 @@ export default function StudioHome() {
 
         {/* Right column */}
         <div className="grid content-start gap-6">
+          {unfinished.length ? (
+            <Panel title="Unfinished answers" description="Saved on this device as you went. Pick up where you left off.">
+              <ul className="space-y-2">
+                {unfinished.map((d) => (
+                  <li key={d.key}>
+                    <Link
+                      href={`/app/gather?capsule=${d.capsuleId}${d.questionId ? `&question=${d.questionId}` : "&mode=photo"}`}
+                      className="flex items-start gap-3 rounded-[12px] px-3 py-2.5 transition hover:bg-ivory"
+                    >
+                      <History className="mt-0.5 size-4 shrink-0 text-evergreen" />
+                      <span className="min-w-0">
+                        <span className="block truncate font-serif text-[1.05rem]">{d.label}</span>
+                        <span className="text-[0.8125rem] text-ink-3">
+                          {capsules.find((c) => c.id === d.capsuleId)?.subjectName} · {relativeTime(d.updatedAt)}
+                          {d.audio ? " · recording" : ""}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          ) : null}
           <Panel
             title="Waiting for you"
             description={inbox.length ? "Family members added these. Nothing appears in the archive until you approve it." : undefined}

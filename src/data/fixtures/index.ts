@@ -77,6 +77,8 @@ export function buildSeed(now = new Date()): DemoDatabase {
     supportRequests,
     catalog: defaultCatalog,
     bookmarks: [{ capsuleId: "cap_margaret", memoryId: "mem_seat", at: "2026-10-01T09:00:00.000Z" }],
+    captureDrafts: [],
+    gatherings: [],
     wizardDraft: null,
   };
   return structuredClone(seed);

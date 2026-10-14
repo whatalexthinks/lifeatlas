@@ -22,15 +22,42 @@ import { services } from "@/services/factory";
 import { cn, relativeTime } from "@/lib/utils";
 
 export function MemoryEditorSheet({ memory, capsule, open, onOpenChange }: { memory: Memory | undefined; capsule: Capsule; open: boolean; onOpenChange: (v: boolean) => void }) {
+  // The editor writes whether it has unsaved changes; closing then asks before discarding them.
+  const dirtyRef = React.useRef(false);
+  const [confirmClose, setConfirmClose] = React.useState(false);
   if (!memory) return null;
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} title={memory.title} description={<MemoryStatusBadge status={memory.status} />} width="lg">
-      <MemoryEditor key={memory.id + memory.updatedAt} memory={memory} capsule={capsule} onDone={() => onOpenChange(false)} />
-    </Sheet>
+    <>
+      <Sheet
+        open={open}
+        onOpenChange={(v) => {
+          if (!v && dirtyRef.current) setConfirmClose(true);
+          else onOpenChange(v);
+        }}
+        title={memory.title}
+        description={<MemoryStatusBadge status={memory.status} />}
+        width="lg"
+      >
+        <MemoryEditor key={memory.id + memory.updatedAt} memory={memory} capsule={capsule} dirtyRef={dirtyRef} onDone={() => onOpenChange(false)} />
+      </Sheet>
+      <ConfirmDialog
+        open={confirmClose}
+        onOpenChange={setConfirmClose}
+        tone="danger"
+        title="Discard your changes?"
+        confirmLabel="Discard changes"
+        body="You've edited this memory but haven't saved. Close without saving, or go back to keep editing."
+        onConfirm={() => {
+          dirtyRef.current = false;
+          setConfirmClose(false);
+          onOpenChange(false);
+        }}
+      />
+    </>
   );
 }
 
-export function MemoryEditor({ memory, capsule, onDone }: { memory: Memory; capsule: Capsule; onDone: () => void }) {
+export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Memory; capsule: Capsule; onDone: () => void; dirtyRef?: React.RefObject<boolean> }) {
   const persona = usePersona();
   const role = useRole(capsule.id);
   const people = useDb((d) => d.people);
@@ -63,6 +90,26 @@ export function MemoryEditor({ memory, capsule, onDone }: { memory: Memory; caps
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const featured = capsule.featuredMemoryId === memory.id;
+  const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+  const dirty =
+    title !== memory.title ||
+    narrative !== memory.narrative ||
+    quote !== (memory.quote ?? "") ||
+    !same(date, memory.date) ||
+    placeId !== memory.placeId ||
+    chapter !== memory.chapter ||
+    !same(peopleIds, memory.peopleIds) ||
+    !same(tags, memory.tags) ||
+    privacy !== memory.privacy ||
+    !same(consent, memory.consent) ||
+    !same(photoIds, memory.photoIds) ||
+    newPhotos.length > 0 ||
+    removeAudio ||
+    !!newAudio ||
+    transcript !== (existingTranscript?.text ?? "");
+  React.useEffect(() => {
+    if (dirtyRef) dirtyRef.current = dirty;
+  }, [dirty, dirtyRef]);
 
   const save = async () => {
     const parsed = memoryFormSchema.safeParse({ title, narrative, quote, date, placeId, chapter, privacy, tags, peopleIds, consent });

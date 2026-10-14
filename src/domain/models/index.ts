@@ -8,6 +8,7 @@ export * from "./preservation";
 export * from "./commerce";
 export * from "./heirloom";
 export * from "./ops";
+export * from "./drafts";
 
 import type { AccountPreferences, CapsuleMembership, FamilyGroup, Persona, Person, Profile, Relationship, User } from "./people";
 import type {
@@ -34,6 +35,8 @@ import type { AnalyticsEvent, AuditEvent, Notification, SupportRequest } from ".
  * The full local demonstration database. Persisted to IndexedDB.
  * Each top-level collection maps to a future Postgres table.
  */
+import type { CaptureDraft, GatheringSession } from "./drafts";
+
 export interface DemoDatabase {
   schemaVersion: number;
   seededAt: string;
@@ -76,6 +79,9 @@ export interface DemoDatabase {
   supportRequests: SupportRequest[];
   catalog: Product[];
   bookmarks: { capsuleId: string; memoryId: string; at: string }[];
+  /** Answers in progress and family gathering sessions — autosaved, resumable. */
+  captureDrafts: CaptureDraft[];
+  gatherings: GatheringSession[];
   /** Capsule wizard draft — persisted so users can leave and resume. */
   wizardDraft: unknown | null;
 }
