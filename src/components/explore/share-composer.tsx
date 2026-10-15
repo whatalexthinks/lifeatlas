@@ -29,12 +29,12 @@ export function ShareComposer({ open, onOpenChange, memory, capsule }: { open: b
           memoryId: memory.id,
           audience: "family_link",
           format: format === "portrait" ? "portrait_story" : format === "square" ? "audio_quote" : "milestone",
-          consentConfirmedBy: persona?.name ?? "Organizer",
+          consentConfirmedBy: persona?.name ?? "Owner",
           createdAt: new Date().toISOString(),
           publicUrl: null,
         });
       },
-      { actor: persona?.name ?? "Organizer", action: "share.prepared_family_only", target: memory.id },
+      { actor: persona?.name ?? "Owner", action: "share.prepared_family_only", target: memory.id },
     );
     toast.success("Share preview prepared", "Family-only. No public link was created, and nothing was posted.");
     onOpenChange(false);

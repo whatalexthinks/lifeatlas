@@ -20,7 +20,7 @@ export default function ViewerStory() {
     return (
       <div className="mx-auto max-w-xl px-6 py-32 text-center">
         <h1 className={cn("font-serif text-[2.6rem] leading-tight", night ? "text-night-ink" : "text-ink")}>This story isn&rsquo;t available.</h1>
-        <p className={cn("mt-4", night ? "text-night-ink-2" : "text-ink-2")}>It may be private, still waiting for review, or removed by the organizer.</p>
+        <p className={cn("mt-4", night ? "text-night-ink-2" : "text-ink-2")}>It may be private, still waiting for review, or removed by the capsule&rsquo;s owner or an editor.</p>
         <Link href={`${base}/stories`} className={cn("mt-6 inline-block underline underline-offset-4", night ? "text-[#d7bc92]" : "text-evergreen")}>
           Back to all stories
         </Link>

@@ -8,6 +8,7 @@ import { FutureStatusBadge } from "@/components/studio/primitives";
 import { EmptyState } from "@/components/ui/feedback";
 import { useDb } from "@/hooks/use-data";
 import { describeInterval } from "@/lib/dates";
+import { releaseLabel } from "@/domain/future-release";
 import { cn, formatDate } from "@/lib/utils";
 
 export default function ViewerLetters() {
@@ -27,7 +28,7 @@ export default function ViewerLetters() {
                 <div>
                   <p className={cn("font-serif text-[1.5rem] leading-tight", night ? "text-night-ink" : "text-ink")}>{l.isExample ? l.title : `A letter from ${l.authorName}`}</p>
                   <p className={cn("mt-1 text-[0.875rem]", night ? "text-night-ink-3" : "text-ink-3")}>
-                    For {l.recipient.name} · {l.release.milestone ? l.release.milestone.replace(/_/g, " ") : `opens ${describeInterval(l.release.date)}`}
+                    For {l.recipient.name} · {l.release.kind === "milestone" ? releaseLabel(l.release) : `opens ${describeInterval(l.release.date)}`}
                   </p>
                 </div>
                 <FutureStatusBadge status={l.status} example={l.isExample} />

@@ -2,9 +2,11 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ChevronDown, Ear, Lock, SkipForward } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { useInvitation } from "@/components/contribute/contribute-shell";
 import { YourStories } from "@/components/contribute/your-stories";
+import { InvitationPoints } from "@/components/contribute/invitation-points";
+import { explainInvitation } from "@/domain/invitations";
 import { CapsuleCover } from "@/components/capsule/capsule-cover";
 import { Button } from "@/components/ui/button";
 import { DemoNotice } from "@/components/ui/feedback";
@@ -17,12 +19,14 @@ export default function InvitationWelcome() {
   const router = useRouter();
   const personas = useDb((d) => d.personas);
   const questions = useDb((d) => d.questions);
+  const storyCount = useDb((d) => d.memories.filter((m) => m.capsuleId === capsule.id && !m.deletedAt && m.status === "approved").length);
   const [how, setHow] = React.useState(false);
   const [busy, setBusy] = React.useState(false);
   const first = invitation.recipientName.split(" ")[0];
   const isStoryteller = invitation.role === "storyteller";
   const isViewer = invitation.role === "viewer";
-  const qs = invitation.questionIds.map((id) => questions.find((q) => q.id === id)).filter(Boolean);
+  const qs = invitation.questionIds.map((id) => questions.find((q) => q.id === id)).filter((q) => !!q);
+  const points = explainInvitation({ invitation, capsule, inviterName: organizerName, questions: qs.map((q) => q.text), storyCount });
 
   const begin = async () => {
     setBusy(true);
@@ -61,30 +65,9 @@ export default function InvitationWelcome() {
         </figure>
       ) : null}
 
-      <div className="mt-10 grid gap-8 sm:grid-cols-[180px_1fr] sm:items-center">
+      <div className="mt-10 grid gap-8 sm:grid-cols-[180px_1fr] sm:items-start">
         <CapsuleCover capsule={capsule} size="sm" className="aspect-[4/5] w-40 rounded-[16px] shadow-md sm:w-full" />
-        <ul className="space-y-4 text-[1.1rem] leading-snug">
-          {!isViewer ? (
-            <li className="flex gap-3">
-              <Ear className="mt-1 size-5 shrink-0 text-evergreen" />
-              <span>
-                <strong className="font-medium">Who might hear it:</strong> {organizerName} and the family members they invite to {capsule.preferredName}&rsquo;s private archive.
-              </span>
-            </li>
-          ) : null}
-          <li className="flex gap-3">
-            <SkipForward className="mt-1 size-5 shrink-0 text-evergreen" />
-            <span>
-              <strong className="font-medium">No pressure:</strong> {isViewer ? "look around as long as you like." : `skip any question, take breaks, and come back later.${qs.length ? ` There ${qs.length === 1 ? "is 1 question" : `are ${qs.length} questions`} waiting.` : ""}`}
-            </span>
-          </li>
-          <li className="flex gap-3">
-            <Lock className="mt-1 size-5 shrink-0 text-evergreen" />
-            <span>
-              <strong className="font-medium">Private:</strong> never posted publicly. No account or password needed.
-            </span>
-          </li>
-        </ul>
+        <InvitationPoints points={points} />
       </div>
 
       <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -101,7 +84,7 @@ export default function InvitationWelcome() {
           {[
             ["One question at a time.", "Read it, think for a moment, and answer however feels natural."],
             ["Tap the big button to speak.", "Your browser asks to use the microphone once. Pause whenever you like, listen back, and try again."],
-            ["Or type, or add a photo.", "Every way of answering is just as good."],
+            ["Or type, or add a photo.", "Every way of answering is just as good. Skip any question, take breaks, come back later."],
             [isStoryteller ? "It becomes part of your story." : `${organizerName} sees it first.`, isStoryteller ? "Your family can read and listen. You can change or remove anything later." : `They add it to ${capsule.preferredName}'s archive once they've read it.`],
           ].map(([t, d], i) => (
             <li key={t} className="flex gap-4">

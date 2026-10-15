@@ -8,7 +8,7 @@ import { services } from "@/services/factory";
 import { cn, initials } from "@/lib/utils";
 import { toast } from "@/components/ui/feedback";
 
-const kindLabel = { organizer: "Organizer", storyteller: "Storyteller", contributor: "Contributor", viewer: "Viewer", operations: "Operations" } as const;
+const kindLabel = { organizer: "Owner & editor", storyteller: "Storyteller", contributor: "Contributor", viewer: "Viewer", operations: "Operations" } as const;
 
 /** Demo identity switcher. Explicitly NOT authentication. */
 export function PersonaSwitcher({ compact = false, align = "start", side = "bottom", tone = "paper" }: { compact?: boolean; align?: "start" | "end"; side?: "top" | "bottom" | "right"; tone?: "paper" | "night" }) {

@@ -8,12 +8,12 @@ const no = <Minus className="size-4 text-ink-4" aria-label="No" />;
 /** Who can do what in a capsule — rendered from the same rules the app uses. */
 export function RolesTable({ className }: { className?: string }) {
   const cols: { key: string; label: string; cell: (r: ReturnType<typeof roleSummary>) => React.ReactNode }[] = [
-    { key: "read", label: "Read", cell: (r) => (r.read === "everything" ? "Everything" : r.read === "shared" ? "What's shared with them" : no) },
+    { key: "read", label: "Read", cell: (r) => (r.read === "everything" ? "Everything" : r.read === "all_but_private" ? "All but others' “Only me” stories" : r.read === "shared" ? "What's shared with them" : no) },
     { key: "add", label: "Add stories", cell: (r) => (r.add ? yes : no) },
     { key: "edit", label: "Edit", cell: (r) => (r.edit === "all" ? "Any story" : r.edit === "own" ? "Their own" : no) },
     { key: "invite", label: "Invite", cell: (r) => (r.invite ? yes : no) },
     { key: "export", label: "Download", cell: (r) => (r.export ? yes : no) },
-    { key: "delete", label: "Delete capsule", cell: (r) => (r.delete ? yes : no) },
+    { key: "delete", label: "Delete", cell: (r) => (r.delete === "capsule" ? "Any story, and the capsule" : r.delete === "all" ? "Any story" : r.delete === "own" ? "Their own" : no) },
   ];
   return (
     <div className={cn("overflow-x-auto rounded-[20px] border border-line bg-surface", className)} tabIndex={0} role="region" aria-label="Roles and permissions (scrolls sideways on small screens)">

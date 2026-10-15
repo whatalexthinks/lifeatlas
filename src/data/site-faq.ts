@@ -26,7 +26,7 @@ export const faqGroups: FaqGroup[] = [
     id: "privacy",
     title: "Privacy and safety",
     items: [
-      { q: "Who can see my capsule?", a: "Only the people you invite. Capsules are never public and never listed. Within a capsule, each memory can be kept to yourself, shared with the capsule's editors, or shared with everyone you've invited." },
+      { q: "Who can see my capsule?", a: "Only the people you invite. Capsules are never public and never listed. Within a capsule, each memory can be kept to yourself, shared with the owner and editors, shared with particular people you choose, or shared with everyone you've invited. The capsule's owner can always see everything in it." },
       { q: "Is my data encrypted?", a: "In this preview, everything stays in your own browser on your own device; nothing is sent to our servers. When hosted accounts launch we will describe exactly how data is protected in transit and at rest — we won't make security claims before they're true." },
       { q: "Do you use my stories to train AI or sell them?", a: "No. Your stories are yours. We don't sell personal data, and we won't use your memories to train models." },
       { q: "Can I delete everything?", a: "Yes. You can delete single memories (they wait in Recently deleted for a while in case of mistakes), whole capsules, or — in this preview — erase everything on this device from Settings." },

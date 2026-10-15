@@ -144,7 +144,8 @@ export const extraMedia: MediaAsset[] = [
 
 /* ------------------------------ Memories ------------------------------- */
 
-const sarah: MemoryAttribution = { personId: "per_sarah", displayName: "Sarah Ellis", relationship: "Organizer", via: "sample" };
+const sarahWife: MemoryAttribution = { personId: "per_sarah", displayName: "Sarah Ellis", relationship: "Wife", via: "sample" };
+const sarahMother: MemoryAttribution = { ...sarahWife, relationship: "Mother" };
 const jonah: MemoryAttribution = { personId: "per_jonah", displayName: "Jonah Reed", relationship: "Husband", via: "sample" };
 const margaret: MemoryAttribution = { personId: "per_margaret", displayName: "Margaret Ellis", relationship: "Grandmother", via: "sample" };
 const daniel: MemoryAttribution = { personId: "per_daniel", displayName: "Daniel Ellis", relationship: "Son", via: "sample" };
@@ -194,7 +195,7 @@ export const extraMemories: Memory[] = [
     tags: ["How we met", "Boston", "Rain"],
     photoIds: ["med_us_umbrella"],
     questionId: "q_ourstory_3",
-    attribution: sarah,
+    attribution: sarahWife,
     pinned: true,
     createdAt: "2026-09-10T20:30:00.000Z",
   }),
@@ -226,7 +227,7 @@ export const extraMemories: Memory[] = [
     peopleIds: ["per_jonah"],
     tags: ["Questions for each other"],
     questionId: "q_ourstory_1",
-    attribution: sarah,
+    attribution: sarahWife,
     createdAt: "2026-09-14T21:10:00.000Z",
   }),
   memory({
@@ -242,7 +243,7 @@ export const extraMemories: Memory[] = [
     tags: ["Firsts", "Books"],
     photoIds: ["med_us_bookshop"],
     questionId: "q_ourstory_4",
-    attribution: sarah,
+    attribution: sarahWife,
     createdAt: "2026-09-11T19:00:00.000Z",
   }),
   memory({
@@ -258,7 +259,7 @@ export const extraMemories: Memory[] = [
     peopleIds: ["per_sarah", "per_jonah", "per_margaret", "per_thomas"],
     tags: ["Wedding", "Milestone"],
     photoIds: ["med_us_orchard"],
-    attribution: sarah,
+    attribution: sarahWife,
     pinned: true,
     createdAt: "2026-09-12T20:00:00.000Z",
   }),
@@ -290,7 +291,7 @@ export const extraMemories: Memory[] = [
     tags: ["Road trip", "Adventures"],
     photoIds: ["med_us_road"],
     questionId: "q_usnow_7",
-    attribution: sarah,
+    attribution: sarahWife,
     createdAt: "2026-09-18T20:00:00.000Z",
   }),
   memory({
@@ -305,7 +306,7 @@ export const extraMemories: Memory[] = [
     peopleIds: ["per_sarah", "per_jonah", "per_emma"],
     tags: ["Emma", "Family"],
     photoIds: ["med_us_night"],
-    attribution: sarah,
+    attribution: sarahWife,
     createdAt: "2026-09-20T21:00:00.000Z",
   }),
   memory({
@@ -321,7 +322,7 @@ export const extraMemories: Memory[] = [
     tags: ["Traditions", "Little moments"],
     photoIds: ["med_us_pancakes"],
     questionId: "q_usnow_3",
-    attribution: sarah,
+    attribution: sarahWife,
     createdAt: "2026-09-22T20:00:00.000Z",
   }),
   memory({
@@ -336,7 +337,7 @@ export const extraMemories: Memory[] = [
     peopleIds: ["per_sarah", "per_jonah", "per_thomas"],
     tags: ["Hard times"],
     questionId: "q_usnow_4",
-    attribution: sarah,
+    attribution: sarahWife,
     privacy: "organizers",
     createdAt: "2026-09-25T22:00:00.000Z",
   }),
@@ -422,7 +423,7 @@ export const extraMemories: Memory[] = [
     tags: ["Thanksgiving", "Traditions"],
     photoIds: ["med_fam_pie"],
     questionId: "q_familyhistory_3",
-    attribution: sarah,
+    attribution: sarahMother,
     createdAt: "2026-09-15T18:00:00.000Z",
   }),
   memory({
@@ -467,7 +468,7 @@ export const extraMemories: Memory[] = [
     peopleIds: ["per_margaret", "per_daniel", "per_priya", "per_sarah", "per_jonah", "per_emma", "per_leo"],
     tags: ["Gatherings", "Thanksgiving"],
     photoIds: ["med_fam_table"],
-    attribution: sarah,
+    attribution: sarahMother,
     createdAt: "2026-09-23T19:00:00.000Z",
   }),
   memory({

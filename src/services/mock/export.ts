@@ -2,7 +2,7 @@
 
 import { strToU8, zipSync, type Zippable } from "fflate";
 import type { ArchiveManifest, DemoDatabase, ExportJob, ExportOptions, MediaAsset, Memory } from "@/domain/models";
-import { isExportEligible } from "@/domain/policies/permissions";
+import { isExportEligible, roleFor } from "@/domain/policies/permissions";
 import { chapterById } from "@/data/chapters";
 import { capsuleKind } from "@/domain/capsule-kinds";
 import { formatFuzzyDate, sortKey } from "@/lib/dates";
@@ -40,8 +40,11 @@ const slug = (s: string) =>
 
 /** Pure: which memories and media an export would contain. Unit-tested. */
 export function selectExportContent(d: DemoDatabase, capsuleId: string, options: ExportOptions) {
+  // Whoever is exporting gets only what they can see. (No identity, e.g. in tests: no filter.)
+  const persona = d.personas.find((p) => p.id === d.activePersonaId);
+  const exporter = persona?.personId ? { role: roleFor(persona, capsuleId, d.memberships), personId: persona.personId } : undefined;
   const memories = d.memories
-    .filter((m) => m.capsuleId === capsuleId && isExportEligible(m, { includePrivate: options.includePrivate, includeDrafts: options.includeDrafts }))
+    .filter((m) => m.capsuleId === capsuleId && isExportEligible(m, { includePrivate: options.includePrivate, includeDrafts: options.includeDrafts }, exporter))
     .sort((a, b) => sortKey(a.date) - sortKey(b.date));
   const excludedMemories = d.memories
     .filter((m) => m.capsuleId === capsuleId && !memories.includes(m))
@@ -149,6 +152,7 @@ function toManifestMemory(m: Memory, d: DemoDatabase): ArchiveManifest["memories
     tags: m.tags,
     contributor: m.attribution.displayName,
     privacy: m.privacy,
+    ...(m.privacy === "selected" ? { sharedWith: m.sharedWith ?? [] } : {}),
     status: m.status,
     media: [...m.photoIds, ...(m.videoIds ?? []), ...(m.audioId ? [m.audioId] : [])].filter((id) => d.media.some((x) => x.id === id)),
     createdAt: m.createdAt,

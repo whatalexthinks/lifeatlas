@@ -390,7 +390,7 @@ export interface PreservationProvider {
 /* ------------------------------------------------------------------ */
 
 export interface FutureDeliveryProvider {
-  saveDraft(values: FutureMessageFormValues, opts: { id?: string; capsuleId?: string; attachmentIds: string[]; authorName: string; recipientBirthYear?: number }): Promise<ServiceResult<FutureMessage>>;
+  saveDraft(values: FutureMessageFormValues, opts: { id?: string; capsuleId?: string; attachmentIds: string[]; memoryIds?: string[]; authorName: string; recipientBirthYear?: number }): Promise<ServiceResult<FutureMessage>>;
   transition(id: string, to: FutureMessageStatus): Promise<ServiceResult<FutureMessage>>;
   /** Demo seal: computes a real SHA-256 snapshot hash locally; reversible. */
   sealDemo(id: string): Promise<ServiceResult<FutureMessage>>;

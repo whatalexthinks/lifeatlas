@@ -286,7 +286,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
             </h2>
             <p className={cn("text-ink-3", senior ? "text-[1.05rem]" : "text-[0.9375rem]")}>
               {status === "submitted"
-                ? `${capsule.preferredName}'s organizer will see it next. It appears in the archive once approved.`
+                ? `The people looking after ${capsule.preferredName}'s capsule will see it next. It appears in the archive once approved.`
                 : `“${justSaved.title}” is now part of ${capsule.preferredName}'s archive.`}
             </p>
           </div>
@@ -567,7 +567,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
         </div>
         <p className="mt-3 text-[0.8125rem] text-ink-3" aria-live="polite">
           {draftSavedAt ? <span className="font-medium text-ink-2">Draft saved {relativeTime(draftSavedAt)} — you can close this and come back. </span> : null}
-          Saved on this device for the demo — not uploaded or backed up. {status === "submitted" ? "The organizer reviews it before it appears." : ""}
+          Saved on this device for the demo — not uploaded or backed up. {status === "submitted" ? "The owner or an editor reviews it before it appears." : ""}
         </p>
       </div>
       {saved.length ? (

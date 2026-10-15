@@ -41,6 +41,7 @@ const manifestSchema = z.object({
       tags: z.array(z.string()),
       contributor: z.string(),
       privacy: z.string(),
+      sharedWith: z.array(z.string()).optional(),
       status: z.string(),
       media: z.array(z.string()),
     }),
@@ -243,6 +244,10 @@ async function restoreArchive(token: string) {
     const chapter = (chapters.find((c) => c.title === m.chapter || c.id === m.chapter)?.id ?? "everyday") as ChapterKey;
     const own = m.media.map((id) => ({ old: id, kind: manifest.media.find((x) => x.id === id)?.kind, id: mediaIds.get(id) })).filter((x) => x.id);
     const date = restoreDate(m.date);
+    // People a story was shared with must exist here; unknown ones are dropped. If nobody is
+    // left, the story falls back to owner & editors — narrower, never wider.
+    const sharedWith = m.privacy === "selected" ? (m.sharedWith ?? []).map((id) => peopleIds.get(id) ?? (db().people.some((p) => p.id === id) ? id : undefined)).filter((x): x is string => !!x) : [];
+    const privacy = m.privacy === "selected" ? (sharedWith.length ? "selected" : "organizers") : m.privacy === "private" || m.privacy === "organizers" ? m.privacy : "family";
     const r = await mockCapsules.createMemory({
       capsuleId,
       title: m.title.length >= 2 ? m.title.slice(0, 160) : `${m.title || "Untitled"} story`,
@@ -251,7 +256,8 @@ async function restoreArchive(token: string) {
       date,
       chapter,
       placeId: m.placeId ? placeIds.get(m.placeId) : undefined,
-      privacy: m.privacy === "private" || m.privacy === "organizers" ? m.privacy : "family",
+      privacy,
+      sharedWith: privacy === "selected" ? sharedWith : undefined,
       tags: m.tags.slice(0, 12),
       peopleIds: m.peopleIds.map((id) => peopleIds.get(id)).filter((x): x is string => !!x),
       consent: { print: false, export: true, share: false },

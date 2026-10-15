@@ -19,7 +19,7 @@ const sections: { id: string; title: string; icon: React.ComponentType<{ classNa
     icon: Lightbulb,
     articles: [
       { q: "What's the quickest way to begin?", a: <>Open <Link className="text-link" href="/app/gather">Gather a memory</Link>, pick one question, and record or type an answer. One memory is a real beginning.</>, tags: "start begin first memory question" },
-      { q: "Does the storyteller need an account?", a: "No. Storytellers answer from a private link or on your device. Only organizers manage the archive.", tags: "account storyteller login password" },
+      { q: "Does the storyteller need an account?", a: "No. Storytellers answer from a private link or on your device. Only the owner and editors manage the archive.", tags: "account storyteller login password" },
       { q: "Do dates have to be exact?", a: "Not at all. “Around 1965”, “the 1970s” or “the summer we moved” all work, and the timeline handles them gracefully.", tags: "date approximate fuzzy year decade" },
     ],
   },
@@ -38,7 +38,7 @@ const sections: { id: string; title: string; icon: React.ComponentType<{ classNa
     title: "Family & privacy",
     icon: Users,
     articles: [
-      { q: "Who can see a memory?", a: <>Each memory is private, for organizers, or for family. Roles decide the rest — see <Link className="text-link" href="/app/family">Family</Link> for the full table.</>, tags: "privacy who see visible private family organizers" },
+      { q: "Who can see a memory?", a: <>Each memory is for the family, for people you choose, for the owner and editors, or only for you. Roles decide the rest — see <Link className="text-link" href="/app/family">Family</Link> for the full table.</>, tags: "privacy who see visible private family editors selected people share" },
       { q: "What happens when a relative contributes?", a: <>Their story waits in <Link className="text-link" href="/app/invitations?tab=review">review</Link>. You can approve it, return it with a note, or decline it kindly.</>, tags: "contribute review approve invitation relative" },
       { q: "Are invitations emailed?", a: "Not in this preview. You copy the link and share it however you like.", tags: "invite email send link" },
     ],

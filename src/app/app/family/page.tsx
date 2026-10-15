@@ -3,9 +3,10 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Eye, Info, Lock, MailPlus, Minus } from "lucide-react";
+import { Eye, Info, Lock, MailPlus } from "lucide-react";
 import type { Role } from "@/domain/models";
-import { accessMatrix, can, membershipRole, roleLabels } from "@/domain/policies/permissions";
+import { membershipRole, roleLabels } from "@/domain/policies/permissions";
+import { AccessMatrix } from "@/components/studio/access-matrix";
 import { PageHeader, Panel, Stat } from "@/components/studio/primitives";
 import { Avatar } from "@/components/studio/persona-switcher";
 import { Button, ButtonLink } from "@/components/ui/button";
@@ -15,7 +16,6 @@ import { services } from "@/services/factory";
 import { cn } from "@/lib/utils";
 
 const assignable: Role[] = ["organizer", "contributor", "viewer", "successor"];
-const matrixRoles: Role[] = ["owner", "organizer", "storyteller", "contributor", "viewer", "successor"];
 
 export default function FamilyPage() {
   const group = useDb((d) => d.familyGroups[0]);
@@ -163,44 +163,7 @@ export default function FamilyPage() {
       </Panel>
 
       <Panel title="What each role can do" className="mt-6" bodyClassName="p-0 sm:p-0">
-        <div className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-evergreen" tabIndex={0} role="region" aria-label="What each role can do">
-          <table className="w-full min-w-[720px] text-[0.875rem]">
-            <thead>
-              <tr className="border-b border-line">
-                <th scope="col" className="px-6 py-3 text-left font-normal text-ink-3">
-                  <span className="sr-only">Capability</span>
-                </th>
-                {matrixRoles.map((r) => (
-                  <th key={r} scope="col" className="px-2 py-3 text-center font-medium">
-                    <span title={roleLabels[r].description}>{roleLabels[r].label}</span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line">
-              {accessMatrix.map((row) => (
-                <tr key={row.capability}>
-                  <th scope="row" className="px-6 py-2.5 text-left font-normal text-ink-2">
-                    {row.label}
-                  </th>
-                  {matrixRoles.map((r) => (
-                    <td key={r} className="px-2 py-2.5 text-center">
-                      {can(r, row.capability) ? <Check className="mx-auto size-4 text-evergreen" aria-label="Yes" /> : <Minus className="mx-auto size-4 text-ink-4/60" aria-label="No" />}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <dl className="grid gap-x-8 gap-y-3 border-t border-line px-6 py-5 text-[0.875rem] sm:grid-cols-2 lg:grid-cols-3">
-          {matrixRoles.map((r) => (
-            <div key={r}>
-              <dt className="font-medium">{roleLabels[r].label}</dt>
-              <dd className="text-ink-3">{roleLabels[r].description}</dd>
-            </div>
-          ))}
-        </dl>
+        <AccessMatrix />
       </Panel>
     </div>
   );

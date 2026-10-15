@@ -280,9 +280,9 @@ function NotOrganizer() {
   return (
     <div className="mx-auto max-w-xl py-16 text-center">
       <p className="eyebrow justify-center">Viewing as {persona.name}</p>
-      <h1 className="mt-5 font-serif text-heading">The studio is for organizers.</h1>
+      <h1 className="mt-5 font-serif text-heading">The studio is for a capsule&rsquo;s owner and editors.</h1>
       <p className="mt-4 text-lead text-ink-2">
-        {persona.name} is a {persona.kind} in this demo, so they wouldn&rsquo;t see organizer tools. Switch back to Sarah, or continue as {persona.name.split(" ")[0]}.
+        {persona.name} is a {persona.kind} in this demo, so they wouldn&rsquo;t see the owner&rsquo;s and editors&rsquo; tools. Switch back to Sarah, or continue as {persona.name.split(" ")[0]}.
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <ButtonLink href={target.href} size="lg">

@@ -25,14 +25,16 @@ export interface FutureRecipient {
   birthYear?: number;
 }
 
-export type ReleaseKind = "date" | "interval" | "milestone";
+export type ReleaseKind = "date" | "interval" | "milestone" | "year";
 
 export interface FutureReleasePolicy {
   kind: ReleaseKind;
-  /** The intended opening date (also computed for interval releases). */
+  /** The intended opening date (also computed for interval, year and birthday releases). */
   date: ISODate;
   intervalYears?: 5 | 10 | 20 | 30;
-  milestone?: "18th_birthday" | "21st_birthday" | "graduation" | "wedding" | "first_child" | "30th_birthday" | "custom";
+  /** "Open it in 2045": the letter waits for a year, not a particular day. */
+  year?: number;
+  milestone?: "18th_birthday" | "21st_birthday" | "graduation" | "wedding" | "anniversary" | "first_child" | "30th_birthday" | "custom";
   milestoneNote?: string;
   /** Requirement for releases far in the future. */
   requiresReconfirmationEveryYears: number;
@@ -68,7 +70,10 @@ export interface FutureMessage extends Timestamps {
   dedication?: string;
   body: string;
   format: "letter" | "voice" | "letter_with_media";
+  /** Photos, voice notes and video clips sent with the letter. */
   attachmentIds: ID[];
+  /** Stories from the capsule given with the letter — a gift of memories. */
+  memoryIds?: ID[];
   recipient: FutureRecipient;
   backupRecipient?: FutureRecipient;
   successorId?: ID;

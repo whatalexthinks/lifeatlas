@@ -59,27 +59,29 @@ function Swatch({ token, label, text }: { token: string; label: string; text?: b
 }
 
 const surfaces = [
-  ["paper", "Paper — page"],
+  ["paper", "Porcelain — page"],
   ["surface", "Surface — cards"],
-  ["ivory", "Ivory — quiet fills"],
+  ["ivory", "Soft paper — quiet fills"],
   ["linen", "Linen — mounts"],
   ["line", "Line"],
   ["line-strong", "Line strong"],
 ] as const;
 const inks = [
-  ["ink", "Ink"],
+  ["ink", "Charcoal — headings and text"],
   ["ink-2", "Ink 2 — body"],
   ["ink-3", "Ink 3 — secondary"],
   ["ink-4", "Ink 4 — metadata"],
-  ["evergreen", "Evergreen — action"],
-  ["brass-ink", "Brass ink — eyebrows"],
+  ["evergreen", "Muted forest — action"],
+  ["oxblood", "Oxblood — accent"],
+  ["brass-ink", "Taupe ink — eyebrows"],
 ] as const;
+/** Chapter accents tint chapter covers and markers only — they are not part of the brand palette. */
 const chapters = [
   ["terracotta", "Terracotta"],
   ["slate", "Slate"],
   ["smoke", "Smoke"],
   ["moss", "Moss"],
-  ["brass", "Brass"],
+  ["taupe", "Taupe"],
 ] as const;
 const tones: StatusTone[] = ["neutral", "brand", "demo", "success", "warning", "danger", "info"];
 
@@ -152,7 +154,7 @@ export default function StyleGuidePage() {
               </ul>
             </div>
             <div>
-              <p className="mb-4 text-[0.8125rem] font-semibold uppercase tracking-[0.1em] text-ink-3">Chapters</p>
+              <p className="mb-4 text-[0.8125rem] font-semibold uppercase tracking-[0.1em] text-ink-3">Chapter accents</p>
               <ul className="space-y-3">
                 {chapters.map(([t, l]) => (
                   <Swatch key={t} token={t} label={l} text />

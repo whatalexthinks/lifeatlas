@@ -7,7 +7,7 @@ import type { Capsule, Memory, MemoryPrivacy } from "@/domain/models";
 import { Sheet, ConfirmDialog } from "@/components/ui/overlay";
 import { Button } from "@/components/ui/button";
 import { Badge, DemoNotice, toast } from "@/components/ui/feedback";
-import { Checkbox, Field, Input, Label, Segmented, Select, Textarea } from "@/components/ui/field";
+import { Checkbox, ChoiceCards, Field, Input, Label, Select, Textarea } from "@/components/ui/field";
 import { FuzzyDateInput, PhotoDateSuggestion, PlacePicker } from "@/components/capsule/inputs";
 import { MediaImage } from "@/components/media/media-image";
 import { AudioPlayer } from "@/components/audio/audio-player";
@@ -15,13 +15,14 @@ import { PhotoAdder, type PendingPhoto } from "@/components/capture/photo-adder"
 import { VideoAdder, VideoClip, type PendingVideo } from "@/components/media/video-clip";
 import { Recorder, type RecordedAudio } from "@/components/capture/recorder";
 import { MemoryStatusBadge, privacyCopy } from "./primitives";
-import { canEditMemory } from "@/domain/policies/permissions";
+import { canDeleteMemory, canEditMemory, roleLabels } from "@/domain/policies/permissions";
 import { memoryFormSchema } from "@/domain/schemas";
 import { chapters } from "@/data/chapters";
 import { useDb, usePersona, useRole } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { cn, relativeTime } from "@/lib/utils";
 import { brand } from "@/config/brand";
+import { flushSave } from "@/store/demo-store";
 
 export function MemoryEditorSheet({ memory, capsule, open, onOpenChange }: { memory: Memory | undefined; capsule: Capsule; open: boolean; onOpenChange: (v: boolean) => void }) {
   // The editor writes whether it has unsaved changes; closing then asks before discarding them.
@@ -63,9 +64,11 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
   const persona = usePersona();
   const role = useRole(capsule.id);
   const people = useDb((d) => d.people);
+  const memberships = useDb((d) => d.memberships);
   const media = useDb((d) => d.media);
   const transcripts = useDb((d) => d.transcripts);
   const editable = canEditMemory(memory, role, persona.personId) && !memory.deletedAt;
+  const deletable = canDeleteMemory(memory, role, persona.personId) && !memory.deletedAt;
   const canReview = role === "owner" || role === "organizer";
 
   const [title, setTitle] = React.useState(memory.title);
@@ -79,6 +82,13 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
   const [tags, setTags] = React.useState(memory.tags);
   const [tagDraft, setTagDraft] = React.useState("");
   const [privacy, setPrivacy] = React.useState<MemoryPrivacy>(memory.privacy);
+  const [sharedWith, setSharedWith] = React.useState<string[]>(memory.sharedWith ?? []);
+  // People a story can be shared with: members who wouldn't see it anyway (owner and editors
+  // always do; the author always sees their own).
+  const shareable = memberships
+    .filter((m) => m.capsuleId === capsule.id && m.status === "active" && m.role !== "owner" && m.role !== "organizer" && m.role !== "successor" && m.personId !== memory.attribution.personId)
+    .map((m) => ({ person: people.find((p) => p.id === m.personId), role: m.role }))
+    .filter((x) => !!x.person);
   const [consent, setConsent] = React.useState(memory.consent);
   const [photoIds, setPhotoIds] = React.useState(memory.photoIds);
   const [newPhotos, setNewPhotos] = React.useState<PendingPhoto[]>([]);
@@ -106,6 +116,7 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
     !same(peopleIds, memory.peopleIds) ||
     !same(tags, memory.tags) ||
     privacy !== memory.privacy ||
+    (privacy === "selected" && !same(sharedWith, memory.sharedWith ?? [])) ||
     !same(consent, memory.consent) ||
     !same(photoIds, memory.photoIds) ||
     newPhotos.length > 0 ||
@@ -119,10 +130,11 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
   }, [dirty, dirtyRef]);
 
   const save = async () => {
-    const parsed = memoryFormSchema.safeParse({ title, narrative, quote, date, placeId, chapter, privacy, tags, peopleIds, consent });
-    if (!parsed.success) {
+    const parsed = memoryFormSchema.safeParse({ title, narrative, quote, date, placeId, chapter, privacy, sharedWith: privacy === "selected" ? sharedWith : undefined, tags, peopleIds, consent });
+    if (!parsed.success || (privacy === "selected" && !sharedWith.length)) {
       const e: Record<string, string> = {};
-      for (const i of parsed.error.issues) e[String(i.path[0])] ??= i.message;
+      for (const i of parsed.success ? [] : parsed.error.issues) e[String(i.path[0])] ??= i.message;
+      if (privacy === "selected" && !sharedWith.length) e.sharedWith = "Choose at least one person to share it with.";
       setErrors(e);
       toast.warning("Please check the highlighted fields");
       return;
@@ -152,6 +164,8 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
       if (res.status !== "ok") throw new Error(res.message);
       const targetAudio = typeof audioId === "string" ? audioId : audioId === null ? undefined : memory.audioId;
       if (targetAudio && transcript.trim() !== (existingTranscript?.text ?? "").trim()) await s.transcription.saveManualTranscript(targetAudio, transcript.trim());
+      // Write through before saying "saved", so leaving the page straight away can't lose it.
+      await flushSave().catch(() => undefined);
       toast.success("Saved on this device", "Earlier version kept in the history.");
       onDone();
     } catch (e) {
@@ -214,7 +228,7 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
       ) : null}
 
       {!editable && !memory.deletedAt ? (
-        <DemoNotice tone="info">You can view this memory, but only its author or an organizer can edit it. (Simulated permissions.)</DemoNotice>
+        <DemoNotice tone="info">You can view this memory, but only its author, the owner or an editor can edit it. (Simulated permissions.)</DemoNotice>
       ) : null}
 
       <fieldset disabled={!editable} className="space-y-6 disabled:opacity-70">
@@ -246,18 +260,58 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
               ))}
             </Select>
           </Field>
-          <div className="space-y-2">
-            <Label htmlFor="ed-privacy">Who can see it</Label>
-            <Segmented
-              label="Privacy"
-              value={privacy}
-              onChange={setPrivacy}
-              size="sm"
-              options={(["family", "organizers", "private"] as MemoryPrivacy[]).map((p) => ({ value: p, label: privacyCopy[p].label }))}
-            />
-            <p className="text-[0.8125rem] text-ink-3">{privacyCopy[privacy].description}</p>
-          </div>
         </div>
+        <fieldset className="space-y-3">
+          <legend className="mb-2 font-medium">Who can see it</legend>
+          <ChoiceCards
+            name="ed-privacy"
+            aria-label="Who can see it"
+            value={privacy}
+            onChange={(p) => {
+              setPrivacy(p);
+              setErrors(({ sharedWith: _, ...rest }) => rest);
+            }}
+            options={(["family", "selected", "organizers", "private"] as MemoryPrivacy[]).map((p) => ({ value: p, label: privacyCopy[p].label, description: privacyCopy[p].description }))}
+          />
+          {privacy === "selected" ? (
+            <div className="rounded-[16px] border border-line bg-paper/60 p-4">
+              <p id="ed-shared-label" className="font-medium">
+                Share it with
+              </p>
+              {shareable.length ? (
+                <ul className="mt-3 space-y-2.5" aria-labelledby="ed-shared-label">
+                  {shareable.map(({ person, role }) => (
+                    <li key={person!.id}>
+                      <Checkbox
+                        id={`ed-share-${person!.id}`}
+                        checked={sharedWith.includes(person!.id)}
+                        onCheckedChange={(on) => {
+                          setSharedWith((ids) => (on ? [...ids, person!.id] : ids.filter((x) => x !== person!.id)));
+                          setErrors(({ sharedWith: _, ...rest }) => rest);
+                        }}
+                        label={
+                          <span>
+                            {person!.displayName} <span className="text-ink-3">· {roleLabels[role].label}</span>
+                          </span>
+                        }
+                      />
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-2 text-[0.875rem] text-ink-2">
+                  Nobody else has joined this capsule yet. <Link href="/app/family" className="text-link">Invite someone from Family</Link>, then choose them here.
+                </p>
+              )}
+              {errors.sharedWith ? (
+                <p role="alert" className="mt-3 text-[0.875rem] font-medium text-danger">
+                  {errors.sharedWith}
+                </p>
+              ) : null}
+              <p className="mt-3 text-[0.8125rem] text-ink-3">The owner and editors can always see it. In this preview, sharing is simulated on this device.</p>
+            </div>
+          ) : null}
+        </fieldset>
         <div className="space-y-2">
           <Label>People in this story</Label>
           <div className="flex flex-wrap gap-1.5">
@@ -385,9 +439,11 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
             <Button variant="ghost" size="sm" leading={<Star className={cn("size-4", featured && "fill-brass text-brass")} />} disabled={featured || memory.status !== "approved"} onClick={async () => (await services().capsules.setFeatured(capsule.id, memory.id), toast.success("Featured on the cover"))}>
               {featured ? "Featured" : "Feature"}
             </Button>
-            <Button variant="ghost" size="sm" className="text-danger" leading={<Trash2 className="size-4" />} onClick={() => setConfirmDelete(true)}>
-              Delete
-            </Button>
+            {deletable ? (
+              <Button variant="ghost" size="sm" className="text-danger" leading={<Trash2 className="size-4" />} onClick={() => setConfirmDelete(true)}>
+                Delete
+              </Button>
+            ) : null}
           </div>
           <Button onClick={() => void save()} loading={saving}>
             Save changes

@@ -17,6 +17,8 @@ import { ChoiceCards, Field, Input, Segmented, Select, Textarea } from "@/compon
 import { Dialog } from "@/components/ui/overlay";
 import { useDb } from "@/hooks/use-data";
 import { services } from "@/services/factory";
+import { InvitationPoints } from "@/components/contribute/invitation-points";
+import { explainInvitation } from "@/domain/invitations";
 import type { MessagePreview } from "@/services/contracts";
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, formatDate, relativeTime } from "@/lib/utils";
@@ -247,6 +249,7 @@ function NewInvitationDialog({ open, onOpenChange, defaultCapsule, defaultQuesti
   const capsules = useDb((d) => d.capsules).filter((c) => c.status === "active" || c.status === "draft");
   const questions = useDb((d) => d.questions);
   const memories = useDb((d) => d.memories);
+  const inviterName = useDb((d) => d.account.profile.displayName);
   const [capsuleId, setCapsuleId] = React.useState(defaultCapsule ?? capsules[0]?.id ?? "");
   const [values, setValues] = React.useState<InvitationFormValues>({
     recipientName: "",
@@ -329,15 +332,17 @@ function NewInvitationDialog({ open, onOpenChange, defaultCapsule, defaultQuesti
             name="role"
             value={values.role}
             onChange={(v) => set({ role: v })}
-            columns={3}
+            columns={2}
             options={[
-              { value: "storyteller", label: "Storyteller", description: "The person whose life this is" },
               { value: "contributor", label: "Contributor", description: "Adds stories, photos or recordings" },
+              { value: "storyteller", label: "Storyteller", description: "The person whose life this is" },
               { value: "viewer", label: "Viewer", description: "Explores approved stories only" },
+              { value: "organizer", label: "Editor", description: "Helps you run it: edits, invites, reviews" },
             ]}
           />
+          <p className="mt-3 text-[0.875rem] text-ink-3">Everyone you invite joins free. Only you, as the owner, pay for the plan.</p>
         </div>
-        {values.role !== "viewer" ? (
+        {values.role !== "viewer" && values.role !== "organizer" ? (
           <div>
             <div className="mb-3 flex items-center justify-between">
               <p className="font-medium">What should they answer?</p>
@@ -371,7 +376,7 @@ function NewInvitationDialog({ open, onOpenChange, defaultCapsule, defaultQuesti
           </div>
         ) : contributorMedia ? (
           <DemoNotice tone="warning" title="Before you share" icon={<ShieldAlert className="size-[18px]" />}>
-            Viewers will see {contributorMedia} family-visible {contributorMedia === 1 ? "story" : "stories"} that include photos other relatives contributed. Private stories stay hidden. Check the Privacy tab if anything should be organizers-only.
+            Viewers will see {contributorMedia} family-visible {contributorMedia === 1 ? "story" : "stories"} that include photos other relatives contributed. Private stories stay hidden. Check the Privacy tab if anything should be for the owner and editors only.
           </DemoNotice>
         ) : null}
         <Field label="A personal note" htmlFor="i-msg" optional hint="It appears at the top of their invitation." error={errors.message}>
@@ -390,6 +395,24 @@ function NewInvitationDialog({ open, onOpenChange, defaultCapsule, defaultQuesti
             ]}
           />
         </div>
+        {capsule ? (
+          <details className="group rounded-[16px] border border-line bg-paper/60 p-4">
+            <summary className="cursor-pointer list-none font-medium [&::-webkit-details-marker]:hidden">
+              What {values.recipientName.trim().split(" ")[0] || "they"} will be told <span className="font-normal text-ink-3">— who&rsquo;s asking, what it is, the ask, the cost, and how it&rsquo;s used</span>
+            </summary>
+            <InvitationPoints
+              size="sm"
+              className="mt-4"
+              points={explainInvitation({
+                invitation: values,
+                capsule,
+                inviterName,
+                questions: values.mode === "questions" ? values.questionIds.map((id) => questions.find((q) => q.id === id)?.text).filter((t): t is string => !!t) : [],
+                storyCount: memories.filter((m) => m.capsuleId === capsule.id && !m.deletedAt && m.status === "approved").length,
+              })}
+            />
+          </details>
+        ) : null}
       </div>
       <QuestionPicker open={picker} onOpenChange={setPicker} selected={values.questionIds} onConfirm={(ids) => set({ questionIds: ids })} max={12} />
     </Dialog>

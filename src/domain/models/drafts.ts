@@ -52,6 +52,8 @@ export interface LetterDraft {
   /** The composer's form values as typed. */
   values: Record<string, unknown>;
   attachmentIds: ID[];
+  /** Stories chosen to go with the letter. */
+  memoryIds?: ID[];
   birthYear: string;
   updatedAt: ISODateTime;
 }
