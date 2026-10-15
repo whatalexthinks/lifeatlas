@@ -15,6 +15,7 @@ import type {
   BoxConfiguration,
   HeirloomConfiguration,
   Capsule,
+  Cart,
   CartLine,
   CheckoutSession,
   ChapterKey,
@@ -268,6 +269,14 @@ export interface CheckoutQuote {
 }
 
 export interface BillingProvider {
+  /** The bag: lines gathered before checkout. Physical items can be combined with a plan. */
+  addToCart(line: Omit<CartLine, "id">, purpose?: Cart["purpose"]): Promise<ServiceResult<Cart>>;
+  updateCartLine(lineId: string, patch: { quantity?: number; interval?: BillingInterval }): Promise<ServiceResult<Cart>>;
+  removeCartLine(lineId: string): Promise<ServiceResult<Cart>>;
+  /** Totals for the bag as it stands, including any standing plan discount. */
+  quoteCart(): ServiceResult<Quote>;
+  /** Start a checkout from everything in the bag. */
+  checkoutCart(opts?: { promoCode?: string }): Promise<ServiceResult<{ checkoutId: string; url: string }>>;
   createCheckout(lines: CartLine[], purpose: "self" | "gift", opts?: { promoCode?: string }): Promise<ServiceResult<{ checkoutId: string; url: string }>>;
   getCheckout(checkoutId: string): ServiceResult<CheckoutSession>;
   /** Totals for a checkout, with its promotion re-checked against the current rules. */
@@ -302,6 +311,8 @@ export interface GiftService {
   updateGift(id: string, values: GiftFormValues): Promise<ServiceResult<Gift>>;
   resolveToken(token: string): Promise<ServiceResult<Gift>>;
   markOpened(token: string): Promise<ServiceResult<Gift>>;
+  /** The recipient takes up a completed gift: one prepaid, non-renewing term of the plan. */
+  accept(token: string): Promise<ServiceResult<Subscription>>;
 }
 
 /* ------------------------------------------------------------------ */

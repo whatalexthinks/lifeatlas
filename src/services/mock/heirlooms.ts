@@ -1,5 +1,7 @@
 "use client";
 
+import { isPrintEligible } from "@/domain/policies/permissions";
+import { boxBlockers } from "@/domain/commerce/fulfillment";
 import type { CartLine, HeirloomConfiguration } from "@/domain/models";
 import { estimateBookPages, quoteBook, quoteBox } from "@/domain/commerce/pricing";
 import { uid } from "@/lib/utils";
@@ -80,6 +82,14 @@ export const mockHeirlooms: HeirloomRepository = {
       return ok(line);
     }
     if (h.kind === "keepsake_box" && h.box) {
+      // Nothing personal is ordered before the content it's made from exists.
+      const d = db();
+      const blockers = boxBlockers(h.box, {
+        printableStories: d.memories.filter((m) => m.capsuleId === h.capsuleId && isPrintEligible(m)).length,
+        printablePhotos: d.media.filter((m) => m.capsuleId === h.capsuleId && m.kind === "image" && m.consent.print !== false).length,
+        letters: h.box.selectedLetterIds.length,
+      });
+      if (blockers.length) return fail("validation", blockers[0]);
       const boxProduct = catalog.find((p) => p.id === "keepsake_box")!;
       const q = quoteBox(boxProduct.price.amount, h.box, bookProduct.price.amount);
       const line: CartLine = { id: uid("cl"), productId: "keepsake_box", quantity: 1, configurationId: h.id, extrasAmount: q.extras, label: `${h.name} — keepsake box` };

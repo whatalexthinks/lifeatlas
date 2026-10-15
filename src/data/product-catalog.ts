@@ -1,3 +1,4 @@
+import { formatMoney } from "@/lib/utils";
 import type { Product } from "@/domain/models";
 import { launchPrices } from "@/domain/commerce/plans";
 import { brand } from "@/config/brand";
@@ -72,7 +73,7 @@ export const defaultCatalog: Product[] = [
       "10% off printed books and physical capsules",
     ],
     limitations: ["Hosted storage and sign-in arrive with accounts; this preview keeps everything in your browser"],
-    note: "Test price · launch range $149–$249 a year",
+    note: `Test price · launch range ${formatMoney(launchPrices.family.rangeYear[0])}–${formatMoney(launchPrices.family.rangeYear[1])} a year`,
     giftable: true,
     sortOrder: 2,
   },

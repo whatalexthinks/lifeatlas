@@ -46,18 +46,18 @@ export const orders: Order[] = [
       {
         id: "oi_2",
         productId: "book",
-        name: "Printed Heirloom Book — Margaret Ellis",
+        name: "Printed Legacy Book — Margaret Ellis",
         quantity: 2,
-        unitAmount: 14900,
+        unitAmount: 11900,
         extrasAmount: 2400,
         configurationId: "hl_book_margaret",
         summary: "Evergreen linen · brass foil · 10×10 · 96 pages (est.)",
       },
     ],
-    subtotal: 34600,
+    subtotal: 28600,
     shippingEstimate: null,
     taxEstimate: null,
-    total: 34600,
+    total: 28600,
     currency: "USD",
     status: "proof_required",
     payment: "mock_uncharged",
@@ -97,7 +97,7 @@ export const orders: Order[] = [
 
 export const invoices: Invoice[] = [
   { id: "invc_1", orderId: "ord_1001", number: "DEMO-INV-0001", issuedAt: "2026-09-02T13:55:00.000Z", amount: 17900, status: "demo_uncharged" },
-  { id: "invc_2", orderId: "ord_1002", number: "DEMO-INV-0002", issuedAt: "2026-10-03T19:04:00.000Z", amount: 34600, status: "demo_uncharged" },
+  { id: "invc_2", orderId: "ord_1002", number: "DEMO-INV-0002", issuedAt: "2026-10-03T19:04:00.000Z", amount: 28600, status: "demo_uncharged" },
 ];
 
 /** The sample family is on the Family plan (a demo subscription — nothing renews or charges). */

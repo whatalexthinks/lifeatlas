@@ -17,7 +17,6 @@ import { Badge, DemoNotice, Skeleton, toast } from "@/components/ui/feedback";
 import { Checkbox, ChoiceCards, Field, Input, Segmented, Select, Switch, Textarea } from "@/components/ui/field";
 import { useDb, useHydrated } from "@/hooks/use-data";
 import { services } from "@/services/factory";
-import { useDemoStore } from "@/store/demo-store";
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, formatMoney, pluralize } from "@/lib/utils";
 import { chapterFor } from "@/domain/capsule-kinds";
@@ -61,7 +60,6 @@ function BookBuilder() {
   const media = useDb((d) => d.media);
   const catalog = useDb((d) => d.catalog);
   const heirlooms = useDb((d) => d.heirlooms);
-  const mutate = useDemoStore((s) => s.mutate);
 
   const editingId = params.get("id") ?? undefined;
   const existing = heirlooms.find((h) => h.id === editingId && h.kind === "book");
@@ -148,13 +146,10 @@ function BookBuilder() {
       toast.error("Couldn't price this book", line.status === "error" ? line.message : undefined);
       return;
     }
-    mutate((d) => {
-      d.cart = { id: d.cart.id, lines: [line.data], purpose: "self" };
-    });
-    const c = await services().billing.createCheckout([line.data], "self");
+    const c = await services().billing.addToCart(line.data);
     setBusy(null);
-    if (c.status === "ok") router.push(c.data.url);
-    else toast.error("Couldn't open checkout", c.status === "error" ? c.message : undefined);
+    if (c.status === "ok") router.push("/checkout/bag");
+    else toast.error("Couldn't add it to your bag", c.status === "error" ? c.message : undefined);
   };
 
   const toggleStory = (id: string, on: boolean) => update({ storyIds: on ? [...config.storyIds, id] : config.storyIds.filter((x) => x !== id) });
@@ -494,7 +489,7 @@ function BookBuilder() {
               </p>
             ) : null}
             <Button size="lg" block className="mt-5" leading={<ShoppingBag className="size-4" />} onClick={() => void onOrder()} loading={busy === "order"} disabled={!!busy || config.storyIds.length < 3}>
-              Review a demo order
+              Add to bag
             </Button>
             <p className="mt-3 text-center text-[0.8125rem] text-ink-3">Preview only — no payment is charged and nothing is printed.</p>
           </section>

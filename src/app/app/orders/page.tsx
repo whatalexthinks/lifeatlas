@@ -29,20 +29,28 @@ const path: Record<Order["kind"], { status: OrderStatus; label: string }[]> = {
     { status: "paid_mock", label: "Gift ready · demo" },
   ],
   print: [
-    { status: "paid_mock", label: "Ordered" },
+    { status: "paid_mock", label: "Ordered · demo" },
     { status: "proof_required", label: "Proof" },
     { status: "ready_for_fulfillment", label: "Approved" },
-    { status: "printing_mock", label: "Printing" },
-    { status: "shipped_mock", label: "Shipped" },
+    { status: "printing_mock", label: "Printing · simulated" },
+    { status: "shipped_mock", label: "Shipped · simulated" },
   ],
   capsule: [
-    { status: "paid_mock", label: "Ordered" },
+    { status: "paid_mock", label: "Ordered · demo" },
     { status: "proof_required", label: "Proof" },
     { status: "ready_for_fulfillment", label: "Approved" },
-    { status: "printing_mock", label: "Making" },
-    { status: "shipped_mock", label: "Shipped" },
+    { status: "printing_mock", label: "Making · simulated" },
+    { status: "shipped_mock", label: "Shipped · simulated" },
   ],
 };
+
+/** A ready-made kit has nothing to proof, so its path never mentions one. */
+const readyMadePath: { status: OrderStatus; label: string }[] = [
+  { status: "paid_mock", label: "Ordered · demo" },
+  { status: "ready_for_fulfillment", label: "Ready to pack · demo" },
+  { status: "printing_mock", label: "Packing · simulated" },
+  { status: "shipped_mock", label: "Shipped · simulated" },
+];
 
 function subscribeHash(cb: () => void) {
   window.addEventListener("hashchange", cb);
@@ -51,6 +59,7 @@ function subscribeHash(cb: () => void) {
 
 export default function OrdersPage() {
   const orders = useDb((d) => d.orders);
+  const projects = useDb((d) => d.printProjects);
   const hashId = React.useSyncExternalStore(
     subscribeHash,
     () => window.location.hash.slice(1),
@@ -94,7 +103,7 @@ export default function OrdersPage() {
                         {o.number} · {relativeTime(o.createdAt)}
                       </span>
                       <span className="mt-2 block">
-                        <OrderStatusBadge status={o.status} />
+                        <OrderStatusBadge status={o.status} readyMade={o.kind === "capsule" && !projects.some((p) => p.orderId === o.id)} />
                       </span>
                     </span>
                   </button>
@@ -123,7 +132,8 @@ function OrderDetail({ order }: { order: Order }) {
   const config = project ? heirlooms.find((h) => h.id === project.configurationId) : undefined;
   const invoice = invoices.find((i) => i.orderId === order.id);
   const refund = refunds.find((r) => r.orderId === order.id);
-  const steps = path[order.kind];
+  const readyMade = order.kind === "capsule" && !project;
+  const steps = readyMade ? readyMadePath : path[order.kind];
   const reachedIndex = Math.max(
     ...order.history.map((h) => steps.findIndex((s) => s.status === h.status)),
     steps.findIndex((s) => s.status === order.status),
@@ -157,7 +167,7 @@ function OrderDetail({ order }: { order: Order }) {
           </span>
         }
         description={`Placed ${formatDate(order.createdAt, "long")} by ${order.customerName}`}
-        actions={<OrderStatusBadge status={order.status} />}
+        actions={<OrderStatusBadge status={order.status} readyMade={readyMade} />}
       >
         {/* progress rail */}
         <ol className="flex items-start" aria-label="Order progress">
@@ -274,7 +284,7 @@ function OrderDetail({ order }: { order: Order }) {
               <span className="mt-2 size-2 shrink-0 rounded-full bg-evergreen/60" />
               <span>
                 <span className="font-medium">
-                  <OrderStatusLabel status={h.status} />
+                  <OrderStatusLabel status={h.status} readyMade={readyMade} />
                 </span>{" "}
                 <span className="text-ink-3">· {formatDate(h.at, "long")}</span>
                 {h.note ? <span className="block text-[0.875rem] text-ink-3">{h.note}</span> : null}
@@ -353,14 +363,14 @@ function OrderDetail({ order }: { order: Order }) {
   );
 }
 
-function OrderStatusLabel({ status }: { status: OrderStatus }) {
+function OrderStatusLabel({ status, readyMade }: { status: OrderStatus; readyMade?: boolean }) {
   const labels: Record<OrderStatus, string> = {
     draft: "Draft",
     preview: "Checkout started",
     payment_pending: "Payment pending",
     paid_mock: "Confirmed · demo",
     proof_required: "Proof ready",
-    ready_for_fulfillment: "Proof approved",
+    ready_for_fulfillment: readyMade ? "Ready to pack" : "Proof approved",
     printing_mock: "Printing · simulated",
     shipped_mock: "Shipped · simulated",
     canceled_mock: "Canceled",

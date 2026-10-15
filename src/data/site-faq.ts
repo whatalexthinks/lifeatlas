@@ -1,3 +1,5 @@
+import { formatMoney } from "@/lib/utils";
+import { launchPrices } from "@/domain/commerce/plans";
 import { brand } from "@/config/brand";
 
 /**
@@ -56,7 +58,7 @@ export const faqGroups: FaqGroup[] = [
     id: "plans",
     title: "Plans and payments",
     items: [
-      { q: "How much does it cost?", a: "You can start free on this device. The Digital LifeCapsule is $99 a year (or $9.99 a month) and the Family Plan is $179 a year (or $17.99 a month). The Premium Physical LifeCapsule ($249) and the Printed Legacy Book (from $119) are optional add-ons. These are test prices." },
+      { q: "How much does it cost?", a: `You can start free on this device. The Digital LifeCapsule is ${formatMoney(launchPrices.digital.year)} a year (or ${formatMoney(launchPrices.digital.month)} a month) and the Family Plan is ${formatMoney(launchPrices.family.year)} a year (or ${formatMoney(launchPrices.family.month)} a month). The Premium Physical LifeCapsule (${formatMoney(launchPrices.physicalCapsule)}) and the Printed Legacy Book (from ${formatMoney(launchPrices.legacyBook)}) are optional add-ons. These are test prices.` },
       { q: "Will I be charged in the preview?", a: "No. Checkout creates a clearly labelled demonstration order. No payment provider is connected; please don't enter real card details anywhere." },
       { q: "What happens if I stop paying?", a: "You'll always be able to download a complete copy of your capsules. We'll publish the exact policy for read-only access and retention before any paid plan launches." },
       { q: "Do you have promotions or referral rewards?", a: "Founding-member and referral offers are part of the plan. Any giveaway will only run under published rules after legal review — none is running today." },

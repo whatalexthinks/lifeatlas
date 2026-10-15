@@ -1,7 +1,8 @@
 "use client";
 
 import type { BillingInterval, CheckoutSession, Gift, Order, OrderItem, OrderStatus } from "@/domain/models";
-import { unitAmount } from "@/domain/commerce/plans";
+import { currentPlanId, plans, unitAmount } from "@/domain/commerce/plans";
+import { fulfillmentFor } from "@/domain/commerce/fulfillment";
 import { evaluatePromotion, findPromotion, normalizeCode, type PromotionResult } from "@/domain/commerce/promotions";
 import { isReferralCodeShape, referralProgram } from "@/domain/commerce/referrals";
 import { giftSchema } from "@/domain/schemas";
@@ -10,6 +11,7 @@ import { canTransition, orderTransitions } from "@/domain/workflows/state-machin
 import { token as makeToken, uid } from "@/lib/utils";
 import { fail, notConfigured, ok, type BillingProvider, type CheckoutQuote, type FulfillmentProvider, type GiftService, type OrderService } from "../contracts";
 import { actorName, db, latency, pushNotification, store } from "./shared";
+import { flushSave } from "@/store/demo-store";
 
 let orderSeq = 1040;
 
@@ -44,11 +46,14 @@ function resolveCode(code: string, lines: CheckoutSession["lines"]): PromotionRe
   return evaluatePromotion(undefined, lines, d.catalog, ctx(""));
 }
 
+/** The standing keepsake discount the customer's plan includes (Family: 10%). */
+const keepsakeDiscountPct = () => plans[currentPlanId(db().subscriptions, db().catalog)].keepsakeDiscountPct;
+
 function checkoutQuote(session: CheckoutSession): CheckoutQuote {
   const d = db();
   const promo = session.promoCode ? resolveCode(session.promoCode, session.lines) : null;
   const available = session.useCredit === false ? 0 : creditBalance();
-  const quote = quoteCart(session.lines, d.catalog, { discount: promo?.ok ? { amount: promo.discount, label: promo.label } : null, availableCredit: available });
+  const quote = quoteCart(session.lines, d.catalog, { discount: promo?.ok ? { amount: promo.discount, label: promo.label } : null, availableCredit: available, keepsakeDiscountPct: keepsakeDiscountPct() });
   return {
     quote,
     promo: session.promoCode ? (promo!.ok ? { code: session.promoCode, ok: true, label: promo!.label } : { code: session.promoCode, ok: false, reason: promo!.reason }) : null,
@@ -56,15 +61,12 @@ function checkoutQuote(session: CheckoutSession): CheckoutQuote {
   };
 }
 
-/** Personal inserts make a physical capsule made-to-order; the ready-made kit ships after payment. */
+/** Anything personal is made to order; only the unpersonalised kit ships after payment. */
 function lineFulfillment(productId: string, configurationId?: string) {
   const p = db().catalog.find((c) => c.id === productId);
   if (!p) return "none" as const;
-  if (productId === "keepsake_box" && configurationId) {
-    const box = db().heirlooms.find((h) => h.id === configurationId)?.box;
-    if (box && (box.contents.book || box.contents.letterBundle || box.contents.photoPrints > 0)) return "made_to_order" as const;
-  }
-  return p.fulfillment ?? (p.kind === "physical" ? "made_to_order" : "digital");
+  const box = configurationId ? db().heirlooms.find((h) => h.id === configurationId)?.box : undefined;
+  return fulfillmentFor(p, box);
 }
 
 const addTerm = (from: Date, interval: BillingInterval) => {
@@ -75,6 +77,61 @@ const addTerm = (from: Date, interval: BillingInterval) => {
 };
 
 export const mockBilling: BillingProvider = {
+  async addToCart(line, purpose = "self") {
+    const p = db().catalog.find((c) => c.id === line.productId);
+    if (!p || p.availability !== "available_demo") return fail("validation", p ? `${p.name} isn't available to order yet.` : "We couldn't find that product.");
+    if (p.kind === "plan" && db().cart.lines.some((l) => db().catalog.find((c) => c.id === l.productId)?.kind === "plan" && !l.giftId))
+      return fail("conflict", "Your bag already has a plan. Remove it first to choose a different one.");
+    store().mutate((d) => {
+      // A configured item replaces its earlier version; a plain item adds to the quantity.
+      const same = d.cart.lines.find((l) => l.productId === line.productId && l.configurationId === line.configurationId && !l.giftId && !line.giftId);
+      if (same && line.configurationId) Object.assign(same, line);
+      else if (same && p.kind === "physical") same.quantity = Math.min(25, same.quantity + line.quantity);
+      else if (!same) d.cart.lines.push({ ...line, id: uid("cl") });
+      if (purpose === "gift" || d.cart.lines.some((l) => l.giftId)) d.cart.purpose = "gift";
+      else d.cart.purpose = "self";
+    });
+    store().track("cart_added", { productId: line.productId });
+    // The bag outlives the page: write it through so a reload or a new tab sees it.
+    await flushSave().catch(() => undefined);
+    return ok(structuredClone(db().cart));
+  },
+
+  async updateCartLine(lineId, patch) {
+    const line = db().cart.lines.find((l) => l.id === lineId);
+    if (!line) return fail("not_found", "That item is no longer in your bag.");
+    if (patch.quantity !== undefined && (!Number.isInteger(patch.quantity) || patch.quantity < 1 || patch.quantity > 25)) return fail("validation", "Choose between 1 and 25.");
+    store().mutate((d) => {
+      const l = d.cart.lines.find((x) => x.id === lineId)!;
+      if (patch.quantity !== undefined) l.quantity = patch.quantity;
+      if (patch.interval && !l.asGift) l.interval = patch.interval;
+    });
+    await flushSave().catch(() => undefined);
+    return ok(structuredClone(db().cart));
+  },
+
+  async removeCartLine(lineId) {
+    store().mutate((d) => {
+      d.cart.lines = d.cart.lines.filter((l) => l.id !== lineId);
+      if (!d.cart.lines.some((l) => l.giftId)) d.cart.purpose = "self";
+    });
+    await flushSave().catch(() => undefined);
+    return ok(structuredClone(db().cart));
+  },
+
+  quoteCart() {
+    try {
+      return ok(quoteCart(db().cart.lines, db().catalog, { keepsakeDiscountPct: keepsakeDiscountPct() }));
+    } catch (e) {
+      return fail("validation", e instanceof Error ? e.message : "Something in your bag is no longer available.");
+    }
+  },
+
+  async checkoutCart(opts) {
+    const cart = db().cart;
+    return this.createCheckout(cart.lines, cart.purpose, opts);
+  },
+
   async createCheckout(lines, purpose, opts) {
     if (!lines.length) return fail("validation", "Your bag is empty.");
     try {
@@ -413,6 +470,21 @@ export const mockGifts: GiftService = {
     });
     const g = db().gifts.find((x) => x.token === tok);
     return g ? ok({ ...g }) : fail("not_found", "Gift not found.");
+  },
+
+  async accept(tok) {
+    const g = db().gifts.find((x) => x.token === tok);
+    if (!g) return fail("not_found", "Gift not found.");
+    // Only a gift whose (demo) checkout was completed carries a plan; a draft carries nothing.
+    if (!g.orderId) return fail("conflict", "This gift hasn't been completed yet, so there's no plan to start.");
+    const existing = db().subscriptions.find((s) => s.orderId === g.orderId && s.giftedBy);
+    if (existing) return ok({ ...existing });
+    const now = new Date();
+    const sub = { id: uid("sub"), productId: g.productId, status: "preview_active" as const, interval: "year" as const, startedAt: now.toISOString(), renewsOn: addTerm(now, "year"), cancelAtPeriodEnd: true, giftedBy: g.giverName, orderId: g.orderId };
+    store().mutate((d) => {
+      d.subscriptions.push(sub);
+    }, { actor: g.recipient.name, action: "gift.accepted_demo", target: g.id, detail: `From ${g.giverName}` });
+    return ok(sub);
   },
 };
 

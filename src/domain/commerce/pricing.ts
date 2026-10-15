@@ -9,6 +9,8 @@ import { unitAmount } from "./plans";
 export interface Quote {
   lines: { id: string; label: string; quantity: number; unit: number; extras: number; total: number; interval?: "year" | "month"; fulfillment?: Product["fulfillment"] }[];
   subtotal: number;
+  /** A plan's standing keepsake discount (Family: 10% off physical items), in cents. */
+  memberDiscount: { amount: number; label: string } | null;
   /** Promotion discount actually applied (cents). */
   discount: { amount: number; label: string } | null;
   /** Account credit actually applied (cents). */
@@ -24,6 +26,8 @@ export interface QuoteAdjustments {
   discount?: { amount: number; label: string } | null;
   /** Credit available on the account; only what's needed is used. */
   availableCredit?: number;
+  /** Percent off physical items that the customer's plan includes, e.g. 10 on the Family plan. */
+  keepsakeDiscountPct?: number;
 }
 
 export class PricingError extends Error {}
@@ -66,9 +70,13 @@ export function quoteCart(lines: CartLine[], catalog: Product[], adjust: QuoteAd
     });
   }
   const subtotal = out.reduce((s, l) => s + l.total, 0);
-  const discountAmount = adjust.discount ? Math.min(subtotal, Math.max(0, adjust.discount.amount)) : 0;
+  const pct = Math.min(100, Math.max(0, adjust.keepsakeDiscountPct ?? 0));
+  const physicalTotal = lines.reduce((s, line, i) => (catalog.find((c) => c.id === line.productId)?.kind === "physical" ? s + out[i].total : s), 0);
+  const memberAmount = Math.floor((physicalTotal * pct) / 100);
+  const afterMember = subtotal - memberAmount;
+  const discountAmount = adjust.discount ? Math.min(afterMember, Math.max(0, adjust.discount.amount)) : 0;
   if (adjust.discount) assertValidAmount(adjust.discount.amount, "discount");
-  const afterDiscount = subtotal - discountAmount;
+  const afterDiscount = afterMember - discountAmount;
   const credit = Math.min(afterDiscount, Math.max(0, adjust.availableCredit ?? 0));
   const notes = ["Test prices — no payment is collected in this preview."];
   if (hasPhysical) notes.push("Shipping and tax will be calculated once fulfillment is connected.");
@@ -77,6 +85,7 @@ export function quoteCart(lines: CartLine[], catalog: Product[], adjust: QuoteAd
   return {
     lines: out,
     subtotal,
+    memberDiscount: memberAmount ? { amount: memberAmount, label: `Family plan · ${pct}% off keepsakes` } : null,
     discount: discountAmount ? { amount: discountAmount, label: adjust.discount!.label } : null,
     credit,
     shipping: null,
@@ -115,11 +124,23 @@ export function quoteBook(base: number, config: Pick<BookConfiguration, "materia
 export const boxFinishExtras: Record<BoxConfiguration["finish"], number> = { walnut: 4000, white_oak: 2500, ebonised_ash: 3000, linen_wrapped: 0 };
 export const boxEngravingExtras: Record<BoxConfiguration["engraving"], number> = { none: 0, name: 1500, name_and_years: 1800, custom: 2500 };
 
+/** Prices for what can go inside the box, in cents (test). */
+export const boxContentExtras = { letterBundle: 1800, photoPrint: 150, archiveDrive: 2200 };
+
+/** Every extra in the box as its own line, so the estimate is itemised, never lumped. */
+export function boxBreakdown(config: BoxConfiguration, bookUnit: number) {
+  const rows: { key: string; amount: number }[] = [
+    { key: "finish", amount: boxFinishExtras[config.finish] },
+    { key: "engraving", amount: boxEngravingExtras[config.engraving] },
+    { key: "book", amount: config.contents.book ? bookUnit : 0 },
+    { key: "letters", amount: config.contents.letterBundle ? boxContentExtras.letterBundle : 0 },
+    { key: "prints", amount: config.contents.photoPrints * boxContentExtras.photoPrint },
+    { key: "drive", amount: config.contents.archiveDrive ? boxContentExtras.archiveDrive : 0 },
+  ];
+  return rows.filter((r) => r.amount > 0);
+}
+
 export function quoteBox(base: number, config: BoxConfiguration, bookUnit: number) {
-  let extras = boxFinishExtras[config.finish] + boxEngravingExtras[config.engraving];
-  if (config.contents.book) extras += bookUnit;
-  if (config.contents.letterBundle) extras += 1800;
-  extras += config.contents.photoPrints * 150;
-  if (config.contents.archiveDrive) extras += 2200;
+  const extras = boxBreakdown(config, bookUnit).reduce((s, r) => s + r.amount, 0);
   return { unit: base, extras, total: lineTotal(base, extras, 1) };
 }

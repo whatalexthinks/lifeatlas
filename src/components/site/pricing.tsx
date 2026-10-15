@@ -7,6 +7,7 @@ import type { BillingInterval, Product } from "@/domain/models";
 import { defaultCatalog } from "@/data/product-catalog";
 import { annualSavings, plans, unitAmount, type PlanId } from "@/domain/commerce/plans";
 import { ButtonLink } from "@/components/ui/button";
+import { AddToBagButton } from "@/components/site/bag";
 import { cn, formatMoney } from "@/lib/utils";
 
 /**
@@ -98,9 +99,16 @@ export function KeepsakePricing({ className }: { className?: string }) {
           </p>
           <p className="mt-2 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-ink-4">Test price · nothing is charged</p>
           <p className="mt-4 text-[0.9375rem] leading-relaxed text-ink-2">{p.fulfillmentNote}</p>
-          <Link href={href} className="mt-auto inline-flex min-h-11 items-center gap-2 pt-6 text-[0.9375rem] font-medium">
-            <span className="link-underline">{action}</span> <ArrowRight className="size-4" aria-hidden />
-          </Link>
+          <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-3 pt-6">
+            {p.fulfillment === "ships_after_payment" && p.availability === "available_demo" ? (
+              <AddToBagButton productId={p.id} variant="secondary">
+                Add the kit to bag
+              </AddToBagButton>
+            ) : null}
+            <Link href={href} className="inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium">
+              <span className="link-underline">{action}</span> <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </div>
         </li>
       ))}
     </ul>

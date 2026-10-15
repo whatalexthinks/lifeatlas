@@ -126,10 +126,11 @@ const order: Record<OrderStatus, { label: string; tone: StatusTone }> = {
   refunded_mock: { label: "Refunded · simulated", tone: "neutral" },
 };
 
-export function OrderStatusBadge({ status }: { status: OrderStatus }) {
+/** `readyMade`: an order with nothing to proof — "ready" means ready to pack, never "proof approved". */
+export function OrderStatusBadge({ status, readyMade }: { status: OrderStatus; readyMade?: boolean }) {
   return (
     <Badge tone={order[status].tone} dot>
-      {order[status].label}
+      {readyMade && status === "ready_for_fulfillment" ? "Ready to pack · demo" : order[status].label}
     </Badge>
   );
 }

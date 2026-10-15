@@ -133,8 +133,9 @@ function CheckoutInner() {
       <div className="mx-auto max-w-xl px-5 py-24 text-center">
         <h1 className="font-serif text-[2.6rem] leading-tight">{error ?? "Checkout unavailable"}</h1>
         <p className="mt-3 text-ink-2">Choose a plan or design a gift to start a demo checkout.</p>
-        <div className="mt-8 flex justify-center gap-3">
-          <ButtonLink href="/pricing">See pricing</ButtonLink>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <ButtonLink href="/checkout/bag">Open your bag</ButtonLink>
+          <ButtonLink href="/pricing" variant="secondary">See pricing</ButtonLink>
           <ButtonLink href="/gifts/build" variant="secondary">
             Design a gift
           </ButtonLink>
@@ -352,6 +353,12 @@ function CheckoutInner() {
               <dt className="text-ink-3">Subtotal</dt>
               <dd className="font-mono tabular-nums">{formatMoney(quote.subtotal)}</dd>
             </div>
+            {quote.memberDiscount ? (
+              <div className="flex justify-between gap-4">
+                <dt className="text-ink-3">{quote.memberDiscount.label}</dt>
+                <dd className="font-mono tabular-nums text-success">−{formatMoney(quote.memberDiscount.amount)}</dd>
+              </div>
+            ) : null}
             {quote.discount ? (
               <div className="flex justify-between gap-4">
                 <dt className="text-ink-3">{quote.discount.label}</dt>

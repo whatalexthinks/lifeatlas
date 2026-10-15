@@ -1,5 +1,6 @@
 "use client";
 
+import { BagLink } from "@/components/site/bag";
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -63,6 +64,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <BagLink />
           <Link href="/app" className="hidden rounded-full px-3 py-2 text-[0.8125rem] text-ink-2 hover:text-ink sm:inline-flex">
             Open studio
           </Link>

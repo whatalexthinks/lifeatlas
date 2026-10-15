@@ -37,6 +37,7 @@ const appRoutes = [
   "/gift/for-grandpa-walt",
   "/future/open/example-opening",
   "/checkout/preview?product=digital",
+  "/checkout/bag",
   "/app/referrals",
   "/demo/control-center",
   "/demo/operations",
