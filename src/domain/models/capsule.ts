@@ -287,7 +287,8 @@ export interface QuestionCollection extends Timestamps {
   questionIds: ID[];
 }
 
-export type AssignmentStatus = "queued" | "answered" | "skipped";
+/** "saved" is "save for later": kept aside, not offered in sessions until moved back. */
+export type AssignmentStatus = "queued" | "answered" | "skipped" | "saved";
 
 export interface QuestionAssignment {
   id: ID;

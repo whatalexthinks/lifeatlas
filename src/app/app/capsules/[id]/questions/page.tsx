@@ -2,18 +2,19 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowDown, ArrowUp, Check, ListPlus, MailPlus, Mic, Plus, SkipForward, Trash2, Undo2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Bookmark, Check, ListPlus, MailPlus, Mic, Plus, RotateCcw, Shuffle, SkipForward, Star, Trash2, Undo2 } from "lucide-react";
+import { capsuleKind, capsuleKinds, surpriseQuestion } from "@/domain/capsule-kinds";
 import { useStudioCapsule } from "@/components/studio/capsule-frame";
 import { QuestionPicker } from "@/components/capsule/question-picker";
 import { Panel } from "@/components/studio/primitives";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge, EmptyState, toast } from "@/components/ui/feedback";
 import { Field, Input, Select } from "@/components/ui/field";
-import { useDb } from "@/hooks/use-data";
+import { useCapsuleMemories, useDb } from "@/hooks/use-data";
 import { useDemoStore } from "@/store/demo-store";
 import { questionCategories } from "@/data/prompts/questions";
 import { services } from "@/services/factory";
-import { uid } from "@/lib/utils";
+import { cn, pluralize, uid } from "@/lib/utils";
 
 export default function StudioQuestions() {
   const { capsule, openMemory } = useStudioCapsule();
@@ -25,11 +26,38 @@ export default function StudioQuestions() {
   const [custom, setCustom] = React.useState("");
   const [customCat, setCustomCat] = React.useState<string>("Small Ordinary Moments");
   const [setName, setSetName] = React.useState("");
+  const favorites = useDb((d) => d.questionFavorites);
+  const memories = useCapsuleMemories(capsule.id, { scope: "studio" });
+  const kind = capsuleKind(capsule);
 
   const queued = assignments.filter((a) => a.status === "queued").sort((a, b) => a.order - b.order);
   const answered = assignments.filter((a) => a.status === "answered");
   const skipped = assignments.filter((a) => a.status === "skipped");
+  const saved = assignments.filter((a) => a.status === "saved");
   const qText = (id: string) => questions.find((q) => q.id === id)?.text ?? "Question";
+  const answersTo = (id: string) => memories.filter((m) => m.questionId === id);
+  const isFavorite = (id: string) => favorites.includes(id);
+  const toggleFavorite = async (id: string) => {
+    const r = await services().capsules.toggleFavoriteQuestion(id);
+    if (r.status === "ok") toast.success(r.data ? "Added to your favourites" : "Removed from favourites");
+  };
+
+  // Surprise me: a question suited to this capsule that hasn't been used here yet.
+  const used = new Set(assignments.map((a) => a.questionId));
+  const [surpriseId, setSurpriseId] = React.useState<string | null>(null);
+  const [seen, setSeen] = React.useState<string[]>([]);
+  const surprise = questions.find((q) => q.id === surpriseId);
+  const drawSurprise = () => {
+    const exclude = new Set([...used, ...seen, ...(surpriseId ? [surpriseId] : [])]);
+    const q = surpriseQuestion(kind, questions, exclude);
+    if (!q) return;
+    setSeen((x) => [...x, q.id]);
+    setSurpriseId(q.id);
+  };
+  const enqueue = async (id: string) => {
+    await services().capsules.setAssignments(capsule.id, [...queued.map((a) => a.questionId).filter((x) => x !== id), id]);
+    toast.success("Added to Up next");
+  };
 
   const reorder = async (i: number, d: -1 | 1) => {
     const ids = queued.map((a) => a.questionId);
@@ -42,6 +70,43 @@ export default function StudioQuestions() {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
       <div className="space-y-6">
+        <section className="relative overflow-hidden rounded-[22px] bg-night p-6 text-night-ink sm:p-7" aria-labelledby="surprise-title">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="surprise-title" className="font-mono text-[0.75rem] uppercase tracking-[0.14em] text-night-accent">
+              A question for {capsuleKinds[kind].about(capsule.preferredName || capsule.subjectName)}
+            </h2>
+            <button type="button" onClick={drawSurprise} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-night-line px-4 text-[0.875rem] font-medium hover:bg-white/10">
+              <Shuffle className="size-4" aria-hidden /> {surprise ? "Another" : "Surprise me"}
+            </button>
+          </div>
+          <div role="status" aria-label="Surprise question">
+            {surprise ? (
+              <>
+                <p className="mt-4 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-night-ink-3">{surprise.category}</p>
+                <p className="mt-2 font-serif text-[clamp(1.5rem,1.25rem+1vw,2rem)] leading-[1.15]">{surprise.text}</p>
+              </>
+            ) : (
+              <p className="mt-4 text-[1rem] leading-relaxed text-night-ink-2">Not sure what to ask next? Press Surprise me for a question written for this kind of capsule — one you haven&rsquo;t used here yet.</p>
+            )}
+          </div>
+          {surprise ? (
+            <div className="mt-6 flex flex-wrap gap-2">
+              <ButtonLink href={`/app/gather?capsule=${capsule.id}&question=${surprise.id}`} variant="light" size="sm" leading={<Mic className="size-4" />}>
+                Answer now
+              </ButtonLink>
+              <Button size="sm" variant="outlineLight" onClick={() => void enqueue(surprise.id).then(() => setSurpriseId(null))} leading={<ListPlus className="size-4" />}>
+                Add to Up next
+              </Button>
+              <Button size="sm" variant="outlineLight" onClick={() => void services().capsules.markAssignment(capsule.id, surprise.id, "saved").then(() => (toast.success("Saved for later"), setSurpriseId(null)))} leading={<Bookmark className="size-4" />}>
+                Save for later
+              </Button>
+              <Button size="sm" variant="outlineLight" aria-pressed={isFavorite(surprise.id)} onClick={() => void toggleFavorite(surprise.id)} leading={<Star className={cn("size-4", isFavorite(surprise.id) && "fill-current")} />}>
+                {isFavorite(surprise.id) ? "Favourite" : "Add to favourites"}
+              </Button>
+            </div>
+          ) : null}
+        </section>
+
         <Panel
           title="Up next"
           description="The order questions are offered in — in person or by link."
@@ -52,7 +117,7 @@ export default function StudioQuestions() {
           }
         >
           {queued.length === 0 ? (
-            <EmptyState className="py-10" title="No questions queued" body="Choose a few from the library of 85, or write your own." />
+            <EmptyState className="py-10" title="No questions queued" body={`Choose a few from the library of ${questions.length}, press Surprise me, or write your own.`} />
           ) : (
             <ol className="space-y-2">
               {queued.map((a, i) => (
@@ -70,6 +135,12 @@ export default function StudioQuestions() {
                     <Link href={`/app/gather?capsule=${capsule.id}&question=${a.questionId}`} className="grid size-8 place-items-center rounded-full text-evergreen hover:bg-ivory" aria-label="Ask now" title="Ask now">
                       <Mic className="size-4" />
                     </Link>
+                    <button className="grid size-8 place-items-center rounded-full hover:bg-ivory" onClick={() => void toggleFavorite(a.questionId)} aria-label={isFavorite(a.questionId) ? "Remove from favourites" : "Add to favourites"} aria-pressed={isFavorite(a.questionId)} title="Favourite">
+                      <Star className={cn("size-4", isFavorite(a.questionId) && "fill-current text-oxblood")} />
+                    </button>
+                    <button className="grid size-8 place-items-center rounded-full hover:bg-ivory" onClick={() => void services().capsules.markAssignment(capsule.id, a.questionId, "saved")} aria-label="Save for later" title="Save for later">
+                      <Bookmark className="size-4" />
+                    </button>
                     <button className="grid size-8 place-items-center rounded-full hover:bg-ivory" onClick={() => void services().capsules.markAssignment(capsule.id, a.questionId, "skipped")} aria-label="Skip for now" title="Skip for now">
                       <SkipForward className="size-4" />
                     </button>
@@ -100,24 +171,82 @@ export default function StudioQuestions() {
           </div>
         </Panel>
 
+        {saved.length ? (
+          <Panel title="Saved for later" description="Kept aside — not offered in sessions until you move them back.">
+            <ul className="space-y-1.5">
+              {saved.map((a) => (
+                <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-2 py-2">
+                  <span className="flex min-w-0 flex-1 items-start gap-2.5">
+                    <Bookmark className="mt-1 size-4 shrink-0 text-ink-3" />
+                    <span className="font-serif text-[1.1rem] leading-snug">{qText(a.questionId)}</span>
+                  </span>
+                  <Button size="sm" variant="ghost" leading={<ListPlus className="size-3.5" />} onClick={() => void services().capsules.markAssignment(capsule.id, a.questionId, "queued")}>
+                    Move to Up next
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        ) : null}
+
+        <Panel title="Your favourites" description="Questions you've starred — shared across all your capsules.">
+          {favorites.length ? (
+            <ul className="space-y-1.5">
+              {favorites.map((id) => {
+                const inQueue = queued.some((a) => a.questionId === id);
+                return (
+                  <li key={id} className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-2 py-2">
+                    <span className="flex min-w-0 flex-1 items-start gap-2.5">
+                      <button type="button" className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full hover:bg-ivory" onClick={() => void toggleFavorite(id)} aria-label="Remove from favourites" aria-pressed="true">
+                        <Star className="size-4 fill-current text-oxblood" />
+                      </button>
+                      <span className="font-serif text-[1.1rem] leading-snug">{qText(id)}</span>
+                    </span>
+                    {inQueue ? (
+                      <span className="text-[0.8125rem] text-ink-3">In Up next</span>
+                    ) : (
+                      <Button size="sm" variant="ghost" leading={<ListPlus className="size-3.5" />} onClick={() => void enqueue(id)}>
+                        Add to Up next
+                      </Button>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="text-[0.9375rem] text-ink-3">Star a question to keep it here.</p>
+          )}
+        </Panel>
+
         <Panel title="Answered & skipped">
           {answered.length + skipped.length === 0 ? (
             <p className="text-ink-3">Nothing yet.</p>
           ) : (
             <ul className="space-y-1.5">
-              {answered.map((a) => (
-                <li key={a.id} className="flex items-center justify-between gap-3 rounded-[12px] px-2 py-2">
-                  <span className="flex items-start gap-2.5">
-                    <Check className="mt-1 size-4 shrink-0 text-success" />
-                    <span className="font-serif text-[1.1rem] leading-snug">{qText(a.questionId)}</span>
-                  </span>
-                  {a.memoryId ? (
-                    <Button size="sm" variant="ghost" onClick={() => openMemory(a.memoryId!)}>
-                      Open answer
-                    </Button>
-                  ) : null}
-                </li>
-              ))}
+              {answered.map((a) => {
+                const count = answersTo(a.questionId).length;
+                return (
+                  <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-2 py-2">
+                    <span className="flex min-w-0 flex-1 items-start gap-2.5">
+                      <Check className="mt-1 size-4 shrink-0 text-success" />
+                      <span>
+                        <span className="block font-serif text-[1.1rem] leading-snug">{qText(a.questionId)}</span>
+                        {count > 1 ? <span className="text-[0.8125rem] text-ink-3">{pluralize(count, "answer")} — each one kept</span> : null}
+                      </span>
+                    </span>
+                    <span className="flex gap-1">
+                      {a.memoryId ? (
+                        <Button size="sm" variant="ghost" onClick={() => openMemory(a.memoryId!)}>
+                          Open answer
+                        </Button>
+                      ) : null}
+                      <ButtonLink size="sm" variant="ghost" href={`/app/gather?capsule=${capsule.id}&question=${a.questionId}`} leading={<RotateCcw className="size-3.5" />}>
+                        Answer again
+                      </ButtonLink>
+                    </span>
+                  </li>
+                );
+              })}
               {skipped.map((a) => (
                 <li key={a.id} className="flex items-center justify-between gap-3 rounded-[12px] px-2 py-2 text-ink-3">
                   <span className="flex items-start gap-2.5">

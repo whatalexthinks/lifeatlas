@@ -34,7 +34,7 @@ const manifestSchema = z.object({
       title: z.string(),
       narrative: z.string(),
       quote: z.string().optional(),
-      date: z.object({ precision: z.string(), year: z.number().optional(), month: z.number().optional(), day: z.number().optional(), season: z.string().optional(), decade: z.number().optional(), lifeStage: z.string().optional(), note: z.string().optional() }),
+      date: z.object({ precision: z.string(), year: z.number().optional(), month: z.number().optional(), day: z.number().optional(), season: z.string().optional(), decade: z.number().optional(), lifeStage: z.string().optional(), age: z.number().optional(), note: z.string().optional() }),
       chapter: z.string(),
       placeId: z.string().optional(),
       peopleIds: z.array(z.string()),

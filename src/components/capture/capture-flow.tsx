@@ -7,7 +7,7 @@ import type { Capsule, FuzzyDate, Memory, MemoryAttribution, MemoryStatus, Quest
 import { Button, ButtonLink } from "@/components/ui/button";
 import { DemoNotice, ProgressBar, toast } from "@/components/ui/feedback";
 import { Input, Label, Textarea } from "@/components/ui/field";
-import { FuzzyDateInput, PlacePicker } from "@/components/capsule/inputs";
+import { FuzzyDateInput, PhotoDateSuggestion, PlacePicker } from "@/components/capsule/inputs";
 import { MediaImage } from "@/components/media/media-image";
 import { Recorder, type RecordedAudio } from "./recorder";
 import { PhotoAdder, type PendingPhoto } from "./photo-adder";
@@ -482,7 +482,10 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
       {/* Photo */}
       <div className="mt-8">
         {showPhotos || photos.length ? (
-          <PhotoAdder photos={photos} onChange={setPhotos} size={senior ? "senior" : "standard"} />
+          <div className="space-y-3">
+            <PhotoAdder photos={photos} onChange={setPhotos} size={senior ? "senior" : "standard"} />
+            <PhotoDateSuggestion takenOn={photos.find((p) => p.takenOn)?.takenOn} value={date} onUse={setDate} />
+          </div>
         ) : (
           <Button variant="secondary" size={senior ? "lg" : "md"} onClick={() => setShowPhotos(true)} leading={<ImagePlus className="size-5" />}>
             Add a photo
@@ -506,7 +509,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
             </div>
             <div className="space-y-2">
               <Label htmlFor="mem-date">When was this?</Label>
-              <FuzzyDateInput id="mem-date" value={date} onChange={setDate} />
+              <FuzzyDateInput id="mem-date" value={date} onChange={setDate} birthYear={capsule.birthYear} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="mem-place">Where was this?</Label>

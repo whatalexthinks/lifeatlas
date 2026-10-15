@@ -88,6 +88,7 @@ export function buildSeed(now = new Date()): DemoDatabase {
     referrals: { code: makeReferralCode("Sarah", "usr_sarah"), events: sampleReferralEvents },
     credits: sampleCredits,
     bookmarks: [{ capsuleId: "cap_margaret", memoryId: "mem_seat", at: "2026-10-01T09:00:00.000Z" }],
+    questionFavorites: ["q_ourstory_1"],
     captureDrafts: [],
     letterDrafts: [],
     gatherings: [],

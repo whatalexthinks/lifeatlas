@@ -51,3 +51,22 @@ describe("describeInterval", () => {
     expect(describeInterval("2046-10-13", now)).toBe("in about 20 years");
   });
 });
+
+describe("ages and notes", () => {
+  it("shows an age as an age, never as the year it was derived into", () => {
+    expect(formatFuzzyDate({ precision: "age", age: 12, year: 1952 })).toBe("Around age 12");
+    expect(formatFuzzyDate({ precision: "age", age: 12 }, "short")).toBe("Age 12");
+    expect(formatFuzzyDate({ precision: "age", age: 0 })).toBe("As a baby");
+    expect(formatFuzzyDate({ precision: "age" })).toBe("Date unknown");
+    expect(isApproximate({ precision: "age", age: 12 })).toBe(true);
+  });
+
+  it("orders an age by the derived year when there is one, and last when there isn't", () => {
+    expect(sortKey({ precision: "age", age: 12, year: 1952 })).toBeLessThan(sortKey({ precision: "year", year: 1960 }));
+    expect(sortKey({ precision: "age", age: 12 })).toBe(Number.POSITIVE_INFINITY);
+  });
+
+  it("keeps a relative note as the display when the date is unknown", () => {
+    expect(formatFuzzyDate({ precision: "unknown", note: "Before we moved to California" })).toBe("Before we moved to California");
+  });
+});

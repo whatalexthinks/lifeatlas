@@ -129,6 +129,7 @@ function toManifestMemory(m: Memory, d: DemoDatabase): ArchiveManifest["memories
       season: m.date.season,
       decade: m.date.decade,
       lifeStage: m.date.lifeStage,
+      age: m.date.age,
       note: m.date.note,
     },
     chapter: chapterById(m.chapter).title,

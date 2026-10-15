@@ -48,3 +48,12 @@ describe("onboarding", () => {
     expect(fam).toMatchObject({ subjectName: "The Ellis Family", title: "Four Generations", collectionMode: "family", relationship: "Family", layout: "full_bleed" });
   });
 });
+
+describe("date validation", () => {
+  it("an age needs a number, within reason", async () => {
+    const { fuzzyDateSchema } = await import("@/domain/schemas");
+    expect(fuzzyDateSchema.safeParse({ precision: "age" }).success).toBe(false);
+    expect(fuzzyDateSchema.safeParse({ precision: "age", age: 12 }).success).toBe(true);
+    expect(fuzzyDateSchema.safeParse({ precision: "age", age: 140 }).success).toBe(false);
+  });
+});

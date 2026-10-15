@@ -172,7 +172,9 @@ export interface CapsuleRepository {
   addPlace(place: Omit<Place, "id">): Promise<ServiceResult<Place>>;
   addCustomQuestion(capsuleId: string, text: string, category: string): Promise<ServiceResult<string>>;
   setAssignments(capsuleId: string, questionIds: string[]): Promise<ServiceResult<null>>;
-  markAssignment(capsuleId: string, questionId: string, status: "queued" | "answered" | "skipped", memoryId?: string): Promise<ServiceResult<null>>;
+  markAssignment(capsuleId: string, questionId: string, status: "queued" | "answered" | "skipped" | "saved", memoryId?: string): Promise<ServiceResult<null>>;
+  /** Star or unstar a question for this account. Returns whether it is now a favourite. */
+  toggleFavoriteQuestion(questionId: string): Promise<ServiceResult<boolean>>;
   /** Grant, change or (with null) remove a person's role on a capsule. The owner can't be changed here. */
   setMemberRole(capsuleId: string, personId: string, role: Role | null): Promise<ServiceResult<null>>;
 }

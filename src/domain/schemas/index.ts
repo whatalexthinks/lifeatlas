@@ -16,7 +16,7 @@ const optionalEmail = z
 
 export const fuzzyDateSchema = z
   .object({
-    precision: z.enum(["day", "month", "season", "year", "circa", "decade", "life_stage", "unknown"]),
+    precision: z.enum(["day", "month", "season", "year", "circa", "decade", "life_stage", "age", "unknown"]),
     year: z.number().int().min(1850).max(CURRENT_YEAR + 1).optional(),
     month: z.number().int().min(1).max(12).optional(),
     day: z.number().int().min(1).max(31).optional(),
@@ -25,6 +25,7 @@ export const fuzzyDateSchema = z
     lifeStage: z
       .enum(["early_childhood", "childhood", "teenage_years", "young_adulthood", "early_family_years", "middle_years", "later_years", "recent_years"])
       .optional(),
+    age: z.number().int().min(0, "Please check the age.").max(120, "Please check the age.").optional(),
     note: z.string().max(120).optional(),
   })
   .superRefine((d, ctx) => {
@@ -39,6 +40,7 @@ export const fuzzyDateSchema = z
     if (d.precision === "season" && !d.season) need("season", "Choose a season.");
     if (d.precision === "decade" && d.decade === undefined) need("decade", "Choose a decade.");
     if (d.precision === "life_stage" && !d.lifeStage) need("lifeStage", "Choose a time of life.");
+    if (d.precision === "age" && d.age === undefined) need("age", "Add an age — roughly is fine.");
   });
 
 /* ------------------------------ Capsule wizard ------------------------------ */

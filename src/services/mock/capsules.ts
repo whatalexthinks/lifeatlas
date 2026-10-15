@@ -411,6 +411,20 @@ export const mockCapsules: CapsuleRepository = {
     return ok(null);
   },
 
+  async toggleFavoriteQuestion(questionId) {
+    if (!db().questions.some((q) => q.id === questionId)) return fail("not_found", "That question isn't in the library.");
+    let now = false;
+    store().mutate((d) => {
+      const i = d.questionFavorites.indexOf(questionId);
+      if (i >= 0) d.questionFavorites.splice(i, 1);
+      else {
+        d.questionFavorites.unshift(questionId);
+        now = true;
+      }
+    });
+    return ok(now);
+  },
+
   async setMemberRole(capsuleId, personId, role) {
     const d = db();
     const capsule = d.capsules.find((c) => c.id === capsuleId);

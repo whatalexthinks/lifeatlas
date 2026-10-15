@@ -8,7 +8,7 @@ import { Sheet, ConfirmDialog } from "@/components/ui/overlay";
 import { Button } from "@/components/ui/button";
 import { Badge, DemoNotice, toast } from "@/components/ui/feedback";
 import { Checkbox, Field, Input, Label, Segmented, Select, Textarea } from "@/components/ui/field";
-import { FuzzyDateInput, PlacePicker } from "@/components/capsule/inputs";
+import { FuzzyDateInput, PhotoDateSuggestion, PlacePicker } from "@/components/capsule/inputs";
 import { MediaImage } from "@/components/media/media-image";
 import { AudioPlayer } from "@/components/audio/audio-player";
 import { PhotoAdder, type PendingPhoto } from "@/components/capture/photo-adder";
@@ -71,6 +71,7 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
   const [narrative, setNarrative] = React.useState(memory.narrative);
   const [quote, setQuote] = React.useState(memory.quote ?? "");
   const [date, setDate] = React.useState(memory.date);
+  const birthYear = useDb((d) => d.capsules.find((c) => c.id === memory.capsuleId)?.birthYear);
   const [placeId, setPlaceId] = React.useState(memory.placeId);
   const [chapter, setChapter] = React.useState(memory.chapter);
   const [peopleIds, setPeopleIds] = React.useState(memory.peopleIds);
@@ -217,7 +218,7 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
         </Field>
         <div className="space-y-2">
           <Label htmlFor="ed-date">When</Label>
-          <FuzzyDateInput id="ed-date" value={date} onChange={setDate} />
+          <FuzzyDateInput id="ed-date" value={date} onChange={setDate} birthYear={birthYear} />
           {errors.date ? <p className="text-[0.875rem] font-medium text-danger">{errors.date}</p> : null}
         </div>
         <div className="space-y-2">
@@ -309,6 +310,7 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
             </div>
           ) : null}
           <PhotoAdder photos={newPhotos} onChange={setNewPhotos} />
+          <PhotoDateSuggestion takenOn={newPhotos.find((p) => p.takenOn)?.takenOn} value={date} onUse={setDate} />
         </div>
 
         {/* Audio */}
