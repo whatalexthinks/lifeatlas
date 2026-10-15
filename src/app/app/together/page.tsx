@@ -114,7 +114,7 @@ function Setup({ onStart }: { onStart: (s: GatheringSession) => void }) {
                 const on = guests.some((g) => g.personId === p.id);
                 return (
                   <button key={p.id} type="button" aria-pressed={on} onClick={() => toggle({ key: p.id, name: p.givenName, personId: p.id, relationship: p.shortBio })} className={cn("inline-flex min-h-11 items-center gap-2 rounded-full border py-1 pl-1 pr-4 text-[0.9375rem] transition", on ? "border-evergreen bg-evergreen text-on-evergreen" : "border-line bg-surface hover:border-ink/30")}>
-                    <Avatar name={p.displayName} size="sm" className={on ? "bg-on-evergreen/20 text-on-evergreen" : undefined} />
+                    <Avatar name={p.displayName} size="sm" className={on ? "bg-paper text-ink" : undefined} />
                     {p.givenName}
                     {on ? <Check className="size-4" /> : null}
                   </button>

@@ -10,7 +10,7 @@ import { brand } from "@/config/brand";
  * Internal ids `book` and `keepsake_box` predate the rebrand and are kept so existing
  * designs and orders stay valid.
  */
-export const CATALOG_VERSION = 2;
+export const CATALOG_VERSION = 3;
 
 export const defaultCatalog: Product[] = [
   {
@@ -138,7 +138,7 @@ export const defaultCatalog: Product[] = [
     price: { amount: 0, currency: "USD", interval: "one_time", isTestPrice: true },
     availability: "coming_soon",
     fulfillment: "none",
-    inclusions: ["Prepare and preview letters, voice and video messages", "Choose dates and milestones", "Name a successor"],
+    inclusions: ["Prepare and preview letters, voice messages and photographs", "Choose dates and milestones", "Name a successor"],
     limitations: ["Nothing is scheduled for delivery today", "No prepaid delivery is sold"],
     giftable: false,
     sortOrder: 10,

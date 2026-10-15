@@ -2,20 +2,27 @@
 
 import * as React from "react";
 import type { Capsule } from "@/domain/models";
-import { MediaImage } from "@/components/media/media-image";
+import { MediaImage, Plate } from "@/components/media/media-image";
 import { cn } from "@/lib/utils";
 import { brand } from "@/config/brand";
 
+/** Cover colours, drawn from the brand palette. Keys are stored on capsules and never renamed. */
 export const paletteStyles: Record<Capsule["theme"]["palette"], { bg: string; ink: string; accent: string; soft: string; label: string }> = {
-  evergreen: { bg: "#2f4339", ink: "#f3efe7", accent: "#d7bc92", soft: "#e3e8e1", label: "Evergreen" },
-  terracotta: { bg: "#8e4b33", ink: "#fbf1e6", accent: "#f0d9a8", soft: "#f3e3da", label: "Terracotta" },
-  slate: { bg: "#46586a", ink: "#eef1f3", accent: "#e6d3a8", soft: "#e2e7ec", label: "Slate" },
-  linen: { bg: "#e7dfcf", ink: "#242824", accent: "#8a6d43", soft: "#f3eee3", label: "Linen" },
-  night: { bg: "#161c19", ink: "#f1ede6", accent: "#d7bc92", soft: "#2a322d", label: "Night" },
+  evergreen: { bg: "#4b5647", ink: "#f4f1ea", accent: "#dcc6a0", soft: "#e6e8e1", label: "Forest" },
+  terracotta: { bg: "#763f43", ink: "#f8efe9", accent: "#e8c9a6", soft: "#f1e3e1", label: "Oxblood" },
+  slate: { bg: "#4a5560", ink: "#eef1f3", accent: "#e2cfa6", soft: "#e2e7ec", label: "Slate" },
+  linen: { bg: "#ece5d8", ink: "#252421", accent: "#763f43", soft: "#f5f1e9", label: "Linen" },
+  night: { bg: "#252421", ink: "#f3efe7", accent: "#d7bc92", soft: "#33312d", label: "Charcoal" },
 };
 
 export function typographyClass(t: Capsule["theme"]["typography"]) {
   return t === "italic" ? "font-serif italic" : t === "modern" ? "font-sans font-medium tracking-[-0.035em]" : "font-serif";
+}
+
+/** A stored photograph, or — for public previews — a sample illustration drawn by id. */
+function CoverImage({ cover, className }: { cover: Capsule["cover"]; className?: string }) {
+  if (!cover.mediaId && cover.plateId) return <Plate id={cover.plateId} alt="" className={className} focalY={cover.focalY} />;
+  return <MediaImage mediaId={cover.mediaId} className={className} focalY={cover.focalY} />;
 }
 
 /** Editorial cover for a capsule. Works with or without a photograph. */
@@ -38,7 +45,7 @@ export function CapsuleCover({
   if (capsule.cover.layout === "full_bleed" && hasImage) {
     return (
       <div className={cn("relative isolate overflow-hidden", className)} style={{ backgroundColor: p.bg }}>
-        <MediaImage mediaId={capsule.cover.mediaId} className="absolute inset-0" focalY={capsule.cover.focalY} />
+        <CoverImage cover={capsule.cover} className="absolute inset-0" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6" style={{ color: "#fbf8f1" }}>
           {showMeta ? <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] opacity-80">{capsule.title}</p> : null}
@@ -53,7 +60,7 @@ export function CapsuleCover({
     return (
       <div className={cn("relative isolate flex flex-col overflow-hidden", className)} style={{ backgroundColor: p.bg, color: p.ink }}>
         <div className="relative m-4 mb-0 flex-1 overflow-hidden rounded-[4px] sm:m-5 sm:mb-0">
-          <MediaImage mediaId={capsule.cover.mediaId} className="absolute inset-0" focalY={capsule.cover.focalY} />
+          <CoverImage cover={capsule.cover} className="absolute inset-0" />
         </div>
         <div className="p-4 sm:p-5">
           {showMeta ? <p className="font-mono text-[0.6875rem] uppercase tracking-[0.16em]" style={{ color: p.accent }}>{capsule.title}</p> : null}

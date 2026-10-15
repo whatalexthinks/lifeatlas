@@ -159,12 +159,12 @@ test("a future letter seals with a fingerprint and is never scheduled", async ({
 
 test("operations edits flow into checkout and simulations land in review", async ({ page }) => {
   await page.goto("/demo/operations#catalog");
-  const row = page.locator("li", { hasText: "Personal Capsule" }).first();
+  const row = page.locator("li", { hasText: "Digital LifeCapsule" }).first();
   await row.locator("input").fill("44.00");
   await row.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText(/Personal Capsule updated/)).toBeVisible();
+  await expect(page.getByText(/Digital LifeCapsule updated/)).toBeVisible();
   await settle(page);
-  await page.goto("/checkout/preview?product=personal");
+  await page.goto("/checkout/preview?product=digital");
   await expect(page.getByText("$44").first()).toBeVisible();
 
   await page.goto("/demo/control-center");

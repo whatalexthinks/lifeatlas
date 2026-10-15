@@ -160,11 +160,12 @@ test("a returned story is fixed and resent; previews show each person's view", a
   await settle(page);
 
   await page.goto("/app/family");
-  await page.getByRole("button", { name: "Preview as Jonah Reed" }).click();
+  // Leo is a viewer only, so his preview opens the family viewer (editors land in the studio).
+  await page.getByRole("button", { name: "Preview as Leo Ellis" }).click();
   await page.waitForURL(/\/view\//);
-  await expect(page.getByText("Previewing as Jonah Reed")).toBeVisible();
+  await expect(page.getByText("Previewing as Leo Ellis")).toBeVisible();
   await page.getByRole("button", { name: "Back to Sarah" }).click();
-  await expect(page.getByText("Previewing as Jonah Reed")).toHaveCount(0);
+  await expect(page.getByText("Previewing as Leo Ellis")).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 

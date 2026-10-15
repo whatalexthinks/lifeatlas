@@ -7,33 +7,30 @@ const cols = [
     title: "Product",
     links: [
       ["How it works", "/how-it-works"],
-      ["Features", "/features"],
-      ["Storytelling", "/storytelling"],
-      ["Memory map", "/memory-map"],
-      ["Family collaboration", "/family-collaboration"],
-      ["Letters Through Time", "/letters-through-time"],
+      ["Example capsules", "/examples"],
       ["Pricing", "/pricing"],
+      ["Physical capsules", "/physical-capsules"],
+      ["Gifts", "/gifts"],
+      ["Open the studio", "/app"],
     ],
   },
   {
-    title: "Heirlooms & gifts",
+    title: "For",
     links: [
-      ["Heirlooms", "/heirlooms"],
-      ["Printed book", "/heirlooms/book"],
-      ["Keepsake box", "/heirlooms/time-capsule"],
-      ["Gifts", "/gifts"],
-      ["Holiday gathering", "/gifts/holiday"],
-      ["For parents", "/gifts/parents"],
-      ["For grandparents", "/gifts/grandparents"],
+      ["Couples", "/couples"],
+      ["Families", "/families"],
+      ["Your own story", "/personal"],
+      ["Parents & grandparents", "/legacy"],
+      ["Holiday gatherings", "/gifts/holiday"],
     ],
   },
   {
     title: "Trust",
     links: [
-      ["Preservation", "/preservation"],
       ["Privacy (draft)", "/privacy"],
       ["Terms (draft)", "/terms"],
-      ["Data retention (draft)", "/data-retention"],
+      ["Preservation", "/preservation"],
+      ["Data retention", "/data-retention"],
       ["Accessibility", "/accessibility"],
     ],
   },
@@ -42,9 +39,9 @@ const cols = [
     links: [
       ["About", "/about"],
       ["Questions", "/faq"],
+      ["Support", "/support"],
       ["Contact", "/contact"],
       ["Sample story", "/demo"],
-      ["Open the studio", "/app"],
     ],
   },
 ];
@@ -60,9 +57,9 @@ export function SiteFooter() {
               <BrandMark className="size-[30px]" />
               <Wordmark className="text-night-ink" />
             </div>
-            <p className="mt-6 font-serif text-[1.75rem] leading-[1.15] text-night-ink">Every life has a story worth keeping.</p>
+            <p className="mt-6 font-serif text-[1.75rem] leading-[1.15] text-night-ink">A life is made of moments. Keep them close.</p>
             <p className="mt-4 text-[0.9375rem] leading-relaxed text-night-ink-2">
-              A private family archive for voices, photographs, places and letters — made to be explored together and carried forward.
+              Private capsules for the stories, voices and photographs of the people you love — made to be shared with the people you choose, and handed down.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">

@@ -5,7 +5,7 @@ import { appConfig } from "@/lib/config";
 export default function robots(): MetadataRoute.Robots {
   const base = appConfig.siteUrl.replace(/\/$/, "");
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/app", "/view", "/contribute", "/gift/", "/future", "/checkout", "/demo", "/proof"] }],
+    rules: [{ userAgent: "*", allow: "/", disallow: ["/app", "/view", "/contribute", "/gift/", "/future", "/checkout", "/demo", "/proof", "/r/"] }],
     sitemap: `${base}/sitemap.xml`,
   };
 }

@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { untilAnimationsSettle } from "./support/settle";
 
 /**
  * Automated WCAG 2.2 AA checks (axe-core). Automated rules catch roughly a third of
@@ -8,7 +9,7 @@ import AxeBuilder from "@axe-core/playwright";
  */
 const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
-const publicRoutes = ["/", "/pricing", "/how-it-works", "/heirlooms/book", "/faq", "/gifts/build", "/no-such-page"];
+const publicRoutes = ["/", "/pricing", "/how-it-works", "/couples", "/families", "/personal", "/legacy", "/gifts", "/physical-capsules", "/examples", "/about", "/support", "/contact", "/privacy", "/r/SARAH-K7PQ", "/heirlooms/book", "/faq", "/gifts/build", "/no-such-page"];
 const appRoutes = [
   "/app",
   "/app/capsules/cap_margaret",
@@ -35,7 +36,8 @@ const appRoutes = [
   "/contribute/emma-blue-bowl",
   "/gift/for-grandpa-walt",
   "/future/open/example-opening",
-  "/checkout/preview?product=personal",
+  "/checkout/preview?product=digital",
+  "/app/referrals",
   "/demo/control-center",
   "/demo/operations",
   "/demo/style-guide",
@@ -46,6 +48,7 @@ async function audit(page: Page, routes: string[]) {
   for (const path of routes) {
     await page.goto(path);
     await page.waitForLoadState("networkidle");
+    await untilAnimationsSettle(page);
     const { violations } = await new AxeBuilder({ page }).withTags(WCAG).analyze();
     for (const v of violations) problems.push(`${path} — ${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")})`);
   }
@@ -53,10 +56,12 @@ async function audit(page: Page, routes: string[]) {
 }
 
 test("public pages meet WCAG 2.2 AA automated checks", async ({ page }) => {
+  test.setTimeout(180_000); // ~20 pages, each audited after its entrance animations settle
   expect(await audit(page, publicRoutes)).toEqual([]);
 });
 
 test("studio, family and demo pages meet WCAG 2.2 AA automated checks", async ({ page }) => {
+  test.setTimeout(240_000); // ~30 pages, each audited after its entrance animations settle
   expect(await audit(page, appRoutes)).toEqual([]);
 });
 
@@ -70,9 +75,10 @@ test("pages added for drafts, sessions, restore and proofs pass too", async ({ p
   await page.waitForURL(/session=/);
   const session = new URL(page.url()).search;
   await page.goto("/app/family");
-  await page.getByRole("button", { name: "Preview as Jonah Reed" }).click();
+  // A viewer-only person: their preview opens the family viewer.
+  await page.getByRole("button", { name: "Preview as Leo Ellis" }).click();
   await page.waitForURL(/\/view\//);
-  const preview = await audit(page, ["/view/cap_margaret", "/view/cap_margaret/stories?q=harbor"]);
+  const preview = await audit(page, ["/view/cap_family", "/view/cap_family/stories?q=ferry"]);
   await page.getByRole("button", { name: "Back to Sarah" }).click();
   await page.waitForTimeout(300);
   expect([...preview, ...(await audit(page, [proof!, `/app/together${session}`, "/app/together", "/contribute/emma-blue-bowl"]))]).toEqual([]);

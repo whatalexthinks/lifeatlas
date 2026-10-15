@@ -1,11 +1,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { ArrowUpRight, Check, Plus } from "lucide-react";
-import { defaultCatalog } from "@/data/product-catalog";
-import type { Product } from "@/domain/models";
 import { ButtonLink } from "@/components/ui/button";
 import { Reveal } from "@/components/shared/reveal";
-import { cn, formatMoney } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 export function Container({ children, className, size = "default" }: { children: React.ReactNode; className?: string; size?: "default" | "narrow" | "wide" }) {
   return <div className={cn("mx-auto w-full px-5 sm:px-8", size === "narrow" ? "max-w-[880px]" : size === "wide" ? "max-w-[1440px]" : "max-w-[1320px]", className)}>{children}</div>;
@@ -48,62 +46,6 @@ export function PageHero({ eyebrow, title, lead, children, className }: { eyebro
         {children ? <div className="mt-9">{children}</div> : null}
       </Container>
     </section>
-  );
-}
-
-const planOrder = ["preview", "digital", "family"];
-
-export function PricingCards({ catalog = defaultCatalog, compact = false }: { catalog?: Product[]; compact?: boolean }) {
-  const plans = planOrder.map((id) => catalog.find((p) => p.id === id)).filter((p): p is Product => !!p);
-  return (
-    <div className="grid gap-5 lg:grid-cols-3">
-      {plans.map((p, i) => {
-        const featured = p.id === "family";
-        return (
-          <Reveal key={p.id} delay={i * 80} className={cn("relative flex flex-col rounded-[24px] p-7 sm:p-8", featured ? "bg-night text-night-ink shadow-lg" : "card-paper")}>
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className={cn("eyebrow plain", featured && "text-[#d7bc92]")}>{p.tagline}</p>
-              {featured ? <span className="rounded-full bg-[#d7bc92] px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-[#1b1a18]">For the whole family</span> : null}
-            </div>
-            <h3 className="mt-4 font-serif text-[2rem] leading-tight">{p.name}</h3>
-            <p className="mt-4 flex items-baseline gap-2">
-              <span className="font-serif text-[3.25rem] leading-none tracking-[-0.03em]">{formatMoney(p.price.amount)}</span>
-              <span className={cn("text-[0.9375rem]", featured ? "text-night-ink-2" : "text-ink-3")}>{p.price.interval === "year" ? `per year${p.monthly ? ` · or ${formatMoney(p.monthly.amount)}/mo` : ""}` : p.price.amount === 0 ? "free, on this device" : "one time"}</span>
-            </p>
-            <p className={cn("mt-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em]", featured ? "text-night-ink-3" : "text-ink-4")}>Test price · not charged in this preview</p>
-            <p className={cn("mt-5 text-[0.9875rem] leading-relaxed", featured ? "text-night-ink-2" : "text-ink-2")}>{p.description}</p>
-            {!compact ? (
-              <ul className="mt-6 space-y-2.5">
-                {p.inclusions.map((x) => (
-                  <li key={x} className="flex gap-2.5 text-[0.9375rem] leading-snug">
-                    <Check className={cn("mt-0.5 size-4 shrink-0", featured ? "text-[#d7bc92]" : "text-evergreen")} />
-                    <span className={featured ? "text-night-ink" : "text-ink"}>{x}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-            {!compact && p.limitations.length ? (
-              <div className={cn("mt-5 border-t pt-4 text-[0.8125rem] leading-relaxed", featured ? "border-night-line text-night-ink-3" : "border-line text-ink-3")}>
-                {p.limitations.map((l) => (
-                  <p key={l}>{l}</p>
-                ))}
-              </div>
-            ) : null}
-            <div className="mt-auto pt-8">
-              <ButtonLink
-                href={p.id === "preview" ? "/app/capsules/new" : `/checkout/preview?product=${p.id}`}
-                variant={featured ? "light" : "secondary"}
-                size="lg"
-                block
-                trailing={<ArrowUpRight className="size-4" />}
-              >
-                {p.id === "preview" ? "Start on this device" : `Choose ${p.name}`}
-              </ButtonLink>
-            </div>
-          </Reveal>
-        );
-      })}
-    </div>
   );
 }
 

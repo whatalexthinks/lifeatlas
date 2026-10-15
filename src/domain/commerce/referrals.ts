@@ -35,6 +35,9 @@ export function makeReferralCode(givenName: string, seed: string) {
   return `${letters}-${suffix}`;
 }
 
+/** A code from a link, made safe to store and show: letters, digits and hyphens, at most 16. */
+export const normalizeReferral = (code: string) => code.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "").slice(0, 16);
+
 export const isReferralCodeShape = (code: string) => /^[A-Z]{2,8}-[A-Z2-9]{4}$/.test(code.trim().toUpperCase());
 
 export function referralSummary(events: ReferralEvent[], credits: CreditEntry[]) {

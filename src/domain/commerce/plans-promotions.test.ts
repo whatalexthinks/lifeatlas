@@ -4,7 +4,7 @@ import { defaultCatalog } from "@/data/product-catalog";
 import { defaultPromotions } from "@/data/promotions";
 import { annualSavings, capsuleAllowance, currentPlanId, plans, unitAmount } from "./plans";
 import { canActivate, evaluatePromotion, findPromotion, normalizeCode, type PromotionContext } from "./promotions";
-import { isReferralCodeShape, makeReferralCode, referralSummary } from "./referrals";
+import { isReferralCodeShape, makeReferralCode, normalizeReferral, referralSummary } from "./referrals";
 import { quoteCart } from "./pricing";
 
 const catalog = defaultCatalog;
@@ -122,6 +122,12 @@ describe("referrals", () => {
     expect(isReferralCodeShape(c)).toBe(true);
     expect(isReferralCodeShape("FOUNDERS")).toBe(false);
     expect(makeReferralCode("Zoë-Ann", "x")).toMatch(/^ZOEANN-/);
+  });
+
+  it("cleans codes that arrive in links", () => {
+    expect(normalizeReferral(" sarah-k7pq ")).toBe("SARAH-K7PQ");
+    expect(normalizeReferral("<script>alert(1)</script>")).toBe("SCRIPTALERT1SCRI");
+    expect(isReferralCodeShape(normalizeReferral("sarah-k7pq"))).toBe(true);
   });
 
   it("the friend's offer needs a referral code", () => {

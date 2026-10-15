@@ -1,92 +1,428 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight, AudioLines, BookOpen, Check, Download, Heart, ImagePlus, LockKeyhole, Mic, MoveUpRight, Users } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
-import { Container, FaqList, PricingCards } from "@/components/marketing/blocks";
-import { HeroVignette } from "@/components/marketing/home/hero-vignette";
-import { LifeExplorer } from "@/components/marketing/home/life-explorer";
-import { BookObject, SealedLetter } from "@/components/marketing/objects";
+import { FaqList } from "@/components/marketing/blocks";
+import { BookObject, KeepsakeBox, SealedLetter } from "@/components/marketing/objects";
 import { MobileStickyCta } from "@/components/marketing/site-header";
-import { AudioPlayer } from "@/components/audio/audio-player";
+import { Plate } from "@/components/media/media-image";
+import { ArrowLink, CheckList, Container, Eyebrow, FinalCta, Heading, JsonLd, Numbered, PreviewNote, Section, Split } from "@/components/site/kit";
+import { appConfig } from "@/lib/config";
+import { FutureMessagePreview, HeroComposition, InvitationPreview, QuestionTry, StoryPreview, TimelinePreview, VoicePreview } from "@/components/site/previews";
+import { AudienceGrid } from "@/components/site/audiences";
+import { PlanPricing } from "@/components/site/pricing";
+import { formatMoney } from "@/lib/utils";
+import { defaultCatalog } from "@/data/product-catalog";
 import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: { absolute: `${brand.name} — A whole life. In their words.` },
-  description: "Turn the stories, voices, photographs, and places of someone you love into a family archive. Start with a question. Create a keepsake together.",
+  title: { absolute: `${brand.name} — A life is made of moments. Keep them close.` },
+  description: `${brand.name} keeps the stories, voices and photographs of the people you love — yours, your partner's, your family's — in one private capsule you can share with the people you choose and hand down.`,
   alternates: { canonical: "/" },
 };
 
+const price = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id)!.price.amount);
+
 const faqs: [string, React.ReactNode][] = [
-  ["What exactly is a memory capsule?", "A personal digital collection for one person’s life: recorded answers, written memories, photographs, and meaningful places. Explore it as a timeline or chapters, invite family to contribute, and prepare a printed edition."],
-  ["Where do I start if I’ve never done this before?", "Choose someone you want to know better, then pick a question from the prompt library. You can sit together and record, type an answer, or add a photograph. One memory is enough to begin."],
-  ["Does everyone need an account?", "The intended storyteller experience is one invitation, one question, and a simple record button. This demo lets you explore the different roles on one device. Secure accounts and cross-device invitation delivery are not connected yet."],
-  ["Are my memories backed up?", "Not in this preview. Anything you add is stored in this browser, on this device. Clearing browser data can remove it. Export a portable copy of the memories and media you want to keep. Cloud storage and independent backups are Part Two work."],
-  ["Can I buy a book or schedule a future letter today?", "You can design a book, preview a gift, and prepare a future letter. Payments, printing, shipping, and future delivery are not connected. All orders are clearly marked demonstrations and nothing is charged."],
+  ["What is a LifeCapsule?", "A private place for the story of a life or a relationship: written memories, recorded answers, photographs, dates and places. You can explore it as a timeline or in chapters, invite people to add what they remember, and turn it into a printed book or a physical keepsake."],
+  ["Do the people I invite have to pay?", "Never. Whoever owns the capsule chooses a plan; everyone they invite — to add stories or simply to read them — joins free, with no card and no trial."],
+  ["What can I try today?", `Almost everything, on this device: create capsules, answer questions, record your voice, add photographs, invite family with a link, design a book and prepare future messages. Accounts, cloud storage, payments, printing and delivery aren't connected yet — the preview says so wherever it matters.`],
+  ["Are my memories backed up?", "Not in this preview. What you add stays in this browser. Download a copy of anything that matters — a complete export with your stories and files is always one click away."],
 ];
 
 export default function HomePage() {
+  const site = appConfig.siteUrl.replace(/\/$/, "");
   return (
-    <div className="la-home">
-      <section className="la-hero">
-        <Container size="wide" className="la-hero-grid">
-          <div className="la-hero-copy">
-            <p className="la-kicker"><span /> A home for your family’s story</p>
-            <h1>A whole life.<br /><em>In their words.</em></h1>
-            <p className="la-hero-lead">Turn the stories, voices, and photographs of someone you love into a beautiful family archive.</p>
-            <p className="la-hero-detail">Ask a question. Gather the family. Keep a little more of what makes them, them.</p>
-            <div className="la-actions">
-              <ButtonLink href="/app/capsules/new" size="xl" trailing={<ArrowUpRight className="size-4" />}>Start their story</ButtonLink>
-              <Link href="/demo" className="la-link">Explore a sample archive <ArrowRight className="size-4" /></Link>
-            </div>
-            <div className="la-reassurance"><span><Check className="size-3.5" /> Free to explore</span><span><LockKeyhole className="size-3.5" /> Yours to download</span></div>
-          </div>
-          <HeroVignette />
-        </Container>
-        <Container size="wide" className="la-hero-bottom"><span>FOR THE STORIES THAT MAKE US, US.</span><a href="#how-it-works">A small beginning. Something meaningful. <ArrowDown className="size-4" /></a></Container>
-      </section>
-
-      <section id="how-it-works" className="la-section la-begin">
+    <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [
+            { "@type": "Organization", name: brand.name, url: site, logo: `${site}/icon.svg` },
+            { "@type": "WebSite", name: brand.name, url: site, description: brand.philosophy },
+          ],
+        }}
+      />
+      {/* A — Hero */}
+      <section className="relative overflow-hidden pb-20 pt-10 sm:pb-28 sm:pt-16">
         <Container size="wide">
-          <div className="la-section-head"><p className="la-kicker">01 / A simple place to start</p><h2>You don’t need a life story.<br /><em>Just one good question.</em></h2><p>No blank-page pressure. No perfect words.<br />Build a meaningful collection, one memory at a time.</p></div>
-          <div className="la-steps">
-            {[
-              { n: "01", Icon: Heart, title: "Choose your person", text: "A parent, a grandparent, your partner, yourself. Give their story a place of its own." },
-              { n: "02", Icon: Mic, title: "Let the memories come", text: "Use thoughtful prompts to record a voice, write a story, or add a photograph. Invite family to join in." },
-              { n: "03", Icon: BookOpen, title: "Make something to keep", text: "Explore a living archive. Download your files. Design a book to open together." },
-            ].map(({ n, Icon, title, text }) => <article key={n}><div className="la-step-top"><Icon size={23} strokeWidth={1.4} /><span>{n}</span></div><h3>{title}</h3><p>{text}</p></article>)}
+          <div className="grid gap-14 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:items-center lg:gap-16">
+            <div>
+              <Eyebrow>Private memory capsules for the people you love</Eyebrow>
+              <h1 className="display-1 mt-7">
+                A life is made of moments. <em>Keep them close.</em>
+              </h1>
+              <p className="lead mt-7 max-w-xl">
+                {brand.name} gathers the stories, voices and photographs that matter — your own, your partner&rsquo;s, your family&rsquo;s — into one private capsule you can keep, share with the people you choose, and hand down.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+                <ButtonLink href="/app/capsules/new" size="xl">
+                  Create Your LifeCapsule
+                </ButtonLink>
+                <ArrowLink href="/how-it-works">See How It Works</ArrowLink>
+              </div>
+              <p className="mt-6 text-[0.9375rem] text-ink-3">Free to begin on this device. No card, no account needed to try it.</p>
+            </div>
+            <HeroComposition />
           </div>
-          <Link href="/how-it-works" className="la-link">See how it all comes together <ArrowRight className="size-4" /></Link>
         </Container>
       </section>
 
-      <section className="la-voice-section">
-        <Container size="wide" className="la-voice-grid">
-          <div className="la-question-object"><p>FROM THE QUESTION LIBRARY</p><span className="la-quote-mark">“</span><h3>What’s an ordinary day<br />you wish you could<br /><em>live again?</em></h3><div><span>Childhood & everyday wonders</span><span>01 — 68+</span></div></div>
-          <div className="la-voice-copy"><p className="la-kicker">02 / More than the words</p><h2>The laugh.<br />The little pause.<br /><em>The way they tell it.</em></h2><p>A recording keeps the things a photograph can’t. Give someone you love the space to remember, and let their voice do the rest.</p><AudioPlayer mediaId="aud_bread" title="The kitchen always smelled of bread" tone="light" /><p className="la-caption">Try the player · Fictional story with synthesized sample narration.</p><Link href="/storytelling" className="la-link">A closer look at storytelling <ArrowUpRight className="size-4" /></Link></div>
+      {/* B — The problem */}
+      <Section tone="night" labelledBy="why">
+        <Container size="wide">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-20">
+            <Heading
+              id="why"
+              eyebrow="Why it matters"
+              title={
+                <>
+                  The photographs survive. <em>The stories behind them don&rsquo;t.</em>
+                </>
+              }
+              lead="It isn't the big events we lose first. It's how she said your name, the song he whistled at the stove, the way the two of you tell the story of how you met — each a little differently. Those live in people, not on phones."
+            />
+            <ul className="grid content-end gap-6 border-t border-night-line pt-8 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
+              {["The recipe nobody ever wrote down.", "The voice on an old answering machine.", "The story only Grandpa told right.", "What you'd want your children to know about you."].map((x) => (
+                <li key={x} className="font-serif text-[clamp(1.35rem,1.15rem+0.8vw,1.85rem)] leading-snug text-night-ink">
+                  {x}
+                </li>
+              ))}
+            </ul>
+          </div>
         </Container>
-      </section>
+      </Section>
 
-      <section className="la-section la-explore-section">
-        <Container size="wide"><div className="la-section-head la-split-head"><div><p className="la-kicker">03 / See the bigger story</p><h2>A lifetime.<br /><em>Beautifully connected.</em></h2></div><div><p>The first home. The unexpected journey. The people met along the way. Move through the years and discover the places that shaped a life.</p><Link href="/view/cap_margaret" className="la-link">Step inside Margaret’s archive <ArrowUpRight className="size-4" /></Link></div></div><div className="la-explorer"><LifeExplorer /></div><div className="la-view-types"><span><BookOpen size={17} /> Story chapters</span><span><AudioLines size={17} /> Original voices</span><span><ImagePlus size={17} /> Family photographs</span><span><Users size={17} /> Everyone’s perspective</span></div></Container>
-      </section>
+      {/* C — Real product */}
+      <Section labelledBy="product">
+        <Container size="wide">
+          <Heading
+            id="product"
+            eyebrow="Inside a capsule"
+            title={
+              <>
+                Stories, voices and photographs, <em>kept in one place.</em>
+              </>
+            }
+            lead="These are real screens from the product, showing the fictional sample family. Every story page, timeline and recording you see here is something you can make today."
+          />
+          <div className="mt-14 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            <StoryPreview />
+            <div className="grid content-start gap-6">
+              <TimelinePreview limit={5} />
+              <VoicePreview />
+            </div>
+          </div>
+        </Container>
+      </Section>
 
-      <section className="la-section la-together">
-        <Container size="wide" className="la-two-column"><div><p className="la-kicker">04 / A little from everyone</p><h2>You share a family.<br /><em>Make a story together.</em></h2><p>A sister with a box of slides. A cousin who remembers the details. A grandchild with a question nobody thought to ask.</p><p>Bring their memories into one place. Review each contribution, choose who can see it, and let the story grow.</p><Link href="/family-collaboration" className="la-link">Meet the family experience <ArrowRight className="size-4" /></Link></div><div className="la-family-object"><div className="la-family-note"><div className="la-note-byline"><span className="la-avatar">E</span><div>Emma added a memory<small>Margaret’s family archive</small></div><span className="la-note-dot" /></div><h3>“Grandma, tell me about<br />the blue bowl.”</h3><p>It was always there on the windowsill. I never knew where it came from.</p><div className="la-note-action"><span>One question. A new connection.</span><Link href="/contribute/emma-blue-bowl" aria-label="Open Emma’s sample invitation"><ArrowUpRight size={20} /></Link></div></div><div className="la-family-footer"><div className="la-avatar-group"><span>M</span><span>S</span><span>E</span></div><p>Different generations.<br /><strong>One shared collection.</strong></p></div></div></Container>
-      </section>
+      {/* D — Entry points */}
+      <Section tone="ivory" labelledBy="whose">
+        <Container size="wide">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <Heading
+              id="whose"
+              eyebrow="Whose story first?"
+              title={
+                <>
+                  One capsule for each story <em>you want to keep.</em>
+                </>
+              }
+            />
+            <ArrowLink href="/examples">See example capsules</ArrowLink>
+          </div>
+          <AudienceGrid className="mt-14" />
+        </Container>
+      </Section>
 
-      <section className="la-heirlooms">
-        <Container size="wide" className="la-two-column"><div className="la-book-display"><span className="la-object-tag">THE HEIRLOOM EDITION / 01</span><BookObject title="Margaret Ellis" subtitle="The little things. The whole life." years="1940 — TODAY" size="lg" color="evergreen" className="la-hero-book" /><span className="la-book-footnote">A personal edition. Made from your memories.</span></div><div className="la-heirloom-copy"><p className="la-kicker">05 / Made to hold</p><h2>From a story on a screen<br /><em>to a place on the shelf.</em></h2><p>Turn favorite chapters and photographs into a life book. Choose the cover, add a dedication, and make an edition that could only belong to your family.</p><div className="la-product-specs"><span>Linen-inspired covers</span><span>Your words & photographs</span><span>Editable page previews</span></div><ButtonLink href="/heirlooms" variant="secondary" size="lg" trailing={<MoveUpRight className="size-4" />}>Explore the heirlooms</ButtonLink><p className="la-caption">Design preview · printing, payments, and shipping are not connected.</p></div></Container>
-      </section>
+      {/* E — How it works */}
+      <Section labelledBy="how">
+        <Container size="wide">
+          <Heading
+            id="how"
+            eyebrow="How it works"
+            title={
+              <>
+                You don&rsquo;t need a memoir. <em>Just one good question.</em>
+              </>
+            }
+          />
+          <Numbered
+            className="mt-14"
+            columns={4}
+            items={[
+              { title: "Choose whose story", body: "Yours, the two of you, your family, a parent, a child or someone special. A name is all we ask." },
+              { title: "Answer a question", body: "Speak it, type it or start from a photograph. Skip any question; answer a favourite twice." },
+              { title: "Invite people in", body: "Partners, siblings, grandchildren. They add what only they remember — free, and with your say on what's kept." },
+              { title: "Keep it close", body: "Explore it as a timeline, print it as a book, prepare messages for the future, and download it any time." },
+            ]}
+          />
+          <div className="mt-12">
+            <ArrowLink href="/how-it-works">The whole journey, step by step</ArrowLink>
+          </div>
+        </Container>
+      </Section>
 
-      <section className="la-section la-future"><Container size="wide" className="la-two-column"><div><p className="la-kicker">A little of today, for tomorrow</p><h2>Some words are meant<br /><em>for a future beginning.</em></h2><p>A letter for a milestone. A story for someone not yet old enough to understand. Prepare something personal for a day you’re imagining.</p><Link href="/letters-through-time" className="la-link">Discover Letters Through Time <ArrowRight className="size-4" /></Link><p className="la-caption">Local drafts only. Nothing is scheduled for delivery.</p></div><div className="la-envelope-stage"><SealedLetter to="Emma" openOn="Your next great adventure" /></div></Container></section>
+      {/* Try a question (a working piece of the product) */}
+      <Section tone="surface" space="tight" labelledBy="try">
+        <Container size="wide">
+          <Split
+            media={<QuestionTry />}
+            reverse
+          >
+            <Heading
+              id="try"
+              eyebrow="Try it now"
+              title={
+                <>
+                  Not sure where to start? <em>Let us ask.</em>
+                </>
+              }
+              lead="Choose whose story you're thinking of, and we'll offer a question written for it — how you met, what your grandmother cooked without a recipe, what you hope your child remembers."
+            />
+          </Split>
+        </Container>
+      </Section>
 
-      <section className="la-trust-section"><Container size="wide"><div className="la-trust-heading"><LockKeyhole size={26} strokeWidth={1.3} /><h2>Deeply personal.<br /><em>Always your decisions.</em></h2></div><div className="la-trust-grid"><article><h3>Your circle</h3><p>Choose who a memory is for, and whether it belongs in a printed or shared edition. Secure family access is planned for launch.</p></article><article><h3>Your copy</h3><p>Export stories and available media as ordinary files. Keep a copy outside {brand.name}, in a place you trust.</p></article><article><h3>A clear picture</h3><p>This demo stores new content on your device. No cloud backup is active. Preservation should begin with honesty.</p></article></div><Link href="/preservation" className="la-link">Our approach to keeping memories <ArrowRight className="size-4" /></Link></Container></section>
+      {/* F — Voice */}
+      <Section labelledBy="voice">
+        <Container size="wide">
+          <Split media={<VoicePreview audioId="aud_seat" title="The seat by the window" />}>
+            <Heading
+              id="voice"
+              eyebrow="Voice"
+              title={
+                <>
+                  The laugh, the pause, <em>the way they tell it.</em>
+                </>
+              }
+              lead="A recording keeps what writing can't. Answer out loud on a phone or a laptop — one large button, no settings to learn. If recording isn't possible on a device, you can upload a file or type instead."
+            >
+              <CheckList className="mt-8" items={["Recordings are kept exactly as spoken", "Transcripts are only ever what you type — never invented", "Works with large text and on older phones"]} />
+            </Heading>
+          </Split>
+        </Container>
+      </Section>
 
-      <section className="la-section la-pricing"><Container size="wide"><div className="la-section-head"><p className="la-kicker">A meaningful beginning</p><h2>One person. A whole family.<br /><em>Room for every story.</em></h2><p>Explore the product freely. These are proposed prices for the future service—nothing is charged in this preview.</p></div><PricingCards /><div className="la-pricing-note"><Download size={16} /><span>Portable copies are part of the experience.</span><Link href="/pricing">Compare the details <ArrowRight size={15} /></Link></div></Container></section>
+      {/* G — Example walkthrough */}
+      <Section tone="ivory" labelledBy="walkthrough">
+        <Container size="wide">
+          <Heading
+            id="walkthrough"
+            eyebrow="An example, start to finish"
+            title={
+              <>
+                Sarah &amp; Jonah&rsquo;s capsule, <em>one answer at a time.</em>
+              </>
+            }
+            lead="A fictional couple, shown to make the idea concrete. Twenty-seven years of marriage began with one broken umbrella."
+          />
+          <ol className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              { plate: "umbrella-1998", step: "Sarah answers “How did we meet?”", body: "She types it on her phone one evening — the rain, the red umbrella, the forty minutes in a doorway." },
+              { plate: "bookshop-1998", step: "Jonah answers the same question", body: "His version starts with her laugh. Both answers are kept, side by side." },
+              { plate: "orchard-2001", step: "Their daughter adds the wedding", body: "Emma is invited free, and adds the orchard photograph Sarah had never seen." },
+              { plate: "porch-2025", step: "A letter for their thirtieth", body: "They write to each other, to be opened in 2031 — prepared now, with no false promise about delivery." },
+            ].map((s, i) => (
+              <li key={s.step} className="flex flex-col">
+                <div className="mount">
+                  <Plate id={s.plate} alt="" className="aspect-[4/3]" />
+                </div>
+                <p className="mt-5 font-mono text-[0.75rem] tracking-[0.12em] text-oxblood">{String(i + 1).padStart(2, "0")}</p>
+                <h3 className="display-3 mt-2 !text-[1.3rem]">{s.step}</h3>
+                <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-2">{s.body}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-12">
+            <ArrowLink href="/examples">Explore the sample capsules</ArrowLink>
+          </div>
+        </Container>
+      </Section>
 
-      <section className="la-section la-faq"><Container size="wide" className="la-two-column"><div><p className="la-kicker">A few things to know</p><h2>Good questions.<br /><em>Straight answers.</em></h2><Link href="/faq" className="la-link">More questions & answers <ArrowUpRight size={16} /></Link></div><FaqList items={faqs} /></Container></section>
-      <section className="la-final"><Container><p className="la-kicker">There’s so much left to ask.</p><h2>Start with someone<br /><em>you love.</em></h2><p>You don’t have to capture everything.<br />Just something you’ll be glad you asked.</p><ButtonLink href="/app/capsules/new" size="xl" trailing={<ArrowUpRight size={18} />}>Create a memory capsule</ButtonLink><Link href="/gifts/build" className="la-link">Or make it a gift <ArrowRight size={16} /></Link></Container></section>
-      <MobileStickyCta label="Start their story" />
-    </div>
+      {/* H — Physical keepsakes */}
+      <Section labelledBy="keepsakes">
+        <Container size="wide">
+          <Split
+            media={
+              <div className="relative grid min-h-[360px] place-items-center rounded-[28px] bg-ivory p-8 sm:min-h-[460px]">
+                <div className="w-[62%] max-w-[330px]">
+                  <KeepsakeBox finish="linen_wrapped" engraving="Sarah & Jonah · 1998 —" />
+                </div>
+                <div className="absolute bottom-8 right-8 hidden w-[32%] max-w-[180px] sm:block">
+                  <BookObject title="Our Story" subtitle="Sarah & Jonah" years="1998 —" color="terracotta" size="sm" eyebrow="" />
+                </div>
+              </div>
+            }
+          >
+            <Heading
+              id="keepsakes"
+              eyebrow="Physical keepsakes"
+              title={
+                <>
+                  From a screen <em>to something you can hold.</em>
+                </>
+              }
+              lead="Two optional add-ons for any capsule. Nothing physical is ever required to use the digital one."
+            >
+              <dl className="mt-8 divide-y divide-line border-y border-line">
+                <div className="flex items-baseline justify-between gap-6 py-5">
+                  <dt>
+                    <span className="block font-medium">Premium Physical LifeCapsule</span>
+                    <span className="mt-1 block text-[0.9375rem] text-ink-3">A gift-ready archival kit: keepsake box, prompt cards, photo sleeves and letter envelopes.</span>
+                  </dt>
+                  <dd className="shrink-0 font-sans text-[1.5rem] tracking-[-0.03em]">{price("keepsake_box")}</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-6 py-5">
+                  <dt>
+                    <span className="block font-medium">Printed Legacy Book</span>
+                    <span className="mt-1 block text-[0.9375rem] text-ink-3">Designed from the stories you choose, printed only after you approve a proof.</span>
+                  </dt>
+                  <dd className="shrink-0 font-sans text-[1.5rem] tracking-[-0.03em]">from {price("book")}</dd>
+                </div>
+              </dl>
+              <div className="mt-8 flex flex-wrap gap-x-7 gap-y-3">
+                <ArrowLink href="/physical-capsules">See the keepsakes</ArrowLink>
+              </div>
+              <PreviewNote className="mt-6">Test prices. Payments, printing and shipping aren&rsquo;t connected in this preview — you can design both, and nothing is charged.</PreviewNote>
+            </Heading>
+          </Split>
+        </Container>
+      </Section>
+
+      {/* I — Gifting */}
+      <Section tone="night" labelledBy="gifts">
+        <Container size="wide">
+          <Split
+            reverse
+            media={
+              <div className="grid place-items-center py-6">
+                <SealedLetter to="Mum" openOn="Mother's Day" tone="night" />
+              </div>
+            }
+          >
+            <Heading
+              id="gifts"
+              eyebrow="Gifts"
+              title={
+                <>
+                  Give someone <em>the beginning of their story.</em>
+                </>
+              }
+              lead="A year of their own capsule, a physical kit to open together, or both — with a note from you. They choose when to begin; you can help, or simply listen."
+            >
+              <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
+                <ButtonLink href="/gifts/build" variant="light" size="lg">
+                  Give a LifeCapsule
+                </ButtonLink>
+                <ArrowLink href="/gifts">How gifting works</ArrowLink>
+              </div>
+            </Heading>
+          </Split>
+        </Container>
+      </Section>
+
+      {/* Collaboration & future messages */}
+      <Section labelledBy="together">
+        <Container size="wide">
+          <Heading
+            id="together"
+            eyebrow="Together, and for later"
+            title={
+              <>
+                Everyone remembers something. <em>Some things are meant for later.</em>
+              </>
+            }
+          />
+          <div className="mt-14 grid gap-6 lg:grid-cols-2 lg:items-start">
+            <InvitationPreview />
+            <FutureMessagePreview />
+          </div>
+        </Container>
+      </Section>
+
+      {/* J — Pricing */}
+      <Section tone="ivory" labelledBy="pricing">
+        <Container size="wide">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <Heading
+              id="pricing"
+              eyebrow="Pricing"
+              title={
+                <>
+                  Pay for what you keep. <em>Invite everyone free.</em>
+                </>
+              }
+            />
+            <ArrowLink href="/pricing">Compare plans in detail</ArrowLink>
+          </div>
+          <PlanPricing className="mt-12" />
+        </Container>
+      </Section>
+
+      {/* K — Trust */}
+      <Section labelledBy="trust">
+        <Container size="wide">
+          <Heading
+            id="trust"
+            eyebrow="Privacy and trust"
+            title={
+              <>
+                Private by default. <em>Honest about the rest.</em>
+              </>
+            }
+          />
+          <Numbered
+            className="mt-14"
+            columns={4}
+            items={[
+              { title: "Private by default", body: "Capsules are never public or listed anywhere. Nobody sees one until you invite them." },
+              { title: "Your call, memory by memory", body: "Keep any story to yourself, share it with the capsule's editors, or with everyone you've invited." },
+              { title: "Always yours to take", body: "Download everything — stories as readable files, your photographs and recordings — whenever you like." },
+              { title: "No promises we can't keep", body: "No invented dates or transcripts, no false security claims. In this preview, everything stays in your browser, and we say so." },
+            ]}
+          />
+          <div className="mt-12 flex flex-wrap gap-x-8 gap-y-3">
+            <ArrowLink href="/privacy">How we handle your memories</ArrowLink>
+            <ArrowLink href="/preservation">Our approach to keeping them</ArrowLink>
+          </div>
+        </Container>
+      </Section>
+
+      <Section tone="surface" labelledBy="questions">
+        <Container size="wide">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
+            <Heading
+              id="questions"
+              eyebrow="Questions"
+              title={
+                <>
+                  Good questions, <em>straight answers.</em>
+                </>
+              }
+            >
+              <div className="mt-8">
+                <ArrowLink href="/faq">All questions and answers</ArrowLink>
+              </div>
+            </Heading>
+            <FaqList items={faqs} />
+          </div>
+        </Container>
+      </Section>
+
+      <FinalCta
+        title={
+          <>
+            Start with one story. <em>The rest will follow.</em>
+          </>
+        }
+        lead="For yourself, for the two of you, or for someone you love."
+        primary={
+          <ButtonLink href="/app/capsules/new" size="xl">
+            Create Your LifeCapsule
+          </ButtonLink>
+        }
+        secondary={<ArrowLink href="/gifts/build">Or give one as a gift</ArrowLink>}
+      />
+      <MobileStickyCta label="Create Your LifeCapsule" />
+    </>
   );
 }

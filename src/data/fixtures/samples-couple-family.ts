@@ -126,7 +126,7 @@ const plate = (id: string, plateId: string, capsuleId: string, caption: string, 
 
 export const extraMedia: MediaAsset[] = [
   plate("med_us_umbrella", "umbrella-1998", US, "Newbury Street, the umbrella that didn't survive", "Illustration of two people under a red umbrella on wet church steps in the rain.", { precision: "season", year: 1998, season: "autumn" }, "pl_boston", true),
-  plate("med_us_bookshop", "bookshop-1998", US, "The bookshop on Charles Street", "Illustration of tall bookshelves crowded with books in warm light.", { precision: "season", year: 1998, season: "winter" }, "pl_boston", true),
+  plate("med_us_bookshop", "bookshop-1998", US, "The bookshop on Charles Street", "Illustration of tall bookshelves crowded with books in warm light.", { precision: "month", year: 1998, month: 12 }, "pl_boston", true),
   plate("med_us_orchard", "orchard-2001", US, "The orchard, June 16th", "Illustration of a wedding supper under fruit trees, string lights over a long white table and two figures.", { precision: "day", year: 2001, month: 6, day: 16 }, "pl_stow"),
   plate("med_us_florence", "rooftops-2000", US, "Florence from the borrowed balcony", "Illustration of terracotta rooftops and a cathedral dome under a pale sky.", { precision: "season", year: 2001, season: "summer" }, "pl_florence"),
   plate("med_us_road", "roadtrip-2003", US, "Somewhere past Truro, Nova Scotia", "Illustration of the view through a car windscreen: a coast road, the sea, a folded map on the dashboard.", { precision: "season", year: 2003, season: "summer" }, "pl_halifax"),
@@ -233,7 +233,7 @@ export const extraMemories: Memory[] = [
     id: "mem_us_bookshop",
     capsuleId: US,
     title: "Our first date: the bookshop on Charles Street",
-    date: { precision: "season", year: 1998, season: "winter" },
+    date: { precision: "month", year: 1998, month: 12 },
     placeId: "pl_boston",
     chapter: "coming_of_age",
     narrative:

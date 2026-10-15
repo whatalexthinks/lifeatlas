@@ -3,11 +3,11 @@ import { BrandMark } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 export const bookColors = {
-  evergreen: { cloth: "#2f4339", edge: "#22322a", foil: "#d7bc92" },
+  evergreen: { cloth: "#4b5647", edge: "#3a4337", foil: "#dcc6a0" },
   oat: { cloth: "#d9cdb3", edge: "#c3b494", foil: "#6f5a36" },
-  terracotta: { cloth: "#9a5238", edge: "#7a3f2a", foil: "#f0d9a8" },
+  terracotta: { cloth: "#6e3a3e", edge: "#542b2f", foil: "#e8c9a6" },
   slate: { cloth: "#4b5d6e", edge: "#394856", foil: "#e6d3a8" },
-  ink: { cloth: "#22262a", edge: "#15181a", foil: "#d2b783" },
+  ink: { cloth: "#252421", edge: "#171614", foil: "#d7bc92" },
 } as const;
 
 export type BookColor = keyof typeof bookColors;
@@ -22,6 +22,7 @@ export function BookObject({
   foil = "brass",
   className,
   size = "md",
+  eyebrow = "The Life & Stories of",
 }: {
   title?: string;
   subtitle?: string;
@@ -31,6 +32,8 @@ export function BookObject({
   foil?: "brass" | "none" | "blind_deboss";
   className?: string;
   size?: "sm" | "md" | "lg";
+  /** The small line above the title. Empty for books that aren't about one person. */
+  eyebrow?: string;
 }) {
   const c = bookColors[color];
   const texture =
@@ -55,8 +58,8 @@ export function BookObject({
           <div className="absolute inset-y-0 left-[6%] w-px bg-black/25" />
           <div className="absolute inset-y-0 left-[6.6%] w-px bg-white/10" />
           <div className="absolute inset-0 flex flex-col items-center px-[12%] py-[14%] text-center" style={{ color: foilColor, textShadow }}>
-            <span className="text-[0.55em] font-semibold uppercase tracking-[0.28em]" style={{ fontSize: w * 0.034 }}>
-              The Life &amp; Stories of
+            <span className="min-h-[1em] text-[0.55em] font-semibold uppercase tracking-[0.28em]" style={{ fontSize: w * 0.034 }}>
+              {eyebrow}
             </span>
             <span className="mt-[10%] font-serif leading-[0.95]" style={{ fontSize: w * 0.14 }}>
               {title}
