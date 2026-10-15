@@ -44,7 +44,7 @@ export type DatePrecision =
 
 /**
  * A date that may be exact, approximate, or unknown.
- * Family memories are rarely exact — the model must never force precision.
+ * Family memories are rarely exact, the model must never force precision.
  */
 export interface FuzzyDate {
   precision: DatePrecision;
@@ -55,8 +55,7 @@ export interface FuzzyDate {
   decade?: number; // e.g. 1960
   lifeStage?: LifeStage;
   /**
-   * "Around age 12". When the person's birth year is known, `year` holds birth year + age —
-   * derived only to place the memory on a timeline; the display stays "Around age 12".
+   * "Around age 12". When the person's birth year is known, `year` holds birth year + age, * derived only to place the memory on a timeline; the display stays "Around age 12".
    */
   age?: number;
   /** Optional free text, e.g. "the winter Dad broke his arm" */

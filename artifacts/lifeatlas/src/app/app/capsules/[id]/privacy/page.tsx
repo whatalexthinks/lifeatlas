@@ -39,13 +39,13 @@ export default function StudioPrivacy() {
       },
       { actor: persona.name, action: "membership.role_changed", target: membershipId, detail: role },
     );
-    toast.success("Role updated", "Simulated in this preview — real enforcement arrives with accounts.");
+    toast.success("Role updated", "Simulated in this preview, real enforcement arrives with accounts.");
   };
 
   return (
     <div className="space-y-6">
       <DemoNotice title="Permissions are simulated in this preview">
-        What you choose here changes what each demo identity sees. Real access control — enforced on a server for every request — arrives with secure accounts. Nothing here is a security guarantee yet.
+        What you choose here changes what each demo identity sees. Real access control, enforced on a server for every request, arrives with secure accounts. Nothing here is a security guarantee yet.
       </DemoNotice>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -80,7 +80,7 @@ export default function StudioPrivacy() {
               </li>
             ))}
           </ul>
-          <p className="mt-5 text-[0.875rem] text-ink-3">Change an individual story&rsquo;s visibility from its editor — including sharing it with selected people only. Contributors also choose whether their story may be printed or shared.</p>
+          <p className="mt-5 text-[0.875rem] text-ink-3">Change an individual story&rsquo;s visibility from its editor, including sharing it with selected people only. Contributors also choose whether their story may be printed or shared.</p>
         </Panel>
       </div>
 
@@ -150,7 +150,7 @@ export default function StudioPrivacy() {
         {capsule.status === "deletion_pending" ? (
           <div className="space-y-4">
             <DemoNotice tone="warning" title="Deletion requested" icon={<Trash2 className="size-[18px]" />}>
-              Requested {formatDate(capsule.deletionRequestedAt)}. With real storage there would be a 30-day grace period, after which files are erased from primary storage and backup copies expire on their own schedule. In this demo nothing has been erased — cancel any time, or use “Erase demo data” in Settings.
+              Requested {formatDate(capsule.deletionRequestedAt)}. With real storage there would be a 30-day grace period, after which files are erased from primary storage and backup copies expire on their own schedule. In this demo nothing has been erased, cancel any time, or use “Erase demo data” in Settings.
             </DemoNotice>
             <Button variant="secondary" leading={<RotateCcw className="size-4" />} onClick={() => void services().capsules.setCapsuleStatus(capsule.id, "active").then(() => toast.success("Deletion canceled"))}>
               Cancel deletion
@@ -201,7 +201,7 @@ export default function StudioPrivacy() {
         onConfirm={async () => {
           await services().capsules.setCapsuleStatus(capsule.id, "deletion_pending");
           setConfirm(null);
-          toast.warning("Deletion requested", "Simulated — nothing has been erased.");
+          toast.warning("Deletion requested", "Simulated, nothing has been erased.");
         }}
       />
     </div>

@@ -17,7 +17,7 @@ export interface MapPoint {
 
 /**
  * The OurLifeCapsule memory map. Offline vector cartography (Natural Earth / US
- * Census boundaries bundled with the app) — no API key, no remote tiles.
+ * Census boundaries bundled with the app), no API key, no remote tiles.
  * Markers are real buttons layered over the SVG for accessibility.
  */
 export function MemoryMap({
@@ -84,7 +84,7 @@ export function MemoryMap({
     [points, projection, view],
   );
   // Markers are ~28–36px on screen whatever the map's size, so cluster anything closer than
-  // ~40px as rendered — otherwise neighbours overlap and become hard to tap.
+  // ~40px as rendered, otherwise neighbours overlap and become hard to tap.
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const [renderedWidth, setRenderedWidth] = React.useState(W);
   React.useEffect(() => {
@@ -207,7 +207,7 @@ export function MemoryMap({
         </button>
       ) : null}
       <span className={cn("pointer-events-none absolute bottom-2 right-3 z-20 text-[10px]", night ? "text-[#c4bdb1]" : "text-ink-4")}>
-        {failed ? "Map outlines unavailable — places still listed" : "Natural Earth · US Census"}
+        {failed ? "Map outlines unavailable, places still listed" : "Natural Earth · US Census"}
       </span>
     </div>
   );

@@ -117,7 +117,7 @@ function CompleteInner() {
         </section>
       ) : null}
 
-      <DemoNotice className="mt-8">{physical ? "A proof preview is waiting in Orders. Nothing will be printed or shipped — fulfillment isn't connected." : "Demo — no payment charged. Your plan is active only in this browser."}</DemoNotice>
+      <DemoNotice className="mt-8">{physical ? "A proof preview is waiting in Orders. Nothing will be printed or shipped, fulfillment isn't connected." : "Demo, no payment charged. Your plan is active only in this browser."}</DemoNotice>
 
       <div className="mt-8 flex flex-wrap justify-center gap-3 print:hidden">
         <ButtonLink href={physical ? "/app/orders" : gift ? "/app" : "/app/capsules/new"}>{physical ? "Review the proof" : gift ? "Go to the studio" : "Create your capsule"}</ButtonLink>

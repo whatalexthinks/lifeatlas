@@ -1,6 +1,6 @@
 /**
  * The single source of truth for how the product names and describes itself.
- * Change the brand here — never by editing strings across components.
+ * Change the brand here, never by editing strings across components.
  *
  * Technical identifiers deliberately keep their original names so people's saved data and
  * earlier exports keep working: the IndexedDB database (`lifeatlas-demo`), the export
@@ -30,7 +30,7 @@ export const brand = {
     privacy: "privacy@ourlifecapsule.com",
   },
   /** Shown in footers and documents produced in this preview. */
-  legalLine: "OurLifeCapsule — product preview",
+  legalLine: "OurLifeCapsule, product preview",
   /** File names for things people download: `ourlifecapsule-margaret-ellis-2026-10-14.zip`. */
   filePrefix: "ourlifecapsule",
 } as const;

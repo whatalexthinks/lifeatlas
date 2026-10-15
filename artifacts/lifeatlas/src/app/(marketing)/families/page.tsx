@@ -12,7 +12,7 @@ import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
   title: "For families",
-  description: `Keep your family's stories in ${brand.name}: generations of memories, traditions and recipes, interviews with grandparents, and everyone's side of the story — for every kind of family.`,
+  description: `Keep your family's stories in ${brand.name}: generations of memories, traditions and recipes, interviews with grandparents, and everyone's side of the story, for every kind of family.`,
   alternates: { canonical: "/families" },
 };
 
@@ -30,7 +30,7 @@ export default function FamiliesPage() {
             Every family has a story. <em>Everyone holds a piece.</em>
           </>
         }
-        lead="Grandparents hold the beginning. Parents hold the middle. Children hold the questions nobody thought to ask. A family capsule brings all of it to one table — traditions, recipes, interviews and everyone's side of the story."
+        lead="Grandparents hold the beginning. Parents hold the middle. Children hold the questions nobody thought to ask. A family capsule brings all of it to one table, traditions, recipes, interviews and everyone's side of the story."
         actions={
           <>
             <ButtonLink href="/app/capsules/new?kind=family" size="xl">
@@ -55,7 +55,7 @@ export default function FamiliesPage() {
               }
               lead="Margaret has a capsule of her own, in her own words. She also appears in the family's capsule, and in her daughter's love story. Add someone once, and they can be part of every story they belong to."
             >
-              <CheckList className="mt-8" items={["One record per person — name, dates, how you're related", "Tag them in any memory, in any capsule", `A shared family directory across capsules on the Family Plan`]} />
+              <CheckList className="mt-8" items={["One record per person, name, dates, how you're related", "Tag them in any memory, in any capsule", `A shared family directory across capsules on the Family Plan`]} />
             </Heading>
           </Split>
         </Container>
@@ -71,14 +71,14 @@ export default function FamiliesPage() {
                 Blended, chosen, adopted, <em>complicated, yours.</em>
               </>
             }
-            lead="Relationships are written in your words — stepmother, foster brother, Nana, “my oldest friend”. Nobody is forced into a tree that doesn't fit, and you never have to list someone you'd rather leave out."
+            lead="Relationships are written in your words, stepmother, foster brother, Nana, “my oldest friend”. Nobody is forced into a tree that doesn't fit, and you never have to list someone you'd rather leave out."
           />
           <Numbered
             className="mt-14"
             columns={3}
             items={[
               { title: "Your words for each other", body: "Describe every relationship the way your family does. There's no form that insists on “mother” or “father”." },
-              { title: "Gaps are allowed", body: "Unknown birth years, missing names, a branch nobody talks about. Leave it blank — we never fill it in for you." },
+              { title: "Gaps are allowed", body: "Unknown birth years, missing names, a branch nobody talks about. Leave it blank, we never fill it in for you." },
               { title: "Friends belong too", body: "A godparent, a neighbour of forty years, the friend who's been at every Thanksgiving. Add the people who matter." },
             ]}
           />
@@ -112,7 +112,7 @@ export default function FamiliesPage() {
                   Ask your grandmother <em>while you still can.</em>
                 </>
               }
-              lead="Sit beside them with a phone and press record, or send a link they can answer from their own armchair — large text, one big button, no password. Holiday gatherings work too: pass one device round the table."
+              lead="Sit beside them with a phone and press record, or send a link they can answer from their own armchair, large text, one big button, no password. Holiday gatherings work too: pass one device round the table."
             >
               <div className="mt-8 flex flex-wrap gap-x-7 gap-y-3">
                 <ArrowLink href="/legacy">Recording a parent&rsquo;s story</ArrowLink>
@@ -178,7 +178,7 @@ export default function FamiliesPage() {
                 Things they&rsquo;ll want to know <em>when they&rsquo;re older.</em>
               </>
             }
-            lead="The first word, the funny sayings, the night they came home. A child's capsule is written for them to open later — with letters you seal now for a birthday years away."
+            lead="The first word, the funny sayings, the night they came home. A child's capsule is written for them to open later, with letters you seal now for a birthday years away."
           />
           <Numbered
             className="mt-14"
@@ -218,7 +218,7 @@ export default function FamiliesPage() {
             The Family Plan keeps up to {plans.family.capsules} capsules together.
           </h2>
           <p className="lead mx-auto mt-4 max-w-2xl">
-            Your parents&rsquo; stories, your own, your children&rsquo;s — with a shared family directory, {plans.family.storageGb} GB of planned storage and {plans.family.keepsakeDiscountPct}% off keepsakes. {formatMoney(family.price.amount)} a year.
+            Your parents&rsquo; stories, your own, your children&rsquo;s, with a shared family directory, {plans.family.storageGb} GB of planned storage and {plans.family.keepsakeDiscountPct}% off keepsakes. {formatMoney(family.price.amount)} a year.
           </p>
           <PreviewNote className="mx-auto mt-6 text-left">Test price. Nothing is charged in the preview, and hosted storage arrives with accounts.</PreviewNote>
           <div className="mt-8 flex justify-center">

@@ -105,7 +105,7 @@ export default function GiftOpening() {
                   <p className="font-medium">What&rsquo;s included</p>
                   <p className="mt-1 text-ink-2">
                     {gift.status === "draft"
-                      ? `${product?.name ?? "A capsule plan"} — once ${gift.giverName.split(" ")[0]} completes the gift.`
+                      ? `${product?.name ?? "A capsule plan"}, once ${gift.giverName.split(" ")[0]} completes the gift.`
                       : `One year of the ${product?.name ?? "capsule plan"}, prepaid by ${gift.giverName}. No card needed, and it won't renew on its own.`}{" "}
                     Your family joins free.
                   </p>
@@ -118,7 +118,7 @@ export default function GiftOpening() {
                     <PenLine className="mt-1 size-5 shrink-0 text-evergreen" /> Prefer writing? Type instead, or add an old photograph.
                   </li>
                   <li className="flex gap-3">
-                    <Users className="mt-1 size-5 shrink-0 text-evergreen" /> Your family can listen, read and add their own memories — privately.
+                    <Users className="mt-1 size-5 shrink-0 text-evergreen" /> Your family can listen, read and add their own memories, privately.
                   </li>
                 </ul>
                 <Button size="xl" block className="mt-8" onClick={() => void begin()} loading={busy} trailing={<ArrowRight className="size-5" />}>
@@ -129,7 +129,7 @@ export default function GiftOpening() {
               {gift.status === "draft" ? (
                 <DemoNotice className="mx-auto mt-6 max-w-xl text-left">This is a preview of a gift that hasn&rsquo;t been through the demo checkout yet.</DemoNotice>
               ) : (
-                <DemoNotice className="mx-auto mt-6 max-w-xl text-left">Gift preview from a demo purchase — nothing was charged, and no email was sent. It opens only in this browser.</DemoNotice>
+                <DemoNotice className="mx-auto mt-6 max-w-xl text-left">Gift preview from a demo purchase, nothing was charged, and no email was sent. It opens only in this browser.</DemoNotice>
               )}
             </div>
             <p className="mt-16 text-[0.875rem] text-ink-3">

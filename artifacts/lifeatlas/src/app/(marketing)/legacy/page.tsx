@@ -30,7 +30,7 @@ export default function LegacyPage() {
             In their own words, <em>before the details fade.</em>
           </>
         }
-        lead="The ferry their father worked on. The recipe they never wrote down. The year everything changed. Give them a gentle way to tell it — and give the family a place to keep it, in their own voice."
+        lead="The ferry their father worked on. The recipe they never wrote down. The year everything changed. Give them a gentle way to tell it, and give the family a place to keep it, in their own voice."
         actions={
           <>
             <ButtonLink href="/app/capsules/new?kind=parent" size="xl">
@@ -104,7 +104,7 @@ export default function LegacyPage() {
                   Large, calm and clear. <em>Nothing to learn.</em>
                 </>
               }
-              lead="We design for people who didn't grow up with screens — and test with them in mind."
+              lead="We design for people who didn't grow up with screens, and test with them in mind."
             >
               <CheckList
                 className="mt-8"
@@ -163,7 +163,7 @@ export default function LegacyPage() {
                 </ButtonLink>
               </div>
             </Heading>
-            <PullQuote cite={`From “${light.title}” — fictional sample`}>&ldquo;{light.quote ?? light.narrative.split("\n\n")[0]}&rdquo;</PullQuote>
+            <PullQuote cite={`From “${light.title}”, fictional sample`}>&ldquo;{light.quote ?? light.narrative.split("\n\n")[0]}&rdquo;</PullQuote>
           </div>
         </Container>
       </Section>
@@ -184,7 +184,7 @@ export default function LegacyPage() {
             columns={3}
             items={[
               { title: "A printed book", body: "Their stories and photographs, designed by you and printed only after you approve a proof.", aside: <ArrowLink href="/physical-capsules#book">The Legacy Book</ArrowLink> },
-              { title: "A copy for everyone", body: "Download the whole capsule — readable stories, photographs and recordings — and give each grandchild their own copy.", aside: <ArrowLink href="/preservation">How we think about keeping</ArrowLink> },
+              { title: "A copy for everyone", body: "Download the whole capsule, readable stories, photographs and recordings, and give each grandchild their own copy.", aside: <ArrowLink href="/preservation">How we think about keeping</ArrowLink> },
               { title: "Someone to look after it", body: "Name a successor you trust to care for the capsule in future. The verified handover arrives with hosted accounts.", aside: <ArrowLink href="/faq#keeping">About successors</ArrowLink> },
             ]}
           />

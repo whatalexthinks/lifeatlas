@@ -12,11 +12,11 @@ export const bookColors = {
 
 export type BookColor = keyof typeof bookColors;
 
-/** A cloth-bound book rendered in CSS — believable depth without WebGL. */
+/** A cloth-bound book rendered in CSS, believable depth without WebGL. */
 export function BookObject({
   title = "Margaret Ellis",
   subtitle = "In Her Own Words",
-  years = "1940 —",
+  years = "1940, ",
   color = "evergreen",
   material = "linen",
   foil = "brass",
@@ -82,7 +82,7 @@ export function BookObject({
   );
 }
 
-/** Sealed letter with wax seal — for Letters Through Time. */
+/** Sealed letter with wax seal, for Letters Through Time. */
 export function SealedLetter({ to, openOn, className, tone = "paper" }: { to: string; openOn: string; className?: string; tone?: "paper" | "night" }) {
   return (
     <div className={cn("relative aspect-[1.55] w-full max-w-md", className)} aria-hidden>
@@ -117,8 +117,8 @@ export const boxFinishes = {
 
 export type BoxFinish = keyof typeof boxFinishes;
 
-/** Keepsake box — a true six-face CSS cube with a hinged lid. */
-export function KeepsakeBox({ finish = "walnut", engraving = "Margaret Ellis · 1940 —", open = false, className }: { finish?: BoxFinish; engraving?: string; open?: boolean; className?: string }) {
+/** Keepsake box, a true six-face CSS cube with a hinged lid. */
+export function KeepsakeBox({ finish = "walnut", engraving = "Margaret Ellis · 1940, ", open = false, className }: { finish?: BoxFinish; engraving?: string; open?: boolean; className?: string }) {
   const f = boxFinishes[finish];
   const grain = `repeating-linear-gradient(92deg, ${f.grain} 0 2px, transparent 2px 9px), repeating-linear-gradient(88deg, ${f.grain} 0 1px, transparent 1px 13px)`;
   const W = 300;

@@ -1,7 +1,7 @@
 import { notConfigured, type Services, type ServiceName } from "../contracts";
 
 /**
- * Production adapters — intentionally unimplemented in Part One.
+ * Production adapters, intentionally unimplemented in Part One.
  * Every method returns a typed `not_configured` result instead of throwing,
  * so a misconfigured deployment degrades gracefully rather than going live
  * with fake behaviour. Part Two replaces these one service at a time.

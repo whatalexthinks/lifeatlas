@@ -17,7 +17,7 @@ export type EnvelopeArtwork = "linen" | "botanical" | "night_sky" | "harbor" | "
 export interface GiftRecipient {
   name: string;
   relation: string;
-  /** Optional — the giver can share the link themselves. */
+  /** Optional, the giver can share the link themselves. */
   contact?: string;
 }
 
@@ -30,7 +30,7 @@ export interface GiftReveal {
 export type GiftStatus =
   | "draft"
   | "checkout_mock"
-  | "ready_demo" // "purchased" in a demo sense — never charged
+  | "ready_demo" // "purchased" in a demo sense, never charged
   | "opened_demo"
   | "canceled_demo";
 
@@ -44,7 +44,7 @@ export interface Gift extends Timestamps {
   dedication: string;
   reveal: GiftReveal;
   deliveryMode: "share_link_myself" | "scheduled_preview" | "in_person";
-  /** Scheduled notification preview only — nothing is scheduled in Part One. */
+  /** Scheduled notification preview only, nothing is scheduled in Part One. */
   notifyOn?: ISODate;
   productId: string;
   addOnIds: string[];

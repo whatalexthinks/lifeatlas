@@ -15,7 +15,7 @@ test("every public page renders and unknown routes show not found", async ({ pag
     await expect(page.locator("h1"), `/${slug}`).toBeVisible();
   }
   await page.goto("/not-a-real-ourlifecapsule-page");
-  await expect(page.locator("h1")).toContainText("This page isn");
+  await expect(page.locator("h1")).toContainText("This page has wandered off");
   await page.goto("/demo");
   await expect(page).toHaveURL(/\/view\/cap_margaret$/);
 });
@@ -76,5 +76,5 @@ test("the contact form is honest: saved on this device, not sent", async ({ page
   await page.getByLabel("Email").fill("ana@example.com");
   await page.getByLabel("Your message").fill("Can I add my grandmother's recipes as photographs?");
   await page.getByRole("button", { name: "Save message" }).click();
-  await expect(page.getByText("Saved on this device — not sent.")).toBeVisible();
+  await expect(page.getByText("Saved on this device, not sent.")).toBeVisible();
 });

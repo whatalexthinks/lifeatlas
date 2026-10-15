@@ -10,7 +10,7 @@ test("phone layouts meet WCAG 2.2 AA automated checks", async ({ page }) => {
     await page.waitForLoadState("networkidle");
     await untilAnimationsSettle(page);
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
-    for (const v of violations) problems.push(`${path} — ${v.id}: ${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")}`);
+    for (const v of violations) problems.push(`${path}, ${v.id}: ${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")}`);
   }
   expect(problems).toEqual([]);
 });

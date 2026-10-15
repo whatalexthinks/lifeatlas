@@ -32,7 +32,7 @@ export const mockOperations: OperationsService = {
       (d) => {
         d.promotions.find((x) => x.id === id)!.legalReview = { reviewedBy: reviewedBy.trim(), approvedAt: new Date().toISOString(), notes: notes?.trim() || undefined };
       },
-      { actor: actorName(), action: "promotion.legal_review_recorded", target: id, detail: `${p.name} — demo record, not legal advice` },
+      { actor: actorName(), action: "promotion.legal_review_recorded", target: id, detail: `${p.name}, demo record, not legal advice` },
     );
     return ok({ ...db().promotions.find((x) => x.id === id)! });
   },
@@ -79,16 +79,16 @@ export const mockOperations: OperationsService = {
       case "invitation_opened": {
         const inv = d.invitations.find((i) => i.status === "prepared" || i.status === "simulated_sent");
         if (!inv) return fail("not_found", "No waiting invitations to open.");
-        pushNotification({ kind: "invitation", title: `${inv.recipientName} opened their invitation`, body: "Simulated — no one was contacted.", href: "/app/invitations" });
+        pushNotification({ kind: "invitation", title: `${inv.recipientName} opened their invitation`, body: "Simulated, no one was contacted.", href: "/app/invitations" });
         store().mutate(() => undefined, { actor: "Simulator", action: "invitation.opened_simulated", target: inv.id });
         return ok(`${inv.recipientName} opened their invitation (simulated).`);
       }
       case "proof_ready": {
         const project = d.printProjects[0];
-        if (!project) return fail("not_found", "No print projects yet — place a demo book order first.");
+        if (!project) return fail("not_found", "No print projects yet, place a demo book order first.");
         const r = await mockFulfillment.createProof(project.configurationId);
         if (r.status !== "ok") return fail("unknown", "Couldn't create a proof.");
-        pushNotification({ kind: "order", title: `Proof v${r.data.version} ready (demo)`, body: "Nothing will print until you approve — and printing isn't connected.", href: "/app/orders" });
+        pushNotification({ kind: "order", title: `Proof v${r.data.version} ready (demo)`, body: "Nothing will print until you approve, and printing isn't connected.", href: "/app/orders" });
         return ok(`Proof v${r.data.version} is ready to review.`);
       }
       case "storage_warning": {

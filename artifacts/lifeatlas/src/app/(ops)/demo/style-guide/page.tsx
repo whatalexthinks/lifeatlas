@@ -10,7 +10,7 @@ import { BookObject, KeepsakeBox, SealedLetter } from "@/components/marketing/ob
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
-/* Live token readers — values come from the stylesheet, never copies */
+/* Live token readers, values come from the stylesheet, never copies */
 /* ------------------------------------------------------------------ */
 
 function luminance(rgb: number[]) {
@@ -26,7 +26,7 @@ function parseRgb(css: string) {
 }
 const toHex = (rgb: number[]) => `#${rgb.map((c) => Math.round(c).toString(16).padStart(2, "0")).join("")}`;
 
-/** Writes the computed value straight into the DOM — no state, so it's always current. */
+/** Writes the computed value straight into the DOM, no state, so it's always current. */
 function readSwatch(el: HTMLElement | null, opts: { contrastAgainst?: string }) {
   if (!el) return;
   const sample = el.querySelector<HTMLElement>("[data-sample]");
@@ -59,23 +59,23 @@ function Swatch({ token, label, text }: { token: string; label: string; text?: b
 }
 
 const surfaces = [
-  ["paper", "Porcelain — page"],
-  ["surface", "Surface — cards"],
-  ["ivory", "Soft paper — quiet fills"],
-  ["linen", "Linen — mounts"],
+  ["paper", "Porcelain, page"],
+  ["surface", "Surface, cards"],
+  ["ivory", "Soft paper, quiet fills"],
+  ["linen", "Linen, mounts"],
   ["line", "Line"],
   ["line-strong", "Line strong"],
 ] as const;
 const inks = [
-  ["ink", "Charcoal — headings and text"],
-  ["ink-2", "Ink 2 — body"],
-  ["ink-3", "Ink 3 — secondary"],
-  ["ink-4", "Ink 4 — metadata"],
-  ["evergreen", "Muted forest — action"],
-  ["oxblood", "Oxblood — accent"],
-  ["brass-ink", "Taupe ink — eyebrows"],
+  ["ink", "Charcoal, headings and text"],
+  ["ink-2", "Ink 2, body"],
+  ["ink-3", "Ink 3, secondary"],
+  ["ink-4", "Ink 4, metadata"],
+  ["evergreen", "Muted forest, action"],
+  ["oxblood", "Oxblood, accent"],
+  ["brass-ink", "Taupe ink, eyebrows"],
 ] as const;
-/** Chapter accents tint chapter covers and markers only — they are not part of the brand palette. */
+/** Chapter accents tint chapter covers and markers only, they are not part of the brand palette. */
 const chapters = [
   ["terracotta", "Terracotta"],
   ["slate", "Slate"],
@@ -178,8 +178,8 @@ export default function StyleGuidePage() {
               </div>
               <div>
                 <p className="font-serif text-[1.9rem] leading-tight">The kitchen always smelled of bread</p>
-                <p className="mt-3 font-serif text-[1.15rem] leading-[1.65] text-ink-2">My mother never used a recipe. She knew the dough by the way it felt under her palms — too wet, too tired, just right.</p>
-                <p className="mt-3 font-serif text-[1rem] italic text-ink-3">— told by Margaret Ellis</p>
+                <p className="mt-3 font-serif text-[1.15rem] leading-[1.65] text-ink-2">My mother never used a recipe. She knew the dough by the way it felt under her palms, too wet, too tired, just right.</p>
+                <p className="mt-3 font-serif text-[1rem] italic text-ink-3">, told by Margaret Ellis</p>
               </div>
             </div>
           </div>
@@ -270,18 +270,18 @@ export default function StyleGuidePage() {
           </div>
         </Section>
 
-        <Section id="honesty" title="Honesty patterns" note="Every simulated outcome says what didn't happen. These aren't disclaimers — they're part of the design.">
+        <Section id="honesty" title="Honesty patterns" note="Every simulated outcome says what didn't happen. These aren't disclaimers, they're part of the design.">
           <div className="grid gap-4 md:grid-cols-2">
-            <DemoNotice title="Preview only — no payment was charged">Checkout creates an uncharged demo order.</DemoNotice>
-            <DemoNotice title="Invitation preview — no email sent">Copy the link and share it yourself.</DemoNotice>
-            <DemoNotice title="Future message draft — not scheduled for delivery">Long-term delivery isn&rsquo;t available yet.</DemoNotice>
-            <DemoNotice title="Stored on this device — not backed up">Download a copy of anything you can&rsquo;t replace.</DemoNotice>
+            <DemoNotice title="Preview only, no payment was charged">Checkout creates an uncharged demo order.</DemoNotice>
+            <DemoNotice title="Invitation preview, no email sent">Copy the link and share it yourself.</DemoNotice>
+            <DemoNotice title="Future message draft, not scheduled for delivery">Long-term delivery isn&rsquo;t available yet.</DemoNotice>
+            <DemoNotice title="Stored on this device, not backed up">Download a copy of anything you can&rsquo;t replace.</DemoNotice>
           </div>
           <p className="mt-6 flex items-center gap-3 text-[0.9375rem]">
             <span className="inline-flex items-center gap-1.5 text-ink-3">
               <span className="size-2 rounded-full bg-ink-4" aria-hidden /> Not connected
             </span>
-            <span className="text-ink-3">— unconfigured services are neutral grey, never a green tick.</span>
+            <span className="text-ink-3">, unconfigured services are neutral grey, never a green tick.</span>
           </p>
         </Section>
 
@@ -291,7 +291,7 @@ export default function StyleGuidePage() {
               <BookObject color="evergreen" material="linen" foil="brass" />
             </div>
             <div>
-              <KeepsakeBox finish="white_oak" engraving="Margaret Ellis · 1940 —" open={lid} />
+              <KeepsakeBox finish="white_oak" engraving="Margaret Ellis · 1940, " open={lid} />
               <div className="mt-3 text-center">
                 <Button size="sm" variant="ghost" onClick={() => setLid((v) => !v)}>
                   {lid ? "Close the lid" : "Open the lid"}

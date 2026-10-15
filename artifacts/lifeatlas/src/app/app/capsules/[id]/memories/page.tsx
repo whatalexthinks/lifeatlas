@@ -132,7 +132,7 @@ function MemoriesInner() {
           <EmptyState
             className="mt-6"
             title="No memories yet"
-            body={`Record ${capsule.preferredName} answering a question, type a story, or add a photograph — it becomes a page here straight away.`}
+            body={`Record ${capsule.preferredName} answering a question, type a story, or add a photograph, it becomes a page here straight away.`}
             action={<ButtonLink href={`/app/gather?capsule=${capsule.id}`}>Gather the first memory</ButtonLink>}
           />
         ) : (

@@ -93,7 +93,7 @@ function GatherInner() {
           ) : null}
           <section>
             <div className="mb-3 flex items-end justify-between gap-3">
-              <h2 className="text-[1rem] font-medium">{freeform ? "No question — just a memory" : "Questions for today"}</h2>
+              <h2 className="text-[1rem] font-medium">{freeform ? "No question, just a memory" : "Questions for today"}</h2>
               <div className="flex gap-2">
                 <Button size="sm" variant="secondary" leading={<ListChecks className="size-4" />} onClick={() => setPickerOpen(true)}>
                   Choose
@@ -113,7 +113,7 @@ function GatherInner() {
                 ))}
               </ol>
             ) : (
-              <p className="rounded-[16px] border border-line bg-surface px-5 py-4 text-ink-2">Add a story, a recording or a photograph without a prompt — perfect for a picture you just found.</p>
+              <p className="rounded-[16px] border border-line bg-surface px-5 py-4 text-ink-2">Add a story, a recording or a photograph without a prompt, perfect for a picture you just found.</p>
             )}
           </section>
           <Button size="xl" onClick={() => setStarted(true)}>

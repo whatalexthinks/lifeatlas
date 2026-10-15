@@ -20,7 +20,7 @@ export default function ContactPage() {
           </>
         }
         lead="Questions, ideas, something that didn't work, a story about why this matters to you."
-        note="Honest note: there's no monitored inbox during the preview. The form below keeps your message on this device — it isn't sent to anyone, and we won't pretend it was."
+        note="Honest note: there's no monitored inbox during the preview. The form below keeps your message on this device, it isn't sent to anyone, and we won't pretend it was."
       />
       <Section space="none" className="pb-24 sm:pb-32">
         <Container size="wide">
@@ -44,7 +44,7 @@ export default function ContactPage() {
                   </ArrowLink>
                 </div>
               </div>
-              <PreviewNote>Orders, gifts and future messages in the preview are demonstrations — there&rsquo;s nothing to chase, and nothing has been charged.</PreviewNote>
+              <PreviewNote>Orders, gifts and future messages in the preview are demonstrations, there&rsquo;s nothing to chase, and nothing has been charged.</PreviewNote>
             </aside>
           </div>
         </Container>

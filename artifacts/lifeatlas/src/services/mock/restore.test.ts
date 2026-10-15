@@ -20,7 +20,7 @@ import type { ExportOptions } from "@/domain/models";
 
 const db = () => useDemoStore.getState().db;
 const options: ExportOptions = { includePhotos: true, includeAudio: true, includePrivate: false, includeDrafts: false, includeSamplePlates: false };
-// A real PNG signature followed by arbitrary bytes — enough for type checks and fingerprints.
+// A real PNG signature followed by arbitrary bytes, enough for type checks and fingerprints.
 const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3, 4, 5, 6, 7, 8]);
 // The start of an MP4 ("....ftypisom") followed by arbitrary bytes.
 const mp4 = new Uint8Array([0, 0, 0, 0x18, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d, 9, 8, 7, 6, 5, 4, 3, 2]);
@@ -108,7 +108,7 @@ describe("restoring from an export", () => {
     expect(r.data.warnings[0]).toMatch(/records-only/);
   });
 
-  it("brings dates back exactly — season, decade and life stage included", async () => {
+  it("brings dates back exactly, season, decade and life stage included", async () => {
     const s = services();
     const dates = [
       { precision: "season" as const, season: "summer" as const, year: 1963 },

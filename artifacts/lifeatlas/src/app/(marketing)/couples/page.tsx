@@ -10,7 +10,7 @@ import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
   title: "For couples",
-  description: `A private capsule for the two of you: how you met, your firsts, letters to each other and the small moments only you know — told by both of you, in ${brand.name}.`,
+  description: `A private capsule for the two of you: how you met, your firsts, letters to each other and the small moments only you know, told by both of you, in ${brand.name}.`,
   alternates: { canonical: "/couples" },
 };
 
@@ -29,7 +29,7 @@ export default function CouplesPage() {
             Your story, <em>told by both of you.</em>
           </>
         }
-        lead="How you met — in each of your words. The firsts, the adventures, the hard winters and the ordinary Sundays. A private capsule for the two of you, to keep, add to, and one day hand down."
+        lead="How you met, in each of your words. The firsts, the adventures, the hard winters and the ordinary Sundays. A private capsule for the two of you, to keep, add to, and one day hand down."
         actions={
           <>
             <ButtonLink href="/app/capsules/new?kind=couple" size="xl">
@@ -46,7 +46,7 @@ export default function CouplesPage() {
           <h2 id="why-both" className="display-2">
             Two people never tell it <em>the same way.</em>
           </h2>
-          <p className="lead mx-auto mt-6 max-w-2xl">That&rsquo;s the point. Answer the same question separately and keep both answers, side by side — the umbrella, and the laugh. Most couples find the differences are the best part.</p>
+          <p className="lead mx-auto mt-6 max-w-2xl">That&rsquo;s the point. Answer the same question separately and keep both answers, side by side, the umbrella, and the laugh. Most couples find the differences are the best part.</p>
         </Container>
       </Section>
 
@@ -108,7 +108,7 @@ export default function CouplesPage() {
                   Every year you&rsquo;ve had, <em>in order.</em>
                 </>
               }
-              lead="Memories fall into place on a timeline as you add them — even the ones you can only date as “that summer in Florence”. Add the dates that matter and they'll appear on your home page as they come round."
+              lead="Memories fall into place on a timeline as you add them, even the ones you can only date as “that summer in Florence”. Add the dates that matter and they'll appear on your home page as they come round."
             >
               <dl className="mt-8 divide-y divide-line border-y border-line">
                 {(us.keyDates ?? []).map((k) => (
@@ -143,7 +143,7 @@ export default function CouplesPage() {
             {[
               { Icon: Lock, title: "Only me", body: "Kept from family and editors. The capsule's owner can always see everything, so for thoughts that are yours alone, keep a Personal capsule of your own." },
               { Icon: Eye, title: "The two of us", body: "Shared between you as the capsule's editors, and no one else." },
-              { Icon: Users, title: "Everyone we've invited", body: "For children, parents and friends you've asked to read along — or only the few you choose." },
+              { Icon: Users, title: "Everyone we've invited", body: "For children, parents and friends you've asked to read along, or only the few you choose." },
             ].map(({ Icon, title, body }) => (
               <li key={title} className="rounded-[20px] border border-line bg-paper p-6">
                 <Icon className="size-5 text-oxblood" aria-hidden />
@@ -180,7 +180,7 @@ export default function CouplesPage() {
             One plan for the two of you.
           </h2>
           <p className="lead mx-auto mt-4 max-w-2xl">
-            A Digital LifeCapsule is {formatMoney(digital.price.amount)} a year — test price, nothing is charged in the preview. Your partner joins as an editor, free. So does anyone else you invite.
+            A Digital LifeCapsule is {formatMoney(digital.price.amount)} a year, test price, nothing is charged in the preview. Your partner joins as an editor, free. So does anyone else you invite.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-x-7 gap-y-3">
             <ArrowLink href="/pricing">See pricing</ArrowLink>

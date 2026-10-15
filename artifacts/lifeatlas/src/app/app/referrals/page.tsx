@@ -22,7 +22,7 @@ const statusLabel: Record<ReferralEvent["status"], { label: string; tone: "neutr
 };
 
 /**
- * The referral center. Sharing is always something you do — copy a link or use your
+ * The referral center. Sharing is always something you do, copy a link or use your
  * device's share sheet. We never read your contacts or message anyone for you.
  */
 export default function ReferralsPage() {
@@ -115,7 +115,7 @@ export default function ReferralsPage() {
         </Panel>
       </div>
 
-      <Panel title="Activity" className="mt-6" description="Fictional sample activity in this preview — a real program would only show what your friends agreed to share.">
+      <Panel title="Activity" className="mt-6" description="Fictional sample activity in this preview, a real program would only show what your friends agreed to share.">
         <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
             ["Opened your link", summary.shared],

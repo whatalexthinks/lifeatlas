@@ -72,7 +72,7 @@ export default function OperationsPage() {
           <h1 className="mt-3 font-sans text-[clamp(2.2rem,1.7rem+1.8vw,3.4rem)] font-medium leading-[1.04] tracking-[-0.05em]">
             Behind the <em className="font-serif font-normal tracking-[-0.03em]">archive.</em>
           </h1>
-          <p className="mt-4 text-[1.0625rem] text-ink-2">What the team would see — orders, support, prices and the services still to connect. Built from this device&rsquo;s data only.</p>
+          <p className="mt-4 text-[1.0625rem] text-ink-2">What the team would see, orders, support, prices and the services still to connect. Built from this device&rsquo;s data only.</p>
         </div>
         <Badge tone="demo">Not real staff access</Badge>
       </div>
@@ -154,7 +154,7 @@ function Overview() {
           <h2 id="funnel-h" className="text-[1.0625rem] font-medium">
             Journey funnel · events on this device
           </h2>
-          <p className="text-[0.8125rem] text-ink-3">Local analytics only — never sent anywhere.</p>
+          <p className="text-[0.8125rem] text-ink-3">Local analytics only, never sent anywhere.</p>
         </div>
         <ol className="mt-6 space-y-2.5" aria-label="Funnel steps">
           {funnel.map((f, i) => {
@@ -177,7 +177,7 @@ function Overview() {
             );
           })}
         </ol>
-        {counts.some((c) => c === 0) ? <p className="mt-5 text-[0.875rem] text-ink-3">Empty steps haven&rsquo;t happened on this device yet — create a capsule, invite someone or place a demo order, then come back.</p> : null}
+        {counts.some((c) => c === 0) ? <p className="mt-5 text-[0.875rem] text-ink-3">Empty steps haven&rsquo;t happened on this device yet, create a capsule, invite someone or place a demo order, then come back.</p> : null}
       </section>
     </div>
   );
@@ -235,14 +235,14 @@ function Orders() {
                           setBusy(o.id);
                           const r = await services().orders.advanceMock(o.id);
                           setBusy(null);
-                          if (r.status === "ok") toast.success(`${o.number} advanced`, "Simulated — nothing was made or shipped.");
+                          if (r.status === "ok") toast.success(`${o.number} advanced`, "Simulated, nothing was made or shipped.");
                           else toast.error(r.status === "error" ? r.message : "Couldn't advance");
                         }}
                       >
                         {o.status === "ready_for_fulfillment" ? "Mark printing" : o.status === "printing_mock" ? "Mark shipped" : "Advance"}
                       </Button>
                     ) : (
-                      <span className="text-[0.8125rem] text-ink-4">—</span>
+                      <span className="text-[0.8125rem] text-ink-4">, </span>
                     )}
                   </td>
                 </tr>
@@ -465,7 +465,7 @@ function Audit() {
               <span className="min-w-0 break-words">
                 <span className="text-evergreen">{e.action}</span>
                 {e.target ? <span className="text-ink-3"> · {e.target}</span> : null}
-                {e.detail ? <span className="text-ink-2"> — {e.detail}</span> : null}
+                {e.detail ? <span className="text-ink-2">, {e.detail}</span> : null}
               </span>
             </li>
           ))}
@@ -496,7 +496,7 @@ function Promotions() {
   return (
     <div className="space-y-6">
       <DemoNotice title="Promotions are rules, not code changes">
-        Every offer here runs through the same evaluator at checkout: eligibility, limits, dates and one-per-order. Giveaways can&rsquo;t be switched on until a legal and eligibility review is recorded — and they&rsquo;re awarded under their rules, never typed in as a code.
+        Every offer here runs through the same evaluator at checkout: eligibility, limits, dates and one-per-order. Giveaways can&rsquo;t be switched on until a legal and eligibility review is recorded, and they&rsquo;re awarded under their rules, never typed in as a code.
       </DemoNotice>
       <ul className="space-y-4">
         {promotions.map((p) => {
@@ -553,7 +553,7 @@ function Promotions() {
                         onSubmit={async (e) => {
                           e.preventDefault();
                           const r = await services().operations.recordLegalReview(p.id, reviewer[p.id] ?? "");
-                          if (r.status === "ok") toast.success("Review recorded", "A demo record only — not legal advice.");
+                          if (r.status === "ok") toast.success("Review recorded", "A demo record only, not legal advice.");
                           else toast.error("Not recorded", r.status === "error" ? r.message : undefined);
                         }}
                       >

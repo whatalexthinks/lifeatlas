@@ -18,7 +18,7 @@ import { brand } from "@/config/brand";
 const kindIcon: Record<Order["kind"], React.ComponentType<{ className?: string }>> = { digital: Package, gift: Gift, print: Printer, capsule: Package };
 const kindLabel: Record<Order["kind"], string> = { digital: "Capsule plan", gift: "Gift", print: "Printed book", capsule: "Keepsake box" };
 
-/** The path an order takes, by kind — used for the progress rail. */
+/** The path an order takes, by kind, used for the progress rail. */
 const path: Record<Order["kind"], { status: OrderStatus; label: string }[]> = {
   digital: [
     { status: "preview", label: "Checkout" },
@@ -72,7 +72,7 @@ export default function OrdersPage() {
   return (
     <div className="mx-auto max-w-[1240px]">
       <PageHeader eyebrow="Account" title="Orders" description="Every demo order you've placed, from plans to printed books. Nothing here was charged, printed or shipped." />
-      <DemoNotice className="mb-8" title="Preview only — no payment was charged">
+      <DemoNotice className="mb-8" title="Preview only, no payment was charged">
         Orders follow the real lifecycle so you can see how proofs, cancellations and refunds will work. Steps after approval are simulated.
       </DemoNotice>
       {orders.length === 0 ? (
@@ -147,7 +147,7 @@ function OrderDetail({ order }: { order: Order }) {
     setBusy("approve");
     const r = await services().fulfillment.approveProof(project.id, latestProof.id);
     setBusy(null);
-    if (r.status === "ok") toast.success("Proof approved in the demo", "Printing isn't connected — nothing will be printed.");
+    if (r.status === "ok") toast.success("Proof approved in the demo", "Printing isn't connected, nothing will be printed.");
     else toast.error(r.status === "error" ? r.message : "Couldn't approve");
   };
   const regenerate = async () => {
@@ -205,7 +205,7 @@ function OrderDetail({ order }: { order: Order }) {
           <tfoot className="border-t border-line text-ink-2">
             <tr>
               <td className="pt-3">Shipping</td>
-              <td className="pt-3 text-right">{order.shippingEstimate === null ? (order.kind === "print" || order.kind === "capsule" ? "Not calculated" : "—") : formatMoney(order.shippingEstimate)}</td>
+              <td className="pt-3 text-right">{order.shippingEstimate === null ? (order.kind === "print" || order.kind === "capsule" ? "Not calculated" : "Not set") : formatMoney(order.shippingEstimate)}</td>
             </tr>
             <tr>
               <td className="pt-1">Tax</td>
@@ -217,7 +217,7 @@ function OrderDetail({ order }: { order: Order }) {
             </tr>
           </tfoot>
         </table>
-        <p className="mt-3 text-[0.8125rem] text-ink-3">Payment: {order.payment === "mock_uncharged" ? "Demo — no card was collected and nothing was charged." : order.payment}</p>
+        <p className="mt-3 text-[0.8125rem] text-ink-3">Payment: {order.payment === "mock_uncharged" ? "Demo, no card was collected and nothing was charged." : order.payment}</p>
       </Panel>
 
       {project && latestProof ? (
@@ -228,7 +228,7 @@ function OrderDetail({ order }: { order: Order }) {
         >
           <p className="text-ink-2">
             {latestProof.status === "approved_demo"
-              ? "You approved this proof. In the real service, it would now go to the printer — here, the order stops before anything is made."
+              ? "You approved this proof. In the real service, it would now go to the printer, here, the order stops before anything is made."
               : config?.kind === "keepsake_box"
                 ? "Check the lid engraving letter by letter and everything that goes inside. Once approved, a real order would go to the workshop and can no longer be changed."
                 : "Turn every page before approving. Once approved, a real order would go to print and can no longer be changed."}
@@ -296,7 +296,7 @@ function OrderDetail({ order }: { order: Order }) {
               <span className="mt-2 size-2 shrink-0 rounded-full bg-warning" />
               <span>
                 <span className="font-medium">Refund requested · demo</span> <span className="text-ink-3">· {formatDate(refund.requestedAt, "long")}</span>
-                <span className="block text-[0.875rem] text-ink-3">“{refund.reason}” — support would reply within two working days.</span>
+                <span className="block text-[0.875rem] text-ink-3">“{refund.reason}”, support would reply within two working days.</span>
               </span>
             </li>
           ) : null}
@@ -379,13 +379,13 @@ function OrderStatusLabel({ status, readyMade }: { status: OrderStatus; readyMad
   return <>{labels[status]}</>;
 }
 
-/** Prints a simple demo invoice in a new window — clearly marked, never a real tax document. */
+/** Prints a simple demo invoice in a new window, clearly marked, never a real tax document. */
 function InvoiceButton({ order, invoiceNumber, issuedAt }: { order: Order; invoiceNumber: string; issuedAt: string }) {
   const open = () => {
     const w = window.open("", "_blank", "noopener=no,width=760,height=900");
     if (!w) return toast.error("Allow pop-ups to view the invoice");
     const rows = order.items.map((i) => `<tr><td>${escapeHtml(i.name)}${i.quantity > 1 ? ` × ${i.quantity}` : ""}</td><td style="text-align:right">${formatMoney((i.unitAmount + i.extrasAmount) * i.quantity)}</td></tr>`).join("");
-    w.document.write(`<!doctype html><meta charset="utf-8"><title>${invoiceNumber} (demo)</title><style>body{font:15px/1.5 system-ui,sans-serif;color:#222;max-width:620px;margin:48px auto;padding:0 24px}h1{font:400 32px Georgia,serif;margin:0}table{width:100%;border-collapse:collapse;margin-top:24px}td{padding:10px 0;border-bottom:1px solid #e5e0d6}.stamp{display:inline-block;margin-top:12px;padding:4px 10px;border:1px solid #9a5238;color:#9a5238;border-radius:99px;font-size:12px;letter-spacing:.1em;text-transform:uppercase}.muted{color:#777}</style><h1>${brand.name}</h1><div class="stamp">Demo invoice — nothing was charged</div><p class="muted">${invoiceNumber} · issued ${formatDate(issuedAt, "long")}<br>Order ${order.number} · ${escapeHtml(order.customerName)}</p><table>${rows}<tr><td>Shipping</td><td style="text-align:right">Not calculated</td></tr><tr><td>Tax</td><td style="text-align:right">Not calculated</td></tr><tr><td><strong>Total (test price)</strong></td><td style="text-align:right"><strong>${formatMoney(order.total)}</strong></td></tr></table><p class="muted">This is not a tax invoice. ${brand.name} is a preview; no payment details were collected.</p><button onclick="print()">Print</button>`);
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>${invoiceNumber} (demo)</title><style>body{font:15px/1.5 system-ui,sans-serif;color:#222;max-width:620px;margin:48px auto;padding:0 24px}h1{font:400 32px Georgia,serif;margin:0}table{width:100%;border-collapse:collapse;margin-top:24px}td{padding:10px 0;border-bottom:1px solid #e5e0d6}.stamp{display:inline-block;margin-top:12px;padding:4px 10px;border:1px solid #9a5238;color:#9a5238;border-radius:99px;font-size:12px;letter-spacing:.1em;text-transform:uppercase}.muted{color:#777}</style><h1>${brand.name}</h1><div class="stamp">Demo invoice, nothing was charged</div><p class="muted">${invoiceNumber} · issued ${formatDate(issuedAt, "long")}<br>Order ${order.number} · ${escapeHtml(order.customerName)}</p><table>${rows}<tr><td>Shipping</td><td style="text-align:right">Not calculated</td></tr><tr><td>Tax</td><td style="text-align:right">Not calculated</td></tr><tr><td><strong>Total (test price)</strong></td><td style="text-align:right"><strong>${formatMoney(order.total)}</strong></td></tr></table><p class="muted">This is not a tax invoice. ${brand.name} is a preview; no payment details were collected.</p><button onclick="print()">Print</button>`);
     w.document.close();
   };
   return (

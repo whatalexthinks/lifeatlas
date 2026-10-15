@@ -56,7 +56,7 @@ test("create → contribute → approve → explore → export → restore", asy
   // 3. The organizer approves it. Theo is now part of the family.
   await page.goto("/app/invitations?tab=review");
   await page.locator("article", { hasText: "From Theo Delgado" }).first().getByRole("button", { name: "Approve" }).click();
-  await expect(page.getByText("Approved — now in the archive")).toBeVisible();
+  await expect(page.getByText("Approved, now in the archive")).toBeVisible();
   // Vite navigates faster than Next; let the original debounced device save finish.
   await settle(page);
   await page.goto("/app/family");
@@ -113,7 +113,7 @@ test("unfinished work comes back: answers, letters and holiday sessions", async 
   await page.getByRole("button", { name: "Pick up where I left off" }).click();
   await expect(page.getByLabel("Your answer")).toHaveValue("The bowl caught the light every summer");
 
-  // A letter that isn't finished — or valid — yet.
+  // A letter that isn't finished, or valid, yet.
   await page.goto("/app/future-messages/new");
   await page.getByLabel("Title").fill("For Leo, when he graduates");
   await page.getByLabel("The letter").fill("Dear Leo, I remember the day you");
@@ -132,7 +132,7 @@ test("unfinished work comes back: answers, letters and holiday sessions", async 
   await page.getByRole("radio", { name: "Type" }).click();
   await page.getByLabel("Margaret's answer").fill("Soup on Sundays, always.");
   await page.getByRole("button", { name: "Keep this answer" }).click();
-  await page.getByRole("button", { name: /I’m Sarah — ready/ }).click();
+  await page.getByRole("button", { name: /I’m Sarah, ready/ }).click();
   const question = await page.getByRole("heading", { level: 1 }).innerText();
   await settle(page);
   await page.goto("/app");

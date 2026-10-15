@@ -9,7 +9,7 @@ const principles = [
   { icon: Eye, title: "No access today", body: "Naming someone doesn't let them see anything. They have exactly the access they already had." },
   { icon: BadgeCheck, title: "Verified, never automatic", body: "In the real service, a successor would act only after identity and circumstances are checked by a person." },
   { icon: Clock, title: "Time to object", body: "You'd be notified and given a waiting period to stop any request you didn't make." },
-  { icon: FileLock2, title: "Private stays private", body: "Memories you marked private stay private. A successor looks after the archive — they don't unlock it." },
+  { icon: FileLock2, title: "Private stays private", body: "Memories you marked private stay private. A successor looks after the archive, they don't unlock it." },
 ];
 
 export default function SuccessorPage() {
@@ -23,7 +23,7 @@ export default function SuccessorPage() {
             Someone to <em>carry it on.</em>
           </>
         }
-        description="A successor is the person who could look after these stories — and any letters you've written for the future — if you no longer can."
+        description="A successor is the person who could look after these stories, and any letters you've written for the future, if you no longer can."
       />
       <DemoNotice className="mb-8" title="Nothing is granted or sent in this preview">
         Successors are saved on this device only. No one is contacted, and the verification service that would make this real doesn&rsquo;t exist yet.

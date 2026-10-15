@@ -26,7 +26,7 @@ const fixes: [string, React.ReactNode][] = [
   ["My work has disappeared", "In the preview, everything lives in this browser. A private or incognito window forgets it when closed, and clearing site data erases it. Use the same browser and profile, and download a copy of anything important from a capsule's Export page."],
   ["An invitation link doesn't open on someone else's phone", "That's a preview limit: without accounts, links work only in the browser that created them. Try the contributor experience yourself on this device, or sit together and record in person."],
   ["The text is too small", <>Open <Link href="/app/settings" className="underline underline-offset-4">Settings</Link> and choose larger text, or use your browser&rsquo;s zoom (Ctrl or ⌘ and +). Every page is designed to work at 200% zoom.</>],
-  ["I placed an order — when will it arrive?", "Orders in the preview are demonstrations: nothing is charged, printed or shipped, and each order says so. You can still review a proof and see how fulfilment would work."],
+  ["I placed an order, when will it arrive?", "Orders in the preview are demonstrations: nothing is charged, printed or shipped, and each order says so. You can still review a proof and see how fulfilment would work."],
 ];
 
 export default function SupportPage() {

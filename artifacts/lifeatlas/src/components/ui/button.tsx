@@ -10,22 +10,22 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-ink text-paper shadow-[inset_0_1px_0_rgb(255_255_255/0.06),0_1px_2px_rgb(30_26_22/0.18),0_8px_20px_-12px_rgb(30_26_22/0.45)] hover:bg-ink-2",
+          "bg-evergreen-deep text-on-evergreen shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_1px_2px_rgb(20_28_24/0.2),0_10px_24px_-14px_rgb(20_28_24/0.6)] hover:bg-evergreen",
         accent: "bg-oxblood text-on-oxblood shadow-[0_1px_2px_rgb(60_25_28/0.2),0_8px_20px_-12px_rgb(60_25_28/0.5)] hover:bg-oxblood-deep",
         secondary: "border border-line-strong bg-surface/70 text-ink hover:border-ink-3 hover:bg-surface",
         quiet: "bg-ivory text-ink hover:bg-linen",
         ghost: "text-ink-2 hover:bg-ivory hover:text-ink",
         text: "h-auto! px-0! text-ink underline decoration-1 underline-offset-[0.22em] decoration-current/35 hover:decoration-current",
         destructive: "bg-danger text-on-danger hover:brightness-95",
-        light: "bg-[#f8f6f1] text-[#1b1a18] shadow-[0_10px_30px_-12px_rgb(0_0_0/0.6)] hover:bg-white",
+        light: "bg-[#f3ede3] text-[#171a17] shadow-[0_10px_30px_-12px_rgb(0_0_0/0.6)] hover:bg-white",
         outlineLight: "border border-white/30 text-[#f3efe7] hover:border-white/60 hover:bg-white/8",
         brass: "bg-brass text-[#1f1a12] hover:brightness-105",
       },
       size: {
-        sm: "h-10 rounded-[9px] px-4 text-[0.875rem]",
-        md: "h-11 rounded-[9px] px-5 text-[0.9375rem]",
-        lg: "h-[3.25rem] rounded-[10px] px-7 text-[1rem]",
-        xl: "h-14 rounded-[10px] px-7 text-[1rem]",
+        sm: "h-10 rounded-full px-4 text-[0.875rem]",
+        md: "h-11 rounded-full px-5 text-[0.9375rem]",
+        lg: "h-[3.25rem] rounded-full px-7 text-[1rem]",
+        xl: "h-14 rounded-full px-7 text-[1rem]",
         icon: "size-11 rounded-full",
         iconSm: "size-9 rounded-full",
       },

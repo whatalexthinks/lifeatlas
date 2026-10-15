@@ -9,6 +9,7 @@ import { sha256Hex, uid } from "@/lib/utils";
 import { fail, notConfigured, ok, type MediaStorageProvider, type TranscriptionProvider } from "../contracts";
 import { actorName, db, latency, store } from "./shared";
 import { brand } from "@/config/brand";
+import { photoForPlate } from "@/lib/media/editorial-photos";
 
 /** Object URLs for local blobs, created once per page session and revoked on removal. */
 const objectUrls = new Map<string, string>();
@@ -57,6 +58,8 @@ export const mockMedia: MediaStorageProvider = {
       case "static":
         return ok(asset.source.url);
       case "plate": {
+        const photo = photoForPlate(asset.source.plateId);
+        if (photo) return ok(photo.url);
         const uri = plateDataUri(asset.source.plateId);
         return uri ? ok(uri) : fail("not_found", "Sample illustration missing.");
       }
@@ -95,6 +98,15 @@ export const mockMedia: MediaStorageProvider = {
         }
       }
       case "plate": {
+        const photo = photoForPlate(asset.source.plateId);
+        if (photo) {
+          try {
+            const response = await fetch(photo.url);
+            return response.ok ? ok(await response.blob()) : fail("not_found", "Sample photograph missing.");
+          } catch {
+            return fail("not_found", "The sample photograph could not be loaded.");
+          }
+        }
         const svg = renderPlateSvg(asset.source.plateId);
         return svg ? ok(new Blob([svg], { type: "image/svg+xml" })) : fail("not_found", "Sample illustration missing.");
       }
@@ -169,7 +181,7 @@ export const mockTranscription: TranscriptionProvider = {
     };
   },
   async requestTranscript() {
-    return notConfigured("transcription", "Automatic transcription isn't connected in this preview. You can type or paste a transcript yourself — we never invent one.");
+    return notConfigured("transcription", "Automatic transcription isn't connected in this preview. You can type or paste a transcript yourself, we never invent one.");
   },
   async saveManualTranscript(mediaId, text) {
     const now = new Date().toISOString();

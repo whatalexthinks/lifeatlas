@@ -101,7 +101,7 @@ function TokenProblem({ code, message }: { code: string; message: string }) {
     code === "forbidden"
       ? "The person who sent it has withdrawn this link. If you think that's a mistake, ask them for a new one."
       : code === "conflict"
-        ? "Invitation links last 30 days. Ask the person who invited you to send a fresh link — your answers are never lost when a link expires."
+        ? "Invitation links last 30 days. Ask the person who invited you to send a fresh link, your answers are never lost when a link expires."
         : "Check that the whole link was copied. In this preview, invitations only open in the browser where they were created.";
   return (
     <div className="pt-16 text-center">

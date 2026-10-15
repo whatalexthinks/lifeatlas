@@ -1,10 +1,11 @@
 import type { Capsule, CapsuleMembership, FutureMessage, FuzzyDate, MediaAsset, Memory, MemoryAttribution, Place } from "@/domain/models";
 import { PLATE_NOTICE } from "./media";
+import { photoForPlate } from "@/lib/media/editorial-photos";
 
 /**
  * Two more sample capsules for the fictional Ellis family:
- *  - "Our Story" — Sarah Ellis and Jonah Reed (married 2001), a couples capsule.
- *  - "The Ellis Family" — four generations, told by several people.
+ *  - "Our Story", Sarah Ellis and Jonah Reed (married 2001), a couples capsule.
+ *  - "The Ellis Family", four generations, told by several people.
  * Written for this demo. These people do not exist; nothing here is a real testimonial.
  * Dates are consistent with the rest of the fixtures (people.ts, memories.ts).
  */
@@ -33,7 +34,7 @@ export const extraCapsules: Capsule[] = [
     relationshipKind: "partner",
     title: "Our Story",
     description: "A broken umbrella, an orchard wedding, and twenty-five years of Sunday pancakes.",
-    dedication: "For the two of us, and for Emma — who came along and made it three.",
+    dedication: "For the two of us, and for Emma, who came along and made it three.",
     theme: { palette: "terracotta", typography: "italic" },
     cover: { mediaId: "med_us_orchard", layout: "full_bleed", focalY: 55 },
     status: "active",
@@ -63,7 +64,7 @@ export const extraCapsules: Capsule[] = [
     relationship: "Family",
     relationshipKind: "other",
     title: "Four Generations, One Table",
-    description: "From Walter's ferry on Casco Bay to Leo's first fish — the stories the whole family tells.",
+    description: "From Walter's ferry on Casco Bay to Leo's first fish, the stories the whole family tells.",
     dedication: "Leave the light on. Someone's always on their way home.",
     theme: { palette: "evergreen", typography: "classic" },
     cover: { mediaId: "med_fam_table", layout: "full_bleed", focalY: 45 },
@@ -119,7 +120,7 @@ const plate = (id: string, plateId: string, capsuleId: string, caption: string, 
   placeId,
   contributorName: "Sample family",
   consent: { contributorAgreed: true, print: true, share: false },
-  sampleNotice: PLATE_NOTICE,
+  sampleNotice: photoForPlate(plateId) ? "Editorial photograph supplied for this sample archive. The family stories are fictional." : PLATE_NOTICE,
   createdAt: T,
   updatedAt: T,
 });
@@ -190,7 +191,7 @@ export const extraMemories: Memory[] = [
     chapter: "love",
     quote: "He offered me half an umbrella. It turned inside out before we reached the corner.",
     narrative:
-      "It was raining the way it only rains in Boston in October — sideways, and personally. I was standing in a church doorway on Newbury Street waiting for it to ease, and a man I'd never seen before stepped in beside me with a very cheap red umbrella.\n\nHe offered me half of it. We made it eleven steps before the wind turned it inside out, and instead of apologising he started laughing, and so did I. We stood in that doorway for forty minutes. By the time the rain stopped I knew he taught eighth-grade science, hated olives and was terrible at directions.\n\nHe still has the umbrella. It has never been fixed.",
+      "It was raining the way it only rains in Boston in October, sideways, and personally. I was standing in a church doorway on Newbury Street waiting for it to ease, and a man I'd never seen before stepped in beside me with a very cheap red umbrella.\n\nHe offered me half of it. We made it eleven steps before the wind turned it inside out, and instead of apologising he started laughing, and so did I. We stood in that doorway for forty minutes. By the time the rain stopped I knew he taught eighth-grade science, hated olives and was terrible at directions.\n\nHe still has the umbrella. It has never been fixed.",
     peopleIds: ["per_sarah", "per_jonah"],
     tags: ["How we met", "Boston", "Rain"],
     photoIds: ["med_us_umbrella"],
@@ -202,7 +203,7 @@ export const extraMemories: Memory[] = [
   memory({
     id: "mem_us_notice_jonah",
     capsuleId: US,
-    title: "What I first noticed — Jonah's answer",
+    title: "What I first noticed, Jonah's answer",
     date: { precision: "day", year: 1998, month: 10, day: 17 },
     placeId: "pl_boston",
     chapter: "love",
@@ -218,7 +219,7 @@ export const extraMemories: Memory[] = [
   memory({
     id: "mem_us_notice_sarah",
     capsuleId: US,
-    title: "What I first noticed — Sarah's answer",
+    title: "What I first noticed, Sarah's answer",
     date: { precision: "day", year: 1998, month: 10, day: 17 },
     placeId: "pl_boston",
     chapter: "love",
@@ -238,7 +239,7 @@ export const extraMemories: Memory[] = [
     placeId: "pl_boston",
     chapter: "coming_of_age",
     narrative:
-      "We were supposed to have dinner. Instead we walked into a second-hand bookshop to get out of the cold and didn't come out until it closed. We each picked a book for the other one — he chose me a field guide to New England birds, I chose him a cookbook, which he has used exactly twice.\n\nThe owner made us tea in chipped mugs and let us sit in the back by the radiator. We never did have dinner that night. We split a bag of roasted chestnuts on the walk home.",
+      "We were supposed to have dinner. Instead we walked into a second-hand bookshop to get out of the cold and didn't come out until it closed. We each picked a book for the other one, he chose me a field guide to New England birds, I chose him a cookbook, which he has used exactly twice.\n\nThe owner made us tea in chipped mugs and let us sit in the back by the radiator. We never did have dinner that night. We split a bag of roasted chestnuts on the walk home.",
     peopleIds: ["per_sarah", "per_jonah"],
     tags: ["Firsts", "Books"],
     photoIds: ["med_us_bookshop"],
@@ -255,7 +256,7 @@ export const extraMemories: Memory[] = [
     chapter: "love",
     quote: "My father whistled through the whole first dance. Badly. On purpose, I think.",
     narrative:
-      "We got married in an apple orchard in Stow because neither of us wanted a hall. It had rained all week and the grass was still soft, so half the guests took their shoes off. Mum made the cake. It leaned.\n\nWhat I remember most isn't the vows — it's my father whistling through our whole first dance, badly, on purpose, until everyone was laughing and nobody was nervous any more. He was always good at that.",
+      "We got married in an apple orchard in Stow because neither of us wanted a hall. It had rained all week and the grass was still soft, so half the guests took their shoes off. Mum made the cake. It leaned.\n\nWhat I remember most isn't the vows, it's my father whistling through our whole first dance, badly, on purpose, until everyone was laughing and nobody was nervous any more. He was always good at that.",
     peopleIds: ["per_sarah", "per_jonah", "per_margaret", "per_thomas"],
     tags: ["Wedding", "Milestone"],
     photoIds: ["med_us_orchard"],
@@ -302,7 +303,7 @@ export const extraMemories: Memory[] = [
     placeId: "pl_providence",
     chapter: "family",
     narrative:
-      "We drove home from the hospital at eleven miles an hour. Every car behind us honked. Jonah didn't care.\n\nThat first night none of us slept. We sat by the window with the little lamp on, taking turns holding her, and talked about absolutely nothing — what we'd name a dog, whether the moon looked bigger. I think it was the happiest I've ever been and the most tired.",
+      "We drove home from the hospital at eleven miles an hour. Every car behind us honked. Jonah didn't care.\n\nThat first night none of us slept. We sat by the window with the little lamp on, taking turns holding her, and talked about absolutely nothing, what we'd name a dog, whether the moon looked bigger. I think it was the happiest I've ever been and the most tired.",
     peopleIds: ["per_sarah", "per_jonah", "per_emma"],
     tags: ["Emma", "Family"],
     photoIds: ["med_us_night"],
@@ -317,7 +318,7 @@ export const extraMemories: Memory[] = [
     placeId: "pl_providence",
     chapter: "everyday",
     narrative:
-      "Nobody decided it. One Sunday Jonah made pancakes, the next Sunday Emma asked for them, and that was that — fifteen years and counting. He makes them in the shape of the week's best thing: a fish after Leo's fishing trip, a very lumpy car the week Emma got her licence.\n\nWe've had Sundays apart, of course. But whoever is home makes them anyway.",
+      "Nobody decided it. One Sunday Jonah made pancakes, the next Sunday Emma asked for them, and that was that, fifteen years and counting. He makes them in the shape of the week's best thing: a fish after Leo's fishing trip, a very lumpy car the week Emma got her licence.\n\nWe've had Sundays apart, of course. But whoever is home makes them anyway.",
     peopleIds: ["per_jonah", "per_emma"],
     tags: ["Traditions", "Little moments"],
     photoIds: ["med_us_pancakes"],
@@ -369,7 +370,7 @@ export const extraMemories: Memory[] = [
     chapter: "childhood",
     quote: "Two short, one long. Every child on Peaks Island knew it meant my father.",
     narrative:
-      "My father, Walter Hale, was the engineer on the Casco Bay ferry for thirty years. He wasn't the captain — he'd tell you that very firmly — but he was the reason the thing ran.\n\nHe had a signal on the whistle: two short, one long. If you were on the dock and heard it, you waved, and he'd answer from the engine room with the same. Every child on Peaks Island knew it meant him. My brother Peter counted every boat in the harbor, but he only ever waved at that one.",
+      "My father, Walter Hale, was the engineer on the Casco Bay ferry for thirty years. He wasn't the captain, he'd tell you that very firmly, but he was the reason the thing ran.\n\nHe had a signal on the whistle: two short, one long. If you were on the dock and heard it, you waved, and he'd answer from the engine room with the same. Every child on Peaks Island knew it meant him. My brother Peter counted every boat in the harbor, but he only ever waved at that one.",
     peopleIds: ["per_walter", "per_peter"],
     tags: ["Great-grandfather", "Portland", "Work"],
     photoIds: ["med_fam_ferry"],
@@ -449,7 +450,7 @@ export const extraMemories: Memory[] = [
     placeId: "pl_acadia",
     chapter: "journeys",
     narrative:
-      "Leo was eight and had been fishing off the dock for three days without a bite. When the fish finally came he was so shocked he dropped the rod, grabbed the line with both hands, landed it, looked at it, and said 'Sorry' — and let it go.\n\nDaniel wanted a photo. There isn't one. Leo says that's how it should be.",
+      "Leo was eight and had been fishing off the dock for three days without a bite. When the fish finally came he was so shocked he dropped the rod, grabbed the line with both hands, landed it, looked at it, and said 'Sorry', and let it go.\n\nDaniel wanted a photo. There isn't one. Leo says that's how it should be.",
     peopleIds: ["per_leo", "per_daniel"],
     tags: ["Leo", "Summers"],
     photoIds: ["med_fam_dock"],
@@ -526,7 +527,7 @@ export const extraFutureMessages: FutureMessage[] = [
     authorPersonId: "per_sarah",
     title: "For our thirtieth anniversary",
     dedication: "Open in the orchard, if it's still there.",
-    body: "Jonah — if you're reading this, we made it to thirty. I want to write down what our life looks like right now, so that in five years we can see what changed and what didn't. Emma is in her second year of work and calls on Sundays. Pancakes are still happening. The umbrella is still broken.\n\nI hope we still sit on the porch and say nothing for an hour.",
+    body: "Jonah, if you're reading this, we made it to thirty. I want to write down what our life looks like right now, so that in five years we can see what changed and what didn't. Emma is in her second year of work and calls on Sundays. Pancakes are still happening. The umbrella is still broken.\n\nI hope we still sit on the porch and say nothing for an hour.",
     format: "letter",
     attachmentIds: ["med_us_porch"],
     recipient: { name: "Jonah Reed", relationship: "Husband", contactStatus: "not_provided" },

@@ -42,7 +42,7 @@ export default function StudioHome() {
   const catalog = useDb((d) => d.catalog);
   const pending = usePendingReviewCount();
   const personId = useDb((d) => d.account.profile.personId);
-  // Only the organizer's own drafts — contributors see theirs on their invitation link.
+  // Only the organizer's own drafts, contributors see theirs on their invitation link.
   const paused = useDb((d) => d.gatherings.find((g) => g.status === "in_progress"));
   const unfinished = useDb((d) => d.captureDrafts).filter((d) => d.key.endsWith(`:person:${personId}`) || d.key.endsWith(":person:organizer"));
   const hydrated = useHydrated();
@@ -68,7 +68,7 @@ export default function StudioHome() {
         .find(Boolean)
     : undefined;
   const featuredKind = featuredCapsule ? capsuleKind(featuredCapsule) : "personal";
-  // With nothing queued, offer a question suited to this kind of capsule — a new one each day.
+  // With nothing queued, offer a question suited to this kind of capsule, a new one each day.
   const suggested = featuredCapsule ? questionsForKind(featuredKind, questions).filter((q) => !assignments.some((a) => a.capsuleId === featuredCapsule.id && a.questionId === q.id && a.status === "answered")) : [];
   const [shuffle, setShuffle] = React.useState(0);
   const dayIndex = Math.floor(now / 86_400_000);
@@ -88,7 +88,7 @@ export default function StudioHome() {
       <div className="mx-auto max-w-2xl py-20 text-center">
         <p className="eyebrow justify-center">Welcome</p>
         <h1 className="mt-5 font-serif text-title">Start with one story.</h1>
-        <p className="mt-4 text-lead text-ink-2">Create a capsule for someone you love — or for yourself. It takes about two minutes, and every field but a name is optional.</p>
+        <p className="mt-4 text-lead text-ink-2">Create a capsule for someone you love, or for yourself. It takes about two minutes, and every field but a name is optional.</p>
         <ButtonLink href="/app/capsules/new" size="xl" className="mt-8">
           Create a memory capsule
         </ButtonLink>
@@ -149,7 +149,7 @@ export default function StudioHome() {
                   {featuredMemory.audioId ? <AudioPlayer mediaId={featuredMemory.audioId} variant="mini" title={featuredMemory.title} className="mt-6" showNotice={false} /> : null}
                 </>
               ) : (
-                <p className="mt-6 text-ink-3">No stories yet — the first answer will appear here.</p>
+                <p className="mt-6 text-ink-3">No stories yet, the first answer will appear here.</p>
               )}
               <div className="mt-auto flex flex-wrap gap-2.5 pt-8">
                 <ButtonLink href={`/app/capsules/${featuredCapsule.id}`} trailing={<ArrowRight className="size-4" />}>
@@ -338,7 +338,7 @@ export default function StudioHome() {
             >
               <Plus className="size-7" aria-hidden />
               <span className="font-serif text-[1.25rem] leading-tight text-ink">{allowance.allowed ? "Start a new capsule" : "Your plan is full"}</span>
-              <span className="text-[0.875rem]">{allowance.allowed ? "For you, the two of you, your family — or someone you love." : "Compare plans to make room for more."}</span>
+              <span className="text-[0.875rem]">{allowance.allowed ? "For you, the two of you, your family, or someone you love." : "Compare plans to make room for more."}</span>
             </Link>
           </li>
         </ul>
@@ -399,7 +399,7 @@ export default function StudioHome() {
             </ol>
           ) : (
             <p className="flex items-center gap-3 p-3 text-[0.9375rem] text-ink-3">
-              <Check className="size-5 text-evergreen" aria-hidden /> You&rsquo;re all set. Keep gathering — one question at a time.
+              <Check className="size-5 text-evergreen" aria-hidden /> You&rsquo;re all set. Keep gathering, one question at a time.
             </p>
           )}
         </Panel>
@@ -422,7 +422,7 @@ export default function StudioHome() {
                     <span className="grid size-10 shrink-0 place-items-center rounded-full bg-ivory text-ink-2">{h.kind === "book" ? <BookOpen className="size-5" aria-hidden /> : <Package className="size-5" aria-hidden />}</span>
                     <span className="min-w-0">
                       <span className="block truncate font-medium leading-snug">{h.name}</span>
-                      <span className="block text-[0.8125rem] text-ink-3">{{ editing: "Being designed", in_cart: "In your bag", ordered_demo: "Ordered — demo, nothing charged" }[h.status]}</span>
+                      <span className="block text-[0.8125rem] text-ink-3">{{ editing: "Being designed", in_cart: "In your bag", ordered_demo: "Ordered, demo, nothing charged" }[h.status]}</span>
                     </span>
                   </Link>
                 </li>
@@ -448,7 +448,7 @@ export default function StudioHome() {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        {/* Preservation — truthful */}
+        {/* Preservation, truthful */}
         <Panel title="Preservation" actions={<HardDrive className="size-5 text-ink-3" />}>
           <ul className="space-y-3 text-[0.9375rem]">
             <li className="flex items-center justify-between gap-3">
@@ -503,7 +503,7 @@ export default function StudioHome() {
                 <span className="mt-1.5 size-2 shrink-0 rounded-full bg-sage" aria-hidden />
                 <span className="min-w-0 flex-1 text-[0.9rem] leading-snug">
                   <span className="font-medium">{e.actor}</span> <span className="text-ink-2">{describeAction(e.action)}</span>
-                  {e.detail ? <span className="text-ink-3"> — {e.detail}</span> : null}
+                  {e.detail ? <span className="text-ink-3">, {e.detail}</span> : null}
                   <span className="block text-[0.75rem] text-ink-4">{relativeTime(e.at)}</span>
                 </span>
               </li>
@@ -522,7 +522,7 @@ export default function StudioHome() {
             <p className="mt-1 text-ink-3">
               {paused
                 ? `Question ${Math.min(paused.index + 1, paused.questionIds.length)} of ${paused.questionIds.length} · ${pluralize(paused.answers.length, "answer")} kept so far. Pick up where the table left off.`
-                : "A pass-the-device session for the dinner table — one question each, and a booklet at the end."}
+                : "A pass-the-device session for the dinner table, one question each, and a booklet at the end."}
             </p>
           </div>
         </div>
@@ -537,10 +537,10 @@ export default function StudioHome() {
 function orderStatusLabel(status: string) {
   const map: Record<string, string> = {
     proof_required: "Waiting for you to approve a proof",
-    ready_for_fulfillment: "Ready to make — demo, not sent to a printer",
+    ready_for_fulfillment: "Ready to make, demo, not sent to a printer",
     printing_mock: "Being made (demo)",
     shipped_mock: "Shipped (demo)",
-    paid_mock: "Placed — demo, nothing charged",
+    paid_mock: "Placed, demo, nothing charged",
     canceled_mock: "Canceled",
     refunded_mock: "Refunded (demo)",
   };

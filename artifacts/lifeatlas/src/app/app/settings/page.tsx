@@ -144,7 +144,7 @@ function Settings() {
 
         <Panel title="Notifications" description="Your choices are saved, but no email is sent in this preview.">
           <div className="space-y-5">
-            <Switch id="n-digest" checked={prefs.weeklyDigestIntent} onCheckedChange={(v) => void setPref({ weeklyDigestIntent: v })} label="A weekly note of new memories" description="One short email on Sundays — never more." />
+            <Switch id="n-digest" checked={prefs.weeklyDigestIntent} onCheckedChange={(v) => void setPref({ weeklyDigestIntent: v })} label="A weekly note of new memories" description="One short email on Sundays, never more." />
             <Switch id="n-contrib" checked={prefs.contributionAlertsIntent} onCheckedChange={(v) => void setPref({ contributionAlertsIntent: v })} label="When someone adds a story for review" description="So nothing waits too long for a reply." />
           </div>
         </Panel>
@@ -178,7 +178,7 @@ function Settings() {
 
         <Panel title="Your data" description="Take it with you, or clear it away.">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-5">
-            <p className="max-w-lg text-[0.9375rem] text-ink-2">Download an open archive of any capsule — stories, photos, recordings and a manifest.</p>
+            <p className="max-w-lg text-[0.9375rem] text-ink-2">Download an open archive of any capsule, stories, photos, recordings and a manifest.</p>
             <Link href="/app/preservation" className="text-[0.9375rem] text-link">
               Export from Preservation
             </Link>
@@ -199,7 +199,7 @@ function Settings() {
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line py-5">
             <div className="max-w-lg">
               <p className="font-medium">Erase demo data on this device</p>
-              <p className="mt-1 text-[0.9375rem] text-ink-2">Removes everything you&rsquo;ve added — stories, recordings, letters, orders — and restores the fictional Ellis family.</p>
+              <p className="mt-1 text-[0.9375rem] text-ink-2">Removes everything you&rsquo;ve added, stories, recordings, letters, orders, and restores the fictional Ellis family.</p>
             </div>
             <Button variant="destructive" leading={<Trash2 className="size-4" />} onClick={() => setEraseOpen(true)}>
               Erase and start over

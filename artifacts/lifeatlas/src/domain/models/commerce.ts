@@ -205,7 +205,7 @@ export interface Order extends Timestamps {
   isSample: boolean;
 }
 
-/** Fictional shipping addresses only — validated but never sent anywhere. */
+/** Fictional shipping addresses only, validated but never sent anywhere. */
 export interface ShippingAddress {
   name: string;
   line1: string;

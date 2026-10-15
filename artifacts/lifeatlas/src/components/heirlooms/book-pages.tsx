@@ -132,7 +132,7 @@ export function toSpreads(pages: BookPage[]): [number | null, number | null][] {
 }
 
 /* ------------------------------------------------------------------ */
-/* Rendering — sizes in cqw so a page reads the same at any scale.     */
+/* Rendering, sizes in cqw so a page reads the same at any scale.     */
 /* ------------------------------------------------------------------ */
 
 const ink = "#24221f";
@@ -214,7 +214,7 @@ function PageBody({ page, config }: { page: BookPage; config: BookConfiguration 
             {page.entries.map((e, i) => (
               <li key={e.title} className="flex items-baseline gap-[2cqw]" style={{ fontSize: "3cqw" }}>
                 <span className="font-mono" style={{ fontSize: "2cqw", color: muted, width: "4cqw" }}>
-                  {e.title === "A timeline" ? "—" : String(i + 1).padStart(2, "0")}
+                  {e.title === "A timeline" ? "Not set" : String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="font-serif">{e.title}</span>
                 <span className="flex-1 border-b border-dotted" style={{ borderColor: "#cfc6b3" }} />
@@ -286,7 +286,7 @@ function PageBody({ page, config }: { page: BookPage; config: BookConfiguration 
           </div>
           {page.end ? (
             <p className="mt-[3cqw] font-serif italic" style={{ fontSize: "2.3cqw", color: muted }}>
-              — told by {m.attribution.displayName}
+, told by {m.attribution.displayName}
             </p>
           ) : null}
         </div>
@@ -320,7 +320,7 @@ function PageBody({ page, config }: { page: BookPage; config: BookConfiguration 
             <BrandMark className="size-full" />
           </span>
           <p className="mt-[3cqw] font-serif italic" style={{ fontSize: "2.6cqw", color: "#474239" }}>
-            {page.title} — made with {brand.name} from stories told by family.
+            {page.title}, made with {brand.name} from stories told by family.
           </p>
           <p className="mt-[2cqw] font-mono uppercase" style={{ fontSize: "1.6cqw", letterSpacing: "0.18em", color: muted }}>
             Preview edition · not printed

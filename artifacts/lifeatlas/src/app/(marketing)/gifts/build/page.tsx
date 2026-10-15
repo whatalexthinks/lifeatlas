@@ -83,7 +83,7 @@ export default function GiftBuilder() {
       return;
     }
     const lines = [
-      { id: uid("cl"), productId: v.productId, quantity: 1, extrasAmount: 0, giftId: g.data.id, asGift: true, interval: "year" as const, label: `${product.name} — gift for ${v.recipientName}` },
+      { id: uid("cl"), productId: v.productId, quantity: 1, extrasAmount: 0, giftId: g.data.id, asGift: true, interval: "year" as const, label: `${product.name}, gift for ${v.recipientName}` },
       ...(v.addPrintedCard ? [{ id: uid("cl"), productId: "gift_wrap", quantity: 1, extrasAmount: 0, label: "Printable gift card" }] : []),
     ];
     mutate((d) => {
@@ -102,7 +102,7 @@ export default function GiftBuilder() {
         <div className="min-w-0">
           <p className="eyebrow">Give a capsule</p>
           <h1 className="mt-5 font-serif text-title">A gift that asks as much as it gives.</h1>
-          <p className="mt-5 max-w-xl text-lead text-ink-2">Write a dedication, choose an envelope, and preview exactly what they&rsquo;ll open. You share the link — or hand over a printed card — when the moment is right.</p>
+          <p className="mt-5 max-w-xl text-lead text-ink-2">Write a dedication, choose an envelope, and preview exactly what they&rsquo;ll open. You share the link, or hand over a printed card, when the moment is right.</p>
 
           <div className="mt-12 space-y-10">
             <section aria-labelledby="occ">
@@ -134,7 +134,7 @@ export default function GiftBuilder() {
                 <Input id="g-giverName" value={v.giverName} onChange={(e) => set({ giverName: e.target.value })} placeholder="With love, the grandchildren" invalid={!!errors.giverName} />
               </Field>
               <Field label="Your dedication" htmlFor="g-dedication" hint={`${v.dedication.length}/600 · It appears on the card they open.`} error={errors.dedication} className="sm:col-span-2">
-                <Textarea id="g-dedication" value={v.dedication} onChange={(e) => set({ dedication: e.target.value })} maxLength={600} className="min-h-28 font-serif text-[1.1rem]" placeholder="We want to hear the stories you tell at the table — the ones we keep forgetting to write down." />
+                <Textarea id="g-dedication" value={v.dedication} onChange={(e) => set({ dedication: e.target.value })} maxLength={600} className="min-h-28 font-serif text-[1.1rem]" placeholder="We want to hear the stories you tell at the table, the ones we keep forgetting to write down." />
               </Field>
             </section>
 
@@ -166,7 +166,7 @@ export default function GiftBuilder() {
                 onChange={(m) => set({ deliveryMode: m })}
                 columns={1}
                 options={[
-                  { value: "share_link_myself", label: "I'll share the link myself", description: "By text, email or a family chat — whenever you choose.", icon: <Link2 className="size-5" /> },
+                  { value: "share_link_myself", label: "I'll share the link myself", description: "By text, email or a family chat, whenever you choose.", icon: <Link2 className="size-5" /> },
                   { value: "in_person", label: "I'll give it in person", description: "Print the card and hand it over. Perfect under a tree.", icon: <Hand className="size-5" /> },
                   { value: "scheduled_preview", label: "Plan a date (preview)", description: "See how a scheduled notification would look. Nothing is scheduled or sent in this preview.", icon: <CalendarClock className="size-5" /> },
                 ]}
@@ -194,7 +194,7 @@ export default function GiftBuilder() {
               />
               <div className="mt-5 space-y-3">
                 <Checkbox id="g-card" checked={v.addPrintedCard} onCheckedChange={(x) => set({ addPrintedCard: x })} label="Printable gift card (free)" description="A letterpress-style card with the link and your dedication, to print at home." />
-                <Checkbox id="g-book" checked={false} disabled onCheckedChange={() => undefined} label="Add a printed heirloom book" description="Coming soon — printing isn't available to order yet." />
+                <Checkbox id="g-book" checked={false} disabled onCheckedChange={() => undefined} label="Add a printed heirloom book" description="Coming soon, printing isn't available to order yet." />
               </div>
             </section>
           </div>
@@ -203,7 +203,7 @@ export default function GiftBuilder() {
             <Button size="xl" onClick={() => void checkout()} loading={busy} trailing={<ArrowRight className="size-5" />}>
               Review &amp; continue · {formatMoney(product.price.amount)}
             </Button>
-            <p className="text-[0.875rem] text-ink-3">Test price. The next step is a clearly-labelled demo checkout — no card details are collected.</p>
+            <p className="text-[0.875rem] text-ink-3">Test price. The next step is a clearly-labelled demo checkout, no card details are collected.</p>
           </div>
         </div>
 
@@ -220,7 +220,7 @@ export default function GiftBuilder() {
               Then a gentle welcome: how a memory capsule works, and one button to begin with a single question. No forced sign-up, no upsell.
             </p>
           </div>
-          <DemoNotice className="mt-5">Preview only — no payment will be charged, and no email or text is sent.</DemoNotice>
+          <DemoNotice className="mt-5">Preview only, no payment will be charged, and no email or text is sent.</DemoNotice>
         </aside>
       </Container>
     </div>

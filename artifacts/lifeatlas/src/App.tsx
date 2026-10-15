@@ -136,7 +136,7 @@ const appRoutes = (
           <Route path="r/:code" element={page(() => import("@/app/(marketing)/r/[code]/page"))} />
           <Route path="support" element={page(() => import("@/app/(marketing)/support/page"))} />
           <Route path="terms" element={page(() => import("@/app/(marketing)/terms/page"))} />
-          {/* [...slug] catch-all — also the 404 for any unmatched URL (unknown keys call notFound()). */}
+          {/* [...slug] catch-all, also the 404 for any unmatched URL (unknown keys call notFound()). */}
           <Route path="*" element={page(() => import("@/app/(marketing)/[...slug]/page"))} />
         </Route>
 

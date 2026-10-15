@@ -71,8 +71,8 @@ export const mockCapsules: CapsuleRepository = {
     const name = v.subjectName.trim();
     const birthYear = typeof v.birthYear === "number" ? v.birthYear : undefined;
 
-    // The people this capsule is about become person records — a partner, a parent, a
-    // child — so they can be tagged in stories and appear in the family directory.
+    // The people this capsule is about become person records, a partner, a parent, a
+    // child, so they can be tagged in stories and appear in the family directory.
     const people: Person[] = [];
     const relationships: Relationship[] = [];
     let subjectPersonId: string | undefined;

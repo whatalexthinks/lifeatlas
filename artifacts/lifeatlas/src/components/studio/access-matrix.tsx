@@ -5,7 +5,7 @@ import { accessMatrix, can, roleLabels } from "@/domain/policies/permissions";
 const matrixRoles: Role[] = ["owner", "organizer", "storyteller", "contributor", "viewer", "successor"];
 
 /**
- * What each role can do, grouped as people think about it — reading, editing, inviting,
+ * What each role can do, grouped as people think about it, reading, editing, inviting,
  * exporting, deleting. Rendered from the same rules the app enforces, so it can't disagree.
  */
 export function AccessMatrix() {
@@ -57,7 +57,7 @@ export function AccessMatrix() {
           </div>
         ))}
       </dl>
-      <p className="border-t border-line px-6 py-4 text-[0.8125rem] text-ink-3">Everyone except the owner joins free. Successors have no access now — a later release adds a verified handover, never an automatic one. In this preview, permissions are simulated on this device.</p>
+      <p className="border-t border-line px-6 py-4 text-[0.8125rem] text-ink-3">Everyone except the owner joins free. Successors have no access now, a later release adds a verified handover, never an automatic one. In this preview, permissions are simulated on this device.</p>
     </>
   );
 }

@@ -103,7 +103,7 @@ function Setup({ onStart }: { onStart: (s: GatheringSession) => void }) {
             Pass the phone. <em>Keep the stories.</em>
           </>
         }
-        description="When everyone's together, let one device go around the table. One question each, answered out loud — and a little booklet of the evening at the end."
+        description="When everyone's together, let one device go around the table. One question each, answered out loud, and a little booklet of the evening at the end."
       />
       <SessionsOnDevice />
       <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
@@ -141,7 +141,7 @@ function Setup({ onStart }: { onStart: (s: GatheringSession) => void }) {
                 setNewGuest("");
               }}
             >
-              <Input aria-label="Add a guest" placeholder="Add a guest — a neighbour, a friend…" value={newGuest} onChange={(e) => setNewGuest(e.target.value)} maxLength={40} />
+              <Input aria-label="Add a guest" placeholder="Add a guest, a neighbour, a friend…" value={newGuest} onChange={(e) => setNewGuest(e.target.value)} maxLength={40} />
               <Button type="submit" variant="secondary" leading={<Plus className="size-4" />} disabled={!newGuest.trim()}>
                 Add
               </Button>
@@ -217,7 +217,7 @@ function SessionsOnDevice() {
   if (!sessions.length) return null;
 
   return (
-    <Panel title="Sessions on this device" description="Every answer is saved as you go — pick up where the table left off." className="mb-6">
+    <Panel title="Sessions on this device" description="Every answer is saved as you go, pick up where the table left off." className="mb-6">
       <ul className="divide-y divide-line">
         {sessions.map((s) => {
           const capsule = capsules.find((c) => c.id === s.capsuleId);
@@ -336,7 +336,7 @@ function Table({ session }: { session: GatheringSession }) {
               Pass it to <em>{speaker.name}.</em>
             </p>
             <Button size="xl" variant="light" className="mt-10" autoFocus onClick={() => setHandoff(false)}>
-              I&rsquo;m {speaker.name} — ready
+              I&rsquo;m {speaker.name}, ready
             </Button>
           </div>
         </div>
@@ -452,7 +452,7 @@ function Turn({
       const s = services();
       let audioId: string | undefined;
       if (audio) {
-        const m = await s.media.put({ capsuleId: capsule.id, blob: audio.blob, kind: "audio", caption: `“${q.text}” — ${speaker.name}`, alt: `${speaker.name} answering at ${session.occasion}`, contributorName: speaker.name, durationSec: audio.durationSec, peaks: audio.peaks });
+        const m = await s.media.put({ capsuleId: capsule.id, blob: audio.blob, kind: "audio", caption: `“${q.text}”, ${speaker.name}`, alt: `${speaker.name} answering at ${session.occasion}`, contributorName: speaker.name, durationSec: audio.durationSec, peaks: audio.peaks });
         if (m.status !== "ok") throw new Error(m.message);
         audioId = m.data.id;
       }
@@ -594,7 +594,7 @@ function Booklet({ session }: { session: GatheringSession }) {
           <p className="mt-4 font-serif text-[1.15rem] italic text-[#55504a]">With {joinNames(session.guests.map((g) => g.name))}</p>
         </header>
         {answers.length === 0 ? (
-          <p className="py-16 text-center text-[#55504a]">The table was quiet tonight. That&rsquo;s alright — try again another evening.</p>
+          <p className="py-16 text-center text-[#55504a]">The table was quiet tonight. That&rsquo;s alright, try again another evening.</p>
         ) : (
           <ol className="divide-y divide-[#e6e0d5]">
             {answers.map((a, i) => {
@@ -610,7 +610,7 @@ function Booklet({ session }: { session: GatheringSession }) {
                       <div className="no-print mt-4">
                         <AudioPlayer asset={audio} title={`${a.speakerName}'s answer`} variant="inline" />
                       </div>
-                      <p className="mt-3 hidden font-serif italic text-[#55504a] print:block">A recorded answer ({formatDuration(audio.durationSec ?? 0)}) — listen in the family archive.</p>
+                      <p className="mt-3 hidden font-serif italic text-[#55504a] print:block">A recorded answer ({formatDuration(audio.durationSec ?? 0)}), listen in the family archive.</p>
                     </>
                   ) : null}
                 </li>
@@ -621,7 +621,7 @@ function Booklet({ session }: { session: GatheringSession }) {
         <footer className="border-t border-[#ddd6ca] pt-8 text-center text-[0.8125rem] text-[#5f5a52]">Kept in {capsule?.subjectName}&rsquo;s capsule with {brand.name}</footer>
       </article>
       <p className="no-print mt-6 text-center text-[0.875rem] text-ink-3">
-        Answers from guests are waiting in <Link href="/app/invitations?tab=review" className="text-link">review</Link> — tidy titles, add dates, and choose who sees them.
+        Answers from guests are waiting in <Link href="/app/invitations?tab=review" className="text-link">review</Link>, tidy titles, add dates, and choose who sees them.
       </p>
     </div>
   );

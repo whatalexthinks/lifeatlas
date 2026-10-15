@@ -9,7 +9,7 @@ import { useDemoStore } from "@/store/demo-store";
 import { services } from "@/services/factory";
 
 /**
- * Read hooks — the "repository read" side of the data layer.
+ * Read hooks, the "repository read" side of the data layer.
  * In Part Two these become query hooks over the real API; screens don't change.
  */
 

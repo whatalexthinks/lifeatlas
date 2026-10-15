@@ -98,7 +98,7 @@ export function pathFor(projection: GeoProjection) {
   return geoPath(projection);
 }
 
-/** Round coordinates for display according to location precision — never exact addresses. */
+/** Round coordinates for display according to location precision, never exact addresses. */
 export function displayCoords(lat: number, lng: number, precision: "landmark" | "city" | "region" | "country") {
   const digits = precision === "landmark" ? 2 : precision === "city" ? 1 : 0;
   const f = (v: number, pos: string, neg: string) => `${Math.abs(v).toFixed(digits)}°${v >= 0 ? pos : neg}`;

@@ -9,7 +9,7 @@ import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
   title: "Your own story",
-  description: `Keep your own life story in ${brand.name}: a private capsule for the places, people and lessons that shaped you — written or spoken a few minutes at a time.`,
+  description: `Keep your own life story in ${brand.name}: a private capsule for the places, people and lessons that shaped you, written or spoken a few minutes at a time.`,
   alternates: { canonical: "/personal" },
 };
 
@@ -30,7 +30,7 @@ export default function PersonalPage() {
             Your life, <em>in your own words.</em>
           </>
         }
-        lead="Not a memoir. A place to put things down as they come back to you — the street you grew up on, the job that changed you, the advice you'd give your younger self. For you now, and for whoever comes after."
+        lead="Not a memoir. A place to put things down as they come back to you, the street you grew up on, the job that changed you, the advice you'd give your younger self. For you now, and for whoever comes after."
         actions={
           <>
             <ButtonLink href="/app/capsules/new?kind=personal" size="xl">
@@ -66,7 +66,7 @@ export default function PersonalPage() {
           />
           <ul className="mt-14 grid gap-5 md:grid-cols-3">
             {[
-              { Icon: Mic, title: "Speak it on a walk", body: "Answer out loud on your phone. Your voice is kept as you said it — no invented transcript." },
+              { Icon: Mic, title: "Speak it on a walk", body: "Answer out loud on your phone. Your voice is kept as you said it, no invented transcript." },
               { Icon: PenLine, title: "Write it at night", body: "A few lines or a few pages. Drafts save as you type, so an interruption costs you nothing." },
               { Icon: Clock, title: "Come back next week", body: "A question waits on your home page. Skip it, save it, or answer an old favourite again." },
             ].map(({ Icon, title, body }) => (

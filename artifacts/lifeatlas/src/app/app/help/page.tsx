@@ -29,8 +29,8 @@ const sections: { id: string; title: string; icon: React.ComponentType<{ classNa
     icon: Mic,
     articles: [
       { q: "The microphone won't start", a: "Your browser needs permission. Click the lock or site-settings icon by the address, allow the microphone, then try again. Recording also needs a secure (https) page.", tags: "microphone permission denied record audio not working" },
-      { q: "How long can a recording be?", a: "Up to 20 minutes each. Shorter is often better — a story per recording makes the archive easier to explore.", tags: "length long minutes limit" },
-      { q: "Can I add an old recording?", a: "Yes — when adding a memory, choose to upload an audio file instead of recording.", tags: "upload audio file existing tape" },
+      { q: "How long can a recording be?", a: "Up to 20 minutes each. Shorter is often better, a story per recording makes the archive easier to explore.", tags: "length long minutes limit" },
+      { q: "Can I add an old recording?", a: "Yes, when adding a memory, choose to upload an audio file instead of recording.", tags: "upload audio file existing tape" },
     ],
   },
   {
@@ -38,7 +38,7 @@ const sections: { id: string; title: string; icon: React.ComponentType<{ classNa
     title: "Family & privacy",
     icon: Users,
     articles: [
-      { q: "Who can see a memory?", a: <>Each memory is for the family, for people you choose, for the owner and editors, or only for you. Roles decide the rest — see <Link className="text-link" href="/app/family">Family</Link> for the full table.</>, tags: "privacy who see visible private family editors selected people share" },
+      { q: "Who can see a memory?", a: <>Each memory is for the family, for people you choose, for the owner and editors, or only for you. Roles decide the rest, see <Link className="text-link" href="/app/family">Family</Link> for the full table.</>, tags: "privacy who see visible private family editors selected people share" },
       { q: "What happens when a relative contributes?", a: <>Their story waits in <Link className="text-link" href="/app/invitations?tab=review">review</Link>. You can approve it, return it with a note, or decline it kindly.</>, tags: "contribute review approve invitation relative" },
       { q: "Are invitations emailed?", a: "Not in this preview. You copy the link and share it however you like.", tags: "invite email send link" },
     ],
@@ -48,7 +48,7 @@ const sections: { id: string; title: string; icon: React.ComponentType<{ classNa
     title: "Keeping it safe",
     icon: ShieldCheck,
     articles: [
-      { q: "Is my archive backed up?", a: <>Not in this preview — it lives in this browser only. Download a copy from <Link className="text-link" href="/app/preservation">Preservation</Link> and keep your original files.</>, tags: "backup safe lost cloud storage" },
+      { q: "Is my archive backed up?", a: <>Not in this preview, it lives in this browser only. Download a copy from <Link className="text-link" href="/app/preservation">Preservation</Link> and keep your original files.</>, tags: "backup safe lost cloud storage" },
       { q: "What's inside an export?", a: "Stories as text and a readable offline page, photos and recordings as they were added, and a manifest listing every file with its fingerprint.", tags: "export download zip archive manifest" },
     ],
   },
@@ -90,7 +90,7 @@ export default function HelpPage() {
 
       <div className="relative mb-8">
         <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-ink-3" />
-        <Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search — “microphone”, “backup”, “book”…" aria-label="Search help" className="h-14 pl-12 text-[1.0625rem]" />
+        <Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search, “microphone”, “backup”, “book”…" aria-label="Search help" className="h-14 pl-12 text-[1.0625rem]" />
       </div>
 
       {filtered.length === 0 ? (
@@ -123,7 +123,7 @@ export default function HelpPage() {
       <div className="mt-12 grid gap-6 lg:grid-cols-[1fr_1.3fr]">
         <Panel title="Recording tips for storytellers" actions={<Headphones className="size-5 text-ink-3" />}>
           <ul className="space-y-3 text-[0.9375rem] text-ink-2">
-            <li>Sit somewhere soft — a sofa or a room with curtains sounds warmer than a kitchen.</li>
+            <li>Sit somewhere soft, a sofa or a room with curtains sounds warmer than a kitchen.</li>
             <li>Hold the phone about a hand&rsquo;s width away, a little below the chin.</li>
             <li>Ask one question, then wait. The best part usually comes after a pause.</li>
             <li>Mistakes are welcome. You can always record the story again later.</li>
@@ -135,7 +135,7 @@ export default function HelpPage() {
             <div aria-live="polite">
               <p className="font-medium">Saved on this device.</p>
               <p className="mt-2 text-[0.9375rem] text-ink-2">
-                In the real service, a person would reply to {user.email} within two working days. In this preview nothing is sent — your note appears in the <Link href="/demo/operations#support" className="text-link">operations demo inbox</Link>.
+                In the real service, a person would reply to {user.email} within two working days. In this preview nothing is sent, your note appears in the <Link href="/demo/operations#support" className="text-link">operations demo inbox</Link>.
               </p>
               <Button variant="ghost" className="mt-4" onClick={() => setSent(false)}>
                 Write another

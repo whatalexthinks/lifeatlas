@@ -61,7 +61,7 @@ export default function InvitationWelcome() {
       {invitation.message ? (
         <figure className="mt-10 rounded-[24px] bg-ivory p-6 sm:p-8">
           <blockquote className="font-serif text-[1.5rem] italic leading-snug text-ink">&ldquo;{invitation.message}&rdquo;</blockquote>
-          <figcaption className="mt-4 text-[1rem] text-ink-3">— {organizerName}</figcaption>
+          <figcaption className="mt-4 text-[1rem] text-ink-3">, {organizerName}</figcaption>
         </figure>
       ) : null}
 
@@ -100,7 +100,7 @@ export default function InvitationWelcome() {
       <YourStories invitation={invitation} organizerName={organizerName} className="mt-14 border-t border-line pt-10" />
 
       <DemoNotice className="mt-12" title="Invitation preview">
-        Opened on this device through the demo. No email was sent, and real link security isn&rsquo;t active yet — anyone with this browser could open it.
+        Opened on this device through the demo. No email was sent, and real link security isn&rsquo;t active yet, anyone with this browser could open it.
       </DemoNotice>
     </div>
   );

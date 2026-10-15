@@ -118,7 +118,7 @@ function BookBuilder() {
   }
 
   const save = async (): Promise<string | null> => {
-    const r = await services().heirlooms.save({ id: savedId, kind: "book", capsuleId: capsule.id, name: `${config.title} — book`, book: config });
+    const r = await services().heirlooms.save({ id: savedId, kind: "book", capsuleId: capsule.id, name: `${config.title}, book`, book: config });
     if (r.status !== "ok") {
       toast.error("Couldn't save the design", r.status === "error" ? r.message : undefined);
       return null;
@@ -231,7 +231,7 @@ function BookBuilder() {
                   >
                     {capsules.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.subjectName} — {c.title}
+                        {c.subjectName}, {c.title}
                       </option>
                     ))}
                   </Select>
@@ -388,7 +388,7 @@ function BookBuilder() {
                 />
                 <div className="mt-6 space-y-4">
                   <Switch id="b-captions" checked={config.includeCaptions} onCheckedChange={(v) => update({ includeCaptions: v })} label="Print captions under photographs" />
-                  <Switch id="b-timeline" checked={config.includeTimeline} onCheckedChange={(v) => update({ includeTimeline: v })} label="Add a timeline at the back" description="A page of dates and titles — handy for grandchildren." />
+                  <Switch id="b-timeline" checked={config.includeTimeline} onCheckedChange={(v) => update({ includeTimeline: v })} label="Add a timeline at the back" description="A page of dates and titles, handy for grandchildren." />
                 </div>
               </Panel>
               <Panel title="Copies">
@@ -414,7 +414,7 @@ function BookBuilder() {
                 <ol className="space-y-4 text-[0.9375rem]">
                   {[
                     ["You approve a proof.", "Every page, exactly as it will print. Nothing happens until you say yes."],
-                    ["Contributors keep their say.", "Only approved stories with print consent are included — the list updates if anyone changes their mind."],
+                    ["Contributors keep their say.", "Only approved stories with print consent are included, the list updates if anyone changes their mind."],
                     ["Shipping and tax come later.", "They'll be calculated by the carrier once printing is connected. We won't guess."],
                   ].map(([t, d], i) => (
                     <li key={t} className="flex gap-4">
@@ -465,7 +465,7 @@ function BookBuilder() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="eyebrow">Estimate · test prices</p>
-                <p className="mt-2 font-serif text-[2.4rem] leading-none">{quote ? formatMoney(quote.total) : "—"}</p>
+                <p className="mt-2 font-serif text-[2.4rem] leading-none">{quote ? formatMoney(quote.total) : "Not set"}</p>
                 <p className="mt-2 text-[0.875rem] text-ink-3">
                   {pluralize(config.copies, "copy", "copies")} · about {estPages} pages
                 </p>
@@ -491,7 +491,7 @@ function BookBuilder() {
             <Button size="lg" block className="mt-5" leading={<ShoppingBag className="size-4" />} onClick={() => void onOrder()} loading={busy === "order"} disabled={!!busy || config.storyIds.length < 3}>
               Add to bag
             </Button>
-            <p className="mt-3 text-center text-[0.8125rem] text-ink-3">Preview only — no payment is charged and nothing is printed.</p>
+            <p className="mt-3 text-center text-[0.8125rem] text-ink-3">Preview only, no payment is charged and nothing is printed.</p>
           </section>
           <DemoNotice className="mt-6" title="Printing isn't connected yet">
             Pricing uses test amounts. Once a print partner is connected, you&rsquo;ll approve a final proof and see real shipping before you pay. <Link href="/heirlooms/book" className="text-link">About the book</Link>

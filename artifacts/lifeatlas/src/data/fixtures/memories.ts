@@ -41,7 +41,7 @@ const seeds: Seed[] = [
     chapter: "childhood",
     quote: "Now, whenever I bake, I leave a little flour on the counter for her.",
     narrative:
-      "My mother never used a recipe. She knew the dough by the way it felt under her palms — too wet, too tired, just right. I would stand on a wooden stool beside her, convinced that being allowed to dust the counter with flour was the most important job in the world.\n\nThe radio was always on, low, tuned to whatever station my father had left it on. She hummed along to songs she didn't know the words to. On Saturdays there were two loaves: one for us, and one wrapped in a dish towel for whichever neighbor needed it that week.\n\nNow, whenever I bake, I leave a little flour on the counter for her.",
+      "My mother never used a recipe. She knew the dough by the way it felt under her palms, too wet, too tired, just right. I would stand on a wooden stool beside her, convinced that being allowed to dust the counter with flour was the most important job in the world.\n\nThe radio was always on, low, tuned to whatever station my father had left it on. She hummed along to songs she didn't know the words to. On Saturdays there were two loaves: one for us, and one wrapped in a dish towel for whichever neighbor needed it that week.\n\nNow, whenever I bake, I leave a little flour on the counter for her.",
     peopleIds: ["per_eleanor"],
     tags: ["Mother", "Baking", "Saturdays"],
     photoIds: ["med_kitchen_1947", "med_breadboard_1947"],
@@ -58,7 +58,7 @@ const seeds: Seed[] = [
     chapter: "childhood",
     quote: "We were rarely right, but we always arrived home with something to tell.",
     narrative:
-      "We took the long way home from school because it passed the harbor. Peter counted boats — he kept the tally in the back of his arithmetic book — while I invented stories about where they had been. The tall grey one had come from Iceland. The little red one belonged to a widow who was too proud to sell it.\n\nWe were rarely right, but we always arrived home with something to tell, and cold enough that Mother would make cocoa without our asking.",
+      "We took the long way home from school because it passed the harbor. Peter counted boats, he kept the tally in the back of his arithmetic book, while I invented stories about where they had been. The tall grey one had come from Iceland. The little red one belonged to a widow who was too proud to sell it.\n\nWe were rarely right, but we always arrived home with something to tell, and cold enough that Mother would make cocoa without our asking.",
     peopleIds: ["per_peter"],
     tags: ["Brother", "Harbor", "Winter"],
     photoIds: ["med_harbor_1952"],
@@ -89,7 +89,7 @@ const seeds: Seed[] = [
     chapter: "coming_of_age",
     quote: "Be curious. Be kind. Write home.",
     narrative:
-      "My first journey without my parents was the train to Montréal, to spend the summer with my aunt Colette. I was eighteen and trying very hard to look like I did this sort of thing all the time.\n\nBefore I boarded, my father slipped a letter into my coat. I didn't find it until we were past the border. It said only: Be curious. Be kind. Write home. I carried that letter for years — through two moves, a wedding, and the birth of both children — until the fold wore through.",
+      "My first journey without my parents was the train to Montréal, to spend the summer with my aunt Colette. I was eighteen and trying very hard to look like I did this sort of thing all the time.\n\nBefore I boarded, my father slipped a letter into my coat. I didn't find it until we were past the border. It said only: Be curious. Be kind. Write home. I carried that letter for years, through two moves, a wedding, and the birth of both children, until the fold wore through.",
     peopleIds: ["per_walter", "per_colette"],
     tags: ["Father", "Train", "Aunt Colette"],
     photoIds: ["med_station_1958", "med_letter_1958"],
@@ -120,7 +120,7 @@ const seeds: Seed[] = [
     chapter: "love",
     quote: "For the next fifty years, he kept finding things to tell me.",
     narrative:
-      "Thomas asked whether the seat beside me was taken, even though the rest of the café was empty. I told him it depended on whether he had anything interesting to say.\n\nHe laughed, sat down, and explained — at some length — why the sky is blue. It was not the most romantic opening. But he drew the diagram on a napkin, and I kept the napkin.\n\nFor the next fifty years, he kept finding things to tell me.",
+      "Thomas asked whether the seat beside me was taken, even though the rest of the café was empty. I told him it depended on whether he had anything interesting to say.\n\nHe laughed, sat down, and explained, at some length, why the sky is blue. It was not the most romantic opening. But he drew the diagram on a napkin, and I kept the napkin.\n\nFor the next fifty years, he kept finding things to tell me.",
     peopleIds: ["per_thomas"],
     tags: ["Thomas", "First meeting"],
     photoIds: ["med_cafe_1963"],
@@ -138,7 +138,7 @@ const seeds: Seed[] = [
     chapter: "love",
     quote: "That is the picture I kept.",
     narrative:
-      "It rained all morning. We had planned photographs on the church steps, and I was trying very hard not to be disappointed.\n\nThen Thomas opened a ridiculous red umbrella — he'd borrowed it from the janitor — and everyone started laughing. My mother laughed so hard she had to sit down on the wet steps in her good dress. The photographer took one picture before the rain got heavier.\n\nThat is the picture I kept.",
+      "It rained all morning. We had planned photographs on the church steps, and I was trying very hard not to be disappointed.\n\nThen Thomas opened a ridiculous red umbrella, he'd borrowed it from the janitor, and everyone started laughing. My mother laughed so hard she had to sit down on the wet steps in her good dress. The photographer took one picture before the rain got heavier.\n\nThat is the picture I kept.",
     peopleIds: ["per_thomas", "per_eleanor", "per_walter"],
     tags: ["Wedding", "Thomas", "Rain"],
     photoIds: ["med_umbrella_1965"],
@@ -153,7 +153,7 @@ const seeds: Seed[] = [
     placeId: "pl_boston",
     chapter: "family",
     narrative:
-      "When Sarah came home, the apartment suddenly seemed both smaller and much larger. There were bottles on the bookshelves and a new kind of quiet in the middle of the night.\n\nThomas built her a mobile out of balsa wood and fishing line — little boats, of course — and hung it by the window so the radiator heat would turn it. I did not know what I was doing. I learned to love that way too: without knowing, and all at once.",
+      "When Sarah came home, the apartment suddenly seemed both smaller and much larger. There were bottles on the bookshelves and a new kind of quiet in the middle of the night.\n\nThomas built her a mobile out of balsa wood and fishing line, little boats, of course, and hung it by the window so the radiator heat would turn it. I did not know what I was doing. I learned to love that way too: without knowing, and all at once.",
     peopleIds: ["per_sarah", "per_thomas"],
     tags: ["Sarah", "New parents"],
     photoIds: ["med_nursery_1968"],
@@ -187,7 +187,7 @@ const seeds: Seed[] = [
     chapter: "work",
     quote: "She said it reminded her of the sea.",
     narrative:
-      "The first time I showed my pottery, I expected everyone to walk past. It was a group show in a borrowed loft, and my table was next to the bathroom.\n\nA woman stopped and held a blue bowl in both hands for a long time. She said it reminded her of the sea. She didn't buy it — she couldn't afford it, she said, and neither could I, honestly — but I still think that was the best review I ever received.",
+      "The first time I showed my pottery, I expected everyone to walk past. It was a group show in a borrowed loft, and my table was next to the bathroom.\n\nA woman stopped and held a blue bowl in both hands for a long time. She said it reminded her of the sea. She didn't buy it, she couldn't afford it, she said, and neither could I, honestly, but I still think that was the best review I ever received.",
     tags: ["Pottery", "First show"],
     photoIds: ["med_gallery_1976"],
     questionId: "q_work_4",
@@ -215,7 +215,7 @@ const seeds: Seed[] = [
     placeId: "pl_sanfrancisco",
     chapter: "journeys",
     narrative:
-      "We drove west with a paper map folded so many times it was beginning to tear along the creases. The children argued about the music for roughly two thousand miles. Thomas missed a turn in Nebraska and refused to admit it until Wyoming.\n\nWhen we finally saw the Pacific, Daniel — who had complained the entire way — went very quiet and said, \"Oh.\" That was the whole review. The best parts of that trip were never on the itinerary.",
+      "We drove west with a paper map folded so many times it was beginning to tear along the creases. The children argued about the music for roughly two thousand miles. Thomas missed a turn in Nebraska and refused to admit it until Wyoming.\n\nWhen we finally saw the Pacific, Daniel, who had complained the entire way, went very quiet and said, \"Oh.\" That was the whole review. The best parts of that trip were never on the itinerary.",
     peopleIds: ["per_thomas", "per_sarah", "per_daniel"],
     tags: ["Road trip", "Children"],
     photoIds: ["med_road_1983", "med_cliffs_1983"],
@@ -230,7 +230,7 @@ const seeds: Seed[] = [
     placeId: "pl_london",
     chapter: "journeys",
     narrative:
-      "A woman in a bookshop told us where to find the best tea in the neighborhood. Instead of giving directions, she put on her coat and walked us there. We talked for two hours — about her late husband, about children, about the impossibility of good bread in hotels.\n\nI never learned her last name, but I still remember her kindness, and I have tried, ever since, to walk people where they're going.",
+      "A woman in a bookshop told us where to find the best tea in the neighborhood. Instead of giving directions, she put on her coat and walked us there. We talked for two hours, about her late husband, about children, about the impossibility of good bread in hotels.\n\nI never learned her last name, but I still remember her kindness, and I have tried, ever since, to walk people where they're going.",
     tags: ["Kindness", "Strangers"],
     photoIds: ["med_bookshop_1989"],
     questionId: "q_travel_2",
@@ -244,7 +244,7 @@ const seeds: Seed[] = [
     placeId: "pl_paris",
     chapter: "journeys",
     narrative:
-      "We left the guidebook at the hotel on purpose and followed whatever caught our attention. We found a tiny garden behind a church, an excellent pear tart, and a street musician playing — of all things — the song from our wedding.\n\nThomas tipped him far too much. It was a very good day to be lost.",
+      "We left the guidebook at the hotel on purpose and followed whatever caught our attention. We found a tiny garden behind a church, an excellent pear tart, and a street musician playing, of all things, the song from our wedding.\n\nThomas tipped him far too much. It was a very good day to be lost.",
     peopleIds: ["per_thomas"],
     tags: ["Thomas", "Anniversary"],
     photoIds: ["med_garden_1992"],
@@ -274,7 +274,7 @@ const seeds: Seed[] = [
     chapter: "family",
     quote: "She had already taught me how much room a heart can make.",
     narrative:
-      "Emma arrived on a Tuesday. I had spent months thinking about everything I would teach her — how to center clay, how to read a tide chart, how to make bread without a recipe.\n\nWithin a week, she had already taught me how much room a heart can make.",
+      "Emma arrived on a Tuesday. I had spent months thinking about everything I would teach her, how to center clay, how to read a tide chart, how to make bread without a recipe.\n\nWithin a week, she had already taught me how much room a heart can make.",
     peopleIds: ["per_emma", "per_sarah"],
     tags: ["Emma", "Grandchildren"],
     photoIds: ["med_blanket_2005"],
@@ -304,7 +304,7 @@ const seeds: Seed[] = [
     placeId: "pl_portland",
     chapter: "everyday",
     narrative:
-      "No one is allowed to hurry on pancake mornings. That's the only rule. The first one is always a little crooked — that's the cook's. The last one is always for whoever says they couldn't possibly eat another.\n\nLeo once ate eleven. We don't talk about it.",
+      "No one is allowed to hurry on pancake mornings. That's the only rule. The first one is always a little crooked, that's the cook's. The last one is always for whoever says they couldn't possibly eat another.\n\nLeo once ate eleven. We don't talk about it.",
     peopleIds: ["per_emma", "per_leo"],
     tags: ["Traditions", "Grandchildren"],
     photoIds: ["med_pancakes_2016"],
@@ -463,7 +463,7 @@ const seeds: Seed[] = [
     placeId: "pl_providence",
     chapter: "everyday",
     narrative:
-      "Grandpa was a terrible whistler, which is maybe why he was such a patient teacher. We practiced in the backyard all summer. When I finally got a real note out, he whistled back — badly — and we kept going until Mom called us in for dinner.",
+      "Grandpa was a terrible whistler, which is maybe why he was such a patient teacher. We practiced in the backyard all summer. When I finally got a real note out, he whistled back, badly, and we kept going until Mom called us in for dinner.",
     peopleIds: ["per_thomas", "per_emma"],
     tags: ["Grandpa", "Summer"],
     photoIds: ["med_backyard_2010"],
@@ -496,7 +496,7 @@ const seeds: Seed[] = [
     placeId: "pl_providence",
     chapter: "family",
     narrative:
-      "Emma, you didn't sleep, so neither did I. Around four in the morning your grandmother called — she said she just had a feeling — and talked me through it the way her mother had talked her through it. I want you to know that someone will always pick up at four in the morning.",
+      "Emma, you didn't sleep, so neither did I. Around four in the morning your grandmother called, she said she just had a feeling, and talked me through it the way her mother had talked her through it. I want you to know that someone will always pick up at four in the morning.",
     peopleIds: ["per_emma", "per_margaret"],
     tags: ["For Emma"],
     photoIds: ["med_nightlight_2005"],

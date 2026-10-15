@@ -249,7 +249,7 @@ describe("plans, promotions and credit at checkout", () => {
     expect(db().cart.lines).toEqual([]);
   });
 
-  it("a completed gift starts one prepaid, non-renewing year for the recipient — a draft starts nothing", async () => {
+  it("a completed gift starts one prepaid, non-renewing year for the recipient, a draft starts nothing", async () => {
     const draft = db().gifts.find((g) => !g.orderId);
     if (draft) expect((await services().gifts.accept(draft.token)).status).toBe("error");
     const done = db().gifts.find((g) => g.orderId);

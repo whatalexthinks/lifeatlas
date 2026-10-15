@@ -20,7 +20,7 @@ export interface Recording {
 export const recorderErrorCopy: Record<RecorderError, { title: string; body: string }> = {
   denied: {
     title: "Microphone access is turned off",
-    body: "Your browser blocked the microphone. You can allow it from the lock icon in the address bar and try again — or type your answer instead.",
+    body: "Your browser blocked the microphone. You can allow it from the lock icon in the address bar and try again, or type your answer instead.",
   },
   unsupported: {
     title: "This browser can't record here",

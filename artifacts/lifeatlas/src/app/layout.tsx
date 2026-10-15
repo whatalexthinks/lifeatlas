@@ -6,16 +6,16 @@ import { brand } from "@/config/brand";
 export const metadata: Metadata = {
   metadataBase: new URL(appConfig.siteUrl),
   title: {
-    default: `${brand.name} — A life is made of moments. Keep them close.`,
+    default: `${brand.name}, A life is made of moments. Keep them close.`,
     template: `%s · ${brand.name}`,
   },
   description:
-    "Bring your stories, photographs, voices and favorite memories together in one beautiful, private place — for yourself, someone you love, or your whole family.",
+    "Bring your stories, photographs, voices and favorite memories together in one beautiful, private place, for yourself, someone you love, or your whole family.",
   applicationName: brand.name,
   openGraph: {
     type: "website",
     siteName: brand.name,
-    title: `${brand.name} — A life is made of moments. Keep them close.`,
+    title: `${brand.name}, A life is made of moments. Keep them close.`,
     description: "Stories, voices, photographs and memories, kept together for the people who matter.",
   },
   twitter: { card: "summary_large_image" },

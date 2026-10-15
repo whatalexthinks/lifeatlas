@@ -36,7 +36,7 @@ function write(value: string | null) {
 
 /**
  * Remembers a friend's referral code on this device so checkout can apply their offer.
- * Storage can be unavailable (private windows, blocked site data) — then we say so plainly.
+ * Storage can be unavailable (private windows, blocked site data), then we say so plainly.
  */
 export function ReferralKeeper({ code }: { code: string }) {
   const stored = React.useSyncExternalStore(subscribe, read, () => undefined);
@@ -45,7 +45,7 @@ export function ReferralKeeper({ code }: { code: string }) {
     if (!forgotten) write(code);
   }, [code, forgotten]);
 
-  // Nothing to say until the browser has answered — or while the code is being written.
+  // Nothing to say until the browser has answered, or while the code is being written.
   if (stored === undefined || (!forgotten && stored !== code && stored !== UNAVAILABLE)) return null;
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.9375rem]" role="status">

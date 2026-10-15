@@ -54,13 +54,13 @@ export default function BoxProofPage() {
 
   const checks: Check[] = [
     box.engraving === "none"
-      ? { ok: true, text: "Lid left plain — no engraving." }
+      ? { ok: true, text: "Lid left plain, no engraving." }
       : !engraving
         ? { ok: false, text: "Engraving is switched on but the text is empty." }
         : engraving.length > ENGRAVING_MAX
           ? { ok: false, text: `Engraving is ${engraving.length} characters; the lid fits ${ENGRAVING_MAX}.` }
           : { ok: true, text: `Engraving fits the lid (${engraving.length}/${ENGRAVING_MAX} characters). Check the spelling letter by letter.` },
-    !box.contents.book ? { ok: true, text: "No book in this box." } : book ? { ok: true, text: `Book: “${book.book?.title ?? book.name}” — approve its own proof too.` } : { ok: false, text: "The box includes a book, but no book is designed for this capsule yet." },
+    !box.contents.book ? { ok: true, text: "No book in this box." } : book ? { ok: true, text: `Book: “${book.book?.title ?? book.name}”, approve its own proof too.` } : { ok: false, text: "The box includes a book, but no book is designed for this capsule yet." },
     !box.contents.letterBundle
       ? { ok: true, text: "No letter bundle." }
       : !chosenLetters.length
@@ -71,7 +71,7 @@ export default function BoxProofPage() {
     !box.contents.photoPrints
       ? { ok: true, text: "No photograph prints." }
       : chosenPhotos.length < box.contents.photoPrints
-        ? { ok: false, text: `${box.contents.photoPrints} prints chosen, but only ${chosenPhotos.length} photographs allow printing — ${chosenPhotos.length} will print.` }
+        ? { ok: false, text: `${box.contents.photoPrints} prints chosen, but only ${chosenPhotos.length} photographs allow printing, ${chosenPhotos.length} will print.` }
         : { ok: true, text: `${chosenPhotos.length} photographs, all with print permission.` },
   ];
   const warnings = checks.filter((c) => !c.ok).length;
@@ -93,7 +93,7 @@ export default function BoxProofPage() {
       </div>
       <PrintQuality>
         <main id="main" className="mx-auto flex max-w-3xl flex-col items-center gap-8 px-5 py-10 text-[#252421] print:block print:p-0">
-          {/* Sheet 1 — the lid */}
+          {/* Sheet 1, the lid */}
           <Sheet title="The lid" heirloomName={heirloom.name} sheet={1}>
             <div className="grid gap-8 sm:grid-cols-[1.1fr_1fr] sm:items-center">
               <KeepsakeBox finish={box.finish} engraving={engraving} className="max-w-[340px]" />
@@ -105,7 +105,7 @@ export default function BoxProofPage() {
                   </span>
                 </Spec>
                 <Spec label="Engraving">{engravingLabel[box.engraving]}</Spec>
-                <Spec label="Use">{box.intendedUse === "display" ? "Display — for a shelf or mantel" : "Burial capsule (concept only — not available)"}</Spec>
+                <Spec label="Use">{box.intendedUse === "display" ? "Display, for a shelf or mantel" : "Burial capsule (concept only, not available)"}</Spec>
                 <Spec label="For">{capsule.subjectName}</Spec>
               </dl>
             </div>
@@ -139,7 +139,7 @@ export default function BoxProofPage() {
             </section>
           </Sheet>
 
-          {/* Sheet 2 — inside the box */}
+          {/* Sheet 2, inside the box */}
           <Sheet title="Inside the box" heirloomName={heirloom.name} sheet={2}>
             <ol className="divide-y divide-[#e6e0d5]">
               <Item icon={<BookOpen className="size-5" />} title="Printed book" on={box.contents.book}>
@@ -160,7 +160,7 @@ export default function BoxProofPage() {
                   <ul className="mt-1 space-y-1">
                     {chosenLetters.map((l) => (
                       <li key={l.id}>
-                        &ldquo;{l.title}&rdquo; — for {l.recipient.name}
+                        &ldquo;{l.title}&rdquo;, for {l.recipient.name}
                         <span className="text-[#5f5a52]"> · {l.status === "draft" ? "draft" : l.sealedAt ? `sealed ${formatDate(l.sealedAt)}` : l.status.replace("_", " ")}</span>
                       </li>
                     ))}
@@ -208,7 +208,7 @@ function Sheet({ title, heirloomName, sheet, children }: { title: string; heirlo
         </p>
       </header>
       {children}
-      <p className="mt-10 text-center font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-[#8a5a12]">Demo proof — nothing is made, shipped or charged</p>
+      <p className="mt-10 text-center font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-[#8a5a12]">Demo proof, nothing is made, shipped or charged</p>
     </article>
   );
 }

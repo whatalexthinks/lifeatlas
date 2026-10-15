@@ -25,7 +25,7 @@ export function useBackToSelf() {
 
 /**
  * Shown while looking at OurLifeCapsule as someone else, so a preview is never mistaken for
- * your own view — and getting back is one click.
+ * your own view, and getting back is one click.
  */
 export function PreviewBanner({ capsuleId, tone = "paper" }: { capsuleId?: string; tone?: "paper" | "night" }) {
   const persona = usePersona();
@@ -45,7 +45,7 @@ export function PreviewBanner({ capsuleId, tone = "paper" }: { capsuleId?: strin
           {capsuleId ? (
             <span className={night ? "text-night-ink-2" : "text-ink-2"}>
               {" "}
-              · {role ? roleLabels[role].label : "No access"} — sees {sees}.
+              · {role ? roleLabels[role].label : "No access"}, sees {sees}.
             </span>
           ) : null}
         </p>

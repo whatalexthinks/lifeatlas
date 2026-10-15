@@ -26,7 +26,7 @@ export function DeliveryLadder({ message, className }: { message: Pick<FutureMes
           <span className="min-w-0">
             <span className={cn("block text-[0.9375rem] font-medium", s.state === "unavailable" && "text-ink-2")}>
               {s.label}
-              <span className="sr-only"> — {marker[s.state].spoken}.</span>
+              <span className="sr-only">, {marker[s.state].spoken}.</span>
             </span>
             <span className="block text-[0.8125rem] leading-snug text-ink-3">{s.note}</span>
           </span>

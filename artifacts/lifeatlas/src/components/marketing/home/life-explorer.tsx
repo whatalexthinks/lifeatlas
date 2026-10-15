@@ -81,7 +81,7 @@ export function LifeExplorer() {
                 </div>
                 <div className="min-w-0">
                   <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#c8b28d]">
-                    {formatFuzzyDate(m.date, "short")} · {place?.locality ?? "—"}
+                    {formatFuzzyDate(m.date, "short")} · {place?.locality ?? "Not set"}
                   </p>
                   <p className="mt-1 font-serif text-[1.25rem] leading-tight text-night-ink">{m.title}</p>
                   <p className="mt-0.5 text-[0.8125rem] text-night-ink-2">{chapterById(m.chapter).title}</p>

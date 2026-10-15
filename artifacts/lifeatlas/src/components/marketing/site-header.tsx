@@ -49,7 +49,13 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
         scrolled && "shadow-[0_1px_0_var(--line)]",
       )}
     >
-      <div className="mx-auto flex h-[84px] max-w-[1380px] items-center justify-between gap-6 px-5 sm:px-8">
+      <div className="hidden border-b border-line/70 bg-night text-night-ink-2 md:block">
+        <div className="mx-auto flex h-8 max-w-[1380px] items-center justify-between px-5 font-mono text-[0.625rem] uppercase tracking-[0.22em] sm:px-8">
+          <span>A private family archive, kept by hand</span>
+          <span className="text-night-accent">Preview edition</span>
+        </div>
+      </div>
+      <div className="mx-auto flex h-[80px] max-w-[1380px] items-center justify-between gap-6 px-5 sm:px-8">
         <Logo />
         <nav aria-label="Main" className="hidden items-center gap-0.5 xl:flex">
           {nav.map((n) => (
@@ -57,7 +63,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
               key={n.href}
               href={n.href}
               aria-current={pathname === n.href ? "page" : undefined}
-              className={cn("rounded-full px-3 py-2 text-[0.8125rem] text-ink-2 transition-colors hover:text-ink", pathname === n.href && "text-ink")}
+              className={cn("relative rounded-full px-3 py-2 text-[0.8125rem] tracking-[0.01em] text-ink-2 transition-colors hover:text-ink", pathname === n.href && "text-ink after:absolute after:bottom-0 after:left-1/2 after:size-1 after:-translate-x-1/2 after:rounded-full after:bg-oxblood")}
             >
               <span className="link-underline">{n.label}</span>
             </Link>
@@ -84,7 +90,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
               </button>
             </RD.Trigger>
             <RD.Portal>
-              <RD.Overlay className="fixed inset-0 z-[80] bg-black/30 backdrop-blur-sm" />
+              <RD.Overlay className="fixed inset-0 z-[80] bg-[#171a17]/45 backdrop-blur-sm" />
               <RD.Content className="fixed inset-y-0 right-0 z-[81] flex w-full max-w-sm flex-col overflow-y-auto bg-paper px-6 pb-8 pt-5 shadow-lg data-[state=open]:animate-[fade-in_200ms_ease-out]">
                 <div className="flex items-center justify-between">
                   <RD.Title asChild>
@@ -101,7 +107,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
                 </div>
                 <nav aria-label="Mobile" className="mt-7 flex flex-col">
                   {[...nav, ...moreNav].map((n) => (
-                    <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="border-b border-line py-3 font-sans text-[1.15rem] leading-tight text-ink">
+                    <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="border-b border-line py-3.5 font-serif text-[1.5rem] font-[350] leading-tight tracking-[-0.02em] text-ink">
                       {n.label}
                     </Link>
                   ))}

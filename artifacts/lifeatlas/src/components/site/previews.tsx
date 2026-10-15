@@ -187,7 +187,7 @@ export function VoicePreview({ audioId = "aud_bread", title = "The kitchen alway
         <SampleTag>Synthesized sample voice</SampleTag>
       </div>
       {asset ? <AudioPlayer asset={asset} title={title} className="mt-5" showNotice={false} /> : null}
-      <figcaption className="mt-4 text-[0.8125rem] leading-relaxed text-ink-3">A fictional story read by an open-source text-to-speech voice — not a real person. Your recordings stay exactly as spoken; we never invent a transcript.</figcaption>
+      <figcaption className="mt-4 text-[0.8125rem] leading-relaxed text-ink-3">A fictional story read by an open-source text-to-speech voice, not a real person. Your recordings stay exactly as spoken; we never invent a transcript.</figcaption>
     </figure>
   );
 }
@@ -215,7 +215,7 @@ export function InvitationPreview({ className }: { className?: string }) {
             <div className="flex gap-3">
               <dt className="sr-only">Cost</dt>
               <Check className="mt-0.5 size-4 shrink-0 text-evergreen" aria-hidden />
-              <dd>It&rsquo;s free for you. No plan, no card — ever.</dd>
+              <dd>It&rsquo;s free for you. No plan, no card, ever.</dd>
             </div>
             <div className="flex gap-3">
               <dt className="sr-only">What happens</dt>
@@ -235,13 +235,13 @@ export function InvitationPreview({ className }: { className?: string }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Future messages — honest delivery states                             */
+/* Future messages, honest delivery states                             */
 /* ------------------------------------------------------------------ */
 
 const ladder: { label: string; detail: string; state: "done" | "available" | "not_yet" }[] = [
   { label: "Draft", detail: "Write a letter, record your voice, add photographs.", state: "done" },
   { label: "Saved on this device", detail: "Kept in your browser as you write.", state: "done" },
-  { label: "Uploaded", detail: "Needs hosted accounts — not in this preview.", state: "not_yet" },
+  { label: "Uploaded", detail: "Needs hosted accounts, not in this preview.", state: "not_yet" },
   { label: "Scheduled", detail: "Only when a real delivery service confirms it.", state: "not_yet" },
   { label: "Delivered", detail: "Reported by that service, never assumed.", state: "not_yet" },
 ];
@@ -255,7 +255,7 @@ export function FutureMessagePreview({ className }: { className?: string }) {
         </p>
         <SampleTag />
       </div>
-      <p className="mt-4 font-serif text-[1.35rem] leading-snug">To be opened on June 16, 2031 — by Sarah &amp; Jonah.</p>
+      <p className="mt-4 font-serif text-[1.35rem] leading-snug">To be opened on June 16, 2031, by Sarah &amp; Jonah.</p>
       <ol className="mt-6 space-y-3.5">
         {ladder.map((s) => (
           <li key={s.label} className="flex items-start gap-3">
@@ -263,7 +263,7 @@ export function FutureMessagePreview({ className }: { className?: string }) {
             <span>
               <span className={cn("block text-[0.9375rem] font-medium", s.state === "not_yet" && "text-ink-3")}>
                 {s.label}
-                <span className="sr-only">{s.state === "done" ? " — reached" : " — not reached"}</span>
+                <span className="sr-only">{s.state === "done" ? ", reached" : ", not reached"}</span>
               </span>
               <span className="block text-[0.8125rem] text-ink-3">{s.detail}</span>
             </span>
@@ -406,7 +406,7 @@ export function GenerationsPreview({ className }: { className?: string }) {
           </li>
         ))}
       </ol>
-      <figcaption className="mt-6 border-t border-line pt-4 text-[0.8125rem] leading-relaxed text-ink-3">June isn&rsquo;t family by blood — she&rsquo;s Margaret&rsquo;s friend of fifty years, and she belongs here too.</figcaption>
+      <figcaption className="mt-6 border-t border-line pt-4 text-[0.8125rem] leading-relaxed text-ink-3">June isn&rsquo;t family by blood, she&rsquo;s Margaret&rsquo;s friend of fifty years, and she belongs here too.</figcaption>
     </figure>
   );
 }

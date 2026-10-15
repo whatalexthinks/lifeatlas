@@ -11,7 +11,7 @@ import { AddToBagButton } from "@/components/site/bag";
 import { cn, formatMoney } from "@/lib/utils";
 
 /**
- * Plans and keepsakes, read from the catalog and the plan table — nothing on this page
+ * Plans and keepsakes, read from the catalog and the plan table, nothing on this page
  * hard-codes a price or a limit. Every amount is a test price; nothing is charged.
  */
 
@@ -118,7 +118,7 @@ export function KeepsakePricing({ className }: { className?: string }) {
 const rows: { label: string; value: (id: PlanId) => React.ReactNode }[] = [
   { label: "Capsules", value: (id) => (id === "preview" ? `Up to ${plans[id].capsules}, on this device` : plans[id].capsules) },
   { label: "Storage for photos, voice and video", value: (id) => (plans[id].storageGb ? `${plans[id].storageGb} GB (planned)` : "Your browser only") },
-  { label: "Contributors and viewers", value: () => "Unlimited — always free" },
+  { label: "Contributors and viewers", value: () => "Unlimited, always free" },
   { label: "Guided questions, timeline, chapters", value: () => true },
   { label: "Future messages prepared", value: (id) => (plans[id].futureMessages === "unlimited" ? "Unlimited" : plans[id].futureMessages) },
   { label: "Family directory across capsules", value: (id) => plans[id].familyDirectory },

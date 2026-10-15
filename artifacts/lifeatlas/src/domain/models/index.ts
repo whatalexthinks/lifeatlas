@@ -91,10 +91,10 @@ export interface DemoDatabase {
   bookmarks: { capsuleId: string; memoryId: string; at: string }[];
   /** Questions the account has starred, across every capsule. */
   questionFavorites: string[];
-  /** Answers in progress and family gathering sessions — autosaved, resumable. */
+  /** Answers in progress and family gathering sessions, autosaved, resumable. */
   captureDrafts: CaptureDraft[];
   letterDrafts: LetterDraft[];
   gatherings: GatheringSession[];
-  /** Capsule wizard draft — persisted so users can leave and resume. */
+  /** Capsule wizard draft, persisted so users can leave and resume. */
   wizardDraft: unknown | null;
 }

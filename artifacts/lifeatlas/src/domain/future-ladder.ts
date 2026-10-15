@@ -3,7 +3,7 @@ import { integrations as connected, type Integrations } from "@/config/integrati
 
 /**
  * Where a letter for the future really is, as separate, explicit steps. A step is only ever
- * marked reached when something that can actually reach it has done so — a letter saved on
+ * marked reached when something that can actually reach it has done so, a letter saved on
  * this device is never shown as stored, scheduled or delivered.
  */
 export type LadderStepKey = "drafted" | "saved_locally" | "stored" | "scheduled" | "attempted" | "delivered";
@@ -60,7 +60,7 @@ const needs: Partial<Record<LadderStepKey, keyof Integrations>> = {
 };
 
 const unavailableNote: Partial<Record<LadderStepKey, string>> = {
-  stored: "Not in this preview — nothing leaves this device.",
+  stored: "Not in this preview, nothing leaves this device.",
   scheduled: "No delivery service is connected, so nothing is scheduled.",
   attempted: "Needs a delivery service.",
   delivered: "Needs a delivery service. We never promise a letter will arrive years from now.",
@@ -84,7 +84,7 @@ export function deliveryLadder(message: LetterLike, services: Integrations = con
     const label = key === "delivered" && message.status === "failed" ? "Delivery failed" : labels[key];
     if (i <= upTo) return { key, label, state: "done", note: doneNote[key] };
     if (key === "delivered" && message.status === "failed") return { key, label, state: "failed", note: "The delivery service couldn't deliver it. You'd be told here, with what to try next." };
-    if (message.status === "canceled") return { key, label, state: "canceled", note: "Canceled — this letter won't be delivered." };
+    if (message.status === "canceled") return { key, label, state: "canceled", note: "Canceled, this letter won't be delivered." };
     if (service && !services[service]) return { key, label, state: "unavailable", note: unavailableNote[key] ?? "Not available yet." };
     return { key, label, state: "later", note: "Not yet." };
   });

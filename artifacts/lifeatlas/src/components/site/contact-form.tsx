@@ -40,7 +40,7 @@ export function ContactForm() {
     return (
       <div className="rounded-[22px] border border-line bg-surface p-7" role="status">
         <Check className="size-6 text-evergreen" aria-hidden />
-        <p className="display-3 mt-4 !text-[1.5rem]">Saved on this device — not sent.</p>
+        <p className="display-3 mt-4 !text-[1.5rem]">Saved on this device, not sent.</p>
         <p className="mt-3 text-[1rem] leading-relaxed text-ink-2">No support inbox is connected in this preview, so nobody will read this yet. In the real service, a person would reply to the address you gave. You can see the message in the operations demo inbox.</p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button variant="secondary" onClick={() => setSaved(false)}>

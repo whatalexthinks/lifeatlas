@@ -89,7 +89,7 @@ export function SaveStatus({ compact }: { compact?: boolean }) {
   const { mode, lastSavedAt, error } = usePersistence();
   const label =
     mode === "memory"
-      ? "This browser can't save — changes vanish on reload"
+      ? "This browser can't save, changes vanish on reload"
       : error
         ? error
         : mode === "pending"
@@ -174,7 +174,7 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
             <span className="inline-flex items-center gap-1.5 rounded-full bg-brass-soft px-2.5 py-1 font-medium text-brass-ink">
               <span className="size-1.5 rounded-full bg-brass" aria-hidden /> Demo mode
             </span>
-            <span className="truncate">Sample family &amp; local data only — nothing is sent, charged or backed up.</span>
+            <span className="truncate">Sample family &amp; local data only, nothing is sent, charged or backed up.</span>
           </div>
           <div className="flex items-center gap-1">
             <Link href="/view/cap_margaret" className="hidden h-10 items-center gap-1.5 rounded-full px-3.5 text-[0.875rem] text-ink-2 hover:bg-ivory hover:text-ink sm:inline-flex">

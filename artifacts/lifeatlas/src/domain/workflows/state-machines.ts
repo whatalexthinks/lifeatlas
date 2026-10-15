@@ -11,7 +11,7 @@ import type {
 } from "@/domain/models";
 
 /**
- * Declarative transition tables. Business rules live here — never in components.
+ * Declarative transition tables. Business rules live here, never in components.
  * See docs/DATA_MODEL.md for the diagrams.
  */
 export type TransitionTable<S extends string> = Record<S, readonly S[]>;
@@ -62,7 +62,7 @@ export const futureMessageTransitions: TransitionTable<FutureMessageStatus> = {
   canceled: ["draft"],
 };
 
-/** Production future-delivery states — unreachable without provider confirmation. */
+/** Production future-delivery states, unreachable without provider confirmation. */
 export const PROVIDER_ONLY_FUTURE_STATES: FutureMessageStatus[] = ["sealed", "scheduled", "delivery_attempted", "delivered", "failed"];
 
 export const exportTransitions: TransitionTable<ExportStatus> = {
@@ -125,7 +125,7 @@ export function assertTransition<S extends string>(machine: string, table: Trans
   if (!canTransition(table, from, to)) throw new TransitionError(machine, from, to);
 }
 
-/** Verified/degraded/failed must carry evidence — no green badge without it. */
+/** Verified/degraded/failed must carry evidence, no green badge without it. */
 export function preservationStateIsHonest(state: HealthState, evidence: { checkedAt?: string; provider?: string } | undefined) {
   if (state === "unconfigured" || state === "checking") return true;
   return Boolean(evidence?.checkedAt && evidence.provider);

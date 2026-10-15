@@ -72,13 +72,13 @@ export default function FamilyPage() {
         <Stat label="Capsules" value={groupCapsules.length} />
         <Stat label="People" value={members.length} />
         <Stat label="Contributors" value={new Set(active.filter((m) => m.role === "contributor").map((m) => m.personId)).size} />
-        <Stat label="Invitations waiting" value={pending.length} hint={pending.length ? "Previews only — not sent" : undefined} />
+        <Stat label="Invitations waiting" value={pending.length} hint={pending.length ? "Previews only, not sent" : undefined} />
       </div>
 
       <div className="mb-8 flex gap-3 rounded-[14px] bg-info-soft px-5 py-4 text-[0.9375rem]">
         <Info className="mt-0.5 size-5 shrink-0 text-info" />
         <p className="text-ink-2">
-          <strong className="font-medium text-ink">Roles are demonstrated, not enforced.</strong> Everyone in this preview uses the same browser. Secure sign-in and real access control come with accounts — until then, use <em>Preview</em> to see exactly what each person would see.
+          <strong className="font-medium text-ink">Roles are demonstrated, not enforced.</strong> Everyone in this preview uses the same browser. Secure sign-in and real access control come with accounts, until then, use <em>Preview</em> to see exactly what each person would see.
         </p>
       </div>
 

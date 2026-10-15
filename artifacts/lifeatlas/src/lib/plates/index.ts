@@ -2,7 +2,7 @@ import { makePalette, toneFinish, type Tone } from "./palette";
 import { scenes, type Ctx } from "./scenes";
 
 /**
- * Illustrated sample plates — original artworks generated deterministically
+ * Illustrated sample plates, original artworks generated deterministically
  * from a scene, a film tone and a seed. They are never presented as photographs.
  */
 
@@ -48,7 +48,7 @@ export const plates: Record<string, PlateSpec> = {
   "backyard-2010": { scene: "backyard", tone: "modern", seed: 261, aspect: "landscape" },
   "dock-2012": { scene: "dock", tone: "modern", seed: 271, aspect: "landscape" },
   "nightlight-2005": { scene: "nightlight", tone: "modern", seed: 281, aspect: "portrait" },
-  // Sarah & Jonah — the couples sample
+  // Sarah & Jonah, the couples sample
   "umbrella-1998": { scene: "umbrella", tone: "faded", seed: 301, aspect: "portrait" },
   "bookshop-1998": { scene: "bookshop", tone: "faded", seed: 302, aspect: "portrait" },
   "rooftops-2000": { scene: "rooftops", tone: "faded", seed: 303, aspect: "landscape" },
@@ -57,7 +57,7 @@ export const plates: Record<string, PlateSpec> = {
   "nightlight-2004": { scene: "nightlight", tone: "modern", seed: 306, aspect: "portrait" },
   "pancakes-2012": { scene: "pancakes", tone: "modern", seed: 307, aspect: "portrait" },
   "porch-2025": { scene: "porch", tone: "modern", seed: 308, aspect: "landscape" },
-  // The Ellis family — the multigenerational sample
+  // The Ellis family, the multigenerational sample
   "ferry-1934": { scene: "ferry", tone: "silver", seed: 311, aspect: "landscape" },
   "kitchen-1950": { scene: "kitchen", tone: "sepia", seed: 312, aspect: "landscape" },
   "letter-1952": { scene: "letter", tone: "sepia", seed: 313, aspect: "portrait" },

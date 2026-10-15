@@ -99,7 +99,7 @@ function Story({ memory: m, organizer }: { memory: Memory; organizer: string }) 
           <CornerDownRight className="mt-1 size-4 shrink-0 text-brass-ink" aria-hidden />
           <div>
             <blockquote className="font-serif text-[1.1rem] italic leading-snug">&ldquo;{m.reviewNote}&rdquo;</blockquote>
-            <figcaption className="mt-1 text-[0.875rem] text-ink-3">— {organizer}</figcaption>
+            <figcaption className="mt-1 text-[0.875rem] text-ink-3">, {organizer}</figcaption>
           </div>
         </figure>
       ) : null}

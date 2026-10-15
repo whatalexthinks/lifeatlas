@@ -3,7 +3,7 @@ import { chapterById } from "@/data/chapters";
 
 /**
  * What kind of story a capsule holds. One platform, specialised gently: the kind decides
- * the words we use, the questions we offer first and how chapters are named — never
+ * the words we use, the questions we offer first and how chapters are named, never
  * what a capsule is allowed to contain.
  */
 export interface CapsuleKindConfig {
@@ -43,7 +43,7 @@ export const capsuleKinds: Record<CapsuleKind, CapsuleKindConfig> = {
   personal: {
     kind: "personal",
     option: "My own",
-    optionHint: "Your life, in your words — for you now, and for the people who come after.",
+    optionHint: "Your life, in your words, for you now, and for the people who come after.",
     label: "Personal",
     title: () => "My Life, So Far",
     about: () => "your life",
@@ -57,7 +57,7 @@ export const capsuleKinds: Record<CapsuleKind, CapsuleKindConfig> = {
   couple: {
     kind: "couple",
     option: "Mine and my partner's",
-    optionHint: "How you met, the firsts, the adventures — and the small moments only you two know.",
+    optionHint: "How you met, the firsts, the adventures, and the small moments only you two know.",
     label: "Couple",
     title: () => "Our Story",
     about: (name) => (name ? `${name}'s story together` : "your story together"),
@@ -71,7 +71,7 @@ export const capsuleKinds: Record<CapsuleKind, CapsuleKindConfig> = {
   family: {
     kind: "family",
     option: "My family",
-    optionHint: "Several generations in one place — traditions, family stories and everyone's side of them.",
+    optionHint: "Several generations in one place, traditions, family stories and everyone's side of them.",
     label: "Family",
     title: (name) => (name ? `The ${name} Family` : "Our Family"),
     about: (name) => (name ? `the ${name} family` : "your family"),
@@ -113,7 +113,7 @@ export const capsuleKinds: Record<CapsuleKind, CapsuleKindConfig> = {
   someone: {
     kind: "someone",
     option: "Someone special",
-    optionHint: "A friend, a mentor, someone you miss — a place for the stories people tell about them.",
+    optionHint: "A friend, a mentor, someone you miss, a place for the stories people tell about them.",
     label: "Someone special",
     title: (name) => (callName(name) ? `The Stories of ${callName(name)}` : "Their Stories"),
     about: (name) => callName(name) || "them",
@@ -145,7 +145,7 @@ export function capsuleKind(c: Pick<Capsule, "kind" | "relationshipKind">): Caps
   }
 }
 
-/** Chapter name for this capsule — "How we met" in a couple's capsule, "Love" elsewhere. */
+/** Chapter name for this capsule, "How we met" in a couple's capsule, "Love" elsewhere. */
 export function chapterTitle(c: Pick<Capsule, "kind" | "relationshipKind">, key: ChapterKey) {
   return capsuleKinds[capsuleKind(c)].chapterTitles[key] ?? chapterById(key).title;
 }

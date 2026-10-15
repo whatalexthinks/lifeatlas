@@ -222,7 +222,7 @@ export interface MessagePreview {
 export interface CommunicationsProvider {
   prepareInvitation(capsuleId: string, values: InvitationFormValues): Promise<ServiceResult<Invitation>>;
   preview(invitationId: string, origin: string): Promise<ServiceResult<MessagePreview>>;
-  /** Demo: marks simulated_sent after the organizer copies or "sends" — no email leaves the device. */
+  /** Demo: marks simulated_sent after the organizer copies or "sends", no email leaves the device. */
   simulateSend(invitationId: string): Promise<ServiceResult<Invitation>>;
   /** Production send. Part One: not configured. */
   send(invitationId: string): Promise<ServiceResult<{ providerMessageId: string }>>;
@@ -367,7 +367,7 @@ export interface ArchiveInspection {
   places: number;
   /** Files whose bytes match the SHA-256 recorded at export. */
   verified: { photos: number; recordings: number; videos?: number };
-  /** Captions of files whose bytes no longer match — they won't be restored. */
+  /** Captions of files whose bytes no longer match, they won't be restored. */
   damaged: string[];
   /** Files listed in the manifest but not in this archive (or a records-only export). */
   notInArchive: number;
@@ -405,7 +405,7 @@ export interface FutureDeliveryProvider {
   transition(id: string, to: FutureMessageStatus): Promise<ServiceResult<FutureMessage>>;
   /** Demo seal: computes a real SHA-256 snapshot hash locally; reversible. */
   sealDemo(id: string): Promise<ServiceResult<FutureMessage>>;
-  /** Production scheduling — not configured until Part Two. */
+  /** Production scheduling, not configured until Part Two. */
   schedule(id: string): Promise<ServiceResult<{ jobId: string }>>;
   remove(id: string): Promise<ServiceResult<null>>;
   resolveToken(token: string): Promise<ServiceResult<FutureMessage>>;

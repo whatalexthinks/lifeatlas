@@ -1,7 +1,7 @@
 import type { LifeEvent, Persona, Person, Relationship } from "@/domain/models";
 
 /**
- * THE ELLIS FAMILY — a fictional sample family.
+ * THE ELLIS FAMILY, a fictional sample family.
  * These people do not exist and have not endorsed OurLifeCapsule.
  *
  * Family graph (all dates internally consistent):
@@ -13,8 +13,8 @@ import type { LifeEvent, Persona, Person, Relationship } from "@/domain/models";
  *                    │      └─ Emma Ellis (b. 2005)
  *                    └─ Daniel Ellis (b. 1971) ══ Priya Ellis (b. 1973)
  *                           └─ Leo Ellis (b. 2010)
- *   Colette Arsenault (1915–2002) — Eleanor's sister, Montréal
- *   June Whitaker (b. 1946) — Margaret's friend and fellow potter
+ *   Colette Arsenault (1915–2002), Eleanor's sister, Montréal
+ *   June Whitaker (b. 1946), Margaret's friend and fellow potter
  */
 
 const T = "2026-09-02T14:00:00.000Z";

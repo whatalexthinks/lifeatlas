@@ -122,7 +122,7 @@ export function Recorder({
         {"likelySilent" in clip && clip.likelySilent ? (
           <p className="mt-4 flex items-start gap-2 rounded-[12px] bg-warning-soft px-3.5 py-2.5 text-[0.9375rem] text-ink-2" role="alert">
             <AlertCircle className="mt-0.5 size-4 shrink-0 text-warning" />
-            We barely heard anything. Play it back — if it&rsquo;s silent, check the microphone and record again.
+            We barely heard anything. Play it back, if it&rsquo;s silent, check the microphone and record again.
           </p>
         ) : null}
         <div className="mt-5 flex flex-wrap gap-2.5">
@@ -172,7 +172,7 @@ export function Recorder({
             {formatDuration(r.elapsed)}
           </p>
           <p className="mt-1 text-[0.9375rem] text-ink-3" role="status">
-            {r.status === "paused" ? "Paused — take your time" : "Recording… speak as you would to family"}
+            {r.status === "paused" ? "Paused, take your time" : "Recording… speak as you would to family"}
           </p>
           <LevelBars levels={r.levels} className="mt-5 w-full max-w-sm" />
           <div className="mt-6 flex items-center gap-4">

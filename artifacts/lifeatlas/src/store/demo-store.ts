@@ -87,11 +87,11 @@ export const useDemoStore = create<DemoStore>()((set, get) => ({
   },
 }));
 
-/** Plain-language storage problems — never a raw browser error. Exported for tests. */
+/** Plain-language storage problems, never a raw browser error. Exported for tests. */
 export function describeError(e: unknown) {
   if (isQuotaError(e)) return `This device is out of storage space for ${brand.name}. Remove a recording or download your archive, then try again.`;
   const name = e instanceof DOMException || e instanceof Error ? e.name : "";
-  if (name === "SecurityError" || name === "NotAllowedError") return `This browser is blocking ${brand.name} from saving — usually a private window or a setting that blocks site data.`;
+  if (name === "SecurityError" || name === "NotAllowedError") return `This browser is blocking ${brand.name} from saving, usually a private window or a setting that blocks site data.`;
   if (name === "InvalidStateError" || name === "UnknownError" || name === "AbortError" || name === "TransactionInactiveError") return "This browser's storage stopped responding. Your earlier changes are safe; reload the page and try again.";
   if (name === "VersionError") return `${brand.name} is open in another tab with a different version. Close the other tab and reload.`;
   return `${brand.name} couldn't save on this device just now. Your earlier changes are safe; try again in a moment.`;
@@ -129,7 +129,7 @@ export async function flushSave() {
   }
 }
 
-/** Write only if a debounced save is still waiting — used when the tab is hidden or closing. */
+/** Write only if a debounced save is still waiting, used when the tab is hidden or closing. */
 export function flushPendingSave() {
   if (saveTimer) void flushSave().catch(() => undefined);
 }

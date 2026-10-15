@@ -41,7 +41,7 @@ export function Eyebrow({ children, className, plain }: { children: React.ReactN
   return <p className={cn("eyebrow", plain && "plain", className)}>{children}</p>;
 }
 
-/** Section heading. `title` may contain one <em> — the word that matters. */
+/** Section heading. `title` may contain one <em>, the word that matters. */
 export function Heading({
   id,
   eyebrow,
@@ -191,7 +191,7 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />;
 }
 
-/** A long, readable document with a table of contents — privacy, terms. */
+/** A long, readable document with a table of contents, privacy, terms. */
 export function LegalDocument({ eyebrow, title, status, updated, sections }: { eyebrow: string; title: React.ReactNode; status: React.ReactNode; updated: string; sections: { id: string; title: string; body: React.ReactNode }[] }) {
   return (
     <>

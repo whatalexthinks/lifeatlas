@@ -86,7 +86,7 @@ test("a holiday session runs from the keyboard", async ({ page }) => {
   await page.getByRole("button", { name: "Keep this answer" }).focus();
   await page.keyboard.press("Enter");
   // The hand-off button takes focus so the next person can just press Enter.
-  await expect(page.getByRole("button", { name: /I’m Sarah — ready/ })).toBeFocused();
+  await expect(page.getByRole("button", { name: /I’m Sarah, ready/ })).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.getByText("Sarah’s turn")).toBeVisible();
 });

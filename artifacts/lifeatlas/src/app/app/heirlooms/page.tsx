@@ -37,7 +37,7 @@ export default function HeirloomsPage() {
             Made to <em>hold.</em>
           </>
         }
-        description="Some stories belong in your hands. Design a printed book or a keepsake box from the stories your family has approved — and walk through a demo order to see exactly how it will work."
+        description="Some stories belong in your hands. Design a printed book or a keepsake box from the stories your family has approved, and walk through a demo order to see exactly how it will work."
       />
       <DemoNotice className="mb-10" title="Printing and fulfillment aren't connected">
         Designs and proofs are real and saved on this device. Prices are test amounts; demo orders don&rsquo;t charge anything and nothing is printed or shipped.
@@ -51,7 +51,7 @@ export default function HeirloomsPage() {
           <div className="flex flex-1 flex-col p-6 sm:p-7">
             <div className="flex items-baseline justify-between gap-4">
               <h2 className="font-serif text-[2rem] leading-tight">The Printed Life Book</h2>
-              <p className="shrink-0 text-[0.9375rem] text-ink-2">from {book ? formatMoney(book.price.amount) : "—"}</p>
+              <p className="shrink-0 text-[0.9375rem] text-ink-2">from {book ? formatMoney(book.price.amount) : "Not set"}</p>
             </div>
             <p className="mt-2 text-ink-2">A designed memoir of approved stories and photographs, in linen, cloth or soft-touch. Turn every page and approve a proof first.</p>
             <div className="mt-auto flex flex-wrap gap-3 pt-6">
@@ -66,12 +66,12 @@ export default function HeirloomsPage() {
         </article>
         <article className="card-paper group flex flex-col overflow-hidden">
           <div className="grid h-[340px] place-items-center bg-[radial-gradient(90%_80%_at_50%_30%,#f1ece2,#d9cfba)] px-6">
-            <KeepsakeBox finish="walnut" engraving="Margaret Ellis · 1940 —" className="max-w-[380px]" />
+            <KeepsakeBox finish="walnut" engraving="Margaret Ellis · 1940, " className="max-w-[380px]" />
           </div>
           <div className="flex flex-1 flex-col p-6 sm:p-7">
             <div className="flex items-baseline justify-between gap-4">
               <h2 className="font-serif text-[2rem] leading-tight">The Physical LifeCapsule</h2>
-              <p className="shrink-0 text-[0.9375rem] text-ink-2">from {box ? formatMoney(box.price.amount) : "—"}</p>
+              <p className="shrink-0 text-[0.9375rem] text-ink-2">from {box ? formatMoney(box.price.amount) : "Not set"}</p>
             </div>
             <p className="mt-2 text-ink-2">A finished wooden box for display: the book, printed letters, photographs, a preservation guide and an archive copy.</p>
             <div className="mt-auto flex flex-wrap gap-3 pt-6">
@@ -104,7 +104,7 @@ export default function HeirloomsPage() {
           <p className="text-[0.875rem] text-ink-3">{pluralize(heirlooms.length, "design")}</p>
         </div>
         {heirlooms.length === 0 ? (
-          <p className="mt-6 rounded-[16px] bg-ivory/60 px-6 py-8 text-center text-ink-2">Nothing designed yet. Start with a book — it takes about ten minutes.</p>
+          <p className="mt-6 rounded-[16px] bg-ivory/60 px-6 py-8 text-center text-ink-2">Nothing designed yet. Start with a book, it takes about ten minutes.</p>
         ) : (
           <ul className="mt-6 grid gap-4 md:grid-cols-2">
             {heirlooms.map((h) => {
@@ -161,7 +161,7 @@ export default function HeirloomsPage() {
       </section>
 
       <p className="mt-12 text-center text-[0.875rem] text-ink-3">
-        Prefer a portable copy? Every capsule can be <Link href="/app/preservation" className="text-link">exported as an open archive</Link> at any time — free.
+        Prefer a portable copy? Every capsule can be <Link href="/app/preservation" className="text-link">exported as an open archive</Link> at any time, free.
       </p>
 
       <ConfirmDialog

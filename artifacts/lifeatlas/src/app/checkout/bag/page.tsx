@@ -78,7 +78,7 @@ export default function BagPage() {
     <div className="mx-auto grid max-w-6xl gap-10 px-5 py-10 sm:px-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:py-14">
       <div className="min-w-0">
         <h1 className="font-serif text-[clamp(2.2rem,1.8rem+1.6vw,3rem)] leading-tight">Your bag</h1>
-        <DemoNotice className="mt-6" title="Preview — nothing is charged">
+        <DemoNotice className="mt-6" title="Preview, nothing is charged">
           Your bag is kept on this device. Checkout is a demonstration: no card is asked for and nothing is made or shipped.
         </DemoNotice>
         <ul className="mt-8 divide-y divide-line rounded-[20px] border border-line bg-surface">
@@ -92,7 +92,7 @@ export default function BagPage() {
                 <div className="min-w-0">
                   <p className="font-medium">{line.label ?? p.name}</p>
                   <p className="mt-1 text-[0.875rem] text-ink-3">
-                    {p.kind === "plan" ? (line.asGift || line.giftId ? "One year, prepaid as a gift" : (line.interval ?? "year") === "month" ? "Billed monthly" : "Billed yearly") : q?.fulfillment === "made_to_order" ? "Made to order — printed only after you approve a proof." : q?.fulfillment === "ships_after_payment" ? "Ready-made kit — would ship after payment." : p.tagline}
+                    {p.kind === "plan" ? (line.asGift || line.giftId ? "One year, prepaid as a gift" : (line.interval ?? "year") === "month" ? "Billed monthly" : "Billed yearly") : q?.fulfillment === "made_to_order" ? "Made to order, printed only after you approve a proof." : q?.fulfillment === "ships_after_payment" ? "Ready-made kit, would ship after payment." : p.tagline}
                     {q?.extras ? ` · includes ${formatMoney(q.extras)} of options` : ""}
                   </p>
                   {p.kind === "plan" && p.monthly && !line.asGift && !line.giftId ? (
@@ -106,7 +106,7 @@ export default function BagPage() {
                   ) : null}
                 </div>
                 <div className="flex shrink-0 items-center gap-3 sm:flex-col sm:items-end">
-                  <span className="font-mono tabular-nums">{q ? formatMoney(q.total, { showFree: true }) : "—"}</span>
+                  <span className="font-mono tabular-nums">{q ? formatMoney(q.total, { showFree: true }) : "Not set"}</span>
                   <div className="flex items-center gap-1">
                     {adjustable ? (
                       <span className="inline-flex items-center rounded-full border border-line">
@@ -136,7 +136,7 @@ export default function BagPage() {
               <Package className="mt-0.5 size-5 shrink-0 text-oxblood" aria-hidden />
               <span>
                 <span className="block font-medium">Add the ready-made {kit.name}</span>
-                <span className="text-[0.875rem] text-ink-3">Prompts, archival sleeves and a guide — {formatMoney(kit.price.amount)}. Or <Link href="/app/heirlooms/capsule-builder" className="text-link">design a personal one</Link>.</span>
+                <span className="text-[0.875rem] text-ink-3">Prompts, archival sleeves and a guide, {formatMoney(kit.price.amount)}. Or <Link href="/app/heirlooms/capsule-builder" className="text-link">design a personal one</Link>.</span>
               </span>
             </p>
             <Button variant="secondary" onClick={() => void services().billing.addToCart({ productId: kit.id, quantity: 1, extrasAmount: 0 }).then((r) => (r.status === "ok" ? toast.success("Added to your bag") : toast.error("Couldn't add it", r.status === "error" ? r.message : undefined)))}>

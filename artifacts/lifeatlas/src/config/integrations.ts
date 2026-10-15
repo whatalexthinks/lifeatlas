@@ -1,6 +1,6 @@
 /**
  * Which real services this build is connected to. The interface reads these flags to decide
- * what it may claim — a letter is never "Scheduled" unless `futureDelivery` is true, an
+ * what it may claim, a letter is never "Scheduled" unless `futureDelivery` is true, an
  * invitation is never "Sent" unless `email` is true, and so on.
  *
  * Every flag is false in the preview. Turning one on is part of connecting the provider

@@ -6,14 +6,14 @@ import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import { brand } from "../src/config/brand";
 
-export const alt = `${brand.name} — A life is made of moments. Keep them close. Stories, voices, photographs and memories, kept together for the people who matter.`;
+export const alt = `${brand.name}, A life is made of moments. Keep them close. Stories, voices, photographs and memories, kept together for the people who matter.`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /**
  * The share card for every page. Typographic on purpose: no family photo is ever placed
  * in a link preview, so nothing private can leak through one. Fonts are static TTF
- * instances (the renderer can't read WOFF2) — see src/app/og-fonts for their OFL licences.
+ * instances (the renderer can't read WOFF2), see src/app/og-fonts for their OFL licences.
  */
 export default async function OpengraphImage() {
   const dir = fileURLToPath(new URL("../src/app/og-fonts/", import.meta.url));
@@ -39,7 +39,7 @@ export default async function OpengraphImage() {
           <div style={{ fontFamily: "Newsreader", fontSize: 100, lineHeight: 1, letterSpacing: "-0.03em", marginTop: 34 }}>A life is made</div>
           <div style={{ fontFamily: "Newsreader", fontSize: 100, lineHeight: 1.02, letterSpacing: "-0.03em" }}>of moments.</div>
           <div style={{ fontFamily: "NewsreaderItalic", fontStyle: "italic", fontSize: 100, lineHeight: 1.04, letterSpacing: "-0.03em", color: oxblood }}>Keep them close.</div>
-          <div style={{ fontSize: 25, lineHeight: 1.45, color: muted, marginTop: 30, maxWidth: 600 }}>Stories, voices, photographs and memories — kept together for the people who matter.</div>
+          <div style={{ fontSize: 25, lineHeight: 1.45, color: muted, marginTop: 30, maxWidth: 600 }}>Stories, voices, photographs and memories, kept together for the people who matter.</div>
         </div>
 
         {/* A capsule card, the way the product presents one */}

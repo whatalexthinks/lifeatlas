@@ -33,7 +33,7 @@ export const mockAuth: AuthProvider = {
     if (!p) return fail("not_found", "Unknown demo identity.");
     store().mutate((d) => {
       d.activePersonaId = personaId;
-    }, { actor: p.name, action: "demo.persona_switched", detail: "Simulated — not a sign-in" });
+    }, { actor: p.name, action: "demo.persona_switched", detail: "Simulated, not a sign-in" });
     // Identity decides what every page shows, so write it now rather than after the save debounce.
     await flushSave().catch(() => undefined);
     return ok({ userId: db().account.user.id, personaId, persona: p, assurance: "simulated" });
@@ -109,7 +109,7 @@ export const mockPreservation: PreservationProvider = {
       secondary: "unconfigured",
       lastIntegrityCheck: last,
       explanation:
-        "Storage and backups are not connected in this preview. Your stories live only in this browser on this device. Do not rely on this demo to preserve irreplaceable files — download a copy.",
+        "Storage and backups are not connected in this preview. Your stories live only in this browser on this device. Do not rely on this demo to preserve irreplaceable files, download a copy.",
     };
     return ok(s);
   },

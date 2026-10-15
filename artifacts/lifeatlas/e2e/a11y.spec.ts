@@ -4,8 +4,8 @@ import { untilAnimationsSettle } from "./support/settle";
 
 /**
  * Automated WCAG 2.2 AA checks (axe-core). Automated rules catch roughly a third of
- * accessibility issues — keyboard, screen-reader and "incomplete" results still need
- * human review — but contrast, names, roles and target sizes must never regress.
+ * accessibility issues, keyboard, screen-reader and "incomplete" results still need
+ * human review, but contrast, names, roles and target sizes must never regress.
  */
 const WCAG = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
@@ -51,7 +51,7 @@ async function audit(page: Page, routes: string[]) {
     await page.waitForLoadState("networkidle");
     await untilAnimationsSettle(page);
     const { violations } = await new AxeBuilder({ page }).withTags(WCAG).analyze();
-    for (const v of violations) problems.push(`${path} — ${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")})`);
+    for (const v of violations) problems.push(`${path}, ${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")})`);
   }
   return problems;
 }

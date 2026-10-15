@@ -14,7 +14,7 @@ export const referralProgram = {
   creditUses: "your renewal, a printed book or a physical capsule",
   terms: [
     "Your friend gets 20% off their first year of an annual plan when they arrive with your link or code.",
-    "You get $20 of account credit when they subscribe — up to 10 rewards a year.",
+    "You get $20 of account credit when they subscribe, up to 10 rewards a year.",
     "Credit has no cash value, can't be transferred, and is used automatically at checkout or renewal.",
     "Friends who only contribute to a capsule never need to pay, so inviting family is never a referral.",
     "Your own link can't be used on your own account. We may withhold rewards for duplicate or self-made accounts.",

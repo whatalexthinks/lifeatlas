@@ -31,7 +31,7 @@ export default function ContributeRecord() {
   const memories = useDb((d) => d.memories);
   const cues: Record<string, string> = {};
   for (const q of qs) {
-    // Gentle cues only — never surface grief or work stories as prompts.
+    // Gentle cues only, never surface grief or work stories as prompts.
     if (q.chapter === "wisdom" || q.chapter === "work") continue;
     const m = memories.find((x) => x.capsuleId === capsule.id && x.chapter === q.chapter && x.photoIds.length && x.status === "approved");
     if (m && media.some((a) => a.id === m.photoIds[0])) cues[q.id] = m.photoIds[0];

@@ -56,7 +56,7 @@ export const mockHeirlooms: HeirloomRepository = {
       { actor: actorName(), action: "heirloom.saved", target: config.id, detail: config.name },
     );
     store().track("heirloom_configured", { kind: config.kind });
-    // Proofs open in a new tab, which reads from storage — write now, not after the debounce.
+    // Proofs open in a new tab, which reads from storage, write now, not after the debounce.
     await flushSave().catch(() => undefined);
     return ok(config);
   },
@@ -78,7 +78,7 @@ export const mockHeirlooms: HeirloomRepository = {
     const bookProduct = catalog.find((p) => p.id === "book")!;
     if (h.kind === "book" && h.book) {
       const q = quoteBook(bookProduct.price.amount, h.book, bookPages(h));
-      const line: CartLine = { id: uid("cl"), productId: "book", quantity: h.book.copies, configurationId: h.id, extrasAmount: q.extras, label: `${h.book.title} — printed book` };
+      const line: CartLine = { id: uid("cl"), productId: "book", quantity: h.book.copies, configurationId: h.id, extrasAmount: q.extras, label: `${h.book.title}, printed book` };
       return ok(line);
     }
     if (h.kind === "keepsake_box" && h.box) {
@@ -92,7 +92,7 @@ export const mockHeirlooms: HeirloomRepository = {
       if (blockers.length) return fail("validation", blockers[0]);
       const boxProduct = catalog.find((p) => p.id === "keepsake_box")!;
       const q = quoteBox(boxProduct.price.amount, h.box, bookProduct.price.amount);
-      const line: CartLine = { id: uid("cl"), productId: "keepsake_box", quantity: 1, configurationId: h.id, extrasAmount: q.extras, label: `${h.name} — keepsake box` };
+      const line: CartLine = { id: uid("cl"), productId: "keepsake_box", quantity: 1, configurationId: h.id, extrasAmount: q.extras, label: `${h.name}, keepsake box` };
       return ok(line);
     }
     return fail("unsupported", "This heirloom can't be ordered.");

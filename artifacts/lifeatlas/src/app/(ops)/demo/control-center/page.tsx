@@ -185,7 +185,7 @@ export default function ControlCenterPage() {
       </section>
 
       <DemoNotice className="mt-10" title="This is a demonstration tool">
-        In production, persona switching and simulations don&rsquo;t exist — people sign in as themselves and events come from real services.
+        In production, persona switching and simulations don&rsquo;t exist, people sign in as themselves and events come from real services.
       </DemoNotice>
 
       <ConfirmDialog

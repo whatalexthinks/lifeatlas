@@ -137,7 +137,7 @@ export default function CapsuleOverview() {
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-[0.8125rem] text-ink-3">Gentle guide only — every life has its own shape. {chapterCounts.filter((c) => !c.n).length ? `${pluralize(chapterCounts.filter((c) => !c.n).length, "chapter")} still waiting for a first story.` : ""}</p>
+          <p className="mt-4 text-[0.8125rem] text-ink-3">Gentle guide only, every life has its own shape. {chapterCounts.filter((c) => !c.n).length ? `${pluralize(chapterCounts.filter((c) => !c.n).length, "chapter")} still waiting for a first story.` : ""}</p>
         </Panel>
       </div>
     </div>

@@ -17,8 +17,8 @@ type State =
   | { kind: "error"; message: string };
 
 /**
- * Bring an archive back from a OurLifeCapsule export. The file is checked first — every photo
- * and recording against the fingerprint recorded when it was exported — and nothing
+ * Bring an archive back from a OurLifeCapsule export. The file is checked first, every photo
+ * and recording against the fingerprint recorded when it was exported, and nothing
  * changes until the person confirms. A restore always becomes a new capsule.
  */
 export function RestorePanel() {
@@ -66,7 +66,7 @@ export function RestorePanel() {
           <h2 id="restore-h" className="font-serif text-[1.8rem] leading-tight">
             Restore from an export
           </h2>
-          <p className="mt-2 max-w-2xl text-ink-2">If this browser&rsquo;s copy is lost, bring an archive back from a file you downloaded. Every photo and recording is checked against its fingerprint first, and the archive comes back as a new capsule — nothing here is overwritten.</p>
+          <p className="mt-2 max-w-2xl text-ink-2">If this browser&rsquo;s copy is lost, bring an archive back from a file you downloaded. Every photo and recording is checked against its fingerprint first, and the archive comes back as a new capsule, nothing here is overwritten.</p>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ export function RestorePanel() {
             </div>
             {state.inspection.damaged.length ? (
               <div className="rounded-[14px] border border-warning/30 bg-warning-soft px-4 py-3 text-[0.9375rem]">
-                <p className="font-medium">Won&rsquo;t be restored — the file has changed since export:</p>
+                <p className="font-medium">Won&rsquo;t be restored, the file has changed since export:</p>
                 <ul className="mt-1 list-disc pl-5 text-ink-2">
                   {state.inspection.damaged.map((d) => (
                     <li key={d}>{d}</li>

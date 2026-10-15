@@ -97,7 +97,7 @@ describe("promotions", () => {
     expect(big.ok && big.discount).toBe(24900);
   });
 
-  it("the every-10th giveaway can't run — or be redeemed — without a recorded legal review", () => {
+  it("the every-10th giveaway can't run, or be redeemed, without a recorded legal review", () => {
     const g = promo("promo_every_tenth");
     expect(g.status).toBe("draft");
     expect(canActivate(g)).toMatchObject({ ok: false });

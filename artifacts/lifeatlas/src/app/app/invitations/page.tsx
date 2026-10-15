@@ -48,7 +48,7 @@ function InvitationsInner() {
     if (inv.status === "prepared") await services().communications.simulateSend(inv.id);
     const persona = personas.find((p) => p.personId && p.personId === inv.personId);
     if (persona) await services().auth.switchPersona(persona.id);
-    else toast.info("Opening as the recipient", "This person has no demo identity — you'll see their invitation as a guest.");
+    else toast.info("Opening as the recipient", "This person has no demo identity, you'll see their invitation as a guest.");
     router.push(`/contribute/${inv.token}`);
   };
 
@@ -110,7 +110,7 @@ function InvitationsInner() {
                 </option>
               ))}
             </Select>
-            <p className="text-[0.875rem] text-ink-3">Email and text delivery aren&rsquo;t connected — you share each link yourself.</p>
+            <p className="text-[0.875rem] text-ink-3">Email and text delivery aren&rsquo;t connected, you share each link yourself.</p>
           </div>
           {list.length === 0 ? (
             <EmptyState title="No invitations yet" body="Invite a storyteller, a sibling, or the cousin with the shoebox of slides." action={<Button onClick={() => setCreating(true)}>New invitation</Button>} />
@@ -217,11 +217,11 @@ function ReviewCard({ memory, capsuleName, onOpen }: { memory: Memory; capsuleNa
           </div>
           <p className="catalog mt-4">{formatFuzzyDate(memory.date)}</p>
           <h2 className="mt-1 font-serif text-[1.9rem] leading-tight">{memory.title}</h2>
-          <p className="mt-3 whitespace-pre-line text-[1rem] leading-relaxed text-ink-2">{memory.narrative || "(No written text — see the recording or photo.)"}</p>
+          <p className="mt-3 whitespace-pre-line text-[1rem] leading-relaxed text-ink-2">{memory.narrative || "(No written text, see the recording or photo.)"}</p>
           {memory.audioId ? <AudioPlayer mediaId={memory.audioId} title={memory.title} className="mt-5" showNotice={false} /> : null}
           <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional note for the contributor" className="mt-5 min-h-20 text-[0.9375rem]" aria-label="Note for the contributor" />
           <div className="mt-4 flex flex-wrap gap-2">
-            <Button leading={<Check className="size-4" />} loading={busy === "approved"} onClick={() => void act("approved", "Approved — now in the archive")}>
+            <Button leading={<Check className="size-4" />} loading={busy === "approved"} onClick={() => void act("approved", "Approved, now in the archive")}>
               Approve
             </Button>
             <Button variant="secondary" leading={<RotateCcw className="size-4" />} loading={busy === "returned"} onClick={() => void act("returned", "Returned with your note")}>
@@ -398,7 +398,7 @@ function NewInvitationDialog({ open, onOpenChange, defaultCapsule, defaultQuesti
         {capsule ? (
           <details className="group rounded-[16px] border border-line bg-paper/60 p-4">
             <summary className="cursor-pointer list-none font-medium [&::-webkit-details-marker]:hidden">
-              What {values.recipientName.trim().split(" ")[0] || "they"} will be told <span className="font-normal text-ink-3">— who&rsquo;s asking, what it is, the ask, the cost, and how it&rsquo;s used</span>
+              What {values.recipientName.trim().split(" ")[0] || "they"} will be told <span className="font-normal text-ink-3">, who&rsquo;s asking, what it is, the ask, the cost, and how it&rsquo;s used</span>
             </summary>
             <InvitationPoints
               size="sm"
@@ -492,7 +492,7 @@ function PreviewDialog({ invitationId, onClose, onOpenAs }: { invitationId: stri
         <code className="min-w-0 flex-1 truncate font-mono text-[0.8125rem] text-ink-2">{preview?.link}</code>
         <InvitationStatusBadge status={invitation.status} />
       </div>
-      <DemoNotice className="mt-5" title="Invitation preview — no email sent">
+      <DemoNotice className="mt-5" title="Invitation preview, no email sent">
         Copying marks the invitation as shared in this demo. Real delivery, secure single-use links and expiry enforcement arrive in a later release.
       </DemoNotice>
       <ol className={cn("mt-6 space-y-2 border-l border-line pl-4 text-[0.8125rem] text-ink-3")}>
@@ -502,7 +502,7 @@ function PreviewDialog({ invitationId, onClose, onOpenAs }: { invitationId: stri
           .map((h, i) => (
             <li key={i}>
               <span className="font-medium text-ink-2">{h.status.replace(/_/g, " ")}</span> · {relativeTime(h.at)}
-              {h.note ? ` — ${h.note}` : ""}
+              {h.note ? `, ${h.note}` : ""}
             </li>
           ))}
       </ol>

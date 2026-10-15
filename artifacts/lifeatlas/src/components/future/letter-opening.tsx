@@ -54,7 +54,7 @@ export function LetterOpening({ message, mode, onOpened }: { message: FutureMess
           <div className="relative mt-12 aspect-[1.55] w-full max-w-md" style={{ perspective: "1400px" }}>
             {/* back of the envelope */}
             <div className="absolute inset-0 rounded-[6px] bg-[#d9ccb0] shadow-[0_40px_70px_-30px_rgb(0_0_0/0.85)]" />
-            {/* the letter inside — rises as the flap opens */}
+            {/* the letter inside, rises as the flap opens */}
             <div
               className={cn(
                 "absolute inset-x-[6%] top-[8%] h-[84%] rounded-[3px] bg-[#fbf8f1] px-[8%] pt-[7%] text-left transition-transform duration-[1000ms] ease-[var(--ease-out)] [transition-delay:500ms]",
@@ -150,7 +150,7 @@ export function LetterOpening({ message, mode, onOpened }: { message: FutureMess
               )}
             </div>
           ) : null}
-          <p className="mt-10 font-serif text-[1.3rem] italic">— {message.authorName}</p>
+          <p className="mt-10 font-serif text-[1.3rem] italic">, {message.authorName}</p>
           {stories.length ? (
             <section className="mt-12 border-t border-[#d9ccb4] pt-8" aria-label="Stories given with this letter">
               <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-[#74613f]">

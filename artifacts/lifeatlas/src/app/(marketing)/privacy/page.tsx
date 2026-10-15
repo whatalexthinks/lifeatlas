@@ -30,7 +30,7 @@ export default function PrivacyPage() {
           title: "What the preview stores, and where",
           body: (
             <>
-              <p>Everything you create — capsules, stories, recordings, photographs, drafts, invitations and demonstration orders — is stored in your own browser, on your own device, using the browser&rsquo;s IndexedDB storage. A few small preferences (such as text size, or a friend&rsquo;s referral code) are kept in the browser&rsquo;s local storage.</p>
+              <p>Everything you create, capsules, stories, recordings, photographs, drafts, invitations and demonstration orders, is stored in your own browser, on your own device, using the browser&rsquo;s IndexedDB storage. A few small preferences (such as text size, or a friend&rsquo;s referral code) are kept in the browser&rsquo;s local storage.</p>
               <p>None of it is uploaded to us. We have no copy, cannot read it, and cannot recover it if it&rsquo;s lost.</p>
             </>
           ),
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
             <>
               <p>Capsules are private by default and are never public or listed. In the preview, the people you invite open a link in the same browser, and the visibility settings on each memory decide what each role can see.</p>
               <p>
-                <strong>An honest limit:</strong> because there are no accounts yet, these settings are not a security boundary — anyone using the same browser profile could open the studio. Real access control arrives with accounts. Please use sample or non-sensitive material until then.
+                <strong>An honest limit:</strong> because there are no accounts yet, these settings are not a security boundary, anyone using the same browser profile could open the studio. Real access control arrives with accounts. Please use sample or non-sensitive material until then.
               </p>
             </>
           ),
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
           title: "Questions",
           body: (
             <p>
-              There&rsquo;s no monitored privacy inbox during the preview. You can leave a message on the <Link href="/contact" className="underline underline-offset-4">contact page</Link> — it stays on your device and we say so — or raise a public issue on the project&rsquo;s repository, without personal details.
+              There&rsquo;s no monitored privacy inbox during the preview. You can leave a message on the <Link href="/contact" className="underline underline-offset-4">contact page</Link>, it stays on your device and we say so, or raise a public issue on the project&rsquo;s repository, without personal details.
             </p>
           ),
         },

@@ -19,7 +19,7 @@ export function typographyClass(t: Capsule["theme"]["typography"]) {
   return t === "italic" ? "font-serif italic" : t === "modern" ? "font-sans font-medium tracking-[-0.035em]" : "font-serif";
 }
 
-/** A stored photograph, or — for public previews — a sample illustration drawn by id. */
+/** A stored photograph, or, for public previews, a sample illustration drawn by id. */
 function CoverImage({ cover, className }: { cover: Capsule["cover"]; className?: string }) {
   if (!cover.mediaId && cover.plateId) return <Plate id={cover.plateId} alt="" className={className} focalY={cover.focalY} />;
   return <MediaImage mediaId={cover.mediaId} className={className} focalY={cover.focalY} />;
@@ -40,7 +40,7 @@ export function CapsuleCover({
   const p = paletteStyles[capsule.theme.palette];
   const hasImage = !!(capsule.cover.mediaId || capsule.cover.plateId) && capsule.cover.layout !== "type_only";
   const nameSize = { sm: "text-[1.6rem]", md: "text-[2.2rem]", lg: "text-[3rem]", hero: "text-[clamp(2.6rem,2rem+3vw,5rem)]" }[size];
-  const years = capsule.birthYear ? `${capsule.birthYear} —` : "";
+  const years = capsule.birthYear ? `${capsule.birthYear}, ` : "";
 
   if (capsule.cover.layout === "full_bleed" && hasImage) {
     return (

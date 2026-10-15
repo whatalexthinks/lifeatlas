@@ -18,7 +18,7 @@ const examples = [
   { anchor: "couple", id: "cap_us", what: "Both partners answer the same questions, each in their own words. Key dates for the day they met and their wedding; a letter sealed for their thirtieth anniversary." },
   { anchor: "family", id: "cap_family", what: "Four generations, from a ferry in 1934 to a first fish in 2018. Traditions and recipes, and a correction from a son-in-law waiting for review." },
   { anchor: "parent", id: "cap_margaret", what: "A mother's life in her own voice: recordings, photographs, places on a map, and stories her children and grandchildren added." },
-  { anchor: "remembrance", id: "cap_thomas", what: "A father who has died, remembered by the people who knew him — each adding the piece only they hold." },
+  { anchor: "remembrance", id: "cap_thomas", what: "A father who has died, remembered by the people who knew him, each adding the piece only they hold." },
 ];
 
 export default function ExamplesPage() {
@@ -90,12 +90,12 @@ export default function ExamplesPage() {
                 Margaret&rsquo;s eighty years, <em>place by place.</em>
               </>
             }
-            lead="Memories with a place appear on a map, in the order they happened. Places are kept to the town or city — never a street address."
+            lead="Memories with a place appear on a map, in the order they happened. Places are kept to the town or city, never a street address."
           />
           <div className="la-explorer on-dark mt-12 !rounded-[24px]">
             <LifeExplorer />
           </div>
-          <PreviewNote className="mt-6">If you&rsquo;ve removed the sample capsules from your studio, the viewer links above will tell you so — erasing demo data in Settings brings them back.</PreviewNote>
+          <PreviewNote className="mt-6">If you&rsquo;ve removed the sample capsules from your studio, the viewer links above will tell you so, erasing demo data in Settings brings them back.</PreviewNote>
         </Container>
       </Section>
 

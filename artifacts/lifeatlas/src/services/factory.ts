@@ -16,7 +16,7 @@ import { mockAccount, mockAnalytics, mockAuth, mockGeocoding, mockPreservation, 
 
 /**
  * The single switch between the local demonstration and real providers.
- * Screens call `services()` — they never import an SDK directly.
+ * Screens call `services()`, they never import an SDK directly.
  */
 const demoServices: Services = {
   mode: "demo",

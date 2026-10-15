@@ -8,8 +8,8 @@ import { extraCapsules, extraMedia, extraMemories, extraPlaces } from "@/data/fi
 import { sortKey } from "@/lib/dates";
 
 /**
- * The fictional sample family, read straight from the fixtures. Public pages use these —
- * never the visitor's own stored data — so a preview looks the same for everyone and keeps
+ * The fictional sample family, read straight from the fixtures. Public pages use these, 
+ * never the visitor's own stored data, so a preview looks the same for everyone and keeps
  * working after someone removes the samples from their studio.
  */
 

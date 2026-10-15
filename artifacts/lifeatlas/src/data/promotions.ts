@@ -2,8 +2,7 @@ import type { Promotion } from "@/domain/models";
 
 /**
  * Promotions that ship with the preview. Only plain discounts are active. Anything that
- * needs a legal or eligibility review — above all the "every 10th activation" giveaway —
- * starts as a draft and can't be switched on until that review is recorded.
+ * needs a legal or eligibility review, above all the "every 10th activation" giveaway, * starts as a draft and can't be switched on until that review is recorded.
  */
 const created = "2026-10-01T09:00:00.000Z";
 

@@ -44,7 +44,7 @@ export function CapsuleFrame({ children }: { children: React.ReactNode }) {
       <EmptyState
         className="mx-auto mt-10 max-w-xl"
         title="We couldn't find that capsule"
-        body="It may have been deleted, or created in another browser — capsules in this preview live only on the device where they were made."
+        body="It may have been deleted, or created in another browser, capsules in this preview live only on the device where they were made."
         action={<ButtonLink href="/app/capsules">See your capsules</ButtonLink>}
       />
     );

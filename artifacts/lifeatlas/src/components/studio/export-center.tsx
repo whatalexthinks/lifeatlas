@@ -66,7 +66,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
             options={[
               { value: "zip", label: "Complete archive (.zip)", description: "Original files, a readable offline page (index.html), stories.md and manifest.json with checksums.", icon: <FileArchive className="size-5" /> },
               { value: "html", label: "Single offline page (.html)", description: "One file with stories, photos and recordings embedded. Opens in any browser.", icon: <FileCode2 className="size-5" /> },
-              { value: "json", label: "Records only (.json)", description: "The documented manifest — stories, dates, places, people. No media files.", icon: <FileJson className="size-5" /> },
+              { value: "json", label: "Records only (.json)", description: "The documented manifest, stories, dates, places, people. No media files.", icon: <FileJson className="size-5" /> },
             ]}
           />
         </Panel>
@@ -80,7 +80,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
           </div>
         </Panel>
         <DemoNotice title="Where this file goes">
-          The export is built in this browser and downloaded straight to this device. Nothing is uploaded. Keep at least two copies in different places — a drive at home and a cloud folder you control.
+          The export is built in this browser and downloaded straight to this device. Nothing is uploaded. Keep at least two copies in different places, a drive at home and a cloud folder you control.
         </DemoNotice>
       </div>
 
@@ -147,7 +147,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
               ))}
             </ul>
           )}
-          <p className="px-3 pb-1 text-[0.75rem] text-ink-4">Files aren&rsquo;t stored by {brand.name} after download — build a fresh copy any time.</p>
+          <p className="px-3 pb-1 text-[0.75rem] text-ink-4">Files aren&rsquo;t stored by {brand.name} after download, build a fresh copy any time.</p>
         </Panel>
       </div>
     </div>

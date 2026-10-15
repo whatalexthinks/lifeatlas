@@ -2,7 +2,7 @@ import type { GeocodeResult } from "@/services/contracts";
 
 /**
  * A small built-in list of cities for offline place search in the demo.
- * City centroids only (public data). This is NOT a live geocoder — the UI says so.
+ * City centroids only (public data). This is NOT a live geocoder, the UI says so.
  */
 const rows: [string, string, string, string, number, number][] = [
   ["Portland", "Maine", "United States", "US", 43.6591, -70.2568],

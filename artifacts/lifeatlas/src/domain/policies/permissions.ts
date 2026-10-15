@@ -2,7 +2,7 @@ import type { Capsule, CapsuleMembership, Memory, MemoryPrivacy, Persona, Role }
 
 /**
  * Permission predicates. In Part One these drive what the UI shows for the
- * selected demo persona — they are NOT a security boundary. Part Two must
+ * selected demo persona, they are NOT a security boundary. Part Two must
  * re-implement every check server-side (see docs/SECURITY_PRIVACY_DECISIONS.md).
  */
 
@@ -64,7 +64,7 @@ export const roleLabels: Record<Role, { label: string; description: string }> = 
 export const everydayRoles: Role[] = ["owner", "organizer", "contributor", "viewer"];
 
 /**
- * What a role may do, in the plain terms shown to people — read, add, edit, invite, export,
+ * What a role may do, in the plain terms shown to people, read, add, edit, invite, export,
  * delete. Derived from roleCapabilities so a public table can never disagree with the app.
  */
 export function roleSummary(role: Role) {
@@ -107,7 +107,7 @@ export function can(role: Role | null, capability: Capability) {
 
 /**
  * Whom a privacy setting lets in, besides the memory's author (who always sees their own).
- * "Only me" really is private: editors don't see someone else's private story — only the
+ * "Only me" really is private: editors don't see someone else's private story, only the
  * owner does, because they answer for the capsule's exports and deletion.
  */
 export function privacyAdmits(memory: Pick<Memory, "privacy" | "sharedWith">, role: Role | null, personId?: string): boolean {
@@ -140,7 +140,7 @@ export function canViewMemory(memory: Memory, role: Role | null, personId?: stri
   return privacyAdmits(memory, role, personId);
 }
 
-/** Visible in the public-facing sample viewer (no persona) — sample capsule only, approved family items. */
+/** Visible in the public-facing sample viewer (no persona), sample capsule only, approved family items. */
 export function isViewerVisible(memory: Memory) {
   return !memory.deletedAt && memory.status === "approved" && memory.privacy === "family";
 }

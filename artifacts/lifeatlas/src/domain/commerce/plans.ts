@@ -1,7 +1,7 @@
 import type { BillingInterval, Capsule, Product, Subscription } from "@/domain/models";
 
 /**
- * Plans and entitlements — the one place that decides what each plan includes.
+ * Plans and entitlements, the one place that decides what each plan includes.
  * Screens, checkout and limit checks read from here; nothing hard-codes a limit.
  *
  * Business model: paid capsule ownership, free invited participation. Contributors and
@@ -17,7 +17,7 @@ export interface PlanEntitlements {
   capsules: number;
   /** Planned hosted storage per account. */
   storageGb: number;
-  /** Hosted (cloud) storage and cross-device access — needs the Part Two backend. */
+  /** Hosted (cloud) storage and cross-device access, needs the Part Two backend. */
   hosted: boolean;
   /** Invited contributors and viewers. Always free for them. */
   contributors: "unlimited";
@@ -100,6 +100,6 @@ export function capsuleAllowance(planId: PlanId, ownedNonSample: number) {
           ? `The Family plan includes ${limit} capsules. Archive one you no longer need, or contact us about more.`
           : planId === "digital"
             ? "The Digital plan includes one capsule. The Family plan makes room for five."
-            : `The preview keeps up to ${limit} capsules on this device. Choose a plan to keep more — and to keep them beyond this browser.`,
+            : `The preview keeps up to ${limit} capsules on this device. Choose a plan to keep more, and to keep them beyond this browser.`,
   };
 }

@@ -20,7 +20,7 @@ A privacy-first family legacy platform for gathering stories, photographs, voice
 
 ## Migration constraints
 
-- Preserve the original visual design, routes, media, and local-first behavior. Do not redesign as part of maintenance.
+- Preserve routes and local-first behavior. The user requested a premium photo-led makeover, then selected deep forest green, warm ivory, and muted antique gold from their archive screenshot. Keep that palette and avoid em dashes in site copy.
 - IndexedDB and browser storage hold demo data and media on the current device. There is no cross-device sync or cloud backup.
 - Accounts, payments, email delivery, scheduled delivery, print fulfillment, and cloud storage remain explicitly disconnected, as in the original app. Do not imply they are live.
 - The frontend needs no secrets or database to run. Optional public configuration uses `VITE_APP_MODE`, `VITE_LIFEATLAS_MODE`, `VITE_SITE_URL`, and `VITE_DEMO_LATENCY`.

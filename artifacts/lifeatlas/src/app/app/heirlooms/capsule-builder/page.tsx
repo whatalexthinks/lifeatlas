@@ -56,7 +56,7 @@ function CapsuleBuilder() {
       : {
           finish: "walnut",
           engraving: "name_and_years",
-          engravingText: capsule ? `${capsule.subjectName}${capsule.birthYear ? ` · ${capsule.birthYear} —` : ""}` : "",
+          engravingText: capsule ? `${capsule.subjectName}${capsule.birthYear ? ` · ${capsule.birthYear}, ` : ""}` : "",
           contents: { book: true, letterBundle: true, photoPrints: 12, archiveDrive: true, preservationGuide: true },
           selectedLetterIds: letters.filter((l) => !l.isExample).map((l) => l.id),
           selectedPhotoIds: [],
@@ -120,8 +120,8 @@ function CapsuleBuilder() {
     { icon: <BookOpen className="size-5" />, label: "The printed book", detail: "Your latest book design, bound to fit the box", on: box.contents.book },
     { icon: <Mail className="size-5" />, label: "A bundle of letters", detail: `${pluralize(box.selectedLetterIds.length, "letter")} printed on cotton paper, tied with linen`, on: box.contents.letterBundle },
     { icon: <ImageIcon className="size-5" />, label: "Photograph prints", detail: box.contents.photoPrints ? `${box.contents.photoPrints} prints, 5 × 7 in` : "None", on: box.contents.photoPrints > 0 },
-    { icon: <HardDrive className="size-5" />, label: "Archive copy on a drive", detail: "A convenience copy — keep your own backups too", on: box.contents.archiveDrive },
-    { icon: <ScrollText className="size-5" />, label: "Preservation guide", detail: "How to store paper, photos and media — always included", on: box.contents.preservationGuide },
+    { icon: <HardDrive className="size-5" />, label: "Archive copy on a drive", detail: "A convenience copy, keep your own backups too", on: box.contents.archiveDrive },
+    { icon: <ScrollText className="size-5" />, label: "Preservation guide", detail: "How to store paper, photos and media, always included", on: box.contents.preservationGuide },
   ];
 
   return (
@@ -134,7 +134,7 @@ function CapsuleBuilder() {
             A place to keep <em>what matters.</em>
           </>
         }
-        description="A finished box for the shelf or the mantel — the book, letters, photographs and an archive copy, together. Designed for display, not burial."
+        description="A finished box for the shelf or the mantel, the book, letters, photographs and an archive copy, together. Designed for display, not burial."
         actions={
           <div className="flex flex-wrap gap-2">
             {savedId ? (
@@ -210,7 +210,7 @@ function CapsuleBuilder() {
               columns={1}
               options={[
                 { value: "display", label: "Display keepsake box", description: "For a shelf, a mantel or a cedar chest. Kept indoors.", icon: <Box className="size-5" /> },
-                { value: "burial_concept", label: "Legacy Capsule — concept", description: "Burial or long storage. Not available — in research.", icon: <FlaskConical className="size-5" />, disabled: true },
+                { value: "burial_concept", label: "Legacy Capsule, concept", description: "Burial or long storage. Not available, in research.", icon: <FlaskConical className="size-5" />, disabled: true },
               ]}
             />
             <p className="mt-4 flex gap-2.5 rounded-[12px] bg-warning-soft px-4 py-3 text-[0.875rem] leading-relaxed text-ink-2">
@@ -259,7 +259,7 @@ function CapsuleBuilder() {
             <Segmented
               label="Engraving"
               value={box.engraving}
-              onChange={(v) => update({ engraving: v, engravingText: v === "name" ? capsule.subjectName : v === "name_and_years" ? `${capsule.subjectName}${capsule.birthYear ? ` · ${capsule.birthYear} —` : ""}` : box.engravingText })}
+              onChange={(v) => update({ engraving: v, engravingText: v === "name" ? capsule.subjectName : v === "name_and_years" ? `${capsule.subjectName}${capsule.birthYear ? ` · ${capsule.birthYear}, ` : ""}` : box.engravingText })}
               options={[
                 { value: "none", label: "None" },
                 { value: "name", label: "Name" },
@@ -310,7 +310,7 @@ function CapsuleBuilder() {
                   ]}
                 />
               </div>
-              <Switch id="x-drive" checked={box.contents.archiveDrive} onCheckedChange={(v) => contents({ archiveDrive: v })} label={`Archive copy on a drive · +${formatMoney(boxContentExtras.archiveDrive)}`} description="A convenience copy of the open archive. Never the only copy — keep your own backups." />
+              <Switch id="x-drive" checked={box.contents.archiveDrive} onCheckedChange={(v) => contents({ archiveDrive: v })} label={`Archive copy on a drive · +${formatMoney(boxContentExtras.archiveDrive)}`} description="A convenience copy of the open archive. Never the only copy, keep your own backups." />
               <Switch id="x-guide" checked disabled onCheckedChange={() => undefined} label="Preservation guide" description="Always included." />
             </div>
           </Panel>
@@ -354,7 +354,7 @@ function CapsuleBuilder() {
             <Button size="lg" block className="mt-5" leading={<ShoppingBag className="size-4" />} onClick={() => void onOrder()} loading={busy === "order"} disabled={!!busy || blockers.length > 0}>
               Add to bag
             </Button>
-            <p className="mt-3 text-center text-[0.8125rem] text-ink-3">Preview only — no payment is charged and nothing is made.</p>
+            <p className="mt-3 text-center text-[0.8125rem] text-ink-3">Preview only, no payment is charged and nothing is made.</p>
           </section>
           <DemoNotice title="Nothing ships from this preview">You can design it and walk through a demo order. Real orders open once a workshop partner is chosen and samples are approved.</DemoNotice>
         </div>

@@ -67,7 +67,7 @@ export const mockCommunications: CommunicationsProvider = {
     const about = capsule?.relationshipKind === "self" ? capsule.preferredName : capsule?.preferredName ?? "the family";
     const roleLine =
       inv.role === "storyteller"
-        ? `Your family would love to hear your stories — in your own words, at your own pace.`
+        ? `Your family would love to hear your stories, in your own words, at your own pace.`
         : inv.role === "viewer"
           ? `${from} has invited you to explore ${about}'s archive.`
           : `${from} is gathering stories for ${about}'s archive, and would love one from you.`;
@@ -79,12 +79,12 @@ export const mockCommunications: CommunicationsProvider = {
       `Hi ${first},`,
       "",
       roleLine,
-      inv.message ? `\n“${inv.message}”\n— ${from}` : "",
+      inv.message ? `\n“${inv.message}”\n, ${from}` : "",
       ...points.map((p) => `\n${p.title}\n${p.body}${p.questions?.length ? `\n${p.questions.map((q) => `  • ${q}`).join("\n")}` : ""}`),
       "",
       `Open your invitation: ${link}`,
       "",
-      "There's no password to remember. You can type, record your voice, or add a photo — skip anything you like.",
+      "There's no password to remember. You can type, record your voice, or add a photo, skip anything you like.",
     ]
       .filter((l) => l !== "")
       .join("\n");
@@ -102,8 +102,8 @@ export const mockCommunications: CommunicationsProvider = {
     if (!inv) return fail("not_found", "Invitation not found.");
     if (!canTransition(invitationTransitions, inv.status, "simulated_sent")) return fail("conflict", "This invitation can't be marked as shared right now.");
     await latency();
-    const out = setStatus(invitationId, "simulated_sent", `Link shared from this device — no email or text was sent by ${brand.name}`);
-    pushNotification({ kind: "invitation", title: `Invitation ready for ${inv.recipientName}`, body: "Invitation preview only — no email was sent. Share the link yourself.", href: "/app/invitations" });
+    const out = setStatus(invitationId, "simulated_sent", `Link shared from this device, no email or text was sent by ${brand.name}`);
+    pushNotification({ kind: "invitation", title: `Invitation ready for ${inv.recipientName}`, body: "Invitation preview only, no email was sent. Share the link yourself.", href: "/app/invitations" });
     return ok({ ...out });
   },
 

@@ -112,7 +112,7 @@ export const mockFutureDelivery: FutureDeliveryProvider = {
         x.snapshotHash = hash;
         x.sealedAt = new Date().toISOString();
         x.updatedAt = x.sealedAt;
-        x.history.push({ status: "sealed_demo", at: x.sealedAt, note: "Demo seal — reversible. Not scheduled for delivery." });
+        x.history.push({ status: "sealed_demo", at: x.sealedAt, note: "Demo seal, reversible. Not scheduled for delivery." });
       },
       { actor: actorName(), action: "future_message.sealed_demo", target: id, detail: hash.slice(0, 12) },
     );

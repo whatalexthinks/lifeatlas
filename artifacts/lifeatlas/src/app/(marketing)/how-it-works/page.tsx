@@ -24,7 +24,7 @@ const steps: { id: string; n: string; title: React.ReactNode; body: React.ReactN
     ),
     body: (
       <>
-        <p>Start with the person or the relationship. A name is all we ask — dates, places and photographs can come later, or never.</p>
+        <p>Start with the person or the relationship. A name is all we ask, dates, places and photographs can come later, or never.</p>
         <ul className="mt-6 flex flex-wrap gap-2">
           {kindOrder.map((k) => (
             <li key={k} className="rounded-full border border-line-strong bg-surface px-3.5 py-1.5 text-[0.875rem]">
@@ -66,7 +66,7 @@ const steps: { id: string; n: string; title: React.ReactNode; body: React.ReactN
         <CheckList
           className="mt-6"
           items={[
-            "Record on a phone or laptop — or upload a file, or type",
+            "Record on a phone or laptop, or upload a file, or type",
             "Dates can be exact, “Summer 1998”, “Around age 12” or simply unknown",
             "Photo dates from your camera are offered to confirm, never assumed",
             "Drafts save as you go, so nothing is lost if you're interrupted",
@@ -116,7 +116,7 @@ const steps: { id: string; n: string; title: React.ReactNode; body: React.ReactN
     ),
     body: (
       <>
-        <p>Letters, voice messages and photographs for a birthday, an anniversary or someday. We show exactly where each message stands — and never call one “scheduled” before a real delivery service has accepted it.</p>
+        <p>Letters, voice messages and photographs for a birthday, an anniversary or someday. We show exactly where each message stands, and never call one “scheduled” before a real delivery service has accepted it.</p>
       </>
     ),
     visual: <FutureMessagePreview />,
@@ -148,7 +148,7 @@ export default function HowItWorksPage() {
             From one question to a life, <em>kept.</em>
           </>
         }
-        lead="Six steps, taken at your own pace. Most people finish the first one in a couple of minutes — the rest unfolds over months and years, one memory at a time."
+        lead="Six steps, taken at your own pace. Most people finish the first one in a couple of minutes, the rest unfolds over months and years, one memory at a time."
         actions={
           <>
             <ButtonLink href="/app/capsules/new" size="xl">
@@ -225,7 +225,7 @@ export default function HowItWorksPage() {
                 {works ? <Check className="mt-0.5 size-4 shrink-0 text-evergreen" aria-hidden /> : <Circle className="mt-0.5 size-4 shrink-0 text-ink-4" aria-hidden />}
                 <span className={works ? "" : "text-ink-3"}>
                   {label}
-                  <span className="sr-only">{works ? " — works today" : " — not connected yet"}</span>
+                  <span className="sr-only">{works ? ", works today" : ", not connected yet"}</span>
                 </span>
               </li>
             ))}

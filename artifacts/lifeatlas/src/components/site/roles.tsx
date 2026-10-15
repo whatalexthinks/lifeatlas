@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const yes = <Check className="size-4 text-evergreen" aria-label="Yes" />;
 const no = <Minus className="size-4 text-ink-4" aria-label="No" />;
 
-/** Who can do what in a capsule — rendered from the same rules the app uses. */
+/** Who can do what in a capsule, rendered from the same rules the app uses. */
 export function RolesTable({ className }: { className?: string }) {
   const cols: { key: string; label: string; cell: (r: ReturnType<typeof roleSummary>) => React.ReactNode }[] = [
     { key: "read", label: "Read", cell: (r) => (r.read === "everything" ? "Everything" : r.read === "all_but_private" ? "All but others' “Only me” stories" : r.read === "shared" ? "What's shared with them" : no) },

@@ -105,7 +105,7 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
           </span>
           <h1 className="mt-6 font-serif text-[2.8rem] leading-tight text-night-ink">This archive isn&rsquo;t shared with {persona.name.split(" ")[0]} yet.</h1>
           <p className="mt-4 text-night-ink-2">
-            {capsule.viewerEnabled ? "Only people the owner or an editor invites can open it." : "The capsule's owner hasn't turned on the family viewer."} In this preview the check is simulated for the selected demo identity — real access control arrives with accounts.
+            {capsule.viewerEnabled ? "Only people the owner or an editor invites can open it." : "The capsule's owner hasn't turned on the family viewer."} In this preview the check is simulated for the selected demo identity, real access control arrives with accounts.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <BackToSelfButton />
@@ -133,7 +133,7 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
       <div className={cn("min-h-dvh", night ? "theme-evening bg-night text-night-ink" : "bg-paper text-ink")}>
         <header className={cn("sticky top-0 z-50 border-b backdrop-blur-xl", night ? "border-white/[0.07] bg-night/80" : "border-line bg-paper/85")}>
           <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-4 px-4 sm:px-8">
-            <Link href={base} className={cn("flex min-w-0 items-center gap-2.5", night ? "text-[#d7bc92]" : "text-evergreen")} aria-label={`${capsule.subjectName} — archive cover`}>
+            <Link href={base} className={cn("flex min-w-0 items-center gap-2.5", night ? "text-[#d7bc92]" : "text-evergreen")} aria-label={`${capsule.subjectName}, archive cover`}>
               <BrandMark className="size-7 shrink-0" />
               <span className={cn("truncate font-serif text-[1.3rem]", night ? "text-night-ink" : "text-ink")}>{capsule.subjectName}</span>
             </Link>

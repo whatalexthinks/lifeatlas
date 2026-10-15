@@ -24,7 +24,7 @@ const decadeOf = (m: Memory) => {
   return y === undefined ? null : Math.floor(y / 10) * 10;
 };
 
-/** Book-like reading: chapters in the capsule's chosen order, bookmarks, continuous mode — and a finder. */
+/** Book-like reading: chapters in the capsule's chosen order, bookmarks, continuous mode, and a finder. */
 export function ChaptersView({ capsule, scope, hrefFor, tone = "paper", initial }: { capsule: Capsule; scope: "studio" | "viewer"; hrefFor: (m: Memory) => string; tone?: "paper" | "night"; initial?: { q?: string; saved?: boolean; focus?: boolean } }) {
   const memories = useCapsuleMemories(capsule.id, { scope: scope === "viewer" ? "viewer" : "studio" });
   const bookmarks = useDb((d) => d.bookmarks);
@@ -67,7 +67,7 @@ export function ChaptersView({ capsule, scope, hrefFor, tone = "paper", initial 
     setSavedOnly(false);
   };
 
-  if (!memories.length) return <EmptyState title="No chapters yet" body="Stories are grouped into chapters — childhood, love, work, journeys — as they're added." />;
+  if (!memories.length) return <EmptyState title="No chapters yet" body="Stories are grouped into chapters, childhood, love, work, journeys, as they're added." />;
 
   const muted = night ? "text-night-ink-3" : "text-ink-3";
   return (
@@ -186,7 +186,7 @@ export function ChaptersView({ capsule, scope, hrefFor, tone = "paper", initial 
         />
         {marked.length ? (
           <button type="button" onClick={() => setSavedOnly(true)} className={cn("min-h-9 text-[0.875rem] underline underline-offset-2", muted)}>
-            {marked.length} saved — show them
+            {marked.length} saved, show them
           </button>
         ) : null}
       </div>
@@ -255,7 +255,7 @@ export function ChaptersView({ capsule, scope, hrefFor, tone = "paper", initial 
                       ))}
                     </div>
                     <p className={cn("mt-6 text-[0.875rem]", night ? "text-night-ink-3" : "text-ink-3")}>
-                      — {m.attribution.displayName}
+, {m.attribution.displayName}
                       {m.attribution.relationship && m.attribution.relationship !== "Storyteller" ? `, ${m.attribution.relationship.toLowerCase()}` : ""}
                       <Link href={hrefFor(m)} className="ml-3 inline-flex items-center gap-1 underline-offset-2 hover:underline">
                         Open <ArrowUpRight className="size-3" />

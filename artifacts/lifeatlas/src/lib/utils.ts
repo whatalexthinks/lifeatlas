@@ -29,7 +29,7 @@ export function formatMoney(cents: number, opts: { showFree?: boolean } = {}) {
 }
 
 export function formatBytes(bytes: number | undefined) {
-  if (bytes === undefined || !Number.isFinite(bytes)) return "—";
+  if (bytes === undefined || !Number.isFinite(bytes)) return "Not set";
   if (bytes < 1024) return `${bytes} B`;
   const units = ["KB", "MB", "GB", "TB"];
   let v = bytes / 1024;
@@ -52,9 +52,9 @@ const dtfTime = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric
 const dtfLong = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" });
 
 export function formatDate(iso: string | undefined, style: "short" | "long" | "time" = "short") {
-  if (!iso) return "—";
+  if (!iso) return "Not set";
   const d = new Date(iso.length === 10 ? `${iso}T12:00:00` : iso);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "Not set";
   return style === "long" ? dtfLong.format(d) : style === "time" ? dtfTime.format(d) : dtf.format(d);
 }
 

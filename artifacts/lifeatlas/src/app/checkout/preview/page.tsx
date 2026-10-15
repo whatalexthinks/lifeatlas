@@ -164,7 +164,7 @@ function CheckoutInner() {
             Back to pricing
           </ButtonLink>
         </div>
-        <p className="mt-6 text-[0.8125rem] text-ink-3">Outcome preview — for design review only.</p>
+        <p className="mt-6 text-[0.8125rem] text-ink-3">Outcome preview, for design review only.</p>
       </div>
     );
   }
@@ -176,7 +176,7 @@ function CheckoutInner() {
           <ArrowLeft className="size-4" /> Back
         </button>
         <h1 className="font-serif text-[clamp(2.2rem,1.8rem+1.6vw,3rem)] leading-tight">{session.purpose === "gift" ? "Review your gift" : "Review your order"}</h1>
-        <DemoNotice className="mt-6" title="Preview only — no payment will be charged" icon={<AlertTriangle className="size-[18px]" />}>
+        <DemoNotice className="mt-6" title="Preview only, no payment will be charged" icon={<AlertTriangle className="size-[18px]" />}>
           Payments aren&rsquo;t connected in this preview. There are no card fields, and nothing is sent to a payment provider. Completing this step creates a demo order on this device only.
         </DemoNotice>
 
@@ -188,7 +188,7 @@ function CheckoutInner() {
             <Field label="Name" htmlFor="c-name" error={errors.name}>
               <Input id="c-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} invalid={!!errors.name} autoComplete="name" />
             </Field>
-            <Field label="Email for the demo receipt" htmlFor="c-email" hint="Not sent — shown on the receipt only." error={errors.email}>
+            <Field label="Email for the demo receipt" htmlFor="c-email" hint="Not sent, shown on the receipt only." error={errors.email}>
               <Input id="c-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} invalid={!!errors.email} autoComplete="email" />
             </Field>
           </div>
@@ -243,7 +243,7 @@ function CheckoutInner() {
 
         <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Button size="xl" loading={busy} onClick={() => void place()}>
-            Place demo order — no charge
+            Place demo order, no charge
           </Button>
           <Button
             variant="ghost"
@@ -291,9 +291,9 @@ function CheckoutInner() {
                   </div>
                   <p className="mt-1.5 text-[0.8125rem] text-ink-2">
                     {l.fulfillment === "made_to_order"
-                      ? "Made to order — printed only after you approve a proof."
+                      ? "Made to order, printed only after you approve a proof."
                       : l.fulfillment === "ships_after_payment"
-                        ? "Ready-made kit — would ship after payment."
+                        ? "Ready-made kit, would ship after payment."
                         : p?.kind === "plan"
                           ? "Starts right away. Invited family never pay."
                           : null}

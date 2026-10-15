@@ -170,7 +170,7 @@ export default function StudioPeople() {
                       </span>
                     </td>
                     <td className="catalog px-3 py-3">
-                      {p.birthYear ?? "—"}
+                      {p.birthYear ?? "Not set"}
                       {p.deathYear ? `–${p.deathYear}` : ""}
                     </td>
                     <td className="px-3 py-3">
@@ -179,10 +179,10 @@ export default function StudioPeople() {
                           {storyCount(p)} {storyCount(p) === 1 ? "story" : "stories"}
                         </Link>
                       ) : (
-                        <span className="text-ink-4">—</span>
+                        <span className="text-ink-4">, </span>
                       )}
                     </td>
-                    <td className="px-3 py-3">{contributed(p) || <span className="text-ink-4">—</span>}</td>
+                    <td className="px-3 py-3">{contributed(p) || <span className="text-ink-4">, </span>}</td>
                     <td className="px-6 py-3">
                       <span className="flex flex-wrap gap-1.5">
                         {roles.length ? roles.map((r) => <Badge key={r.id} tone={r.role === "owner" ? "brand" : "neutral"}>{roleLabels[r.role].label}</Badge>) : <span className="text-ink-4">Not a member</span>}

@@ -12,7 +12,7 @@ import { chapterFor } from "@/domain/capsule-kinds";
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, excerpt } from "@/lib/utils";
 
-/** Archive story card — used in the studio and the viewer. */
+/** Archive story card, used in the studio and the viewer. */
 export function MemoryCard({
   memory,
   href,

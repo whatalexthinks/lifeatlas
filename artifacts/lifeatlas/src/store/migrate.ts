@@ -13,7 +13,7 @@ export function withNewFields(stored: DemoDatabase, seed: DemoDatabase): DemoDat
   const storedSampleVersion = stored.sampleVersion ?? 1;
   const fresh = seed as unknown as Record<string, unknown>;
   const out = { ...stored } as unknown as Record<string, unknown>;
-  // Collections added after this device first saved arrive empty — except promotions,
+  // Collections added after this device first saved arrive empty, except promotions,
   // which are configuration rather than someone's data.
   for (const [k, v] of Object.entries(fresh)) if (!(k in out)) out[k] = Array.isArray(v) && k !== "promotions" ? [] : v;
   const db = out as unknown as DemoDatabase;

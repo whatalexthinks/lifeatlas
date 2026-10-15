@@ -93,7 +93,7 @@ export function FuzzyDateInput({ id, value, onChange, birthYear }: { id: string;
           <Input
             id={`${id}-note`}
             aria-label="Anything you remember about when"
-            placeholder="Optional — e.g. “Before we moved to California”"
+            placeholder="Optional, e.g. “Before we moved to California”"
             value={value.note ?? ""}
             maxLength={120}
             onChange={(e) => set({ note: e.target.value || undefined })}
@@ -212,7 +212,7 @@ export function PlacePicker({ id, value, onChange, capsuleId }: { id: string; va
     <div className="space-y-2.5">
       <div className="relative">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-4" />
-        <Input id={id} value={q} onChange={(e) => setQ(e.target.value)} placeholder="A town or city — e.g. Portland" className="pl-10" autoComplete="off" />
+        <Input id={id} value={q} onChange={(e) => setQ(e.target.value)} placeholder="A town or city, e.g. Portland" className="pl-10" autoComplete="off" />
         {loading ? <Loader2 className="absolute right-3.5 top-1/2 size-4 -translate-y-1/2 animate-spin text-ink-4" /> : null}
       </div>
       {localMatches.length ? (
@@ -239,15 +239,15 @@ export function PlacePicker({ id, value, onChange, capsuleId }: { id: string; va
           ))}
         </ul>
       ) : q.trim().length >= 2 && !loading ? (
-        <p className="text-[0.8125rem] text-ink-3">No match in the built-in list. Try a nearby larger city — you can add a nickname later.</p>
+        <p className="text-[0.8125rem] text-ink-3">No match in the built-in list. Try a nearby larger city, you can add a nickname later.</p>
       ) : null}
-      <p className="text-[0.75rem] text-ink-4">Searching a small built-in list of cities in this preview — not a live map search. Only city-level locations are stored; never a street address.</p>
+      <p className="text-[0.75rem] text-ink-4">Searching a small built-in list of cities in this preview, not a live map search. Only city-level locations are stored; never a street address.</p>
     </div>
   );
 }
 
 /**
- * When a photo carries the date its camera recorded, offer it — once, plainly, and only while
+ * When a photo carries the date its camera recorded, offer it, once, plainly, and only while
  * the memory's date is still open. Camera clocks are often wrong, so it is never applied alone.
  */
 export function PhotoDateSuggestion({ takenOn, value, onUse }: { takenOn?: { year: number; month: number; day: number; source: "original" | "digitized" | "modified" }; value: FuzzyDate; onUse: (d: FuzzyDate) => void }) {

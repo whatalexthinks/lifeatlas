@@ -107,8 +107,8 @@ test("a printed book goes from design to an uncharged demo order with a proof", 
   await page.getByRole("button", { name: /Add to bag/ }).click();
 
   await page.waitForURL(/\/checkout\/bag/);
-  await expect(page.getByText("Grandma Margaret — printed book")).toBeVisible();
-  await expect(page.getByText("Made to order — printed only after you approve a proof.")).toBeVisible();
+  await expect(page.getByText("Grandma Margaret, printed book")).toBeVisible();
+  await expect(page.getByText("Made to order, printed only after you approve a proof.")).toBeVisible();
   await page.getByRole("button", { name: "Continue to checkout" }).click();
   await page.waitForURL(/\/checkout\/preview\?session=/);
   await expect(page.locator('input[autocomplete^="cc-"]')).toHaveCount(0);
@@ -125,7 +125,7 @@ test("a printed book goes from design to an uncharged demo order with a proof", 
   await settle(page);
 
   await page.goto("/app/orders");
-  await expect(page.getByText("Grandma Margaret — printed book").first()).toBeVisible();
+  await expect(page.getByText("Grandma Margaret, printed book").first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Approve proof" })).toBeVisible();
 
   await page.goto("/app/heirlooms");

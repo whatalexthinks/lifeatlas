@@ -87,7 +87,7 @@ export function PrivacyBadge({ value }: { value: MemoryPrivacy }) {
 
 export const privacyCopy: Record<MemoryPrivacy, { label: string; description: string }> = {
   private: { label: "Only me", description: "Visible only to the person who added it and the capsule's owner. Editors don't see it." },
-  organizers: { label: "Owner & editors", description: "The owner and editors only — good for drafts and sensitive stories." },
+  organizers: { label: "Owner & editors", description: "The owner and editors only, good for drafts and sensitive stories." },
   selected: { label: "Selected people", description: "Only the people you choose, plus the owner and editors." },
   family: { label: "Family", description: "Everyone invited to this capsule. Never public." },
 };
@@ -126,7 +126,7 @@ const order: Record<OrderStatus, { label: string; tone: StatusTone }> = {
   refunded_mock: { label: "Refunded · simulated", tone: "neutral" },
 };
 
-/** `readyMade`: an order with nothing to proof — "ready" means ready to pack, never "proof approved". */
+/** `readyMade`: an order with nothing to proof, "ready" means ready to pack, never "proof approved". */
 export function OrderStatusBadge({ status, readyMade }: { status: OrderStatus; readyMade?: boolean }) {
   return (
     <Badge tone={order[status].tone} dot>

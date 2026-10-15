@@ -10,7 +10,7 @@ import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
   title: "Physical capsules and legacy books",
-  description: `The Premium Physical ${brand.product} — an archival keepsake kit — and the Printed Legacy Book, made to order from your stories. Optional add-ons to any ${brand.name} capsule.`,
+  description: `The Premium Physical ${brand.product}, an archival keepsake kit, and the Printed Legacy Book, made to order from your stories. Optional add-ons to any ${brand.name} capsule.`,
   alternates: { canonical: "/physical-capsules" },
 };
 
@@ -28,7 +28,7 @@ export default function PhysicalCapsulesPage() {
             Something to hold, <em>open and fill together.</em>
           </>
         }
-        lead="Two optional add-ons for any capsule: an archival keepsake kit for the photographs, letters and objects that belong with the stories — and a printed book made from the stories themselves."
+        lead="Two optional add-ons for any capsule: an archival keepsake kit for the photographs, letters and objects that belong with the stories, and a printed book made from the stories themselves."
         actions={
           <>
             <ButtonLink href="/app/heirlooms/capsule-builder" size="xl">
@@ -43,7 +43,7 @@ export default function PhysicalCapsulesPage() {
         media={
           <div className="grid min-h-[380px] place-items-center rounded-[28px] bg-ivory p-10 sm:min-h-[480px]">
             <div className="w-[70%] max-w-[360px]">
-              <KeepsakeBox finish="walnut" engraving="The Ellis Family · 1934 —" open />
+              <KeepsakeBox finish="walnut" engraving="The Ellis Family · 1934, " open />
             </div>
           </div>
         }
@@ -108,7 +108,7 @@ export default function PhysicalCapsulesPage() {
                 tag: "Made to order",
                 title: "Personal printed pieces",
                 body: "The Legacy Book and any personalised inserts are made only from your stories, and only after you approve them.",
-                steps: ["You design it in the studio", "We prepare a page-by-page proof", "You approve — or change it", "Then it's printed and shipped"],
+                steps: ["You design it in the studio", "We prepare a page-by-page proof", "You approve, or change it", "Then it's printed and shipped"],
               },
             ].map((c) => (
               <div key={c.title} className="rounded-[24px] border border-line bg-surface p-7 sm:p-9">
@@ -126,7 +126,7 @@ export default function PhysicalCapsulesPage() {
               </div>
             ))}
           </div>
-          <PreviewNote className="mt-10">In this preview, payments, printing and shipping aren&rsquo;t connected. You can design both and place a demonstration order — nothing is charged, made or sent, and the order says so.</PreviewNote>
+          <PreviewNote className="mt-10">In this preview, payments, printing and shipping aren&rsquo;t connected. You can design both and place a demonstration order, nothing is charged, made or sent, and the order says so.</PreviewNote>
         </Container>
       </Section>
 
@@ -136,7 +136,7 @@ export default function PhysicalCapsulesPage() {
             reverse
             media={
               <div className="grid place-items-center py-6">
-                <BookObject title="Margaret Ellis" subtitle="In Her Own Words" years="1940 —" color="evergreen" size="lg" />
+                <BookObject title="Margaret Ellis" subtitle="In Her Own Words" years="1940, " color="evergreen" size="lg" />
               </div>
             }
           >
@@ -176,7 +176,7 @@ export default function PhysicalCapsulesPage() {
                 Made to be kept on a shelf, <em>not under the ground.</em>
               </>
             }
-            lead="The physical capsule is a display keepsake. It isn't designed or rated for burial or long-term underground storage, and we won't make durability claims we haven't tested. Photo sleeves and envelopes are acid-free; keep originals somewhere cool, dry and dark — and keep a digital copy too."
+            lead="The physical capsule is a display keepsake. It isn't designed or rated for burial or long-term underground storage, and we won't make durability claims we haven't tested. Photo sleeves and envelopes are acid-free; keep originals somewhere cool, dry and dark, and keep a digital copy too."
           />
         </Container>
       </Section>
@@ -187,7 +187,7 @@ export default function PhysicalCapsulesPage() {
             Begin with the stories. <em>The keepsake can wait.</em>
           </>
         }
-        lead="Every keepsake starts with a capsule — and the capsule is free to start."
+        lead="Every keepsake starts with a capsule, and the capsule is free to start."
         primary={
           <ButtonLink href="/app/capsules/new" size="xl">
             Create Your LifeCapsule

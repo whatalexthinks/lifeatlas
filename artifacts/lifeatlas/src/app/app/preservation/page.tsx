@@ -58,7 +58,7 @@ export default function PreservationPage() {
     const granted = await navigator.storage.persist();
     await device.refresh();
     if (granted) toast.success(`This browser will keep ${brand.name} data`, "It won't be cleared automatically to free space. It's still not a backup.");
-    else toast.info("The browser declined", "Browsers decide this themselves — often after you bookmark or install the site. Keep exporting copies.");
+    else toast.info("The browser declined", "Browsers decide this themselves, often after you bookmark or install the site. Keep exporting copies.");
   };
 
   const runCheck = async () => {
@@ -109,7 +109,7 @@ export default function PreservationPage() {
         <div>
           <p className="font-medium text-ink">These stories are not backed up.</p>
           <p className="mt-1 max-w-3xl text-[0.9375rem] leading-relaxed text-ink-2">
-            In this preview everything lives only in this browser on this device. Clearing site data, a browser reset or a lost laptop removes it — and there is no server to recover from. Download a copy of anything you can&rsquo;t replace, and keep your original files.
+            In this preview everything lives only in this browser on this device. Clearing site data, a browser reset or a lost laptop removes it, and there is no server to recover from. Download a copy of anything you can&rsquo;t replace, and keep your original files.
           </p>
         </div>
       </div>
@@ -143,7 +143,7 @@ export default function PreservationPage() {
             </Badge>
             {device.quota ? <span className="text-[0.875rem] text-ink-3">Room for about {formatBytes(device.quota)} in this browser</span> : null}
           </div>
-          <p className="mt-4 text-[0.9375rem] text-ink-2">This uses your browser&rsquo;s real storage protection. It helps — but a browser profile is still a single copy on a single device.</p>
+          <p className="mt-4 text-[0.9375rem] text-ink-2">This uses your browser&rsquo;s real storage protection. It helps, but a browser profile is still a single copy on a single device.</p>
           {device.persisted !== "granted" && device.persisted !== "unsupported" ? (
             <Button variant="secondary" className="mt-5" onClick={() => void requestPersistence()}>
               Ask the browser to keep it
@@ -185,7 +185,7 @@ export default function PreservationPage() {
             <div className="mt-5 rounded-[12px] bg-ivory/70 p-4" aria-live="polite">
               <p className="flex items-center gap-2 font-medium">
                 {lastRun.result === "passed" ? <CheckCircle2 className="size-5 text-success" /> : <AlertTriangle className="size-5 text-warning" />}
-                {lastRun.filesChecked === 0 ? "No device files to check in this capsule yet" : lastRun.result === "passed" ? `${lastRun.filesChecked} files checked — every one matches` : `${lastRun.mismatches} of ${lastRun.filesChecked} files didn't match`}
+                {lastRun.filesChecked === 0 ? "No device files to check in this capsule yet" : lastRun.result === "passed" ? `${lastRun.filesChecked} files checked, every one matches` : `${lastRun.mismatches} of ${lastRun.filesChecked} files didn't match`}
               </p>
               {lastRun.details.some((d) => !d.ok) ? (
                 <ul className="mt-2 space-y-1 text-[0.875rem] text-ink-2">
@@ -193,7 +193,7 @@ export default function PreservationPage() {
                     .filter((d) => !d.ok)
                     .map((d) => (
                       <li key={d.id} className="font-mono text-[0.8125rem]">
-                        {d.id} — {d.reason}
+                        {d.id}, {d.reason}
                       </li>
                     ))}
                 </ul>
@@ -226,7 +226,7 @@ export default function PreservationPage() {
             <h2 id="export-h" className="mt-3 font-serif text-[2rem] leading-tight">
               Download {capsule?.subjectName ? `${capsule.subjectName.split(" ")[0]}'s` : "the"} archive
             </h2>
-            <p className="mt-2 max-w-2xl text-ink-2">Ordinary files — stories as text and HTML, photos and recordings as they were added, and a manifest with fingerprints. Readable without {brand.name}, forever.</p>
+            <p className="mt-2 max-w-2xl text-ink-2">Ordinary files, stories as text and HTML, photos and recordings as they were added, and a manifest with fingerprints. Readable without {brand.name}, forever.</p>
           </div>
         </div>
         {capsule ? <ExportCenter capsule={capsule} /> : null}

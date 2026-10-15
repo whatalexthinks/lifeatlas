@@ -38,16 +38,16 @@ export function explainInvitation(input: {
   const capsulePoint: InvitationExplainer = {
     key: "capsule",
     title: "What this is",
-    body: `“${capsule.title}” is a private ${brand.product} — a place where a family keeps the stories, voices and photographs of ${capsule.subjectName}. ${
+    body: `“${capsule.title}” is a private ${brand.product}, a place where a family keeps the stories, voices and photographs of ${capsule.subjectName}. ${
       storyCount ? `It holds ${storyCount} ${storyCount === 1 ? "story" : "stories"} so far.` : "It's just getting started."
     }${capsule.description ? ` ${capsule.description}` : ""}`,
   };
 
   const ask: InvitationExplainer =
     invitation.role === "viewer"
-      ? { key: "ask", title: "What you're asked to do", body: "Nothing at all — just read, look and listen, whenever you like." }
+      ? { key: "ask", title: "What you're asked to do", body: "Nothing at all, just read, look and listen, whenever you like." }
       : invitation.role === "storyteller"
-        ? { key: "ask", title: "What you're asked to do", body: `To tell your own stories, in your own words — by speaking, typing or adding a photo.${questions.length ? ` ${inviter} picked ${questions.length === 1 ? "a question" : `${questions.length} questions`} to start with; skip any of them.` : ""}`, questions }
+        ? { key: "ask", title: "What you're asked to do", body: `To tell your own stories, in your own words, by speaking, typing or adding a photo.${questions.length ? ` ${inviter} picked ${questions.length === 1 ? "a question" : `${questions.length} questions`} to start with; skip any of them.` : ""}`, questions }
         : invitation.role === "organizer"
           ? { key: "ask", title: "What you're asked to do", body: `To help ${inviter} look after the capsule as an editor: add and edit stories, invite people and read contributions before they're added.` }
           : invitation.mode === "questions" && questions.length
@@ -57,7 +57,7 @@ export function explainInvitation(input: {
   const payment: InvitationExplainer = {
     key: "payment",
     title: "Does it cost anything?",
-    body: `No. It's free for you, now and later — ${inviter} looks after the plan. You won't be asked for a card or to buy anything to take part.`,
+    body: `No. It's free for you, now and later, ${inviter} looks after the plan. You won't be asked for a card or to buy anything to take part.`,
   };
 
   const visibleTo =
@@ -65,7 +65,7 @@ export function explainInvitation(input: {
       ? "the family members invited to it"
       : capsule.defaultPrivacy === "organizers"
         ? `${inviter} and the capsule's editors`
-        : `${inviter} — and anyone they choose to share it with`;
+        : `${inviter}, and anyone they choose to share it with`;
   const use: InvitationExplainer =
     invitation.role === "viewer"
       ? { key: "use", title: "What happens to what you see", body: `The capsule is private to the people ${inviter} invites. It's never posted publicly or listed in search engines.` }

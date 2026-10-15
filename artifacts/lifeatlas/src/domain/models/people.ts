@@ -48,7 +48,7 @@ export interface Person extends Timestamps {
   /** City-level only. Never a street address. */
   birthplaceId?: ID;
   note?: string;
-  /** e.g. "Margaret's sister" — relative to the capsule's storyteller */
+  /** e.g. "Margaret's sister", relative to the capsule's storyteller */
   shortBio?: string;
   isSample: true | false;
 }

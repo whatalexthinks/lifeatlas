@@ -110,7 +110,7 @@ export function GiftEnvelope({
           <p className="font-mono text-[0.625rem] uppercase tracking-[0.2em] text-[#8a6d43]">{occasion ?? "A gift for you"}</p>
           <p className="mt-2 font-serif text-[clamp(1.4rem,4vw,2rem)] leading-tight text-[#242824]">For {recipient || "someone dear"}</p>
           <p className="mx-auto mt-2 line-clamp-4 max-w-[30ch] font-serif text-[clamp(0.85rem,2.2vw,1rem)] italic leading-snug text-[#474b45]">{dedication || "Your dedication will appear here."}</p>
-          <p className="mt-2 text-[0.75rem] text-[#62655d]">— {giver || "Your name"}</p>
+          <p className="mt-2 text-[0.75rem] text-[#62655d]">, {giver || "Your name"}</p>
         </div>
         {/* front pocket */}
         <svg viewBox="0 0 310 200" className="absolute inset-0 z-20 size-full drop-shadow-[0_10px_16px_rgb(0_0_0/0.18)]" preserveAspectRatio="none" aria-hidden>

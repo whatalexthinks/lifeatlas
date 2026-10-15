@@ -20,7 +20,7 @@ export default function AboutPage() {
             Every life is a story <em>worth keeping.</em>
           </>
         }
-        lead="The details that make someone themselves are the easiest to lose: a phrase they always used, a ritual in the kitchen, the way they told the story of how they met. We're building a place to keep them — privately, honestly, and for a long time."
+        lead="The details that make someone themselves are the easiest to lose: a phrase they always used, a ritual in the kitchen, the way they told the story of how they met. We're building a place to keep them, privately, honestly, and for a long time."
       />
 
       <Section tone="night" labelledBy="belief">
@@ -47,7 +47,7 @@ export default function AboutPage() {
             className="mt-14"
             columns={3}
             items={[
-              { title: "Listening is the gift", body: "The product is built around asking a good question and leaving room for the answer — not around filling a timeline." },
+              { title: "Listening is the gift", body: "The product is built around asking a good question and leaving room for the answer, not around filling a timeline." },
               { title: "The small things matter most", body: "Recipes, sayings, a voice on a recording. We design for the ordinary moments that families miss most." },
               { title: "Your memories are yours", body: "Private by default. Always downloadable. Never sold, never used to train AI." },
               { title: "Honesty over polish", body: "We never invent a date, a place, a transcript, a review or a statistic. If something isn't connected yet, the product says so." },
@@ -68,7 +68,7 @@ export default function AboutPage() {
                 A working product, <em>still being built.</em>
               </>
             }
-            lead={`${brand.name} is a product preview. Nearly everything works on your own device — creating capsules, recording, inviting, designing keepsakes — using a fictional sample family to show what's possible. Accounts, cloud storage, payments, printing and delivery come next, and we won't pretend they exist before they do.`}
+            lead={`${brand.name} is a product preview. Nearly everything works on your own device, creating capsules, recording, inviting, designing keepsakes, using a fictional sample family to show what's possible. Accounts, cloud storage, payments, printing and delivery come next, and we won't pretend they exist before they do.`}
           >
             <PreviewNote className="mt-8">{brand.name} is a working name; branding and trademark are pending. The domain is ourlifecapsule.com.</PreviewNote>
             <div className="mt-8 flex flex-wrap gap-x-7 gap-y-3">

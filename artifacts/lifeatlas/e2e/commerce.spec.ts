@@ -12,7 +12,7 @@ test("the ready-made kit goes through the bag to an honest, uncharged order", as
   await page.getByRole("button", { name: "Add the ready-made kit" }).click();
   await page.waitForURL(/\/checkout\/bag/);
 
-  await expect(page.getByText("Ready-made kit — would ship after payment.")).toBeVisible();
+  await expect(page.getByText("Ready-made kit, would ship after payment.")).toBeVisible();
   await expect(page.getByText("Family plan · 10% off keepsakes")).toBeVisible();
   await page.getByRole("button", { name: /One more/ }).click();
   await expect(page.getByLabel("Quantity 2")).toBeVisible();

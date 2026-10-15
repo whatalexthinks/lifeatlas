@@ -40,14 +40,14 @@ export const fuzzyDateSchema = z
     if (d.precision === "season" && !d.season) need("season", "Choose a season.");
     if (d.precision === "decade" && d.decade === undefined) need("decade", "Choose a decade.");
     if (d.precision === "life_stage" && !d.lifeStage) need("lifeStage", "Choose a time of life.");
-    if (d.precision === "age" && d.age === undefined) need("age", "Add an age — roughly is fine.");
+    if (d.precision === "age" && d.age === undefined) need("age", "Add an age, roughly is fine.");
   });
 
 /* ------------------------------ Capsule wizard ------------------------------ */
 
 export const wizardWhoSchema = z.object({
   relationshipKind: z.enum(["mother", "father", "grandparent", "partner", "self", "other"]),
-  relationship: trimmed(1, 60, "Tell us how you're related — even “friend” is fine."),
+  relationship: trimmed(1, 60, "Tell us how you're related, even “friend” is fine."),
 });
 
 export const wizardIntroduceSchema = z.object({
@@ -95,7 +95,7 @@ export const onboardingKindSchema = z.object({
 export const onboardingDetailsSchema = z
   .object({
     kind: z.enum(["personal", "couple", "family", "parent", "child", "someone"]),
-    name: trimmed(1, 80, "Add a name — a first name is enough."),
+    name: trimmed(1, 80, "Add a name, a first name is enough."),
     partnerName: optionalText(80),
     relationship: optionalText(60),
     birthYear: yearField,
@@ -104,22 +104,22 @@ export const onboardingDetailsSchema = z
       .string()
       .optional()
       .or(z.literal(""))
-      .refine((v) => !v || (/^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(`${v}T00:00:00Z`)) && Number(v.slice(0, 4)) >= 1900), "Please check the date — or leave it empty."),
+      .refine((v) => !v || (/^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(`${v}T00:00:00Z`)) && Number(v.slice(0, 4)) >= 1900), "Please check the date, or leave it empty."),
     birthplace: optionalText(80),
     title: trimmed(1, 120, "Give your capsule a name."),
   })
   .superRefine((v, ctx) => {
     if (v.kind === "couple" && !v.partnerName?.trim()) ctx.addIssue({ code: "custom", path: ["partnerName"], message: "Add your partner's name." });
-    if ((v.kind === "parent" || v.kind === "someone") && !v.relationship?.trim()) ctx.addIssue({ code: "custom", path: ["relationship"], message: "Tell us who they are to you — even “friend” is fine." });
+    if ((v.kind === "parent" || v.kind === "someone") && !v.relationship?.trim()) ctx.addIssue({ code: "custom", path: ["relationship"], message: "Tell us who they are to you, even “friend” is fine." });
   });
 
 export type OnboardingDetails = z.infer<typeof onboardingDetailsSchema>;
 
-/** A date worth remembering. The year is optional — many people know the day but not the year. */
+/** A date worth remembering. The year is optional, many people know the day but not the year. */
 export const keyDateSchema = z
   .object({
     id: z.string(),
-    label: trimmed(1, 60, "Give the date a name — “Our wedding anniversary”."),
+    label: trimmed(1, 60, "Give the date a name, “Our wedding anniversary”."),
     kind: z.enum(["anniversary", "birthday", "milestone", "remembrance"]),
     month: z.number({ message: "Choose a month." }).int().min(1, "Choose a month.").max(12),
     day: z.number({ message: "Choose a day." }).int().min(1, "Choose a day.").max(31),
@@ -136,7 +136,7 @@ export const keyDateSchema = z
 
 export const memoryFormSchema = z.object({
   title: trimmed(2, 160, "Give this memory a short title."),
-  narrative: z.string().max(20_000, "This story is very long — consider splitting it into chapters."),
+  narrative: z.string().max(20_000, "This story is very long, consider splitting it into chapters."),
   quote: optionalText(280),
   date: fuzzyDateSchema,
   placeId: z.string().optional(),
@@ -202,7 +202,7 @@ export const futureMessageSchema = z
     if (v.releaseDate > addYears(today, 50)) ctx.addIssue({ code: "custom", path: ["releaseDate"], message: "Choose a date within the next 50 years." });
     if (v.releaseKind === "milestone" && !v.milestone) ctx.addIssue({ code: "custom", path: ["milestone"], message: "Choose a milestone." });
     if (v.releaseKind === "year" && !v.releaseYear) ctx.addIssue({ code: "custom", path: ["releaseYear"], message: "Choose a year." });
-    if (!v.hasRecording && v.body.length < 10) ctx.addIssue({ code: "custom", path: ["body"], message: "Write at least a sentence or two — or record a voice note or video instead." });
+    if (!v.hasRecording && v.body.length < 10) ctx.addIssue({ code: "custom", path: ["body"], message: "Write at least a sentence or two, or record a voice note or video instead." });
   });
 export type FutureMessageFormValues = z.infer<typeof futureMessageSchema>;
 

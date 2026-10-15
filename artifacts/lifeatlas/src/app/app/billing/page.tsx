@@ -16,7 +16,7 @@ import { services } from "@/services/factory";
 import { formatBytes, formatDate, formatMoney } from "@/lib/utils";
 import { brand } from "@/config/brand";
 
-/** Browser storage actually used by this demo — a real number, not an allowance. */
+/** Browser storage actually used by this demo, a real number, not an allowance. */
 function useStorageEstimate() {
   const [est, setEst] = React.useState<{ usage: number; quota: number } | null>(null);
   React.useEffect(() => {
@@ -65,14 +65,14 @@ export default function BillingPage() {
   const switchInterval = async (to: "year" | "month") => {
     if (!sub || to === interval) return;
     const r = await services().billing.changeInterval(sub.id, to);
-    if (r.status === "ok") toast.success(to === "month" ? "Monthly from your next renewal" : "Annual from your next renewal", "Demo — nothing is charged or renewed.");
+    if (r.status === "ok") toast.success(to === "month" ? "Monthly from your next renewal" : "Annual from your next renewal", "Demo, nothing is charged or renewed.");
     else toast.error("Couldn't change billing", r.status === "error" ? r.message : undefined);
   };
 
   return (
     <div className="mx-auto max-w-[1240px]">
       <PageHeader eyebrow="Account" title="Plan & billing" description="Your plan, what it includes, and every receipt. In this preview no card is collected and nothing is ever charged." />
-      <DemoNotice className="mb-8" title="Preview only — no payment is charged">
+      <DemoNotice className="mb-8" title="Preview only, no payment is charged">
         Prices are test amounts for the proposed service. Payment processing, renewals and real receipts arrive with a payment provider.
       </DemoNotice>
 
@@ -96,11 +96,11 @@ export default function BillingPage() {
               <dl className="mt-6 grid gap-4 border-t border-line pt-5 text-[0.9375rem] sm:grid-cols-3">
                 <div>
                   <dt className="text-[0.8125rem] text-ink-3">Started</dt>
-                  <dd>{sub.startedAt ? formatDate(sub.startedAt, "long") : "—"}</dd>
+                  <dd>{sub.startedAt ? formatDate(sub.startedAt, "long") : "Not set"}</dd>
                 </div>
                 <div>
                   <dt className="text-[0.8125rem] text-ink-3">{sub.cancelAtPeriodEnd || sub.giftedBy ? "Ends" : "Would renew"}</dt>
-                  <dd>{sub.renewsOn ? formatDate(sub.renewsOn, "long") : "—"}</dd>
+                  <dd>{sub.renewsOn ? formatDate(sub.renewsOn, "long") : "Not set"}</dd>
                 </div>
                 <div>
                   <dt className="text-[0.8125rem] text-ink-3">Order</dt>
@@ -110,7 +110,7 @@ export default function BillingPage() {
                         {orders.find((o) => o.id === sub.orderId)?.number ?? "View"}
                       </Link>
                     ) : (
-                      "—"
+                      "Not set"
                     )}
                   </dd>
                 </div>
@@ -147,13 +147,13 @@ export default function BillingPage() {
                 {sub.cancelAtPeriodEnd ? (
                   <>
                     <p className="w-full text-[0.9375rem] text-ink-2">
-                      Set to end on {sub.renewsOn ? formatDate(sub.renewsOn, "long") : "the renewal date"}. Your capsules stay readable and downloadable afterwards — nothing is deleted.
+                      Set to end on {sub.renewsOn ? formatDate(sub.renewsOn, "long") : "the renewal date"}. Your capsules stay readable and downloadable afterwards, nothing is deleted.
                     </p>
                     <Button
                       variant="secondary"
                       onClick={async () => {
                         const r = await services().billing.setCancelAtPeriodEnd(sub.id, false);
-                        if (r.status === "ok") toast.success("Your plan will continue", "Demo — nothing is charged.");
+                        if (r.status === "ok") toast.success("Your plan will continue", "Demo, nothing is charged.");
                       }}
                     >
                       Keep my plan
@@ -171,7 +171,7 @@ export default function BillingPage() {
             </>
           ) : (
             <div className="mt-5 border-t border-line pt-5">
-              <p className="max-w-lg text-ink-2">You&rsquo;re exploring on this device. Everything works here; a plan keeps your capsules beyond this browser once hosting is connected — and invited family never pay.</p>
+              <p className="max-w-lg text-ink-2">You&rsquo;re exploring on this device. Everything works here; a plan keeps your capsules beyond this browser once hosting is connected, and invited family never pay.</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {planIds
                   .filter((id) => id !== "preview")
@@ -204,7 +204,7 @@ export default function BillingPage() {
                 <span className="tabular-nums text-ink-2">{hydrated && storage ? formatBytes(storage.usage) : "…"}</span>
               </div>
               <p className="mt-1.5 text-[0.8125rem] text-ink-3">
-                Measured on this device.{ent.storageGb ? ` Your plan's ${ent.storageGb} GB is the planned hosted allowance — hosted storage isn't connected yet.` : " The preview doesn't include hosted storage."}{" "}
+                Measured on this device.{ent.storageGb ? ` Your plan's ${ent.storageGb} GB is the planned hosted allowance, hosted storage isn't connected yet.` : " The preview doesn't include hosted storage."}{" "}
                 <Link href="/app/preservation" className="text-link">
                   Download a copy
                 </Link>
@@ -277,7 +277,7 @@ export default function BillingPage() {
                         </Link>
                       </td>
                       <td className="px-3 py-3.5 text-ink-2">{formatDate(inv.issuedAt)}</td>
-                      <td className="max-w-[260px] truncate px-3 py-3.5">{o?.items[0]?.name ?? "—"}</td>
+                      <td className="max-w-[260px] truncate px-3 py-3.5">{o?.items[0]?.name ?? "Not set"}</td>
                       <td className="px-3 py-3.5 text-right tabular-nums">{formatMoney(inv.amount)}</td>
                       <td className="px-6 py-3.5 text-right">
                         <Badge tone={inv.status === "void" ? "neutral" : "demo"}>{inv.status === "demo_uncharged" ? "Not charged" : inv.status === "void" ? "Void" : "Paid"}</Badge>
@@ -302,7 +302,7 @@ export default function BillingPage() {
           onConfirm={async () => {
             const r = await services().billing.setCancelAtPeriodEnd(sub.id, true);
             setCancelOpen(false);
-            if (r.status === "ok") toast.success("Your plan will end at the end of the term", "Demo — nothing is charged or deleted.");
+            if (r.status === "ok") toast.success("Your plan will end at the end of the term", "Demo, nothing is charged or deleted.");
           }}
         />
       ) : null}

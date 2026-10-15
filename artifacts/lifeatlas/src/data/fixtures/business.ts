@@ -21,7 +21,7 @@ export const orders: Order[] = [
     id: "ord_1001",
     number: "OLC-DEMO-1001",
     kind: "digital",
-    items: [{ id: "oi_1", productId: "family", name: "Family Plan — first year", quantity: 1, unitAmount: 17900, extrasAmount: 0 }],
+    items: [{ id: "oi_1", productId: "family", name: "Family Plan, first year", quantity: 1, unitAmount: 17900, extrasAmount: 0 }],
     subtotal: 17900,
     shippingEstimate: null,
     taxEstimate: null,
@@ -32,7 +32,7 @@ export const orders: Order[] = [
     customerName: "Sarah Ellis",
     history: [
       { status: "preview", at: "2026-09-02T13:50:00.000Z" },
-      { status: "paid_mock", at: "2026-09-02T13:55:00.000Z", note: "Demo checkout — no payment taken" },
+      { status: "paid_mock", at: "2026-09-02T13:55:00.000Z", note: "Demo checkout, no payment taken" },
     ],
     isSample: true,
     createdAt: "2026-09-02T13:50:00.000Z",
@@ -46,7 +46,7 @@ export const orders: Order[] = [
       {
         id: "oi_2",
         productId: "book",
-        name: "Printed Legacy Book — Margaret Ellis",
+        name: "Printed Legacy Book, Margaret Ellis",
         quantity: 2,
         unitAmount: 11900,
         extrasAmount: 2400,
@@ -64,7 +64,7 @@ export const orders: Order[] = [
     customerName: "Sarah Ellis",
     history: [
       { status: "preview", at: "2026-10-03T19:00:00.000Z" },
-      { status: "paid_mock", at: "2026-10-03T19:04:00.000Z", note: "Demo checkout — no payment taken" },
+      { status: "paid_mock", at: "2026-10-03T19:04:00.000Z", note: "Demo checkout, no payment taken" },
       { status: "proof_required", at: "2026-10-03T19:05:00.000Z", note: "Proof v1 ready for review (demo)" },
     ],
     isSample: true,
@@ -75,7 +75,7 @@ export const orders: Order[] = [
     id: "ord_1003",
     number: "OLC-DEMO-1003",
     kind: "gift",
-    items: [{ id: "oi_3", productId: "digital", name: "Digital LifeCapsule — one year, as a gift", quantity: 1, unitAmount: 9900, extrasAmount: 0 }],
+    items: [{ id: "oi_3", productId: "digital", name: "Digital LifeCapsule, one year, as a gift", quantity: 1, unitAmount: 9900, extrasAmount: 0 }],
     subtotal: 9900,
     shippingEstimate: null,
     taxEstimate: null,
@@ -100,14 +100,14 @@ export const invoices: Invoice[] = [
   { id: "invc_2", orderId: "ord_1002", number: "DEMO-INV-0002", issuedAt: "2026-10-03T19:04:00.000Z", amount: 28600, status: "demo_uncharged" },
 ];
 
-/** The sample family is on the Family plan (a demo subscription — nothing renews or charges). */
+/** The sample family is on the Family plan (a demo subscription, nothing renews or charges). */
 export const subscriptions: Subscription[] = [
   { id: "sub_family", productId: "family", status: "preview_active", interval: "year", startedAt: "2026-09-02T13:55:00.000Z", renewsOn: "2027-09-02T13:55:00.000Z", orderId: "ord_1001" },
 ];
 
 /* ---------------------------- Referrals --------------------------- */
 
-/** Fictional friends — illustrating the referral center, not real people or results. */
+/** Fictional friends, illustrating the referral center, not real people or results. */
 export const sampleReferralEvents: ReferralEvent[] = [
   { id: "ref_1", friendName: "Priya (sample)", status: "rewarded", at: "2026-09-21T15:00:00.000Z", rewardCredit: 2000, isSample: true },
   { id: "ref_2", friendName: "A friend from book club (sample)", status: "started_preview", at: "2026-10-04T18:20:00.000Z", isSample: true },
@@ -123,14 +123,14 @@ export const heirlooms: HeirloomConfiguration[] = [
     id: "hl_book_margaret",
     kind: "book",
     capsuleId: "cap_margaret",
-    name: "Margaret — In Her Own Words",
+    name: "Margaret, In Her Own Words",
     book: {
       material: "linen",
       color: "evergreen",
       foil: "brass",
       size: "10x10",
       title: "Margaret Ellis",
-      subtitle: "In Her Own Words · 1940 —",
+      subtitle: "In Her Own Words · 1940, ",
       dedication: "For the stories that made us, and the ones still to come.",
       coverMediaId: "med_coast_1972",
       storyIds: ["mem_bread", "mem_harbor", "mem_foghorn", "mem_letter", "mem_suitcase", "mem_seat", "mem_wedding", "mem_three", "mem_summer", "mem_show", "mem_house", "mem_pacific", "mem_florence", "mem_grandma", "mem_know"],
@@ -168,7 +168,7 @@ export const gifts: Gift[] = [
     occasion: "christmas",
     recipient: { name: "Grandpa Walt", relation: "Grandfather" },
     giverName: "The Okafor grandchildren",
-    dedication: "We want to hear the stories you tell at the table — the ones we keep forgetting to write down. Merry Christmas.",
+    dedication: "We want to hear the stories you tell at the table, the ones we keep forgetting to write down. Merry Christmas.",
     reveal: { envelope: "winter", color: "evergreen", showGiverName: true },
     deliveryMode: "in_person",
     productId: "digital",
@@ -189,7 +189,7 @@ export const futureMessages: FutureMessage[] = [
     authorName: "Margaret Ellis",
     authorPersonId: "per_margaret",
     title: "For Emma, at thirty",
-    dedication: "Open this on your thirtieth birthday — or whenever you need it.",
+    dedication: "Open this on your thirtieth birthday, or whenever you need it.",
     body:
       "My darling Emma,\n\nBy the time you read this you'll be thirty, which is exactly the age I was when I first sat at a potter's wheel and made something that looked like a bowl. I hope you've already found the thing that makes your hands busy and your head quiet. If you haven't, there's no hurry. I was a late bloomer at nearly everything.\n\nI want you to know that you were the first person who ever called me Grandma, and that I practiced answering to it in the car.\n\nBe curious. Be kind. Write home.\n\nAll my love, always,\nGrandma",
     format: "letter",
@@ -205,7 +205,7 @@ export const futureMessages: FutureMessage[] = [
     history: [
       { status: "draft", at: "2026-10-01T18:00:00.000Z" },
       { status: "prepared", at: "2026-10-04T17:30:00.000Z" },
-      { status: "sealed_demo", at: "2026-10-04T18:00:00.000Z", note: "Demo seal — reversible, not scheduled" },
+      { status: "sealed_demo", at: "2026-10-04T18:00:00.000Z", note: "Demo seal, reversible, not scheduled" },
     ],
     createdAt: "2026-10-01T18:00:00.000Z",
     updatedAt: "2026-10-04T18:00:00.000Z",
@@ -217,7 +217,7 @@ export const futureMessages: FutureMessage[] = [
     authorName: "Sarah Ellis",
     authorPersonId: "per_sarah",
     title: "What Grandpa would have told you",
-    body: "Leo — Grandpa Tom used to say the world is mostly things we don't understand yet, and that this is good news. Here's what else he would have wanted you to know at eighteen…",
+    body: "Leo, Grandpa Tom used to say the world is mostly things we don't understand yet, and that this is good news. Here's what else he would have wanted you to know at eighteen…",
     format: "letter",
     attachmentIds: [],
     recipient: { name: "Leo Ellis", relationship: "Nephew", contactStatus: "not_provided", birthYear: 2010 },
@@ -236,7 +236,7 @@ export const futureMessages: FutureMessage[] = [
     authorName: "Sarah Ellis",
     authorPersonId: "per_sarah",
     title: "Twenty years from now",
-    dedication: "For Emma — when you're the age I was when you were born.",
+    dedication: "For Emma, when you're the age I was when you were born.",
     body: "Emma, I'm writing this at the kitchen table, the same one Grandma's bowl sits on now…",
     format: "letter",
     attachmentIds: [],
@@ -259,7 +259,7 @@ export const futureMessages: FutureMessage[] = [
     title: "An example of opening day",
     dedication: "This is a sample showing how a future letter will feel to open.",
     body:
-      "Dear one,\n\nIf you're reading this, a little piece of today has travelled a long way to find you. I don't know what your world looks like. I hope the coffee is still good and the people around you still laugh too loudly at dinner.\n\nThis is a sample letter, written to show what opening day might feel like. Long-term delivery isn't live yet — but the letters you write here are ready when it is.",
+      "Dear one,\n\nIf you're reading this, a little piece of today has travelled a long way to find you. I don't know what your world looks like. I hope the coffee is still good and the people around you still laugh too loudly at dinner.\n\nThis is a sample letter, written to show what opening day might feel like. Long-term delivery isn't live yet, but the letters you write here are ready when it is.",
     format: "letter",
     attachmentIds: [],
     recipient: { name: "You", relationship: "Future reader", contactStatus: "not_provided" },
@@ -267,7 +267,7 @@ export const futureMessages: FutureMessage[] = [
     restrictions: { recipientOnly: false, allowFamilyAfterOpening: true },
     status: "delivered",
     isExample: true,
-    history: [{ status: "delivered", at: "2026-10-13T08:00:00.000Z", note: "Example only — not a real delivery" }],
+    history: [{ status: "delivered", at: "2026-10-13T08:00:00.000Z", note: "Example only, not a real delivery" }],
     createdAt: "2026-09-01T08:00:00.000Z",
     updatedAt: "2026-09-01T08:00:00.000Z",
   },
@@ -288,10 +288,10 @@ export const successors: SuccessorDesignation[] = [
 /* --------------------------- Notifications ------------------------ */
 
 export const notifications: Notification[] = [
-  { id: "ntf_1", at: "2026-10-09T19:22:00.000Z", kind: "contribution", title: "Emma added a story", body: "“The blue bowl on the windowsill” — with a photo and a recording. Waiting for your review.", href: "/app/invitations?tab=review", read: false },
+  { id: "ntf_1", at: "2026-10-09T19:22:00.000Z", kind: "contribution", title: "Emma added a story", body: "“The blue bowl on the windowsill”, with a photo and a recording. Waiting for your review.", href: "/app/invitations?tab=review", read: false },
   { id: "ntf_2", at: "2026-10-07T21:05:00.000Z", kind: "contribution", title: "Daniel added a story", body: "“The night the kiln set off the alarm” is in review.", href: "/app/invitations?tab=review", read: false },
-  { id: "ntf_3", at: "2026-10-03T19:05:00.000Z", kind: "order", title: "Book proof ready to review (demo)", body: "Proof v1 of Margaret's book is ready. Nothing will print until you approve — and printing isn't connected yet.", href: "/app/orders", read: true },
-  { id: "ntf_4", at: "2026-10-04T08:01:00.000Z", kind: "invitation", title: "Invitation prepared for June", body: "Email preview only — no email was sent. Share the link yourself.", href: "/app/invitations", read: true },
+  { id: "ntf_3", at: "2026-10-03T19:05:00.000Z", kind: "order", title: "Book proof ready to review (demo)", body: "Proof v1 of Margaret's book is ready. Nothing will print until you approve, and printing isn't connected yet.", href: "/app/orders", read: true },
+  { id: "ntf_4", at: "2026-10-04T08:01:00.000Z", kind: "invitation", title: "Invitation prepared for June", body: "Email preview only, no email was sent. Share the link yourself.", href: "/app/invitations", read: true },
 ];
 
 /* ----------------------------- Support ---------------------------- */

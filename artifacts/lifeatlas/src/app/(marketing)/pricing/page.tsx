@@ -27,8 +27,8 @@ export default function PricingPage() {
             Pay for what you keep. <em>Invite everyone free.</em>
           </>
         }
-        lead="One owner chooses a plan. Partners, parents, cousins and grandchildren join free — to add their stories or simply to read them. Start on this device without paying anything at all."
-        note="All prices are test prices. Nothing is charged in this preview — checkout creates a clearly labelled demonstration order."
+        lead="One owner chooses a plan. Partners, parents, cousins and grandchildren join free, to add their stories or simply to read them. Start on this device without paying anything at all."
+        note="All prices are test prices. Nothing is charged in this preview, checkout creates a clearly labelled demonstration order."
       />
 
       <Section space="none" className="pb-20 sm:pb-28" labelledBy="plans">
@@ -88,7 +88,7 @@ export default function PricingPage() {
             columns={4}
             items={[
               { title: "Owners pay", body: "Whoever starts a capsule chooses its plan. Pay yearly and save, or monthly if you'd rather." },
-              { title: "Everyone else is free", body: "Contributors and viewers never need a plan, a card or a trial — however many you invite." },
+              { title: "Everyone else is free", body: "Contributors and viewers never need a plan, a card or a trial, however many you invite." },
               { title: "Leave whenever you like", body: "Cancel at any time. Your capsules stay yours to download, completely, on every plan." },
               { title: "Gifts work the same way", body: "Give someone a year of their own capsule. They never pay to add stories or invite their family." },
             ]}
@@ -121,11 +121,11 @@ export default function PricingPage() {
               <p className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-oxblood">Refer a friend</p>
               <h3 className="display-3 mt-3">They save, you earn credit</h3>
               <p className="mt-3 text-[1rem] leading-relaxed text-ink-2">
-                Friends who arrive through your link get {referralProgram.friendOffer}. When they subscribe, you get {formatMoney(referralProgram.referrerCredit)} of credit toward {referralProgram.creditUses} — up to {referralProgram.maxRewardsPerYear} times a year.
+                Friends who arrive through your link get {referralProgram.friendOffer}. When they subscribe, you get {formatMoney(referralProgram.referrerCredit)} of credit toward {referralProgram.creditUses}, up to {referralProgram.maxRewardsPerYear} times a year.
               </p>
             </div>
           </div>
-          <PreviewNote className="mt-8">Offers apply at the demonstration checkout, where nothing is charged. One offer per order. Any giveaway will run only under published rules after legal review — none is running today.</PreviewNote>
+          <PreviewNote className="mt-8">Offers apply at the demonstration checkout, where nothing is charged. One offer per order. Any giveaway will run only under published rules after legal review, none is running today.</PreviewNote>
         </Container>
       </Section>
 

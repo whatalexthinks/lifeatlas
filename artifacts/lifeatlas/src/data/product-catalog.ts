@@ -4,7 +4,7 @@ import { launchPrices } from "@/domain/commerce/plans";
 import { brand } from "@/config/brand";
 
 /**
- * The editable catalog. ALL PRICES ARE TEST PRICES — configurable launch hypotheses, not
+ * The editable catalog. ALL PRICES ARE TEST PRICES, configurable launch hypotheses, not
  * validated pricing. Amounts are integer cents. Operations can edit a local copy in
  * /demo/operations; these defaults are restored on reset or when CATALOG_VERSION changes.
  *
@@ -20,12 +20,12 @@ export const defaultCatalog: Product[] = [
     planId: "preview",
     name: "Preview",
     tagline: "Try it on this device.",
-    description: `Explore the sample capsules and start up to three of your own. Everything you add stays in this browser — nothing is hosted or backed up until you choose a plan.`,
+    description: `Explore the sample capsules and start up to three of your own. Everything you add stays in this browser, nothing is hosted or backed up until you choose a plan.`,
     price: { amount: 0, currency: "USD", interval: "one_time", isTestPrice: true },
     availability: "available_demo",
     fulfillment: "none",
     inclusions: ["Explore three sample capsules", "Start up to three capsules on this device", "Record, write and add photographs", "Download everything, any time"],
-    limitations: ["Stored only in this browser — clearing it removes your work", "Invitations work as copyable links in this browser only"],
+    limitations: ["Stored only in this browser, clearing it removes your work", "Invitations work as copyable links in this browser only"],
     giftable: false,
     sortOrder: 0,
   },
@@ -34,7 +34,7 @@ export const defaultCatalog: Product[] = [
     kind: "plan",
     planId: "digital",
     name: `Digital ${brand.product}`,
-    tagline: "One life, one love, or one family story — beautifully kept.",
+    tagline: "One life, one love, or one family story, beautifully kept.",
     description: "A private capsule for you, your partner, your family or someone you love: stories, voices, photographs, timelines and future messages, with free invitations for everyone who contributes.",
     price: { amount: launchPrices.digital.year, currency: "USD", interval: "year", isTestPrice: true },
     monthly: { amount: launchPrices.digital.month },
@@ -43,12 +43,12 @@ export const defaultCatalog: Product[] = [
     inclusions: [
       "One capsule of any kind",
       "25 GB for photographs, recordings and videos (planned allowance)",
-      "Unlimited family contributors and viewers — free for them",
+      "Unlimited family contributors and viewers, free for them",
       "Guided questions, voice recording, timelines and chapters",
       "Up to 10 future messages prepared",
       "Download a complete copy any time",
     ],
-    limitations: ["Hosted storage and sign-in arrive with accounts; this preview keeps everything in your browser", "Cancel any time — you can still download everything"],
+    limitations: ["Hosted storage and sign-in arrive with accounts; this preview keeps everything in your browser", "Cancel any time, you can still download everything"],
     note: "Test price · billed yearly, or monthly",
     giftable: true,
     sortOrder: 1,
@@ -59,7 +59,7 @@ export const defaultCatalog: Product[] = [
     planId: "family",
     name: "Family Plan",
     tagline: "Every capsule your family needs, in one place.",
-    description: "For the people keeping several stories at once — your parents, your relationship, your children — with a shared family directory and more room for media.",
+    description: "For the people keeping several stories at once, your parents, your relationship, your children, with a shared family directory and more room for media.",
     price: { amount: launchPrices.family.year, currency: "USD", interval: "year", isTestPrice: true },
     monthly: { amount: launchPrices.family.month },
     availability: "available_demo",
@@ -68,7 +68,7 @@ export const defaultCatalog: Product[] = [
       "Up to five capsules",
       "100 GB shared across them (planned allowance)",
       "A shared family directory: people and relationships across capsules",
-      "Unlimited contributors and viewers — free for them",
+      "Unlimited contributors and viewers, free for them",
       "Unlimited future messages prepared",
       "10% off printed books and physical capsules",
     ],
@@ -83,7 +83,7 @@ export const defaultCatalog: Product[] = [
     name: `Premium Physical ${brand.product}`,
     tagline: "A keepsake to hold, open and fill together.",
     description:
-      "A gift-ready archival kit: a fitted keepsake box, memory prompt cards, archival photo sleeves and letter envelopes. It needs nothing from you to ship — personal printed inserts can be added later, once your stories are ready.",
+      "A gift-ready archival kit: a fitted keepsake box, memory prompt cards, archival photo sleeves and letter envelopes. It needs nothing from you to ship, personal printed inserts can be added later, once your stories are ready.",
     price: { amount: launchPrices.physicalCapsule, currency: "USD", interval: "one_time", isTestPrice: true, from: true },
     availability: "available_demo",
     fulfillment: "ships_after_payment",
@@ -95,8 +95,8 @@ export const defaultCatalog: Product[] = [
       "A printed guide to starting and caring for your capsule",
       "Optional lid engraving and gift message",
     ],
-    limitations: ["Display keepsake — not designed or rated for burial", "Shipping and tax calculated once fulfillment is connected", "Payments and shipping aren't connected in this preview"],
-    note: "From — test price · add-on",
+    limitations: ["Display keepsake, not designed or rated for burial", "Shipping and tax calculated once fulfillment is connected", "Payments and shipping aren't connected in this preview"],
+    note: "From, test price · add-on",
     giftable: true,
     sortOrder: 3,
   },
@@ -112,7 +112,7 @@ export const defaultCatalog: Product[] = [
     fulfillmentNote: "Made to order: printed only after your stories are in and you approve the proof.",
     inclusions: ["Up to 72 pages; more in 4-page signatures", "Cloth, linen or soft-touch cover", "Foil or debossed title", "A page-by-page proof to approve first"],
     limitations: ["Printing and shipping aren't connected in this preview", "Shipping and tax calculated once fulfillment is connected"],
-    note: "From — test price · add-on",
+    note: "From, test price · add-on",
     giftable: true,
     sortOrder: 4,
   },
@@ -120,7 +120,7 @@ export const defaultCatalog: Product[] = [
     id: "legacy_capsule",
     kind: "physical",
     name: "Burial-rated capsule (research)",
-    tagline: "For long storage — not offered.",
+    tagline: "For long storage, not offered.",
     description: "A sealed capsule concept for long-term storage. It will not be offered until materials are tested and certified by qualified manufacturers.",
     price: { amount: 0, currency: "USD", interval: "one_time", isTestPrice: true },
     availability: "not_available",

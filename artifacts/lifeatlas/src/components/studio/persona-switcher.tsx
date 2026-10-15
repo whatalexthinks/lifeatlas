@@ -53,7 +53,7 @@ export function PersonaSwitcher({ compact = false, align = "start", side = "bott
                   onClick={async () => {
                     await services().auth.switchPersona(p.id);
                     setOpen(false);
-                    toast.info(`Now viewing as ${p.name}`, "Simulated identity — nothing is signed in or secured.");
+                    toast.info(`Now viewing as ${p.name}`, "Simulated identity, nothing is signed in or secured.");
                   }}
                   className="flex w-full items-center gap-3 rounded-[12px] px-2.5 py-2.5 text-left hover:bg-ivory"
                 >

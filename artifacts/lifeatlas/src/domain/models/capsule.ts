@@ -52,9 +52,9 @@ export type CapsuleStatus = "draft" | "active" | "archived" | "deletion_pending"
 export type CollectionMode = "in_person" | "link" | "family";
 /**
  * Who may see a memory besides the person who added it:
- * family — everyone with a role on the capsule; selected — the owner, editors and the people
- * in `sharedWith`; organizers — the owner and editors ("organizer" is the stored id for Editor);
- * private — the owner only.
+ * family, everyone with a role on the capsule; selected, the owner, editors and the people
+ * in `sharedWith`; organizers, the owner and editors ("organizer" is the stored id for Editor);
+ * private, the owner only.
  */
 export type MemoryPrivacy = "private" | "organizers" | "selected" | "family";
 
@@ -71,7 +71,7 @@ export interface CapsuleCover {
   focalY: number; // 0–100, object-position
 }
 
-/** Whose story a capsule holds. Shapes words, prompts and chapter names — not what it may contain. */
+/** Whose story a capsule holds. Shapes words, prompts and chapter names, not what it may contain. */
 export type CapsuleKind = "personal" | "couple" | "family" | "parent" | "child" | "someone";
 
 /** A date the capsule remembers every year (an anniversary) or once (a milestone). */
@@ -242,7 +242,7 @@ export interface Transcript extends Timestamps {
   id: ID;
   mediaId: ID;
   text: string;
-  /** Never "inferred" in Part One — we do not invent transcripts. */
+  /** Never "inferred" in Part One, we do not invent transcripts. */
   origin: "manual" | "sample_script" | "provider";
   language: "en";
 }

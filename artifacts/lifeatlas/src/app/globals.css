@@ -9,14 +9,14 @@
 :root {
   color-scheme: light;
 
-  /* Materials — porcelain and soft paper */
+  /* Materials, porcelain and soft paper */
   --paper: #f8f6f1;
   --ivory: #f0ece4;
   --surface: #fcfbf8;
   --linen: #e8e2d7;
   --mat: #f3f0ea;
 
-  /* Ink hierarchy — charcoal. Every step ≥ 4.5:1 on paper, ivory and surface. */
+  /* Ink hierarchy, charcoal. Every step ≥ 4.5:1 on paper, ivory and surface. */
   --ink: #252421;
   --ink-2: #4a4741;
   --ink-3: #5c5850;
@@ -72,7 +72,7 @@
   --on-image: #fbf9f4;
   --scrim: rgb(24 22 20 / 0.55);
 
-  /* Night surfaces — warm charcoal (also used in light mode for dark sections) */
+  /* Night surfaces, warm charcoal (also used in light mode for dark sections) */
   --night: #1b1a18;
   --night-2: #23211e;
   --night-3: #2c2a26;
@@ -94,7 +94,7 @@
   --dur-slow: 700ms;
 }
 
-/* Evening theme — a real viewing mode, not inverted colors. */
+/* Evening theme, a real viewing mode, not inverted colors. */
 :root[data-theme="evening"],
 .theme-evening {
   color-scheme: dark;
@@ -555,7 +555,7 @@
     border-radius: var(--radius);
   }
 
-  /* Paper grain overlay — rendered once, extremely subtle. */
+  /* Paper grain overlay, rendered once, extremely subtle. */
   .grain {
     position: relative;
     isolation: isolate;
@@ -1047,3 +1047,116 @@
  .la-slip-top button { width: 38px; height: 38px; }
  .la-memory-slip h3 { font-size: 1.7rem; }
 }
+
+/* ==================================================================
+   Heirloom edition. Forest green, warm ivory, muted antique gold.
+   Appended last so it refines every token and shared utility above.
+   ================================================================== */
+:root {
+  --paper: #f4f2e9;
+  --ivory: #ebe9dd;
+  --surface: #faf9f3;
+  --linen: #dddccd;
+  --mat: #efeee4;
+  --ink: #17231b;
+  --ink-2: #3d493e;
+  --ink-3: #586054;
+  --ink-4: #697062;
+  --evergreen: #294334;
+  --evergreen-deep: #1b3024;
+  --evergreen-soft: #dfe5db;
+  --oxblood: #75613e;
+  --oxblood-deep: #5d4c2e;
+  --oxblood-soft: #ebe6d7;
+  --taupe: #b49f80;
+  --brass: #a39270;
+  --brass-ink: #716040;
+  --brass-soft: #eae5d7;
+  --line: #ddd1bf;
+  --line-strong: #c6b59c;
+  --shadow-color: 52 36 22;
+  --focus: #263830;
+  --night: #101a14;
+  --night-2: #1a241d;
+  --night-3: #242e25;
+  --night-line: #303c30;
+  --night-ink: #e8e7d9;
+  --night-ink-2: #c5c7b5;
+  --night-ink-3: #a2a58f;
+  --night-accent: #ad9b76;
+  --radius-sm: 3px;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+}
+:root[data-theme="evening"], .theme-evening {
+  color-scheme: dark;
+  --paper: #101a14;
+  --ivory: #162018;
+  --surface: #1a241d;
+  --linen: #273228;
+  --mat: #1d281f;
+  --ink: #e8e7d9;
+  --ink-2: #c5c7b5;
+  --ink-3: #a2a58f;
+  --ink-4: #9a9d87;
+  --line: #2c382c;
+  --line-strong: #404c3c;
+  --evergreen: #a99b7a;
+  --evergreen-deep: #b2a17c;
+  --evergreen-soft: #29362b;
+  --on-evergreen: #111b15;
+  --oxblood: #ad9b76;
+  --oxblood-deep: #c2b18d;
+  --oxblood-soft: #2c3024;
+  --on-oxblood: #101a14;
+  --brass: #a39270;
+  --brass-ink: #c4b58e;
+  --brass-soft: #2b3024;
+  --focus: #b9a982;
+}
+.marketing-shell { min-height: 100dvh; background: var(--paper); color: var(--ink); }
+.marketing-shell .la-home, .marketing-shell .la-page { --la-muted: var(--ink-2); --la-rule: var(--line); }
+.marketing-shell .la-page-hero, .marketing-shell .la-trust-section, .marketing-shell .la-heirlooms { background: var(--ivory); }
+.marketing-shell .la-page-intro, .marketing-shell .la-trust-grid p { color: var(--ink-2); }
+.marketing-shell .la-view-types span, .marketing-shell .la-product-specs, .marketing-shell .la-pricing-note { color: var(--ink-3); }
+
+body { font-feature-settings: "ss01", "cv11", "kern"; }
+
+.display-1, .display-2, .display-3 {
+  font-family: var(--font-serif);
+  font-weight: 330;
+  font-optical-sizing: auto;
+}
+.display-1 { font-size: clamp(3rem, 1.6rem + 5.4vw, 7.2rem); line-height: 0.94; letter-spacing: -0.035em; }
+.display-2 { font-size: clamp(2.3rem, 1.5rem + 3vw, 4.4rem); line-height: 1.0; letter-spacing: -0.03em; }
+.display-3 { font-size: clamp(1.5rem, 1.25rem + 0.95vw, 2.2rem); line-height: 1.1; letter-spacing: -0.02em; font-weight: 380; }
+.display-1 em, .display-2 em, .display-3 em { font-weight: 300; letter-spacing: -0.03em; color: var(--oxblood); }
+.on-dark .display-1 em, .on-dark .display-2 em, .on-dark .display-3 em { color: var(--night-accent); }
+
+.eyebrow { font-family: var(--font-mono); font-weight: 500; font-size: 0.6875rem; letter-spacing: 0.2em; color: var(--oxblood); }
+.eyebrow::before { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: transparent; border: 1px solid currentColor; opacity: 1; }
+
+.mount { background: #fbf8f2; padding: clamp(10px, 1.4vw, 16px) clamp(10px, 1.4vw, 16px) clamp(26px, 3vw, 40px); border-radius: 1px; }
+.mount::after { inset: clamp(10px, 1.4vw, 16px) clamp(10px, 1.4vw, 16px) clamp(26px, 3vw, 40px); }
+
+/* Body-wide paper tooth, fixed so it costs nothing on scroll. */
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: 0.35; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3 0 0 0 0 .22 0 0 0 0 .14 0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+@media print { body::after { display: none; } }
+
+/* Photographic language: toned silver prints on bone. */
+.print-photo { position: relative; overflow: hidden; background: var(--linen); }
+.print-photo img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.18) contrast(1.04) saturate(0.85); transition: transform 1.6s var(--ease-out); }
+.print-photo:hover img { transform: scale(1.025); }
+.print-photo::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08), inset 0 0 80px rgb(40 26 14 / 0.18); }
+.print-frame { --ink: #17231b; --ink-2: #3d493e; --ink-3: #586054; --ink-4: #697062; background: #f3f1e6; color: #17231b; padding: 10px 10px 38px; box-shadow: var(--shadow-object); }
+.caption-hand { font-family: var(--font-serif); font-style: italic; font-size: 0.95rem; color: var(--ink-3); }
+.seal { display: inline-grid; place-items: center; border-radius: 999px; background: var(--oxblood); color: #101a14; }
+.gilt-rule { height: 1px; background: linear-gradient(90deg, transparent, var(--brass), transparent); }
+.filmstrip { display: flex; gap: clamp(10px, 1.4vw, 18px); animation: drift 80s linear infinite; width: max-content; }
+.filmstrip:hover { animation-play-state: paused; }
+@keyframes drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+.hero-rise { animation: fade-up 1100ms var(--ease-out) both; animation-delay: var(--d, 0ms); }

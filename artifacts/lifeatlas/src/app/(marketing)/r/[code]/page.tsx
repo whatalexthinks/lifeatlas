@@ -12,7 +12,7 @@ import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
   title: "You've been invited",
-  description: `A friend invited you to ${brand.name} — private capsules for the stories, voices and photographs of the people you love.`,
+  description: `A friend invited you to ${brand.name}, private capsules for the stories, voices and photographs of the people you love.`,
   robots: { index: false, follow: true },
 };
 
@@ -39,7 +39,7 @@ export default function ReferralPage() {
         lead={
           valid
             ? `${brand.name} keeps the stories, voices and photographs of the people you love in one private capsule. Your friend's link gives you ${offer?.percentOff ?? 20}% off your first year of an annual plan.`
-            : "The code may have been cut short when it was copied. You're very welcome to look around — and if you have the code, you can type it at checkout."
+            : "The code may have been cut short when it was copied. You're very welcome to look around, and if you have the code, you can type it at checkout."
         }
         actions={
           <>

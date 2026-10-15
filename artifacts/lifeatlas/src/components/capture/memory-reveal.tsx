@@ -55,7 +55,7 @@ export function MemoryReveal({ memory, subjectName, className, format = "card", 
         <h3 className={cn("mt-3 font-serif leading-[1.04] tracking-[-0.015em]", format === "portrait" ? "text-[2.4rem]" : "text-[2.1rem]")}>{memory.title}</h3>
         {memory.quote || memory.narrative ? <p className="mt-3 max-w-xl font-serif text-[1.15rem] italic leading-snug text-night-ink-2">&ldquo;{memory.quote ?? excerpt(memory.narrative, 150)}&rdquo;</p> : null}
         {memory.audioId ? <AudioPlayer mediaId={memory.audioId} variant="mini" tone="light" className="mt-5" title={memory.title} showNotice={false} /> : null}
-        {format === "card" && memory.videoIds?.length ? <VideoClip mediaId={memory.videoIds[0]} title={`${memory.title} — video`} className="mt-5" /> : null}
+        {format === "card" && memory.videoIds?.length ? <VideoClip mediaId={memory.videoIds[0]} title={`${memory.title}, video`} className="mt-5" /> : null}
         {subjectName ? <p className="mt-5 text-[0.8125rem] text-night-ink-3">From the archive of {subjectName}</p> : null}
       </div>
     </article>

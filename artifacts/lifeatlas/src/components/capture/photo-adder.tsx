@@ -13,7 +13,7 @@ export interface PendingPhoto {
   caption: string;
   width?: number;
   height?: number;
-  /** The date the camera recorded, if any — offered to confirm, never applied on its own. */
+  /** The date the camera recorded, if any, offered to confirm, never applied on its own. */
   takenOn?: TakenDate;
 }
 
@@ -29,7 +29,7 @@ async function dimensions(url: string) {
 /**
  * Photo picker with real MIME + signature validation and local previews. Photos can be
  * dropped in, reordered (buttons, or drag on larger screens) and captioned; the camera's date
- * is read so it can be offered — never assumed.
+ * is read so it can be offered, never assumed.
  */
 export function PhotoAdder({ photos, onChange, max = 6, size = "standard" }: { photos: PendingPhoto[]; onChange: (p: PendingPhoto[]) => void; max?: number; size?: "senior" | "standard" }) {
   const inputRef = React.useRef<HTMLInputElement | null>(null);

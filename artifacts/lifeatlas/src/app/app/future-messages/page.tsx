@@ -44,7 +44,7 @@ export default function FutureMessagesPage() {
   };
   const unseal = async (l: FutureMessage) => {
     const r = await services().futureDelivery.transition(l.id, "draft");
-    if (r.status === "ok") toast.success("Unsealed — back to draft");
+    if (r.status === "ok") toast.success("Unsealed, back to draft");
   };
   const schedule = async () => {
     const r = await services().futureDelivery.schedule("x");
@@ -56,14 +56,14 @@ export default function FutureMessagesPage() {
       <PageHeader
         eyebrow="Letters Through Time · Preview feature"
         title="Words for a day that hasn't come yet."
-        description="Write letters and record messages for the future. You can draft, preview and seal them here. Long-term delivery isn't available yet — nothing is scheduled."
+        description="Write letters and record messages for the future. You can draft, preview and seal them here. Long-term delivery isn't available yet, nothing is scheduled."
         actions={
           <ButtonLink href="/app/future-messages/new" leading={<Plus className="size-4" />}>
             Write a letter
           </ButtonLink>
         }
       />
-      <DemoNotice className="mb-8" title="Future message drafts — not scheduled for delivery">
+      <DemoNotice className="mb-8" title="Future message drafts, not scheduled for delivery">
         Letters live on this device. Delivery 5, 10, 20 or 30 years from now needs a service with verified contacts, succession, backups and legal review. We won&rsquo;t sell it until those exist.
       </DemoNotice>
 
@@ -128,7 +128,7 @@ export default function FutureMessagesPage() {
             {[
               ["An immutable snapshot", "Sealing freezes the exact content with a fingerprint, stored in independent backups."],
               ["Verified recipients", "Contacts confirmed now, and re-confirmed every two years until the day."],
-              ["A successor", "Someone you trust who can act if you can't — verified, never automatic."],
+              ["A successor", "Someone you trust who can act if you can't, verified, never automatic."],
               ["Continuity & legal review", "A plan for company changes, data portability and estate rules before anything is sold."],
             ].map(([t, d]) => (
               <li key={t} className="flex gap-3">
@@ -148,7 +148,7 @@ export default function FutureMessagesPage() {
       {list.length === 0 ? (
         <EmptyState
           title={tab === "draft" ? "No drafts" : "Nothing here"}
-          body={tab === "draft" ? "A letter for a wedding day, a thirtieth birthday, a first child. Start with a few lines — you can return to it any time." : "Letters move here as you prepare and seal them."}
+          body={tab === "draft" ? "A letter for a wedding day, a thirtieth birthday, a first child. Start with a few lines, you can return to it any time." : "Letters move here as you prepare and seal them."}
           action={tab === "draft" ? <ButtonLink href="/app/future-messages/new">Write a letter</ButtonLink> : null}
         />
       ) : (
@@ -174,7 +174,7 @@ export default function FutureMessagesPage() {
                 </div>
                 <div>
                   <dt className="text-ink-4">Recipient contact</dt>
-                  <dd>{l.recipient.contactStatus === "not_provided" ? "Not provided" : "Unverified — verification arrives with the service"}</dd>
+                  <dd>{l.recipient.contactStatus === "not_provided" ? "Not provided" : "Unverified, verification arrives with the service"}</dd>
                 </div>
                 {l.backupRecipient ? (
                   <div>
@@ -225,7 +225,7 @@ export default function FutureMessagesPage() {
 
       <Dialog open={!!preview} onOpenChange={(v) => !v && setPreview(null)} title="Opening preview" hideTitle size="xl" className="bg-night">
         <div className="-mx-6 -mb-6 bg-night px-6 py-10 sm:-mx-8 sm:px-8">{preview ? <LetterOpening message={preview} mode={preview.isExample ? "example" : "preview"} /> : null}</div>
-        <p className="mt-4 text-center text-[0.8125rem] text-night-ink-3">Simulated opening — no letter was delivered.</p>
+        <p className="mt-4 text-center text-[0.8125rem] text-night-ink-3">Simulated opening, no letter was delivered.</p>
       </Dialog>
       <ConfirmDialog
         open={!!del}

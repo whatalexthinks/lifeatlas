@@ -12,7 +12,7 @@ import { useDemoStore } from "@/store/demo-store";
 import { services } from "@/services/factory";
 import { starterQuestionIds } from "@/data/prompts/questions";
 
-/** The gift recipient's first question — creates their own capsule on the spot. */
+/** The gift recipient's first question, creates their own capsule on the spot. */
 export default function GiftBegin() {
   const { token } = useParams<{ token: string }>();
   const hydrated = useHydrated();
@@ -85,13 +85,13 @@ export default function GiftBegin() {
         ) : done ? (
           <div className="pt-16 text-center">
             <h1 className="font-serif text-[clamp(2.4rem,1.8rem+2.5vw,3.6rem)] leading-tight">That&rsquo;s your first story.</h1>
-            <p className="mx-auto mt-4 max-w-md text-[1.15rem] text-ink-2">It&rsquo;s kept in your capsule. Come back for another question whenever you like — {gift?.giverName} will be so glad.</p>
+            <p className="mx-auto mt-4 max-w-md text-[1.15rem] text-ink-2">It&rsquo;s kept in your capsule. Come back for another question whenever you like, {gift?.giverName} will be so glad.</p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <ButtonLink href={`/view/${capsule.id}`} size="lg">
                 See your capsule
               </ButtonLink>
             </div>
-            <p className="mt-6 text-[0.875rem] text-ink-3">Saved on this device for the demo — not uploaded or backed up.</p>
+            <p className="mt-6 text-[0.875rem] text-ink-3">Saved on this device for the demo, not uploaded or backed up.</p>
           </div>
         ) : (
           <div className="pt-4">

@@ -6,16 +6,17 @@ import { MobileStickyCta } from "@/components/marketing/site-header";
 import { Plate } from "@/components/media/media-image";
 import { ArrowLink, CheckList, Container, Eyebrow, FinalCta, Heading, JsonLd, Numbered, PreviewNote, Section, Split } from "@/components/site/kit";
 import { appConfig } from "@/lib/config";
-import { FutureMessagePreview, HeroComposition, InvitationPreview, QuestionTry, StoryPreview, TimelinePreview, VoicePreview } from "@/components/site/previews";
+import { FutureMessagePreview, InvitationPreview, QuestionTry, StoryPreview, TimelinePreview, VoicePreview } from "@/components/site/previews";
 import { AudienceGrid } from "@/components/site/audiences";
 import { PlanPricing } from "@/components/site/pricing";
 import { formatMoney } from "@/lib/utils";
 import { defaultCatalog } from "@/data/product-catalog";
 import { brand } from "@/config/brand";
+import { ContactSheet, EditorialSpread, HeroPrints, LostThings } from "@/components/marketing/home/editorial";
 
 export const metadata: Metadata = {
-  title: { absolute: `${brand.name} — A life is made of moments. Keep them close.` },
-  description: `${brand.name} keeps the stories, voices and photographs of the people you love — yours, your partner's, your family's — in one private capsule you can share with the people you choose and hand down.`,
+  title: { absolute: `${brand.name}, A life is made of moments. Keep them close.` },
+  description: `${brand.name} keeps the stories, voices and photographs of the people you love, yours, your partner's, your family's, in one private capsule you can share with the people you choose and hand down.`,
   alternates: { canonical: "/" },
 };
 
@@ -23,9 +24,9 @@ const price = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id
 
 const faqs: [string, React.ReactNode][] = [
   ["What is a LifeCapsule?", "A private place for the story of a life or a relationship: written memories, recorded answers, photographs, dates and places. You can explore it as a timeline or in chapters, invite people to add what they remember, and turn it into a printed book or a physical keepsake."],
-  ["Do the people I invite have to pay?", "Never. Whoever owns the capsule chooses a plan; everyone they invite — to add stories or simply to read them — joins free, with no card and no trial."],
-  ["What can I try today?", `Almost everything, on this device: create capsules, answer questions, record your voice, add photographs, invite family with a link, design a book and prepare future messages. Accounts, cloud storage, payments, printing and delivery aren't connected yet — the preview says so wherever it matters.`],
-  ["Are my memories backed up?", "Not in this preview. What you add stays in this browser. Download a copy of anything that matters — a complete export with your stories and files is always one click away."],
+  ["Do the people I invite have to pay?", "Never. Whoever owns the capsule chooses a plan; everyone they invite, to add stories or simply to read them, joins free, with no card and no trial."],
+  ["What can I try today?", `Almost everything, on this device: create capsules, answer questions, record your voice, add photographs, invite family with a link, design a book and prepare future messages. Accounts, cloud storage, payments, printing and delivery aren't connected yet, the preview says so wherever it matters.`],
+  ["Are my memories backed up?", "Not in this preview. What you add stays in this browser. Download a copy of anything that matters, a complete export with your stories and files is always one click away."],
 ];
 
 export default function HomePage() {
@@ -41,57 +42,55 @@ export default function HomePage() {
           ],
         }}
       />
-      {/* A — Hero */}
-      <section className="relative overflow-hidden pb-20 pt-10 sm:pb-28 sm:pt-16">
+      {/* Hero */}
+      <section className="relative overflow-hidden pb-16 pt-10 sm:pb-24 sm:pt-16">
         <Container size="wide">
-          <div className="grid gap-14 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:items-center lg:gap-16">
+          <div className="grid gap-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-14">
             <div>
-              <Eyebrow>Private memory capsules for the people you love</Eyebrow>
-              <h1 className="display-1 mt-7">
+              <Eyebrow className="hero-rise">A private family archive</Eyebrow>
+              <h1 className="display-1 hero-rise mt-8 [--d:120ms]">
                 A life is made of moments. <em>Keep them close.</em>
               </h1>
-              <p className="lead mt-7 max-w-xl">
-                {brand.name} gathers the stories, voices and photographs that matter — your own, your partner&rsquo;s, your family&rsquo;s — into one private capsule you can keep, share with the people you choose, and hand down.
+              <p className="lead hero-rise mt-8 max-w-xl [--d:240ms]">
+                {brand.name} brings your stories, voices and photographs together in a private capsule. Keep it for yourself, share it with the people you choose, and hand it down.
               </p>
-              <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+              <div className="hero-rise mt-10 flex flex-wrap items-center gap-x-7 gap-y-4 [--d:360ms]">
                 <ButtonLink href="/app/capsules/new" size="xl">
                   Create Your LifeCapsule
                 </ButtonLink>
                 <ArrowLink href="/how-it-works">See How It Works</ArrowLink>
               </div>
-              <p className="mt-6 text-[0.9375rem] text-ink-3">Free to begin on this device. No card, no account needed to try it.</p>
+              <div className="hero-rise mt-12 flex max-w-xl items-center gap-5 border-t border-line pt-6 [--d:480ms]">
+                <p className="font-mono text-[0.65rem] uppercase leading-relaxed tracking-[0.18em] text-ink-3">Free to begin on this device. No card, no account needed to try it.</p>
+              </div>
             </div>
-            <HeroComposition />
+            <HeroPrints />
           </div>
         </Container>
       </section>
 
-      {/* B — The problem */}
+      <ContactSheet />
+
+      {/* The problem */}
       <Section tone="night" labelledBy="why">
         <Container size="wide">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-20">
-            <Heading
-              id="why"
-              eyebrow="Why it matters"
-              title={
-                <>
-                  The photographs survive. <em>The stories behind them don&rsquo;t.</em>
-                </>
-              }
-              lead="It isn't the big events we lose first. It's how she said your name, the song he whistled at the stove, the way the two of you tell the story of how you met — each a little differently. Those live in people, not on phones."
-            />
-            <ul className="grid content-end gap-6 border-t border-night-line pt-8 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
-              {["The recipe nobody ever wrote down.", "The voice on an old answering machine.", "The story only Grandpa told right.", "What you'd want your children to know about you."].map((x) => (
-                <li key={x} className="font-serif text-[clamp(1.35rem,1.15rem+0.8vw,1.85rem)] leading-snug text-night-ink">
-                  {x}
-                </li>
-              ))}
-            </ul>
+          <Heading
+            id="why"
+            eyebrow="Why it matters"
+            title={
+              <>
+                The photographs survive. <em>The stories behind them don&rsquo;t.</em>
+              </>
+            }
+            lead="It isn't the big events we lose first. It's how she said your name, the song he whistled at the stove, the way the two of you tell the story of how you met, each a little differently. Those live in people, not on phones."
+          />
+          <div className="mt-16">
+            <LostThings />
           </div>
         </Container>
       </Section>
 
-      {/* C — Real product */}
+      {/* C, Real product */}
       <Section labelledBy="product">
         <Container size="wide">
           <Heading
@@ -114,7 +113,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* D — Entry points */}
+      {/* D, Entry points */}
       <Section tone="ivory" labelledBy="whose">
         <Container size="wide">
           <div className="flex flex-wrap items-end justify-between gap-6">
@@ -133,7 +132,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* E — How it works */}
+      {/* E, How it works */}
       <Section labelledBy="how">
         <Container size="wide">
           <Heading
@@ -151,7 +150,7 @@ export default function HomePage() {
             items={[
               { title: "Choose whose story", body: "Yours, the two of you, your family, a parent, a child or someone special. A name is all we ask." },
               { title: "Answer a question", body: "Speak it, type it or start from a photograph. Skip any question; answer a favourite twice." },
-              { title: "Invite people in", body: "Partners, siblings, grandchildren. They add what only they remember — free, and with your say on what's kept." },
+              { title: "Invite people in", body: "Partners, siblings, grandchildren. They add what only they remember, free, and with your say on what's kept." },
               { title: "Keep it close", body: "Explore it as a timeline, print it as a book, prepare messages for the future, and download it any time." },
             ]}
           />
@@ -176,13 +175,13 @@ export default function HomePage() {
                   Not sure where to start? <em>Let us ask.</em>
                 </>
               }
-              lead="Choose whose story you're thinking of, and we'll offer a question written for it — how you met, what your grandmother cooked without a recipe, what you hope your child remembers."
+              lead="Choose whose story you're thinking of, and we'll offer a question written for it, how you met, what your grandmother cooked without a recipe, what you hope your child remembers."
             />
           </Split>
         </Container>
       </Section>
 
-      {/* F — Voice */}
+      {/* F, Voice */}
       <Section labelledBy="voice">
         <Container size="wide">
           <Split media={<VoicePreview audioId="aud_seat" title="The seat by the window" />}>
@@ -194,15 +193,15 @@ export default function HomePage() {
                   The laugh, the pause, <em>the way they tell it.</em>
                 </>
               }
-              lead="A recording keeps what writing can't. Answer out loud on a phone or a laptop — one large button, no settings to learn. If recording isn't possible on a device, you can upload a file or type instead."
+              lead="A recording keeps what writing can't. Answer out loud on a phone or a laptop, one large button, no settings to learn. If recording isn't possible on a device, you can upload a file or type instead."
             >
-              <CheckList className="mt-8" items={["Recordings are kept exactly as spoken", "Transcripts are only ever what you type — never invented", "Works with large text and on older phones"]} />
+              <CheckList className="mt-8" items={["Recordings are kept exactly as spoken", "Transcripts are only ever what you type, never invented", "Works with large text and on older phones"]} />
             </Heading>
           </Split>
         </Container>
       </Section>
 
-      {/* G — Example walkthrough */}
+      {/* G, Example walkthrough */}
       <Section tone="ivory" labelledBy="walkthrough">
         <Container size="wide">
           <Heading
@@ -217,16 +216,16 @@ export default function HomePage() {
           />
           <ol className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { plate: "umbrella-1998", step: "Sarah answers “How did we meet?”", body: "She types it on her phone one evening — the rain, the red umbrella, the forty minutes in a doorway." },
+              { plate: "umbrella-1998", step: "Sarah answers “How did we meet?”", body: "She types it on her phone one evening, the rain, the red umbrella, the forty minutes in a doorway." },
               { plate: "bookshop-1998", step: "Jonah answers the same question", body: "His version starts with her laugh. Both answers are kept, side by side." },
               { plate: "orchard-2001", step: "Their daughter adds the wedding", body: "Emma is invited free, and adds the orchard photograph Sarah had never seen." },
-              { plate: "porch-2025", step: "A letter for their thirtieth", body: "They write to each other, to be opened in 2031 — prepared now, with no false promise about delivery." },
+              { plate: "porch-2025", step: "A letter for their thirtieth", body: "They write to each other, to be opened in 2031, prepared now, with no false promise about delivery." },
             ].map((s, i) => (
               <li key={s.step} className="flex flex-col">
                 <div className="mount">
                   <Plate id={s.plate} alt="" className="aspect-[4/3]" />
                 </div>
-                <p className="mt-5 font-mono text-[0.75rem] tracking-[0.12em] text-oxblood">{String(i + 1).padStart(2, "0")}</p>
+                <p className="mt-5 font-mono text-[0.7rem] tracking-[0.2em] text-oxblood">{String(i + 1).padStart(2, "0")}</p>
                 <h3 className="display-3 mt-2 !text-[1.3rem]">{s.step}</h3>
                 <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-2">{s.body}</p>
               </li>
@@ -238,17 +237,17 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* H — Physical keepsakes */}
+      {/* H, Physical keepsakes */}
       <Section labelledBy="keepsakes">
         <Container size="wide">
           <Split
             media={
-              <div className="relative grid min-h-[360px] place-items-center rounded-[28px] bg-ivory p-8 sm:min-h-[460px]">
+              <div className="relative grid min-h-[360px] place-items-center rounded-[2px] bg-ivory p-8 sm:min-h-[460px]">
                 <div className="w-[62%] max-w-[330px]">
-                  <KeepsakeBox finish="linen_wrapped" engraving="Sarah & Jonah · 1998 —" />
+                  <KeepsakeBox finish="linen_wrapped" engraving="Sarah & Jonah · 1998, " />
                 </div>
                 <div className="absolute bottom-8 right-8 hidden w-[32%] max-w-[180px] sm:block">
-                  <BookObject title="Our Story" subtitle="Sarah & Jonah" years="1998 —" color="terracotta" size="sm" eyebrow="" />
+                  <BookObject title="Our Story" subtitle="Sarah & Jonah" years="1998, " color="terracotta" size="sm" eyebrow="" />
                 </div>
               </div>
             }
@@ -282,13 +281,13 @@ export default function HomePage() {
               <div className="mt-8 flex flex-wrap gap-x-7 gap-y-3">
                 <ArrowLink href="/physical-capsules">See the keepsakes</ArrowLink>
               </div>
-              <PreviewNote className="mt-6">Test prices. Payments, printing and shipping aren&rsquo;t connected in this preview — you can design both, and nothing is charged.</PreviewNote>
+              <PreviewNote className="mt-6">Test prices. Payments, printing and shipping aren&rsquo;t connected in this preview, you can design both, and nothing is charged.</PreviewNote>
             </Heading>
           </Split>
         </Container>
       </Section>
 
-      {/* I — Gifting */}
+      {/* I, Gifting */}
       <Section tone="night" labelledBy="gifts">
         <Container size="wide">
           <Split
@@ -307,7 +306,7 @@ export default function HomePage() {
                   Give someone <em>the beginning of their story.</em>
                 </>
               }
-              lead="A year of their own capsule, a physical kit to open together, or both — with a note from you. They choose when to begin; you can help, or simply listen."
+              lead="A year of their own capsule, a physical kit to open together, or both, with a note from you. They choose when to begin; you can help, or simply listen."
             >
               <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
                 <ButtonLink href="/gifts/build" variant="light" size="lg">
@@ -339,7 +338,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* J — Pricing */}
+      {/* J, Pricing */}
       <Section tone="ivory" labelledBy="pricing">
         <Container size="wide">
           <div className="flex flex-wrap items-end justify-between gap-6">
@@ -358,7 +357,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* K — Trust */}
+      {/* K, Trust */}
       <Section labelledBy="trust">
         <Container size="wide">
           <Heading
@@ -376,7 +375,7 @@ export default function HomePage() {
             items={[
               { title: "Private by default", body: "Capsules are never public or listed anywhere. Nobody sees one until you invite them." },
               { title: "Your call, memory by memory", body: "Keep any story to yourself, share it with the capsule's editors, or with everyone you've invited." },
-              { title: "Always yours to take", body: "Download everything — stories as readable files, your photographs and recordings — whenever you like." },
+              { title: "Always yours to take", body: "Download everything, stories as readable files, your photographs and recordings, whenever you like." },
               { title: "No promises we can't keep", body: "No invented dates or transcripts, no false security claims. In this preview, everything stays in your browser, and we say so." },
             ]}
           />
@@ -407,6 +406,8 @@ export default function HomePage() {
           </div>
         </Container>
       </Section>
+
+      <EditorialSpread />
 
       <FinalCta
         title={

@@ -3,7 +3,7 @@ import { unitAmount } from "./plans";
 
 /**
  * The promotion evaluator. Pure and unit-tested: given a code, a cart and who's buying,
- * say whether it applies and exactly how much it takes off — or why it doesn't, in words a
+ * say whether it applies and exactly how much it takes off, or why it doesn't, in words a
  * customer understands. One promotion per order; promotions don't stack.
  */
 
@@ -45,11 +45,11 @@ function lineApplies(p: Promotion, product: Product) {
 }
 
 export function evaluatePromotion(p: Promotion | undefined, lines: CartLine[], catalog: Product[], ctx: PromotionContext): PromotionResult {
-  if (!p) return { ok: false, reason: "That code isn't recognised. Check the spelling — codes aren't case-sensitive." };
+  if (!p) return { ok: false, reason: "That code isn't recognised. Check the spelling, codes aren't case-sensitive." };
   if (p.status !== "active") return { ok: false, reason: p.status === "ended" ? "This offer has ended." : "This offer isn't available right now." };
   const gate = canActivate(p);
   if (!gate.ok) return { ok: false, reason: "This offer isn't available right now." };
-  if (p.kind === "giveaway") return { ok: false, reason: "Giveaways are awarded under their published rules — they can't be redeemed as a code." };
+  if (p.kind === "giveaway") return { ok: false, reason: "Giveaways are awarded under their published rules, they can't be redeemed as a code." };
   if (p.startsAt && ctx.now < new Date(p.startsAt)) return { ok: false, reason: "This offer hasn't started yet." };
   if (p.endsAt && ctx.now > new Date(p.endsAt)) return { ok: false, reason: "This offer has ended." };
   if (p.limits.maxRedemptions !== undefined && p.redemptions >= p.limits.maxRedemptions) return { ok: false, reason: "This offer has been fully claimed." };
@@ -101,6 +101,6 @@ export function evaluatePromotion(p: Promotion | undefined, lines: CartLine[], c
   discount = Math.max(0, Math.min(discount, base));
   if (discount === 0) return { ok: false, reason: "This offer doesn't change the price of what's in your bag." };
   const label =
-    p.kind === "free_period" ? `${p.name} — ${p.freeMonths} months free` : p.kind === "amount_off" ? `${p.name} — $${((p.amountOff ?? 0) / 100).toFixed(2)} off` : `${p.name} — ${p.percentOff}% off${p.firstTermOnly ? " the first term" : ""}`;
+    p.kind === "free_period" ? `${p.name}, ${p.freeMonths} months free` : p.kind === "amount_off" ? `${p.name}, $${((p.amountOff ?? 0) / 100).toFixed(2)} off` : `${p.name}, ${p.percentOff}% off${p.firstTermOnly ? " the first term" : ""}`;
   return { ok: true, promotion: p, discount, label, appliedTo: eligible.map((l) => l.id) };
 }

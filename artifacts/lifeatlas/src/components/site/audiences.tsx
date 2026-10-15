@@ -5,12 +5,12 @@ import { Reveal } from "@/components/shared/reveal";
 import { cn } from "@/lib/utils";
 
 export const audiences = [
-  { key: "couples", href: "/couples", plate: "umbrella-1998", label: "For couples", line: "How you met, the firsts, the letters — told by both of you, each in your own words." },
+  { key: "couples", href: "/couples", plate: "umbrella-1998", label: "For couples", line: "How you met, the firsts, the letters, told by both of you, each in your own words." },
   { key: "families", href: "/families", plate: "table-2019", label: "For families", line: "Generations at one table: traditions, recipes and everyone's side of the story." },
   { key: "legacy", href: "/legacy", plate: "kitchen-1947", label: "For a parent or grandparent", line: "Their stories in their own voice, before the details fade." },
-  { key: "personal", href: "/personal", plate: "bookshop-1989", label: "For yourself", line: "Your life, in your words — for you now, and for the people who come after." },
+  { key: "personal", href: "/personal", plate: "bookshop-1989", label: "For yourself", line: "Your life, in your words, for you now, and for the people who come after." },
   { key: "children", href: "/families#children", plate: "nightlight-2004", label: "For a child", line: "Milestones, funny sayings and letters they'll open when they're older." },
-  { key: "gifts", href: "/gifts", plate: "letter-1952", label: "As a gift", line: "Give someone the beginning of their story — and the time to tell it." },
+  { key: "gifts", href: "/gifts", plate: "letter-1952", label: "As a gift", line: "Give someone the beginning of their story, and the time to tell it." },
 ] as const;
 
 /** Entry points by audience. Each leads to its own page, not a repeat of the homepage. */

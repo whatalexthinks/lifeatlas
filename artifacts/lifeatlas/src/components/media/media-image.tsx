@@ -5,6 +5,7 @@ import { ImageOff } from "lucide-react";
 import type { MediaAsset } from "@/domain/models";
 import { useMediaAsset, useMediaUrl } from "@/hooks/use-data";
 import { cn } from "@/lib/utils";
+import { photoForPlate } from "@/lib/media/editorial-photos";
 
 /**
  * Displays any media image (sample plate, sample photo, or a photo stored on
@@ -87,6 +88,7 @@ export function MediaImage({
 }) {
   const fromStore = useMediaAsset(assetProp ? undefined : mediaId);
   const asset = assetProp ?? fromStore;
+  const editorialPhoto = asset?.source.kind === "plate" ? photoForPlate(asset.source.plateId) : undefined;
   const { url: rawUrl, error } = useMediaUrl(asset);
   const url = usePrintSafeUrl(rawUrl);
   const print = React.useContext(PrintContext);
@@ -96,7 +98,7 @@ export function MediaImage({
       {url ? (
         <img
           src={url}
-          alt={alt ?? asset?.alt ?? ""}
+          alt={alt ?? editorialPhoto?.alt ?? asset?.alt ?? ""}
           sizes={sizes}
           loading={priority || print ? "eager" : "lazy"}
           decoding="async"
@@ -124,9 +126,10 @@ export function MediaImage({
  * cached /plates route so the illustration isn't inlined into the page's HTML.
  */
 export function Plate({ id, className, alt, priority, focalY = 50 }: { id: string; className?: string; alt: string; priority?: boolean; focalY?: number }) {
+  const photo = photoForPlate(id);
   return (
     <div className={cn("relative overflow-hidden bg-linen", className)}>
-      <img src={`/plates/${id}`} alt={alt} className="size-full object-cover" style={{ objectPosition: `50% ${focalY}%` }} loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} />
+      <img src={photo?.url ?? `/plates/${id}`} alt={photo?.alt ?? alt} className="size-full object-cover" style={{ objectPosition: `50% ${focalY}%` }} loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} />
     </div>
   );
 }

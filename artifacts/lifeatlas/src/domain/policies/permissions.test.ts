@@ -34,7 +34,7 @@ describe("viewing", () => {
   it("shows approved family memories to viewers", () => {
     expect(canViewMemory(memory(), "viewer")).toBe(true);
   });
-  it("keeps “Only me” stories to their author and the owner — editors don't see them", () => {
+  it("keeps “Only me” stories to their author and the owner, editors don't see them", () => {
     const m = memory({ privacy: "private", attribution: { personId: "per_emma", displayName: "Emma Ellis", via: "invitation" } });
     expect(canViewMemory(m, "viewer")).toBe(false);
     expect(canViewMemory(m, "organizer", "per_jonah")).toBe(false);

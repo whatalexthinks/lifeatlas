@@ -100,7 +100,7 @@ export function StoryView({ capsule, memory, scope, hrefFor, tone = "paper", bac
 
       <div className="mt-14 grid gap-14 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0">
-          {audio ? <AudioPlayer asset={audio} title={`${memory.title} — ${memory.attribution.displayName}`} tone={night ? "light" : "ink"} className="mb-10" /> : null}
+          {audio ? <AudioPlayer asset={audio} title={`${memory.title}, ${memory.attribution.displayName}`} tone={night ? "light" : "ink"} className="mb-10" /> : null}
           {memory.narrative ? (
             <div className={cn("prose-story max-w-[40rem]", night && "text-night-ink")}>
               {memory.narrative.split(/\n{2,}/).map((p, k) => (
@@ -115,7 +115,7 @@ export function StoryView({ capsule, memory, scope, hrefFor, tone = "paper", bac
           {memory.videoIds?.length ? (
             <div className="mt-12 space-y-6">
               {memory.videoIds.map((id) => (
-                <VideoClip key={id} mediaId={id} title={`${memory.title} — video`} />
+                <VideoClip key={id} mediaId={id} title={`${memory.title}, video`} />
               ))}
             </div>
           ) : null}
@@ -129,7 +129,7 @@ export function StoryView({ capsule, memory, scope, hrefFor, tone = "paper", bac
             </div>
           ) : null}
           {memory.photoIds.some((id) => media.find((a) => a.id === id)?.sampleNotice) ? (
-            <p className={cn("mt-6 text-[0.75rem]", night ? "text-night-ink-3" : "text-ink-4")}>Images here are sample illustrations or a generated sample photograph — not real family photographs.</p>
+            <p className={cn("mt-6 text-[0.75rem]", night ? "text-night-ink-3" : "text-ink-4")}>Editorial photographs and illustrations accompany this fictional family archive. They do not document the people in these sample stories.</p>
           ) : null}
         </div>
 

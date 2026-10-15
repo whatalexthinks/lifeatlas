@@ -105,7 +105,7 @@ export function Badge({ tone = "neutral", children, className, dot }: { tone?: S
 
 /**
  * The honest, contextual demo notice used at transactional moments.
- * Calm and precise — never a giant banner on emotional pages.
+ * Calm and precise, never a giant banner on emotional pages.
  */
 export function DemoNotice({
   children,

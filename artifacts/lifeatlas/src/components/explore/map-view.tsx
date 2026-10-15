@@ -215,7 +215,7 @@ export function MapView({
               <MemoryMap points={points} activeId={activePlace} onSelect={(id) => select(id)} view={view} onViewChange={setView} journey={journey} showJourney={journeyOn} tone={night ? "night" : "paper"} aspect={1.15} label={`Map of places in ${capsule.preferredName}'s life`} />
             </div>
             <p className={cn("mt-3 text-[0.8125rem]", night ? "text-night-ink-3" : "text-ink-3")}>
-              {pluralize(points.length, "place")} · locations shown at city level. Offline map — no live tiles or geocoding in this preview.
+              {pluralize(points.length, "place")} · locations shown at city level. Offline map, no live tiles or geocoding in this preview.
             </p>
           </div>
           <div ref={listRef} className="lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto lg:pr-1">
@@ -236,7 +236,7 @@ export function MapView({
             {unlocated.length ? (
               <section className="mt-6 px-4">
                 <p className={cn("catalog mb-2", night && "text-night-ink-3")}>Not on the map · {unlocated.length}</p>
-                <p className={cn("mb-2 text-[0.875rem]", night ? "text-night-ink-3" : "text-ink-3")}>These memories don&rsquo;t have a place yet{scope === "studio" ? " — open one to add a town or city." : "."}</p>
+                <p className={cn("mb-2 text-[0.875rem]", night ? "text-night-ink-3" : "text-ink-3")}>These memories don&rsquo;t have a place yet{scope === "studio" ? ", open one to add a town or city." : "."}</p>
                 {unlocated.map(storyRow)}
               </section>
             ) : null}

@@ -162,7 +162,7 @@ function ComposerInner() {
     if (andSeal) {
       const s = await services().futureDelivery.sealDemo(res.data.id);
       setBusy(null);
-      if (s.status === "ok") toast.success("Sealed in this demo", "Not scheduled for delivery — you can unseal it any time.");
+      if (s.status === "ok") toast.success("Sealed in this demo", "Not scheduled for delivery, you can unseal it any time.");
       else toast.error("Saved, but couldn't seal", s.status === "error" ? s.message : undefined);
     } else {
       setBusy(null);
@@ -237,7 +237,7 @@ function ComposerInner() {
               <Field label="They are your…" htmlFor="f-rel" error={errors.recipientRelationship}>
                 <Input id="f-rel" value={v.recipientRelationship} onChange={(e) => set({ recipientRelationship: e.target.value })} placeholder="Granddaughter" invalid={!!errors.recipientRelationship} />
               </Field>
-              <Field label="Their email" htmlFor="f-contact" optional hint="Stays unverified in this preview — nothing is sent." error={errors.recipientContact}>
+              <Field label="Their email" htmlFor="f-contact" optional hint="Stays unverified in this preview, nothing is sent." error={errors.recipientContact}>
                 <Input id="f-contact" type="email" value={v.recipientContact ?? ""} onChange={(e) => set({ recipientContact: e.target.value })} placeholder="name@example.com" invalid={!!errors.recipientContact} />
               </Field>
               <Field label="A backup recipient" htmlFor="f-backup" optional hint="Someone who could receive it if they can't be reached.">
@@ -301,7 +301,7 @@ function ComposerInner() {
             </div>
           </Panel>
 
-          <Panel title="Give stories with it" description="Choose stories from the capsule to travel with the letter — a gift of memories they can read on the day.">
+          <Panel title="Give stories with it" description="Choose stories from the capsule to travel with the letter, a gift of memories they can read on the day.">
             {storyChoices.length ? (
               <>
                 <ul className="divide-y divide-line" aria-label="Stories to include">
@@ -390,7 +390,7 @@ function ComposerInner() {
                       setV((x) => withDerivedDate(x, e.target.value));
                     }} />
                   </Field>
-                  <Field label="Expected date" htmlFor="f-msdate" error={errors.releaseDate} hint="An estimate — the real date can be confirmed later.">
+                  <Field label="Expected date" htmlFor="f-msdate" error={errors.releaseDate} hint="An estimate, the real date can be confirmed later.">
                     <Input id="f-msdate" type="date" value={v.releaseDate} min={todayIso()} onChange={(e) => set({ releaseDate: e.target.value })} invalid={!!errors.releaseDate} />
                   </Field>
                   {milestones.find((m) => m.value === v.milestone)?.askNote ? (
@@ -405,7 +405,7 @@ function ComposerInner() {
                   "Choose the year it should wait for."
                 ) : (
                   <>
-                    Would open {v.releaseKind === "year" ? "in" : "on"} <strong className="font-medium">{v.releaseKind === "year" ? v.releaseYear : formatDate(v.releaseDate, "long")}</strong> — {describeInterval(v.releaseDate)}.
+                    Would open {v.releaseKind === "year" ? "in" : "on"} <strong className="font-medium">{v.releaseKind === "year" ? v.releaseYear : formatDate(v.releaseDate, "long")}</strong>, {describeInterval(v.releaseDate)}.
                   </>
                 )}
               </p>
@@ -441,7 +441,7 @@ function ComposerInner() {
               <History className="size-3.5" /> Writing kept on this device {relativeTime(keptAt)}. Save the draft when you&rsquo;re ready.
             </p>
           ) : null}
-          <DemoNotice title="Future message draft — not scheduled">Saved on this device. Sealing records a content fingerprint and can be undone. No delivery is arranged, and no payment is taken.</DemoNotice>
+          <DemoNotice title="Future message draft, not scheduled">Saved on this device. Sealing records a content fingerprint and can be undone. No delivery is arranged, and no payment is taken.</DemoNotice>
           <div className="rounded-[20px] border border-line bg-surface p-5">
             <p className="mb-4 font-medium">{existing ? "Where this letter is" : "Where it will be once saved"}</p>
             <DeliveryLadder message={{ status: existing?.status ?? "draft" }} />
@@ -451,7 +451,7 @@ function ComposerInner() {
       <Dialog open={preview} onOpenChange={setPreview} title="Opening preview" hideTitle size="xl">
         <div className="-mx-6 -mb-6 bg-night px-6 py-10 sm:-mx-8 sm:px-8">
           <LetterOpening message={previewMessage} mode="preview" />
-          <p className="mt-6 text-center text-[0.8125rem] text-night-ink-3">Simulated opening — no letter was delivered.</p>
+          <p className="mt-6 text-center text-[0.8125rem] text-night-ink-3">Simulated opening, no letter was delivered.</p>
         </div>
       </Dialog>
     </div>

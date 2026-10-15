@@ -1,7 +1,7 @@
 import type { CapsuleKind, ChapterKey, Question, QuestionCategory } from "@/domain/models";
 
 /**
- * The OurLifeCapsule question library — authored prompts in sections. Sections marked with
+ * The OurLifeCapsule question library, authored prompts in sections. Sections marked with
  * audiences were written for a kind of capsule (partners asking each other, a parent
  * writing to a child, a family across generations); the rest suit any life story.
  * Follow-ups are scripted (no AI) and offered gently after an answer.
@@ -18,11 +18,11 @@ const sections: { category: QuestionCategory; key: string; chapter: ChapterKey; 
     rows: [
       ["What did you first notice about me?", ["Did you tell anyone about me that day?"]],
       ["When did you realize this was something special?", ["Was it a big moment or a small one?"]],
-      ["Tell the story of how we met — your version.", ["What do you think I'd remember differently?"]],
+      ["Tell the story of how we met, your version.", ["What do you think I'd remember differently?"]],
       ["What do you remember about our first date?", ["What were you nervous about?"]],
       ["What's a small moment together you'll never forget?", ["Why that one, do you think?"]],
       ["What did you think the first time you saw where I lived?"],
-      ["When did you first say 'I love you' — or know you were about to?"],
+      ["When did you first say 'I love you', or know you were about to?"],
       ["What did you want to say on our wedding day, or a day like it, that you never said?"],
     ],
   },
@@ -38,7 +38,7 @@ const sections: { category: QuestionCategory; key: string; chapter: ChapterKey; 
       ["What's the hardest thing we've come through together?", ["What got us through it?"]],
       ["What's your favorite room in our home, and why?"],
       ["What do we argue about that secretly makes you smile?"],
-      ["Where was the best trip we've taken — and the worst?", ["What made the worst one worth it anyway?"]],
+      ["Where was the best trip we've taken, and the worst?", ["What made the worst one worth it anyway?"]],
     ],
   },
   {
@@ -61,7 +61,7 @@ const sections: { category: QuestionCategory; key: string; chapter: ChapterKey; 
     audiences: ["child"],
     rows: [
       ["What was the day you were born like for us?", ["Who was the first person we called?"]],
-      ["What was your first word — and what did we think it meant?"],
+      ["What was your first word, and what did we think it meant?"],
       ["What made you laugh hardest when you were tiny?"],
       ["What were you completely sure about at age five?"],
       ["What's a bedtime ritual we had?", ["Which book did you make us read again and again?"]],

@@ -72,7 +72,7 @@ export interface FutureMessage extends Timestamps {
   format: "letter" | "voice" | "letter_with_media";
   /** Photos, voice notes and video clips sent with the letter. */
   attachmentIds: ID[];
-  /** Stories from the capsule given with the letter — a gift of memories. */
+  /** Stories from the capsule given with the letter, a gift of memories. */
   memoryIds?: ID[];
   recipient: FutureRecipient;
   backupRecipient?: FutureRecipient;

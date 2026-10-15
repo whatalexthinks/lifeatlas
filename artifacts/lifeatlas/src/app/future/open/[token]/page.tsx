@@ -56,7 +56,7 @@ export default function FutureOpenPage() {
             </span>
             <h1 className="mt-6 font-serif text-[clamp(2.4rem,1.8rem+2.5vw,3.6rem)] leading-tight text-night-ink">This letter is sealed until {formatDate(message.release.date, "long")}.</h1>
             <p className="mx-auto mt-4 max-w-lg text-[1.1rem] text-night-ink-2">
-              That&rsquo;s {describeInterval(message.release.date)}. In the real service, {message.recipient.name.split(" ")[0]} would be able to open it then — and not before.
+              That&rsquo;s {describeInterval(message.release.date)}. In the real service, {message.recipient.name.split(" ")[0]} would be able to open it then, and not before.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button variant="light" onClick={() => setPreviewing(true)}>

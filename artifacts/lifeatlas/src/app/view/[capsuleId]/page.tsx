@@ -57,7 +57,7 @@ export default function ViewerCover() {
             <div className="max-w-xl animate-[fade-up_1000ms_var(--ease-out)_700ms_both]">
               {capsule.dedication ? <p className="font-serif text-[1.45rem] italic leading-snug text-[#e9e3d6]">{capsule.dedication}</p> : null}
               <p className="mt-4 font-mono text-[0.8125rem] tracking-[0.14em] text-[#c4bdb1]">
-                {capsule.birthYear ? `${capsule.birthYear} — ` : ""}
+                {capsule.birthYear ? `${capsule.birthYear}, ` : ""}
                 {birthplace ? `Born in ${birthplace.name}` : capsule.birthplaceLabel ? `Born in ${capsule.birthplaceLabel}` : ""}
               </p>
             </div>
@@ -89,7 +89,7 @@ export default function ViewerCover() {
             </h2>
             {memories.length === 0 ? (
               <div className={cn("mt-4 text-lead", night ? "text-night-ink-2" : "text-ink-2")}>
-                <p>{canManage ? `Once you add or approve a story, it appears here for the family — with its photographs, places and ${capsule.preferredName}'s voice.` : `When stories are added and approved, they'll appear here — with photographs, places and ${capsule.preferredName}'s voice.`}</p>
+                <p>{canManage ? `Once you add or approve a story, it appears here for the family, with its photographs, places and ${capsule.preferredName}'s voice.` : `When stories are added and approved, they'll appear here, with photographs, places and ${capsule.preferredName}'s voice.`}</p>
                 {canManage ? (
                   <Link href={`/app/gather?capsule=${capsule.id}`} className={cn("mt-6 inline-flex h-12 items-center gap-2 rounded-full px-6 text-[1rem] font-medium", night ? "bg-[#f8f6f1] text-[#1b1a18]" : "bg-evergreen text-on-evergreen")}>
                     Gather the first memory <ArrowUpRight className="size-4" />

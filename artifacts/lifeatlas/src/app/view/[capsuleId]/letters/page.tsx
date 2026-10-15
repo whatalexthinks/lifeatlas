@@ -16,7 +16,7 @@ export default function ViewerLetters() {
   const letters = useDb((d) => d.futureMessages).filter((m) => m.capsuleId === capsule.id || m.isExample);
   const night = tone === "night";
   return (
-    <ViewerPage eyebrow="Letters Through Time" title={<>Words <em>waiting for their day.</em></>} lead="Letters written for the future stay sealed. You can see who they're for and when they're meant to be opened — never what they say.">
+    <ViewerPage eyebrow="Letters Through Time" title={<>Words <em>waiting for their day.</em></>} lead="Letters written for the future stay sealed. You can see who they're for and when they're meant to be opened, never what they say.">
       {letters.length === 0 ? (
         <EmptyState title="No letters yet" body="When someone writes a letter for the future, its envelope will appear here." />
       ) : (
@@ -39,7 +39,7 @@ export default function ViewerLetters() {
                 </Link>
               ) : (
                 <p className={cn("mt-5 inline-flex items-center gap-2 text-[0.875rem]", night ? "text-night-ink-3" : "text-ink-3")}>
-                  <Lock className="size-4" /> Sealed. Long-term delivery isn&rsquo;t live yet — nothing is scheduled.
+                  <Lock className="size-4" /> Sealed. Long-term delivery isn&rsquo;t live yet, nothing is scheduled.
                 </p>
               )}
             </li>

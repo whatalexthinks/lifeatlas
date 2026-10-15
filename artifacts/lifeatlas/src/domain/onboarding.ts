@@ -5,7 +5,7 @@ import { callName, capsuleKinds } from "@/domain/capsule-kinds";
 
 /**
  * Onboarding asks as little as possible: whose story, a name or two, and how it should look.
- * These helpers turn those answers into a capsule — the page stays a page.
+ * These helpers turn those answers into a capsule, the page stays a page.
  */
 
 export interface OnboardingLook {
@@ -40,7 +40,7 @@ export function suggestedTitle(kind: CapsuleKind, d: Pick<OnboardingDetails, "na
   return capsuleKinds[kind].title(kind === "couple" ? subjectFor(kind, d) : d.name.trim());
 }
 
-/** The one optional date onboarding asks for. Only what was typed — nothing inferred. */
+/** The one optional date onboarding asks for. Only what was typed, nothing inferred. */
 export function keyDatesFor(kind: CapsuleKind, d: Pick<OnboardingDetails, "name" | "keyDate">): KeyDate[] {
   if (!d.keyDate) return [];
   const [year, month, day] = d.keyDate.split("-").map(Number);

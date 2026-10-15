@@ -39,7 +39,7 @@ function resolveCode(code: string, lines: CheckoutSession["lines"]): PromotionRe
   const promo = findPromotion(d.promotions, normalized);
   if (promo) return evaluatePromotion(promo, lines, d.catalog, ctx(promo.id));
   if (isReferralCodeShape(normalized)) {
-    if (normalized === d.referrals.code) return { ok: false, reason: "That's your own referral code — share it with someone you think would love this." };
+    if (normalized === d.referrals.code) return { ok: false, reason: "That's your own referral code, share it with someone you think would love this." };
     const referral = d.promotions.find((p) => p.id === referralProgram.friendPromotionId);
     return evaluatePromotion(referral, lines, d.catalog, ctx(referralProgram.friendPromotionId, true));
   }
@@ -216,7 +216,7 @@ export const mockBilling: BillingProvider = {
     const items: OrderItem[] = session.lines.map((l) => {
       const p = catalog.find((c) => c.id === l.productId)!;
       const interval = p.kind === "plan" ? (l.interval ?? "year") : undefined;
-      const name = l.label ?? (p.kind === "plan" ? `${p.name} — ${l.asGift ? "one year, as a gift" : interval === "month" ? "monthly" : "annual"}` : p.name);
+      const name = l.label ?? (p.kind === "plan" ? `${p.name}, ${l.asGift ? "one year, as a gift" : interval === "month" ? "monthly" : "annual"}` : p.name);
       return { id: uid("oi"), productId: l.productId, name, quantity: l.quantity, unitAmount: unitAmount(p, interval), extrasAmount: l.extrasAmount, configurationId: l.configurationId, giftId: l.giftId };
     });
     const fulfillments = session.lines.map((l) => lineFulfillment(l.productId, l.configurationId));
@@ -241,9 +241,9 @@ export const mockBilling: BillingProvider = {
       shippingTo: customer.shipping,
       history: [
         { status: "preview", at: session.createdAt },
-        { status: "paid_mock", at: now, note: "Demo checkout — no payment was taken" },
-        ...(status === "proof_required" ? [{ status: "proof_required" as const, at: now, note: "Made to order — waiting for your proof approval. Nothing will be printed." }] : []),
-        ...(status === "ready_for_fulfillment" ? [{ status: "ready_for_fulfillment" as const, at: now, note: "Ready-made kit — would ship once fulfillment is connected. Nothing will ship." }] : []),
+        { status: "paid_mock", at: now, note: "Demo checkout, no payment was taken" },
+        ...(status === "proof_required" ? [{ status: "proof_required" as const, at: now, note: "Made to order, waiting for your proof approval. Nothing will be printed." }] : []),
+        ...(status === "ready_for_fulfillment" ? [{ status: "ready_for_fulfillment" as const, at: now, note: "Ready-made kit, would ship once fulfillment is connected. Nothing will ship." }] : []),
       ],
       isSample: false,
       createdAt: session.createdAt,
@@ -304,10 +304,10 @@ export const mockBilling: BillingProvider = {
           }
         }
       },
-      { actor: customer.name, action: "order.mock_completed", target: order.id, detail: `${order.number} — no charge` },
+      { actor: customer.name, action: "order.mock_completed", target: order.id, detail: `${order.number}, no charge` },
     );
     store().track("checkout_completed_mock", { total: order.total, kind, promotion: order.discount?.promotionId ?? "none" });
-    pushNotification({ kind: "order", title: `Demo order ${order.number}`, body: "Preview only — no payment was charged and nothing will ship.", href: `/app/orders#${order.id}` });
+    pushNotification({ kind: "order", title: `Demo order ${order.number}`, body: "Preview only, no payment was charged and nothing will ship.", href: `/app/orders#${order.id}` });
     return ok(order);
   },
 
@@ -375,7 +375,7 @@ export const mockOrders: OrderService = {
     if (!o) return fail("not_found", "Order not found.");
     if (!canTransition(orderTransitions, o.status, "canceled_mock")) return fail("conflict", "This order can no longer be canceled in the demo.");
     await latency();
-    return ok(setOrderStatus(orderId, "canceled_mock", "Canceled — nothing was charged"));
+    return ok(setOrderStatus(orderId, "canceled_mock", "Canceled, nothing was charged"));
   },
   async requestRefund(orderId, reason) {
     const o = db().orders.find((x) => x.id === orderId);
@@ -395,7 +395,7 @@ export const mockOrders: OrderService = {
     const next = path[i + 1];
     if (!next || !canTransition(orderTransitions, o.status, next)) return fail("conflict", "No further mock steps for this order.");
     await latency();
-    return ok(setOrderStatus(orderId, next, "Advanced in operations demo — simulated"));
+    return ok(setOrderStatus(orderId, next, "Advanced in operations demo, simulated"));
   },
 };
 
@@ -491,7 +491,7 @@ export const mockGifts: GiftService = {
 export const mockFulfillment: FulfillmentProvider = {
   async createProof(configurationId) {
     const project = db().printProjects.find((p) => p.configurationId === configurationId);
-    if (!project) return fail("not_found", "No print project yet — complete a demo order first.");
+    if (!project) return fail("not_found", "No print project yet, complete a demo order first.");
     const proof = { id: uid("proof"), version: project.proofs.length + 1, createdAt: new Date().toISOString(), status: "pending_review" as const };
     store().mutate((d) => {
       const p = d.printProjects.find((x) => x.id === project.id)!;
@@ -515,7 +515,7 @@ export const mockFulfillment: FulfillmentProvider = {
         if (o && o.status === "proof_required") {
           o.status = "ready_for_fulfillment";
           o.updatedAt = p.updatedAt;
-          o.history.push({ status: "ready_for_fulfillment", at: p.updatedAt, note: "Proof approved in demo — printing is not connected" });
+          o.history.push({ status: "ready_for_fulfillment", at: p.updatedAt, note: "Proof approved in demo, printing is not connected" });
         }
       },
       { actor: actorName(), action: "proof.approved_demo", target: proofId },

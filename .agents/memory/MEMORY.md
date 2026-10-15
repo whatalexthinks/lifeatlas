@@ -1,1 +1,2 @@
 - [Imported dependency detection](import-dependency-detection.md) — validate migration helper dependency suggestions against real imports before installing.
+- [Visual direction](visual-direction.md) — premium, bespoke photo-led styling; no em dashes in site copy.

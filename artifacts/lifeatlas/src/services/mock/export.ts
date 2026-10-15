@@ -65,7 +65,7 @@ function mediaDecision(asset: MediaAsset, options: ExportOptions): { include: bo
   if (asset.kind === "image" && !options.includePhotos) return { include: false, reason: "Photos excluded by your choice" };
   if (asset.kind === "video" && !options.includePhotos) return { include: false, reason: "Photos and videos excluded by your choice" };
   if (asset.source.kind === "plate" && !options.includeSamplePlates) return { include: false, reason: "Sample illustration (not your file)" };
-  if (asset.source.kind === "remote") return { include: false, reason: "Stored in the cloud — not connected in this preview" };
+  if (asset.source.kind === "remote") return { include: false, reason: "Stored in the cloud, not connected in this preview" };
   return { include: true };
 }
 
@@ -86,7 +86,7 @@ function offlineHtml(manifest: ArchiveManifest, mediaHref: (id: string) => strin
           const href = x!.included ? mediaHref(x!.id) : null;
           return href
             ? `<figure><img src="${esc(href)}" alt="${esc(x!.caption)}" loading="lazy"><figcaption>${esc(x!.caption)}${x!.sampleNotice ? ` <small>· ${esc(x!.sampleNotice)}</small>` : ""}</figcaption></figure>`
-            : `<p class="missing">Photo not included: ${esc(x!.caption || x!.id)} — ${esc(x!.reason ?? "")}</p>`;
+            : `<p class="missing">Photo not included: ${esc(x!.caption || x!.id)}, ${esc(x!.reason ?? "")}</p>`;
         })
         .join("");
       const videos = m.media
@@ -96,7 +96,7 @@ function offlineHtml(manifest: ArchiveManifest, mediaHref: (id: string) => strin
           const href = x!.included ? mediaHref(x!.id) : null;
           return href
             ? `<figure><video controls preload="metadata" src="${esc(href)}"></video><figcaption>${esc(x!.caption)}</figcaption></figure>`
-            : `<p class="missing">Video not included: ${esc(x!.caption || x!.id)} — ${esc(x!.reason ?? "")}</p>`;
+            : `<p class="missing">Video not included: ${esc(x!.caption || x!.id)}, ${esc(x!.reason ?? "")}</p>`;
         })
         .join("");
       const audio = m.media
@@ -106,7 +106,7 @@ function offlineHtml(manifest: ArchiveManifest, mediaHref: (id: string) => strin
           const href = x!.included ? mediaHref(x!.id) : null;
           return href
             ? `<div class="audio"><audio controls preload="none" src="${esc(href)}"></audio>${x!.sampleNotice ? `<small>${esc(x!.sampleNotice)}</small>` : ""}</div>`
-            : `<p class="missing">Recording not included — ${esc(x!.reason ?? "")}</p>`;
+            : `<p class="missing">Recording not included, ${esc(x!.reason ?? "")}</p>`;
         })
         .join("");
       return `<article id="${esc(m.id)}"><p class="meta">${esc(m.date.display)}${place ? ` · ${esc(place)}` : ""} · ${esc(m.chapter)}</p><h2>${esc(m.title)}</h2>${m.quote ? `<blockquote>${esc(m.quote)}</blockquote>` : ""}${m.narrative
@@ -115,7 +115,7 @@ function offlineHtml(manifest: ArchiveManifest, mediaHref: (id: string) => strin
         .join("")}${imgs}${videos}${audio}<p class="by">Shared by ${esc(m.contributor)}</p></article>`;
     })
     .join("");
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(manifest.capsule.subjectName)} — ${brand.name} archive</title><style>
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(manifest.capsule.subjectName)}, ${brand.name} archive</title><style>
 :root{--paper:#f8f6f1;--ink:#242824;--muted:#62655d;--line:#ded9cf;--green:#34473f}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:18px/1.65 Georgia,'Iowan Old Style',serif}
 header,main,footer{max-width:760px;margin:0 auto;padding:0 24px}header{padding-top:72px;padding-bottom:32px;border-bottom:1px solid var(--line)}
@@ -125,7 +125,7 @@ article{padding:48px 0;border-bottom:1px solid var(--line)}blockquote{margin:0 0
 figure{margin:24px 0}img{max-width:100%;display:block;border:10px solid #fff;box-shadow:0 10px 30px -12px #0003}figcaption{font:14px system-ui,sans-serif;color:var(--muted);margin-top:8px}
 audio{width:100%;margin-top:12px}.missing{font:14px system-ui,sans-serif;color:#9a362e;background:#f6e5e1;padding:10px 14px;border-radius:8px}
 nav ol{columns:2;font:15px system-ui,sans-serif;padding-left:20px}footer{padding:48px 24px 96px;font:14px system-ui,sans-serif;color:var(--muted)}
-</style></head><body><header><p class="eyebrow">${brand.name} · Portable archive</p><h1>${esc(manifest.capsule.subjectName)}</h1><p>${esc(manifest.capsule.title)}${manifest.capsule.birthYear ? ` · Born ${manifest.capsule.birthYear}` : ""}</p>${manifest.capsule.dedication ? `<p><em>${esc(manifest.capsule.dedication)}</em></p>` : ""}<nav><p class="eyebrow">${manifest.memories.length} stories</p><ol>${manifest.memories.map((m) => `<li><a href="#${esc(m.id)}">${esc(m.title)}</a></li>`).join("")}</ol></nav></header><main>${stories}</main><footer><p>Exported ${esc(new Date(manifest.generatedAt).toLocaleString())} from an {brand.name} demonstration on this device. This file opens without {brand.name}, in any modern browser.</p>${manifest.notices.map((n) => `<p>${esc(n)}</p>`).join("")}${manifest.exclusions.length ? `<p><strong>Not included:</strong></p><ul>${manifest.exclusions.map((e) => `<li>${esc(e.kind)} ${esc(e.id)} — ${esc(e.reason)}</li>`).join("")}</ul>` : ""}</footer></body></html>`;
+</style></head><body><header><p class="eyebrow">${brand.name} · Portable archive</p><h1>${esc(manifest.capsule.subjectName)}</h1><p>${esc(manifest.capsule.title)}${manifest.capsule.birthYear ? ` · Born ${manifest.capsule.birthYear}` : ""}</p>${manifest.capsule.dedication ? `<p><em>${esc(manifest.capsule.dedication)}</em></p>` : ""}<nav><p class="eyebrow">${manifest.memories.length} stories</p><ol>${manifest.memories.map((m) => `<li><a href="#${esc(m.id)}">${esc(m.title)}</a></li>`).join("")}</ol></nav></header><main>${stories}</main><footer><p>Exported ${esc(new Date(manifest.generatedAt).toLocaleString())} from an {brand.name} demonstration on this device. This file opens without {brand.name}, in any modern browser.</p>${manifest.notices.map((n) => `<p>${esc(n)}</p>`).join("")}${manifest.exclusions.length ? `<p><strong>Not included:</strong></p><ul>${manifest.exclusions.map((e) => `<li>${esc(e.kind)} ${esc(e.id)}, ${esc(e.reason)}</li>`).join("")}</ul>` : ""}</footer></body></html>`;
 }
 
 function toManifestMemory(m: Memory, d: DemoDatabase): ArchiveManifest["memories"][number] {
@@ -281,11 +281,11 @@ export const mockExport: ExportBuilder = {
         files["manifest.json"] = strToU8(JSON.stringify(manifest, null, 2));
         files["index.html"] = strToU8(offlineHtml(manifest, (id) => manifestMedia.find((m) => m.id === id)?.path ?? null));
         files["stories.md"] = strToU8(
-          [`# ${capsule.subjectName}`, capsule.title, "", ...manifest.memories.flatMap((m) => [`## ${m.title}`, `_${m.date.display}_`, "", m.narrative, "", `— ${m.contributor}`, ""])].join("\n"),
+          [`# ${capsule.subjectName}`, capsule.title, "", ...manifest.memories.flatMap((m) => [`## ${m.title}`, `_${m.date.display}_`, "", m.narrative, "", `, ${m.contributor}`, ""])].join("\n"),
         );
         files["README.txt"] = strToU8(
           [
-            `${brand.name} archive — ${capsule.subjectName}`,
+            `${brand.name} archive, ${capsule.subjectName}`,
             "",
             "Open index.html in any web browser to read the stories, see the photographs and listen to recordings.",
             "manifest.json describes every record in a stable, documented format (schema: lifeatlas.archive v1).",
@@ -319,7 +319,7 @@ export const mockExport: ExportBuilder = {
         { actor: actorName(), action: "archive.exported", target: capsuleId, detail: `${fileName} (${counts.memories} stories)` },
       );
       store().track("archive_exported", { format, memories: counts.memories, missing });
-      pushNotification({ kind: "export", title: "Your archive is ready", body: `${fileName} — downloaded to this device.`, href: `/app/capsules/${capsuleId}/export` });
+      pushNotification({ kind: "export", title: "Your archive is ready", body: `${fileName}, downloaded to this device.`, href: `/app/capsules/${capsuleId}/export` });
       return ok({ job: done, blob });
     } catch (e) {
       const message = e instanceof Error ? e.message : "Export failed";

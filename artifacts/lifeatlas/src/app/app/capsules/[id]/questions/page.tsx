@@ -36,7 +36,7 @@ export default function StudioQuestions() {
   const saved = assignments.filter((a) => a.status === "saved");
   const qText = (id: string) => questions.find((q) => q.id === id)?.text ?? "Question";
   const answersTo = (id: string) => memories.filter((m) => m.questionId === id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  // Answered means a story answers it — whether or not it was ever queued.
+  // Answered means a story answers it, whether or not it was ever queued.
   const answeredIds = [...new Set([...answered.map((a) => a.questionId), ...memories.filter((m) => m.questionId).map((m) => m.questionId!)])];
   const isFavorite = (id: string) => favorites.includes(id);
   const toggleFavorite = async (id: string) => {
@@ -88,7 +88,7 @@ export default function StudioQuestions() {
                 <p className="mt-2 font-serif text-[clamp(1.5rem,1.25rem+1vw,2rem)] leading-[1.15]">{surprise.text}</p>
               </>
             ) : (
-              <p className="mt-4 text-[1rem] leading-relaxed text-night-ink-2">Not sure what to ask next? Press Surprise me for a question written for this kind of capsule — one you haven&rsquo;t used here yet.</p>
+              <p className="mt-4 text-[1rem] leading-relaxed text-night-ink-2">Not sure what to ask next? Press Surprise me for a question written for this kind of capsule, one you haven&rsquo;t used here yet.</p>
             )}
           </div>
           {surprise ? (
@@ -111,7 +111,7 @@ export default function StudioQuestions() {
 
         <Panel
           title="Up next"
-          description="The order questions are offered in — in person or by link."
+          description="The order questions are offered in, in person or by link."
           actions={
             <Button size="sm" variant="secondary" leading={<ListPlus className="size-4" />} onClick={() => setPicker(true)}>
               Add from library
@@ -174,7 +174,7 @@ export default function StudioQuestions() {
         </Panel>
 
         {saved.length ? (
-          <Panel title="Saved for later" description="Kept aside — not offered in sessions until you move them back.">
+          <Panel title="Saved for later" description="Kept aside, not offered in sessions until you move them back.">
             <ul className="space-y-1.5">
               {saved.map((a) => (
                 <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-2 py-2">
@@ -191,7 +191,7 @@ export default function StudioQuestions() {
           </Panel>
         ) : null}
 
-        <Panel title="Your favourites" description="Questions you've starred — shared across all your capsules.">
+        <Panel title="Your favourites" description="Questions you've starred, shared across all your capsules.">
           {favorites.length ? (
             <ul className="space-y-1.5">
               {favorites.map((id) => {
@@ -234,7 +234,7 @@ export default function StudioQuestions() {
                       <Check className="mt-1 size-4 shrink-0 text-success" />
                       <span>
                         <span className="block font-serif text-[1.1rem] leading-snug">{qText(qid)}</span>
-                        {answers.length > 1 ? <span className="text-[0.8125rem] text-ink-3">{pluralize(answers.length, "answer")} — each one kept</span> : null}
+                        {answers.length > 1 ? <span className="text-[0.8125rem] text-ink-3">{pluralize(answers.length, "answer")}, each one kept</span> : null}
                       </span>
                     </span>
                     <span className="flex gap-1">

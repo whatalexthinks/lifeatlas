@@ -203,9 +203,9 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
             {memory.status === "draft" ? "This is a draft" : `Contributed by ${memory.attribution.displayName}${memory.attribution.relationship ? ` · ${memory.attribution.relationship}` : ""}`}
           </p>
           <p className="mt-1 text-[0.9rem] text-ink-2">{memory.status === "draft" ? "Drafts aren't visible in the family viewer until published." : "It appears in the archive only after you approve it. A note is shown to the contributor."}</p>
-          {memory.status !== "draft" ? <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional note — e.g. “Could you add the year?”" className="mt-3 min-h-20 text-[0.9375rem]" aria-label="Note to contributor" /> : null}
+          {memory.status !== "draft" ? <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional note, e.g. “Could you add the year?”" className="mt-3 min-h-20 text-[0.9375rem]" aria-label="Note to contributor" /> : null}
           <div className="mt-3 flex flex-wrap gap-2">
-            <Button size="sm" leading={<Check className="size-4" />} onClick={() => void transition("approved", memory.status === "draft" ? "Published to the archive" : "Approved — now in the archive")}>
+            <Button size="sm" leading={<Check className="size-4" />} onClick={() => void transition("approved", memory.status === "draft" ? "Published to the archive" : "Approved, now in the archive")}>
               {memory.status === "draft" ? "Publish" : "Approve"}
             </Button>
             {memory.status === "submitted" ? (

@@ -3,7 +3,7 @@ import type { Capsule, CapsuleMembership, ChapterKey, KeyDate, Memory } from "@/
 /**
  * What the home page shows, worked out in one tested place: the dates coming up, how far
  * each capsule has come, and the few next steps worth suggesting. Nothing here invents a
- * fact — a date without a known year never gets an "nth anniversary".
+ * fact, a date without a known year never gets an "nth anniversary".
  */
 
 export interface UpcomingDate {
@@ -13,7 +13,7 @@ export interface UpcomingDate {
   /** The next occurrence, at local midnight. */
   on: Date;
   daysAway: number;
-  /** "25th anniversary", "turns 22", "13 years" — only when the first year is known. */
+  /** "25th anniversary", "turns 22", "13 years", only when the first year is known. */
   milestone?: string;
 }
 

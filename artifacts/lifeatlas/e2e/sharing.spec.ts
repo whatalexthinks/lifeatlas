@@ -55,7 +55,7 @@ test("a letter for a particular year, with a story given, never claims to be sch
   await expect(card).toContainText("In 2040");
   await expect(card).toContainText("Step 2 of 6 · Saved on this device. Not uploaded, not scheduled.");
   await card.locator("summary").click();
-  await expect(card.getByRole("list", { name: "Where this letter is" })).toContainText("Scheduled with a delivery service — Not available yet.");
+  await expect(card.getByRole("list", { name: "Where this letter is" })).toContainText("Scheduled with a delivery service, Not available yet.");
   // Nowhere does a letter on this device read as "Scheduled".
   await expect(page.getByText("Scheduled", { exact: true })).toHaveCount(0);
 

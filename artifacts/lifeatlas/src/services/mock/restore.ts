@@ -15,7 +15,7 @@ import { brand } from "@/config/brand";
 /**
  * Restoring from a OurLifeCapsule export. The manifest (schema `lifeatlas.archive` v1) is the
  * contract: it lists every story and file with a SHA-256, so a restore can say exactly
- * what came back intact. A restore always creates a new capsule — it never merges into
+ * what came back intact. A restore always creates a new capsule, it never merges into
  * or overwrites what's already on the device.
  */
 
@@ -82,14 +82,14 @@ async function inspectArchive(file: File) {
   } else {
     format = "json";
     manifestText = new TextDecoder().decode(bytes);
-    if (isHtml(manifestText)) return fail("validation", "This is the offline reading copy (.html). It's for reading, not restoring — use the .zip or .json export instead.");
+    if (isHtml(manifestText)) return fail("validation", "This is the offline reading copy (.html). It's for reading, not restoring, use the .zip or .json export instead.");
   }
 
   let raw: unknown;
   try {
     raw = JSON.parse(manifestText);
   } catch {
-    return fail("validation", `This file isn't an ${brand.name} export — its contents couldn't be read as an archive manifest.`);
+    return fail("validation", `This file isn't an ${brand.name} export, its contents couldn't be read as an archive manifest.`);
   }
   const parsed = manifestSchema.safeParse(raw);
   if (!parsed.success) {
@@ -123,7 +123,7 @@ async function inspectArchive(file: File) {
   if (format === "json") warnings.push("This is a records-only export: stories, dates, places and people come back, but photographs and recordings aren't in it.");
   else if (notInArchive) warnings.push(`${notInArchive} ${notInArchive === 1 ? "file was" : "files were"} left out when this export was made, so ${notInArchive === 1 ? "it" : "they"} can't be restored.`);
   if (damaged.size) warnings.push(`${damaged.size} ${damaged.size === 1 ? "file doesn't" : "files don't"} match the fingerprint recorded at export and won't be restored. Another copy of the export may be intact.`);
-  warnings.push("Print permission starts switched off for restored stories — turn it on story by story once the people who told them agree.");
+  warnings.push("Print permission starts switched off for restored stories, turn it on story by story once the people who told them agree.");
 
   const token = uid("rst");
   held.set(token, { manifest, files, damaged, recordsOnly: format === "json" });
@@ -157,7 +157,7 @@ function restoreDate(d: Manifest["memories"][number]["date"]): FuzzyDate {
 
 async function restoreArchive(token: string) {
   const h = held.get(token);
-  if (!h) return fail("not_found", "Choose the export file again — it's only held until the page is closed.");
+  if (!h) return fail("not_found", "Choose the export file again, it's only held until the page is closed.");
   const { manifest, files, damaged, recordsOnly } = h;
   const year = manifest.capsule.birthYear;
   const created = await mockCapsules.createFromWizard({
@@ -188,8 +188,7 @@ async function restoreArchive(token: string) {
   const mediaIds = new Map<string, string>();
   const samples = db().media.filter((a) => a.sampleNotice && a.source.kind !== "local");
   for (const m of manifest.media) {
-    // Sample illustrations and narration ship with OurLifeCapsule: point at the app's copy —
-    // if the export included them (a records-only export never carries files).
+    // Sample illustrations and narration ship with OurLifeCapsule: point at the app's copy, // if the export included them (a records-only export never carries files).
     const sample = m.sampleNotice && (m.included || recordsOnly) ? samples.find((a) => a.id === m.id) : undefined;
     if (sample) {
       const id = uid("med");
@@ -245,7 +244,7 @@ async function restoreArchive(token: string) {
     const own = m.media.map((id) => ({ old: id, kind: manifest.media.find((x) => x.id === id)?.kind, id: mediaIds.get(id) })).filter((x) => x.id);
     const date = restoreDate(m.date);
     // People a story was shared with must exist here; unknown ones are dropped. If nobody is
-    // left, the story falls back to owner & editors — narrower, never wider.
+    // left, the story falls back to owner & editors, narrower, never wider.
     const sharedWith = m.privacy === "selected" ? (m.sharedWith ?? []).map((id) => peopleIds.get(id) ?? (db().people.some((p) => p.id === id) ? id : undefined)).filter((x): x is string => !!x) : [];
     const privacy = m.privacy === "selected" ? (sharedWith.length ? "selected" : "organizers") : m.privacy === "private" || m.privacy === "organizers" ? m.privacy : "family";
     const r = await mockCapsules.createMemory({

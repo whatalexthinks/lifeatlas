@@ -38,7 +38,7 @@ export interface CaptureFlowProps {
   allowFreeform?: boolean;
 }
 
-/** The question itself is an honest, readable default title — rename any time. */
+/** The question itself is an honest, readable default title, rename any time. */
 function titleFromQuestion(q?: Question) {
   return q ? q.text : "";
 }
@@ -73,7 +73,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
   const [restoredAudio, setRestoredAudio] = React.useState<{ url: string } | null>(null);
   const warnedDraftError = React.useRef(false);
 
-  // Wait for this device's saved data to load — checking earlier would miss the draft
+  // Wait for this device's saved data to load, checking earlier would miss the draft
   // and the first autosave would overwrite it.
   const hydrated = useHydrated();
   React.useEffect(() => {
@@ -208,7 +208,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
 
   const save = async () => {
     if (!hasContent) {
-      setError("Record, type, or add a photo or video first — or skip this question.");
+      setError("Record, type, or add a photo or video first, or skip this question.");
       return;
     }
     setSaving(true);
@@ -230,7 +230,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
       let audioId: string | undefined;
       const finalTitle = title.trim() || (freeform ? "A memory" : titleFromQuestion(q)) || "A memory";
       if (audio) {
-        const r = await s.media.put({ capsuleId: capsule.id, blob: audio.blob, kind: "audio", caption: `“${finalTitle}” — ${attribution.displayName}`, alt: `Recording by ${attribution.displayName}`, contributorName: attribution.displayName, durationSec: audio.durationSec, peaks: audio.peaks });
+        const r = await s.media.put({ capsuleId: capsule.id, blob: audio.blob, kind: "audio", caption: `“${finalTitle}”, ${attribution.displayName}`, alt: `Recording by ${attribution.displayName}`, contributorName: attribution.displayName, durationSec: audio.durationSec, peaks: audio.peaks });
         if (r.status !== "ok") throw new Error(r.message);
         audioId = r.data.id;
       }
@@ -293,7 +293,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
         </div>
         <MemoryReveal memory={justSaved} subjectName={capsule.subjectName} />
         <DemoNotice compact className="mt-4">
-          Saved on this device for the demo — not uploaded or backed up.
+          Saved on this device for the demo, not uploaded or backed up.
         </DemoNotice>
         {followUp && !isLast ? (
           <div className="mt-6 rounded-[18px] border border-line bg-surface p-5">
@@ -301,7 +301,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
               <Sparkles className="size-4" /> A gentle follow-up
             </p>
             <p className={cn("mt-2 font-serif leading-snug", senior ? "text-[1.5rem]" : "text-[1.3rem]")}>{followUp}</p>
-            <p className="mt-1 text-[0.875rem] text-ink-3">Only if you&rsquo;d like to — you can always come back to it.</p>
+            <p className="mt-1 text-[0.875rem] text-ink-3">Only if you&rsquo;d like to, you can always come back to it.</p>
           </div>
         ) : null}
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -345,7 +345,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
         <h2 ref={headingRef} tabIndex={-1} className="font-serif text-heading outline-none">
           That&rsquo;s every question for now.
         </h2>
-        <p className="mt-3 text-lead text-ink-2">{saved.length ? `${saved.length} ${saved.length === 1 ? "memory" : "memories"} kept today. Thank you.` : "No answers saved this time — that's perfectly fine."}</p>
+        <p className="mt-3 text-lead text-ink-2">{saved.length ? `${saved.length} ${saved.length === 1 ? "memory" : "memories"} kept today. Thank you.` : "No answers saved this time, that's perfectly fine."}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           {finishHref ? (
             <ButtonLink href={finishHref} size="lg" onClick={() => onFinished?.(saved)}>
@@ -526,7 +526,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
       <div className="mt-8 rounded-[18px] border border-line bg-surface/60">
         <button type="button" onClick={() => setDetails((v) => !v)} aria-expanded={details} className={cn("flex w-full items-center justify-between gap-3 px-5 py-4 text-left font-medium", senior ? "text-[1.05rem]" : "text-[0.9375rem]")}>
           <span>
-            Add a title, date or place <span className="font-normal text-ink-3">— optional, can be done later</span>
+            Add a title, date or place <span className="font-normal text-ink-3">, optional, can be done later</span>
           </span>
           <ChevronDown className={cn("size-5 shrink-0 transition-transform", details && "rotate-180")} />
         </button>
@@ -566,8 +566,8 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
           ) : null}
         </div>
         <p className="mt-3 text-[0.8125rem] text-ink-3" aria-live="polite">
-          {draftSavedAt ? <span className="font-medium text-ink-2">Draft saved {relativeTime(draftSavedAt)} — you can close this and come back. </span> : null}
-          Saved on this device for the demo — not uploaded or backed up. {status === "submitted" ? "The owner or an editor reviews it before it appears." : ""}
+          {draftSavedAt ? <span className="font-medium text-ink-2">Draft saved {relativeTime(draftSavedAt)}, you can close this and come back. </span> : null}
+          Saved on this device for the demo, not uploaded or backed up. {status === "submitted" ? "The owner or an editor reviews it before it appears." : ""}
         </p>
       </div>
       {saved.length ? (

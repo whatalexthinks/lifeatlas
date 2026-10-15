@@ -25,16 +25,16 @@ const occasions = [
 ];
 
 const giftFaq: [string, React.ReactNode][] = [
-  ["Will they ever have to pay?", "Not for the period you've given — and never to add stories, record, or invite their own family. If they'd like to continue after a gifted year, that's their choice, and they can always download everything first."],
+  ["Will they ever have to pay?", "Not for the period you've given, and never to add stories, record, or invite their own family. If they'd like to continue after a gifted year, that's their choice, and they can always download everything first."],
   ["What if they're not ready to start?", "That's fine. The gift waits for them, and your note is the first thing they see when they open it. You can also sit with them and begin together."],
-  ["Can I add memories to a capsule I gave?", "Yes, if they invite you — most people do. You'll join free, as a contributor or an editor."],
+  ["Can I add memories to a capsule I gave?", "Yes, if they invite you, most people do. You'll join free, as a contributor or an editor."],
   ["How do they receive it?", "You get a gift link to send however you like, or a printable card to hand over. In this preview the link opens in this browser only, and no email is sent by us."],
 ];
 
 export default function GiftsPage() {
   const options = [
     { id: "digital", visual: <Plate id="letter-1952" alt="" className="aspect-[4/3] rounded-[16px]" />, line: "A year of their own capsule, with unlimited family contributors.", price: `${formatMoney(p("digital").price.amount)} for a year` },
-    { id: "family", visual: <Plate id="table-2019" alt="" className="aspect-[4/3] rounded-[16px]" />, line: "Up to five capsules — for a parent who'd like one for each grandchild.", price: `${formatMoney(p("family").price.amount)} for a year` },
+    { id: "family", visual: <Plate id="table-2019" alt="" className="aspect-[4/3] rounded-[16px]" />, line: "Up to five capsules, for a parent who'd like one for each grandchild.", price: `${formatMoney(p("family").price.amount)} for a year` },
     {
       id: "keepsake_box",
       visual: (
@@ -57,7 +57,7 @@ export default function GiftsPage() {
             Give someone <em>the beginning of their story.</em>
           </>
         }
-        lead="For the person who has a thousand stories and nowhere to put them. Give them their own capsule — and a little of your time to listen."
+        lead="For the person who has a thousand stories and nowhere to put them. Give them their own capsule, and a little of your time to listen."
         actions={
           <>
             <ButtonLink href="/gifts/build" size="xl">
@@ -114,9 +114,9 @@ export default function GiftsPage() {
             className="mt-14"
             columns={4}
             items={[
-              { title: "You write a note", body: "Choose the gift, add a few words, and pick when it should be opened — today, or on the day itself." },
+              { title: "You write a note", body: "Choose the gift, add a few words, and pick when it should be opened, today, or on the day itself." },
               { title: "You hand it over", body: "Send the gift link yourself, or print a card to put in their hand. We don't email anyone on your behalf in the preview." },
-              { title: "They open it", body: "Your note appears first. They see what the gift includes and that it's already paid for — no card asked for." },
+              { title: "They open it", body: "Your note appears first. They see what the gift includes and that it's already paid for, no card asked for." },
               { title: "They begin, or you begin together", body: "Their capsule is created the moment they accept. The first question is waiting, and they can invite you in." },
             ]}
           />

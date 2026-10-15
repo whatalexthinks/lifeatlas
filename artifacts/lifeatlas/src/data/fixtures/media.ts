@@ -1,17 +1,18 @@
 import type { FuzzyDate, MediaAsset, Transcript } from "@/domain/models";
 import { memories } from "./memories";
 import audioManifest from "./audio-manifest.json";
+import { photoForPlate } from "@/lib/media/editorial-photos";
 
 /**
  * Sample media.
- *  - Plates are original procedurally-illustrated artworks (src/lib/plates) —
+ *  - Plates are original procedurally-illustrated artworks (src/lib/plates), 
  *    clearly labelled as illustrations, never presented as real photographs.
  *  - One generated photograph (coast-1972.webp) carried over from the preview build.
  *  - Audio is synthetic narration produced with the open Kokoro-82M model
  *    (Apache-2.0) by scripts/generate-sample-audio.py. It is NOT a real person's voice.
  */
 
-export const PLATE_NOTICE = "Illustrated sample plate — an original artwork made for this demo, not a real photograph.";
+export const PLATE_NOTICE = "Illustrated sample plate, an original artwork made for this demo, not a real photograph.";
 export const PHOTO_NOTICE = "AI-generated sample photograph of a fictional family. Not a real photograph of real people.";
 export const AUDIO_NOTICE = "Synthetic sample narration (open-source text-to-speech). Not a real person's voice.";
 
@@ -45,7 +46,7 @@ const plate = (p: PlateSeed): MediaAsset => ({
   placeId: p.placeId,
   contributorName: p.contributor ?? "Sample family",
   consent: { contributorAgreed: true, print: true, share: false },
-  sampleNotice: PLATE_NOTICE,
+  sampleNotice: photoForPlate(p.plateId) ? "Editorial photograph supplied for this sample archive. The family stories are fictional." : PLATE_NOTICE,
   createdAt: T,
   updatedAt: T,
 });
@@ -87,10 +88,10 @@ export const plateMedia: MediaAsset[] = [
   plate({ id: "med_backyard_2010", plateId: "backyard-2010", capsuleId: TH, caption: "Whistling practice", alt: "Illustration of a summer backyard with a tree swing and long grass.", takenDate: { precision: "season", year: 2010, season: "summer" }, placeId: "pl_providence", contributor: "Emma Ellis" }),
   plate({ id: "med_dock_2012", plateId: "dock-2012", capsuleId: TH, caption: "How long the light lasts", alt: "Illustration of a wooden dock reaching into calm water at sunset.", takenDate: { precision: "season", year: 2012, season: "summer" }, placeId: "pl_portland" }),
   plate({ id: "med_nightlight_2005", plateId: "nightlight-2005", capsuleId: S, caption: "Four in the morning", alt: "Illustration of a window at night with a small lamp glowing.", takenDate: { precision: "month", year: 2005, month: 4 }, placeId: "pl_providence", width: 900, height: 1125 }),
-  /* Cover portraits — abstract, never a likeness of a real person */
-  plate({ id: "med_portrait_margaret", plateId: "portrait-margaret", capsuleId: M, caption: "Cover study — Margaret", alt: "Abstract illustrated portrait silhouette in profile against a sea-green ground.", width: 900, height: 1125 }),
-  plate({ id: "med_portrait_thomas", plateId: "portrait-thomas", capsuleId: TH, caption: "Cover study — Thomas", alt: "Abstract illustrated portrait silhouette in profile against a warm ochre ground.", width: 900, height: 1125 }),
-  plate({ id: "med_portrait_sarah", plateId: "portrait-sarah", capsuleId: S, caption: "Cover study — Sarah", alt: "Abstract illustrated portrait silhouette in profile against a slate-blue ground.", width: 900, height: 1125 }),
+  /* Cover portraits, abstract, never a likeness of a real person */
+  plate({ id: "med_portrait_margaret", plateId: "portrait-margaret", capsuleId: M, caption: "Cover study, Margaret", alt: "Abstract illustrated portrait silhouette in profile against a sea-green ground.", width: 900, height: 1125 }),
+  plate({ id: "med_portrait_thomas", plateId: "portrait-thomas", capsuleId: TH, caption: "Cover study, Thomas", alt: "Abstract illustrated portrait silhouette in profile against a warm ochre ground.", width: 900, height: 1125 }),
+  plate({ id: "med_portrait_sarah", plateId: "portrait-sarah", capsuleId: S, caption: "Cover study, Sarah", alt: "Abstract illustrated portrait silhouette in profile against a slate-blue ground.", width: 900, height: 1125 }),
 ];
 
 export const photoMedia: MediaAsset[] = [
@@ -130,7 +131,7 @@ export const audioMedia: MediaAsset[] = audioEntries.map((a) => {
     mimeType: "audio/mpeg",
     byteSize: a.byteSize,
     durationSec: a.durationSec,
-    caption: mem ? `“${mem.title}” — read aloud` : "Sample narration",
+    caption: mem ? `“${mem.title}”, read aloud` : "Sample narration",
     alt: mem ? `Synthetic narration of the story “${mem.title}”.` : "Synthetic narration",
     takenDate: mem?.date,
     placeId: mem?.placeId,
