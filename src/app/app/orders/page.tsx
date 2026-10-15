@@ -13,6 +13,7 @@ import { ConfirmDialog, Dialog } from "@/components/ui/overlay";
 import { useDb } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { cn, formatDate, formatMoney, relativeTime } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 const kindIcon: Record<Order["kind"], React.ComponentType<{ className?: string }>> = { digital: Package, gift: Gift, print: Printer, capsule: Package };
 const kindLabel: Record<Order["kind"], string> = { digital: "Capsule plan", gift: "Gift", print: "Printed book", capsule: "Keepsake box" };
@@ -218,11 +219,13 @@ function OrderDetail({ order }: { order: Order }) {
           <p className="text-ink-2">
             {latestProof.status === "approved_demo"
               ? "You approved this proof. In the real service, it would now go to the printer — here, the order stops before anything is made."
-              : "Turn every page before approving. Once approved, a real order would go to print and can no longer be changed."}
+              : config?.kind === "keepsake_box"
+                ? "Check the lid engraving letter by letter and everything that goes inside. Once approved, a real order would go to the workshop and can no longer be changed."
+                : "Turn every page before approving. Once approved, a real order would go to print and can no longer be changed."}
           </p>
           <div className="mt-5 flex flex-wrap gap-2.5">
-            {config?.kind === "book" ? (
-              <ButtonLink variant="secondary" href={`/proof/book/${config.id}`} target="_blank" leading={<FileText className="size-4" />}>
+            {config ? (
+              <ButtonLink variant="secondary" href={config.kind === "book" ? `/proof/book/${config.id}` : `/proof/box/${config.id}`} target="_blank" leading={<FileText className="size-4" />}>
                 Open proof
               </ButtonLink>
             ) : null}
@@ -372,7 +375,7 @@ function InvoiceButton({ order, invoiceNumber, issuedAt }: { order: Order; invoi
     const w = window.open("", "_blank", "noopener=no,width=760,height=900");
     if (!w) return toast.error("Allow pop-ups to view the invoice");
     const rows = order.items.map((i) => `<tr><td>${escapeHtml(i.name)}${i.quantity > 1 ? ` × ${i.quantity}` : ""}</td><td style="text-align:right">${formatMoney((i.unitAmount + i.extrasAmount) * i.quantity)}</td></tr>`).join("");
-    w.document.write(`<!doctype html><meta charset="utf-8"><title>${invoiceNumber} (demo)</title><style>body{font:15px/1.5 system-ui,sans-serif;color:#222;max-width:620px;margin:48px auto;padding:0 24px}h1{font:400 32px Georgia,serif;margin:0}table{width:100%;border-collapse:collapse;margin-top:24px}td{padding:10px 0;border-bottom:1px solid #e5e0d6}.stamp{display:inline-block;margin-top:12px;padding:4px 10px;border:1px solid #9a5238;color:#9a5238;border-radius:99px;font-size:12px;letter-spacing:.1em;text-transform:uppercase}.muted{color:#777}</style><h1>LifeAtlas</h1><div class="stamp">Demo invoice — nothing was charged</div><p class="muted">${invoiceNumber} · issued ${formatDate(issuedAt, "long")}<br>Order ${order.number} · ${escapeHtml(order.customerName)}</p><table>${rows}<tr><td>Shipping</td><td style="text-align:right">Not calculated</td></tr><tr><td>Tax</td><td style="text-align:right">Not calculated</td></tr><tr><td><strong>Total (test price)</strong></td><td style="text-align:right"><strong>${formatMoney(order.total)}</strong></td></tr></table><p class="muted">This is not a tax invoice. LifeAtlas is a preview; no payment details were collected.</p><button onclick="print()">Print</button>`);
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>${invoiceNumber} (demo)</title><style>body{font:15px/1.5 system-ui,sans-serif;color:#222;max-width:620px;margin:48px auto;padding:0 24px}h1{font:400 32px Georgia,serif;margin:0}table{width:100%;border-collapse:collapse;margin-top:24px}td{padding:10px 0;border-bottom:1px solid #e5e0d6}.stamp{display:inline-block;margin-top:12px;padding:4px 10px;border:1px solid #9a5238;color:#9a5238;border-radius:99px;font-size:12px;letter-spacing:.1em;text-transform:uppercase}.muted{color:#777}</style><h1>${brand.name}</h1><div class="stamp">Demo invoice — nothing was charged</div><p class="muted">${invoiceNumber} · issued ${formatDate(issuedAt, "long")}<br>Order ${order.number} · ${escapeHtml(order.customerName)}</p><table>${rows}<tr><td>Shipping</td><td style="text-align:right">Not calculated</td></tr><tr><td>Tax</td><td style="text-align:right">Not calculated</td></tr><tr><td><strong>Total (test price)</strong></td><td style="text-align:right"><strong>${formatMoney(order.total)}</strong></td></tr></table><p class="muted">This is not a tax invoice. ${brand.name} is a preview; no payment details were collected.</p><button onclick="print()">Print</button>`);
     w.document.close();
   };
   return (

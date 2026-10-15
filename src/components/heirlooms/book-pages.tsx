@@ -8,6 +8,7 @@ import { MediaImage } from "@/components/media/media-image";
 import { useMediaAsset } from "@/hooks/use-data";
 import { formatFuzzyDate, sortKey } from "@/lib/dates";
 import { cn } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 /* ------------------------------------------------------------------ */
 /* Page model                                                          */
@@ -319,7 +320,7 @@ function PageBody({ page, config }: { page: BookPage; config: BookConfiguration 
             <BrandMark className="size-full" />
           </span>
           <p className="mt-[3cqw] font-serif italic" style={{ fontSize: "2.6cqw", color: "#474239" }}>
-            {page.title} — made with LifeAtlas from stories told by family.
+            {page.title} — made with {brand.name} from stories told by family.
           </p>
           <p className="mt-[2cqw] font-mono uppercase" style={{ fontSize: "1.6cqw", letterSpacing: "0.18em", color: muted }}>
             Preview edition · not printed

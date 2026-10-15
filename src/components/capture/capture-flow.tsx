@@ -2,19 +2,21 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRight, Check, ChevronDown, ImagePlus, Keyboard, Mic, SkipForward, Sparkles } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, History, ImagePlus, Keyboard, Mic, RotateCcw, SkipForward, Sparkles } from "lucide-react";
 import type { Capsule, FuzzyDate, Memory, MemoryAttribution, MemoryStatus, Question } from "@/domain/models";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { DemoNotice, ProgressBar, toast } from "@/components/ui/feedback";
 import { Input, Label, Textarea } from "@/components/ui/field";
-import { FuzzyDateInput, PlacePicker } from "@/components/capsule/inputs";
+import { FuzzyDateInput, PhotoDateSuggestion, PlacePicker } from "@/components/capsule/inputs";
 import { MediaImage } from "@/components/media/media-image";
 import { Recorder, type RecordedAudio } from "./recorder";
 import { PhotoAdder, type PendingPhoto } from "./photo-adder";
 import { MemoryReveal } from "./memory-reveal";
 import { services } from "@/services/factory";
+import type { LoadedCaptureDraft } from "@/services/contracts";
 import { flushSave } from "@/store/demo-store";
-import { cn } from "@/lib/utils";
+import { useHydrated } from "@/hooks/use-data";
+import { cn, formatDuration, relativeTime, uid } from "@/lib/utils";
 
 type Mode = "voice" | "text";
 
@@ -60,11 +62,113 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
   const [recorderKey, setRecorderKey] = React.useState(0);
   const headingRef = React.useRef<HTMLHeadingElement | null>(null);
 
+  /* ---------------------- Autosaved draft (this device) ---------------------- */
+  const draftKey = `${capsule.id}:${invitationToken ? `invitation:${invitationToken}` : `person:${attribution.personId ?? variant}`}`;
+  const [draftReady, setDraftReady] = React.useState(false);
+  const [offer, setOffer] = React.useState<LoadedCaptureDraft | null>(null);
+  const [draftSavedAt, setDraftSavedAt] = React.useState<string | null>(null);
+  const [restoredAudio, setRestoredAudio] = React.useState<{ url: string } | null>(null);
+  const warnedDraftError = React.useRef(false);
+
+  // Wait for this device's saved data to load — checking earlier would miss the draft
+  // and the first autosave would overwrite it.
+  const hydrated = useHydrated();
+  React.useEffect(() => {
+    if (!hydrated) return;
+    let live = true;
+    void services()
+      .drafts.loadCaptureDraft(draftKey)
+      .then((r) => {
+        if (!live) return;
+        const d = r.status === "ok" ? r.data : null;
+        if (d && (d.draft.text.trim() || d.draft.title.trim() || d.audio || d.photos.length)) setOffer(d);
+        setDraftReady(true);
+      });
+    return () => {
+      live = false;
+    };
+  }, [draftKey, hydrated]);
+
   const freeform = allowFreeform && questions.length === 0;
   const q = questions[index];
   const total = Math.max(1, questions.length);
   const done = !freeform && index >= questions.length;
   const hasContent = !!audio || text.trim().length > 0 || photos.length > 0;
+  const autosaving = draftReady && !offer && !justSaved && !done;
+  const draftFields = { key: draftKey, capsuleId: capsule.id, questionId: q?.id, label: freeform ? "A memory of your own" : (q?.text ?? "A memory"), who: attribution.displayName, text, title, date, placeId };
+
+  const reportDraft = (r: Awaited<ReturnType<ReturnType<typeof services>["drafts"]["saveCaptureDraft"]>>) => {
+    if (r.status === "ok") setDraftSavedAt(r.data.updatedAt);
+    else if (!warnedDraftError.current) {
+      warnedDraftError.current = true;
+      toast.warning("Draft not fully saved", r.status === "error" ? r.message : undefined);
+    }
+  };
+
+  // Words, title, date and place: save after a short pause in typing.
+  React.useEffect(() => {
+    if (!autosaving || (!text.trim() && !title.trim() && date.precision === "unknown" && !placeId)) return;
+    const t = setTimeout(() => void services().drafts.saveCaptureDraft(draftFields).then(reportDraft), 400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- draftFields is rebuilt from these values
+  }, [autosaving, text, title, date, placeId, draftKey, q?.id]);
+
+  // Recordings and photos: save as soon as they actually change (not on first render).
+  const savedAudio = React.useRef<RecordedAudio | null>(null);
+  const savedPhotos = React.useRef<PendingPhoto[]>([]);
+  React.useEffect(() => {
+    if (!autosaving || audio === savedAudio.current) return;
+    savedAudio.current = audio;
+    void services()
+      .drafts.saveCaptureDraft(draftFields, { audio: audio ? { blob: audio.blob, durationSec: audio.durationSec, peaks: audio.peaks, source: audio.source } : null })
+      .then(reportDraft);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only a new recording should trigger this
+  }, [autosaving, audio]);
+  React.useEffect(() => {
+    if (!autosaving || photos === savedPhotos.current || (!photos.length && !savedPhotos.current.length)) return;
+    savedPhotos.current = photos;
+    void services()
+      .drafts.saveCaptureDraft(draftFields, { photos: photos.map((p) => ({ blob: p.file, caption: p.caption, width: p.width, height: p.height, name: p.file.name })) })
+      .then(reportDraft);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only changed photos should trigger this
+  }, [autosaving, photos]);
+
+  React.useEffect(
+    () => () => {
+      if (restoredAudio) URL.revokeObjectURL(restoredAudio.url);
+    },
+    [restoredAudio],
+  );
+
+  const discardDraft = () => {
+    setDraftSavedAt(null);
+    return services().drafts.discardCaptureDraft(draftKey);
+  };
+
+  const restoreDraft = (d: LoadedCaptureDraft) => {
+    const qi = d.draft.questionId ? questions.findIndex((x) => x.id === d.draft.questionId) : -1;
+    if (qi >= 0) setIndex(qi);
+    setText(d.draft.text);
+    setTitle(d.draft.title);
+    setDate(d.draft.date);
+    setPlaceId(d.draft.placeId);
+    if (d.draft.title || d.draft.date.precision !== "unknown" || d.draft.placeId) setDetails(true);
+    if (d.audio) {
+      const restored = { ...d.audio };
+      savedAudio.current = restored;
+      setAudio(restored);
+      setRestoredAudio({ url: URL.createObjectURL(d.audio.blob) });
+      setMode("voice");
+    } else if (d.draft.text) setMode("text");
+    if (d.photos.length) {
+      const restoredPhotos: PendingPhoto[] = d.photos.map((p) => ({ id: uid("ph"), file: new File([p.blob], p.name, { type: p.blob.type }), url: URL.createObjectURL(p.blob), caption: p.caption, width: p.width, height: p.height }));
+      savedPhotos.current = restoredPhotos;
+      setPhotos(restoredPhotos);
+      setShowPhotos(true);
+    }
+    setDraftSavedAt(d.draft.updatedAt);
+    setOffer(null);
+  };
 
   React.useEffect(() => {
     headingRef.current?.focus();
@@ -82,6 +186,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
     setError(null);
     setFollowUp(null);
     setMode("voice");
+    setRestoredAudio(null);
     setRecorderKey((k) => k + 1);
   };
 
@@ -93,6 +198,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
 
   const skip = async () => {
     if (q) await services().capsules.markAssignment(capsule.id, q.id, "skipped");
+    await discardDraft();
     next();
   };
 
@@ -137,6 +243,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
         status,
       });
       if (res.status !== "ok") throw new Error(res.message);
+      await discardDraft();
       if (invitationToken) await s.communications.submitContribution(invitationToken, res.data.id);
       await flushSave().catch(() => undefined);
       setSaved((prev) => [...prev, res.data]);
@@ -258,6 +365,35 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
         </div>
       ) : null}
 
+      {offer ? (
+        <div role="status" className="mb-8 flex flex-wrap items-center gap-4 rounded-[18px] border border-evergreen/25 bg-evergreen-soft/60 px-5 py-4">
+          <History className="size-5 shrink-0 text-evergreen" />
+          <p className="min-w-0 flex-1 text-[0.9375rem]">
+            <strong className="font-medium">You were in the middle of an answer.</strong>{" "}
+            <span className="text-ink-2">
+              “{offer.draft.label}” · saved {relativeTime(offer.draft.updatedAt)}
+              {offer.audio ? " · with a recording" : ""}
+              {offer.photos.length ? ` · ${offer.photos.length} photo${offer.photos.length === 1 ? "" : "s"}` : ""}
+            </span>
+          </p>
+          <div className="flex gap-2">
+            <Button size="sm" onClick={() => restoreDraft(offer)}>
+              Pick up where I left off
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setOffer(null);
+                void discardDraft();
+              }}
+            >
+              Start fresh
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
       {cue ? (
         <div className="mb-6 w-40 rotate-[-2deg]">
           <div className="mount">
@@ -293,7 +429,29 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
 
       <div className="mt-8">
         <div hidden={mode !== "voice"}>
-          <Recorder key={recorderKey} onChange={setAudio} size={senior ? "senior" : "standard"} onTypeInstead={() => setMode("text")} />
+          {restoredAudio && audio ? (
+            <div className="rounded-[20px] border border-line bg-surface p-5">
+              <p className="flex items-center gap-2 text-[0.9375rem] font-medium">
+                <History className="size-4 text-evergreen" /> Your recording, restored · {formatDuration(audio.durationSec)}
+              </p>
+              <audio controls src={restoredAudio.url} className="mt-4 w-full" aria-label="Restored recording" />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-3"
+                leading={<RotateCcw className="size-4" />}
+                onClick={() => {
+                  setAudio(null);
+                  setRestoredAudio(null);
+                  setRecorderKey((k) => k + 1);
+                }}
+              >
+                Record again
+              </Button>
+            </div>
+          ) : (
+            <Recorder key={recorderKey} onChange={setAudio} size={senior ? "senior" : "standard"} onTypeInstead={() => setMode("text")} />
+          )}
         </div>
         <div hidden={mode !== "text"}>
           <Label htmlFor="answer-text" className={senior ? "text-[1.1rem]" : undefined}>
@@ -303,6 +461,9 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
             id="answer-text"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onBlur={() => {
+              if (autosaving && text.trim()) void services().drafts.saveCaptureDraft(draftFields).then(reportDraft);
+            }}
             placeholder="Start anywhere. A smell, a sound, a name…"
             className={cn("mt-2 min-h-56", senior && "text-[1.2rem] leading-relaxed")}
             maxLength={20000}
@@ -321,7 +482,10 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
       {/* Photo */}
       <div className="mt-8">
         {showPhotos || photos.length ? (
-          <PhotoAdder photos={photos} onChange={setPhotos} size={senior ? "senior" : "standard"} />
+          <div className="space-y-3">
+            <PhotoAdder photos={photos} onChange={setPhotos} size={senior ? "senior" : "standard"} />
+            <PhotoDateSuggestion takenOn={photos.find((p) => p.takenOn)?.takenOn} value={date} onUse={setDate} />
+          </div>
         ) : (
           <Button variant="secondary" size={senior ? "lg" : "md"} onClick={() => setShowPhotos(true)} leading={<ImagePlus className="size-5" />}>
             Add a photo
@@ -345,7 +509,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
             </div>
             <div className="space-y-2">
               <Label htmlFor="mem-date">When was this?</Label>
-              <FuzzyDateInput id="mem-date" value={date} onChange={setDate} />
+              <FuzzyDateInput id="mem-date" value={date} onChange={setDate} birthYear={capsule.birthYear} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="mem-place">Where was this?</Label>
@@ -372,7 +536,8 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
             </Button>
           ) : null}
         </div>
-        <p className="mt-3 text-[0.8125rem] text-ink-3">
+        <p className="mt-3 text-[0.8125rem] text-ink-3" aria-live="polite">
+          {draftSavedAt ? <span className="font-medium text-ink-2">Draft saved {relativeTime(draftSavedAt)} — you can close this and come back. </span> : null}
           Saved on this device for the demo — not uploaded or backed up. {status === "submitted" ? "The organizer reviews it before it appears." : ""}
         </p>
       </div>

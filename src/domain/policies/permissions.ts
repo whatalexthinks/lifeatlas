@@ -1,4 +1,4 @@
-import type { Capsule, Memory, MemoryPrivacy, Persona, Role } from "@/domain/models";
+import type { Capsule, CapsuleMembership, Memory, MemoryPrivacy, Persona, Role } from "@/domain/models";
 
 /**
  * Permission predicates. In Part One these drive what the UI shows for the
@@ -44,16 +44,51 @@ export const roleCapabilities: Record<Role, Capability[]> = {
 
 export const roleLabels: Record<Role, { label: string; description: string }> = {
   owner: { label: "Owner", description: "Pays for the capsule, manages everything including billing and deletion." },
-  organizer: { label: "Organizer", description: "Curates prompts, invites people and reviews contributions." },
+  organizer: { label: "Editor", description: "Helps run the capsule: adds and edits stories, invites people and reviews contributions." },
   storyteller: { label: "Storyteller", description: "The person whose life this is. Controls their own contributions." },
   contributor: { label: "Contributor", description: "Adds stories, photos or recordings by invitation." },
   viewer: { label: "Viewer", description: "Can explore approved, family-visible memories." },
   successor: { label: "Successor", description: "A designated future steward. No access until a verified handover (Part Two)." },
 };
 
-export function roleFor(persona: Persona | undefined, capsuleId: string): Role | null {
+/** The four roles people choose between. ("organizer" is the stored id for Editor.) */
+export const everydayRoles: Role[] = ["owner", "organizer", "contributor", "viewer"];
+
+/**
+ * What a role may do, in the plain terms shown to people — read, add, edit, invite, export,
+ * delete. Derived from roleCapabilities so a public table can never disagree with the app.
+ */
+export function roleSummary(role: Role) {
+  const c = roleCapabilities[role];
+  return {
+    read: c.includes("view_private") ? ("everything" as const) : c.includes("view_approved") ? ("shared" as const) : ("nothing" as const),
+    add: c.includes("add_memory"),
+    edit: c.includes("edit_any_memory") ? ("all" as const) : c.includes("edit_own_memory") ? ("own" as const) : ("none" as const),
+    invite: c.includes("manage_invitations"),
+    export: c.includes("export_archive"),
+    delete: c.includes("delete_capsule"),
+    billing: c.includes("manage_billing"),
+  };
+}
+
+/** Highest first. Successor is left out: it grants nothing until a verified handover. */
+const roleRank: Role[] = ["owner", "organizer", "storyteller", "contributor", "viewer"];
+
+/** A person's working role on a capsule, from their active memberships. */
+export function membershipRole(memberships: CapsuleMembership[], personId: string, capsuleId: string): Role | null {
+  const held = memberships.filter((m) => m.personId === personId && m.capsuleId === capsuleId && m.status === "active").map((m) => m.role);
+  return roleRank.find((r) => held.includes(r)) ?? null;
+}
+
+/**
+ * The role the selected demo identity holds on a capsule. When memberships are given they
+ * decide (so a role changed on the Family page shows everywhere at once); otherwise the
+ * persona's own list is used.
+ */
+export function roleFor(persona: Persona | undefined, capsuleId: string, memberships?: CapsuleMembership[]): Role | null {
   if (!persona) return null;
   if (persona.kind === "operations") return null;
+  if (persona.personId && memberships) return membershipRole(memberships, persona.personId, capsuleId);
   return persona.roles.find((r) => r.capsuleId === capsuleId)?.role ?? null;
 }
 

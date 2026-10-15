@@ -132,7 +132,7 @@ export function AudioPlayer({
       className={cn(
         "relative grid shrink-0 place-items-center rounded-full transition-[transform,background-color] duration-200 hover:scale-[1.04] active:scale-95 disabled:opacity-40",
         variant === "mini" ? "size-10" : "size-14",
-        light ? "bg-[#f2ebdc] text-[#1b221e]" : "bg-evergreen text-on-evergreen",
+        light ? "bg-[#f2ebdc] text-[#1b1a18]" : "bg-evergreen text-on-evergreen",
       )}
     >
       {playing ? <Pause className={variant === "mini" ? "size-4" : "size-5"} fill="currentColor" /> : <Play className={cn(variant === "mini" ? "size-4" : "size-5", "translate-x-[1px]")} fill="currentColor" />}
@@ -164,7 +164,7 @@ export function AudioPlayer({
         <div className="min-w-0 flex-1">
           <Waveform peaks={peaks} progress={progress} bars={36} height={28} tone={light ? "light" : "brand"} />
         </div>
-        <span className={cn("catalog tabular shrink-0", light && "text-[#bdb7aa]")}>{formatDuration(playing || time ? time : duration)}</span>
+        <span className={cn("catalog tabular shrink-0", light && "text-[#c4bdb1]")}>{formatDuration(playing || time ? time : duration)}</span>
       </div>
     );
   }
@@ -175,7 +175,7 @@ export function AudioPlayer({
       <div className="flex items-center gap-4">
         {playButton}
         <div className="min-w-0 flex-1">
-          {title ? <p className={cn("mb-1.5 truncate text-[0.9375rem] font-medium", light ? "text-[#eee9de]" : "text-ink")}>{title}</p> : null}
+          {title ? <p className={cn("mb-1.5 truncate text-[0.9375rem] font-medium", light ? "text-[#f1ede6]" : "text-ink")}>{title}</p> : null}
           <div
             ref={trackRef}
             role="slider"
@@ -195,7 +195,7 @@ export function AudioPlayer({
           >
             <Waveform peaks={peaks} progress={progress} tone={light ? "light" : "ink"} />
           </div>
-          <div className={cn("mt-1 flex items-center justify-between gap-3 catalog tabular", light && "text-[#bdb7aa]")}>
+          <div className={cn("mt-1 flex items-center justify-between gap-3 catalog tabular", light && "text-[#c4bdb1]")}>
             <span>
               {formatDuration(time)} / {formatDuration(duration)}
             </span>
@@ -230,8 +230,8 @@ export function AudioPlayer({
           <p className="whitespace-pre-line">{transcript.text}</p>
         </div>
       ) : null}
-      {showNotice && asset.sampleNotice ? <p className={cn("mt-3 text-[0.75rem] leading-snug", light ? "text-[#bdb7aa]" : "text-ink-3")}>{asset.sampleNotice}</p> : null}
-      {showNotice && asset.storage === "this_device" ? <p className={cn("mt-3 text-[0.75rem] leading-snug", light ? "text-[#bdb7aa]" : "text-ink-3")}>Recorded on this device · stored only in this browser · not backed up</p> : null}
+      {showNotice && asset.sampleNotice ? <p className={cn("mt-3 text-[0.75rem] leading-snug", light ? "text-[#c4bdb1]" : "text-ink-3")}>{asset.sampleNotice}</p> : null}
+      {showNotice && asset.storage === "this_device" ? <p className={cn("mt-3 text-[0.75rem] leading-snug", light ? "text-[#c4bdb1]" : "text-ink-3")}>Recorded on this device · stored only in this browser · not backed up</p> : null}
     </div>
   );
 }

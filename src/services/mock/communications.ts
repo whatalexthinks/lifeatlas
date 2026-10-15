@@ -6,6 +6,7 @@ import { canTransition, invitationTransitions } from "@/domain/workflows/state-m
 import { token as makeToken, uid } from "@/lib/utils";
 import { fail, notConfigured, ok, type CommunicationsProvider } from "../contracts";
 import { actorName, db, latency, pushNotification, store } from "./shared";
+import { brand } from "@/config/brand";
 
 function setStatus(id: string, to: Invitation["status"], note?: string) {
   store().mutate(
@@ -86,7 +87,7 @@ export const mockCommunications: CommunicationsProvider = {
       subject: inv.role === "storyteller" ? `${from} would love to hear your stories` : `A story for ${about}?`,
       preheader: "One question, one story. No account needed.",
       body,
-      sms: `${from} invited you to add a story to ${about}'s LifeAtlas: ${link}`,
+      sms: `${from} invited you to add a story to ${about}'s ${brand.name}: ${link}`,
       link,
     });
   },
@@ -96,7 +97,7 @@ export const mockCommunications: CommunicationsProvider = {
     if (!inv) return fail("not_found", "Invitation not found.");
     if (!canTransition(invitationTransitions, inv.status, "simulated_sent")) return fail("conflict", "This invitation can't be marked as shared right now.");
     await latency();
-    const out = setStatus(invitationId, "simulated_sent", "Link shared from this device — no email or text was sent by LifeAtlas");
+    const out = setStatus(invitationId, "simulated_sent", `Link shared from this device — no email or text was sent by ${brand.name}`);
     pushNotification({ kind: "invitation", title: `Invitation ready for ${inv.recipientName}`, body: "Invitation preview only — no email was sent. Share the link yourself.", href: "/app/invitations" });
     return ok({ ...out });
   },
@@ -121,6 +122,7 @@ export const mockCommunications: CommunicationsProvider = {
     if (inv.status === "prepared") setStatus(inv.id, "simulated_sent", "Link opened on this device");
     const cur = db().invitations.find((i) => i.id === inv.id)!;
     if (!canTransition(invitationTransitions, cur.status, "accepted_demo")) return fail("conflict", "This invitation can't be accepted.");
+    joinFamily(inv.id);
     return ok({ ...setStatus(inv.id, "accepted_demo") });
   },
 
@@ -172,3 +174,24 @@ export const mockCommunications: CommunicationsProvider = {
     return ok({ ...db().contributions.find((c) => c.id === id)! });
   },
 };
+
+/**
+ * Opening an invitation makes the person part of the family: someone new is added to
+ * People, and they get the invited role on the capsule unless they already have one.
+ */
+function joinFamily(invitationId: string) {
+  store().mutate((d) => {
+    const inv = d.invitations.find((i) => i.id === invitationId);
+    if (!inv) return;
+    const now = new Date().toISOString();
+    if (!inv.personId || !d.people.some((p) => p.id === inv.personId)) {
+      const [givenName, ...rest] = inv.recipientName.trim().split(/\s+/);
+      const id = uid("per");
+      d.people.push({ id, displayName: inv.recipientName.trim(), givenName, familyName: rest.join(" "), shortBio: inv.relationship || undefined, isSample: false, createdAt: now, updatedAt: now });
+      inv.personId = id;
+    }
+    const personId = inv.personId;
+    if (!d.memberships.some((m) => m.capsuleId === inv.capsuleId && m.personId === personId && m.status === "active" && m.role !== "successor"))
+      d.memberships.push({ id: uid("mb"), capsuleId: inv.capsuleId, personId, role: inv.role, status: "active", grantedAt: now, enforcement: "simulated" });
+  });
+}

@@ -9,8 +9,9 @@ import { Panel } from "@/components/studio/primitives";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/feedback";
 import { useCapsuleMemories } from "@/hooks/use-data";
-import { chapterById, chapterColorVar } from "@/data/chapters";
+import { chapterColorVar } from "@/data/chapters";
 import { services } from "@/services/factory";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 export default function StudioChapters() {
   const { capsule, hrefFor } = useStudioCapsule();
@@ -29,7 +30,7 @@ export default function StudioChapters() {
       <Panel title="Chapter order" description="How chapters appear in the viewer, the reading mode and printed books.">
         <ol className="space-y-1.5" aria-label="Chapters in order">
           {order.map((id, i) => {
-            const ch = chapterById(id);
+            const ch = chapterFor(capsule, id);
             return (
               <li key={id} className="flex items-center gap-3 rounded-[12px] border border-line bg-surface px-3 py-2">
                 <span className="catalog w-5">{String(i + 1).padStart(2, "0")}</span>

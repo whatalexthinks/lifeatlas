@@ -4,7 +4,6 @@ import * as React from "react";
 import { ImageOff } from "lucide-react";
 import type { MediaAsset } from "@/domain/models";
 import { useMediaAsset, useMediaUrl } from "@/hooks/use-data";
-import { plateDataUri } from "@/lib/plates";
 import { cn } from "@/lib/utils";
 
 /**
@@ -120,13 +119,14 @@ export function MediaImage({
   );
 }
 
-/** Direct plate rendering by plate id (used on marketing pages with no store dependency). */
-export function Plate({ id, className, alt, priority }: { id: string; className?: string; alt: string; priority?: boolean }) {
-  const src = React.useMemo(() => plateDataUri(id), [id]);
-  if (!src) return null;
+/**
+ * Direct plate rendering by plate id (marketing pages, no store dependency). Served from the
+ * cached /plates route so the illustration isn't inlined into the page's HTML.
+ */
+export function Plate({ id, className, alt, priority, focalY = 50 }: { id: string; className?: string; alt: string; priority?: boolean; focalY?: number }) {
   return (
     <div className={cn("relative overflow-hidden bg-linen", className)}>
-      <img src={src} alt={alt} className="size-full object-cover" loading={priority ? "eager" : "lazy"} decoding="async" />
+      <img src={`/plates/${id}`} alt={alt} className="size-full object-cover" style={{ objectPosition: `50% ${focalY}%` }} loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} />
     </div>
   );
 }
@@ -149,7 +149,7 @@ export function Mounted({ children, caption, meta, className, tilt = 0 }: { chil
 /** Uncropped image for lightboxes. */
 export function LightboxImage({ asset, className }: { asset: MediaAsset; className?: string }) {
   const { url, error } = useMediaUrl(asset);
-  if (error) return <p className="text-[0.9375rem] text-[#bdb7aa]">{error}</p>;
+  if (error) return <p className="text-[0.9375rem] text-[#c4bdb1]">{error}</p>;
   if (!url) return <div className="skeleton h-[50dvh] w-[min(80vw,900px)] rounded-[8px] opacity-20" aria-hidden />;
   return <img src={url} alt={asset.alt} className={cn("max-h-[72dvh] max-w-full rounded-[4px] object-contain shadow-2xl", className)} />;
 }

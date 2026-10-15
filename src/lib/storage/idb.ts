@@ -5,7 +5,7 @@ import type { DemoDatabase } from "@/domain/models";
  * Local demonstration persistence.
  * - `state`: the structured DemoDatabase snapshot (JSON-safe).
  * - `blobs`: user media (recordings, photos) as Blobs — never in localStorage.
- * Data stays in THIS browser on THIS device. It is not encrypted by LifeAtlas
+ * Data stays in THIS browser on THIS device. It is not encrypted by OurLifeCapsule
  * and it is not backed up.
  */
 

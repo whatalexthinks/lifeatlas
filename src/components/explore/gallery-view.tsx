@@ -74,7 +74,7 @@ export function GalleryView({ capsule, scope, hrefFor, tone = "paper" }: { capsu
             className="group block w-full break-inside-avoid text-left"
             aria-label={`Open photograph: ${p.asset.caption || p.memory.title}`}
           >
-            <figure className={cn("overflow-hidden rounded-[6px] p-2 pb-0 shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5", night ? "bg-[#1f2722]" : "bg-surface")}>
+            <figure className={cn("overflow-hidden rounded-[6px] p-2 pb-0 shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5", night ? "bg-[#272522]" : "bg-surface")}>
               <MediaImage asset={p.asset} className="w-full" intrinsic alt={p.asset.alt} />
               <figcaption className="flex items-baseline justify-between gap-2 px-1 py-2.5">
                 <span className={cn("truncate font-serif text-[0.95rem] italic", night ? "text-night-ink-2" : "text-ink-2")}>{p.asset.caption || p.memory.title}</span>
@@ -89,11 +89,11 @@ export function GalleryView({ capsule, scope, hrefFor, tone = "paper" }: { capsu
       <RD.Root open={index !== null} onOpenChange={(v) => !v && setIndex(null)}>
         <RD.Portal>
           <RD.Overlay className="fixed inset-0 z-[80] bg-[#0c0f0d]/95 data-[state=open]:animate-[fade-in_200ms_ease-out]" />
-          <RD.Content className="fixed inset-0 z-[81] flex flex-col text-[#eee9de] outline-none">
+          <RD.Content className="fixed inset-0 z-[81] flex flex-col text-[#f1ede6] outline-none">
             {current ? (
               <>
                 <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
-                  <RD.Title className="catalog text-[#bdb7aa]">
+                  <RD.Title className="catalog text-[#c4bdb1]">
                     {index! + 1} / {photos.length}
                   </RD.Title>
                   <RD.Description className="sr-only">{current.asset.alt}</RD.Description>
@@ -118,12 +118,12 @@ export function GalleryView({ capsule, scope, hrefFor, tone = "paper" }: { capsu
                 </div>
                 <div className="mx-auto w-full max-w-3xl px-6 pb-8 pt-5 text-center">
                   <p className="font-serif text-[1.5rem] italic leading-snug">{current.asset.caption || current.memory.title}</p>
-                  <p className="catalog mt-2 text-[#bdb7aa]">
+                  <p className="catalog mt-2 text-[#c4bdb1]">
                     {formatFuzzyDate(current.asset.takenDate ?? current.memory.date)}
                     {current.asset.placeId || current.memory.placeId ? ` · ${places.find((p) => p.id === (current.asset.placeId ?? current.memory.placeId))?.name ?? ""}` : ""} · {current.asset.contributorName}
                   </p>
-                  {current.asset.sampleNotice ? <p className="mt-2 text-[0.75rem] text-[#bdb7aa]">{current.asset.sampleNotice}</p> : null}
-                  <Link href={hrefFor(current.memory)} className="mt-4 inline-flex items-center gap-1.5 text-[0.9375rem] font-medium text-[#d2bb93] hover:underline" onClick={() => setIndex(null)}>
+                  {current.asset.sampleNotice ? <p className="mt-2 text-[0.75rem] text-[#c4bdb1]">{current.asset.sampleNotice}</p> : null}
+                  <Link href={hrefFor(current.memory)} className="mt-4 inline-flex items-center gap-1.5 text-[0.9375rem] font-medium text-[#d7bc92] hover:underline" onClick={() => setIndex(null)}>
                     Read “{current.memory.title}” <ArrowUpRight className="size-4" />
                   </Link>
                 </div>

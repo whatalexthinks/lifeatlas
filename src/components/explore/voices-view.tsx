@@ -7,9 +7,9 @@ import type { Capsule, Memory } from "@/domain/models";
 import { AudioPlayer } from "@/components/audio/audio-player";
 import { EmptyState } from "@/components/ui/feedback";
 import { useCapsuleMemories, useDb } from "@/hooks/use-data";
-import { chapterById } from "@/data/chapters";
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, formatDuration } from "@/lib/utils";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 export function VoicesView({ capsule, scope, hrefFor, tone = "paper" }: { capsule: Capsule; scope: "studio" | "viewer"; hrefFor: (m: Memory) => string; tone?: "paper" | "night" }) {
   const memories = useCapsuleMemories(capsule.id, { scope: scope === "viewer" ? "viewer" : "studio", type: "audio" });
@@ -48,13 +48,13 @@ export function VoicesView({ capsule, scope, hrefFor, tone = "paper" }: { capsul
           <li key={m.id} className={cn("rounded-[20px] p-5", night ? "bg-white/[0.04] ring-1 ring-white/10" : "card-paper")}>
             <div className="mb-4 flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className={cn("catalog", night && "text-[#c4ad86]")}>
-                  {formatFuzzyDate(m.date)} · {chapterById(m.chapter).title}
+                <p className={cn("catalog", night && "text-[#d7bc92]")}>
+                  {formatFuzzyDate(m.date)} · {chapterFor(capsule, m.chapter).title}
                 </p>
                 <h3 className={cn("mt-1 font-serif text-[1.45rem] leading-tight", night ? "text-night-ink" : "text-ink")}>{m.title}</h3>
                 <p className={cn("mt-0.5 text-[0.8125rem]", night ? "text-night-ink-3" : "text-ink-3")}>Told by {m.attribution.displayName}</p>
               </div>
-              <Link href={hrefFor(m)} className={cn("inline-flex shrink-0 items-center gap-1 text-[0.8125rem] font-medium hover:underline", night ? "text-[#d2bb93]" : "text-evergreen")}>
+              <Link href={hrefFor(m)} className={cn("inline-flex shrink-0 items-center gap-1 text-[0.8125rem] font-medium hover:underline", night ? "text-[#d7bc92]" : "text-evergreen")}>
                 Story <ArrowUpRight className="size-3.5" />
               </Link>
             </div>

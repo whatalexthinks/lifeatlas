@@ -5,8 +5,9 @@ import { MapPin } from "lucide-react";
 import type { Memory } from "@/domain/models";
 import { MediaImage } from "@/components/media/media-image";
 import { AudioPlayer } from "@/components/audio/audio-player";
-import { usePlace } from "@/hooks/use-data";
-import { chapterById, chapterColorVar } from "@/data/chapters";
+import { useDb, usePlace } from "@/hooks/use-data";
+import { chapterColorVar } from "@/data/chapters";
+import { chapterFor } from "@/domain/capsule-kinds";
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, excerpt } from "@/lib/utils";
 
@@ -16,7 +17,8 @@ import { cn, excerpt } from "@/lib/utils";
  */
 export function MemoryReveal({ memory, subjectName, className, format = "card", animate = true }: { memory: Memory; subjectName?: string; className?: string; format?: "card" | "portrait" | "square"; animate?: boolean }) {
   const place = usePlace(memory.placeId);
-  const chapter = chapterById(memory.chapter);
+  const capsule = useDb((d) => d.capsules.find((c) => c.id === memory.capsuleId));
+  const chapter = chapterFor(capsule, memory.chapter);
   const photo = memory.photoIds[0];
   const aspect = format === "portrait" ? "aspect-[9/16]" : format === "square" ? "aspect-square" : "";
   const color = chapterColorVar[chapter.color];
@@ -29,13 +31,13 @@ export function MemoryReveal({ memory, subjectName, className, format = "card", 
           <div className={cn("absolute inset-0", format === "card" ? "bg-gradient-to-t from-night via-transparent to-transparent" : "bg-gradient-to-t from-black/85 via-black/25 to-black/10")} />
         </div>
       ) : (
-        <div className={cn("relative", format === "card" ? "aspect-[21/9]" : "absolute inset-0")} style={{ background: `radial-gradient(120% 90% at 20% 10%, color-mix(in srgb, ${color} 55%, #131815), #131815 70%)` }}>
+        <div className={cn("relative", format === "card" ? "aspect-[21/9]" : "absolute inset-0")} style={{ background: `radial-gradient(120% 90% at 20% 10%, color-mix(in srgb, ${color} 55%, #1b1a18), #1b1a18 70%)` }}>
           <div className="topo-lines absolute inset-0 opacity-25" />
-          <span aria-hidden className="absolute left-6 top-2 font-serif text-[9rem] leading-none text-[#c4ad86]/35 sm:left-7">&ldquo;</span>
+          <span aria-hidden className="absolute left-6 top-2 font-serif text-[9rem] leading-none text-[#d7bc92]/35 sm:left-7">&ldquo;</span>
         </div>
       )}
       <div className={cn("relative z-10 p-6 sm:p-7", format !== "card" && "absolute inset-x-0 bottom-0")}>
-        <p className="flex flex-wrap items-center gap-x-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-[#d7bd8a]">
+        <p className="flex flex-wrap items-center gap-x-2 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-[#d7bc92]">
           <span>{chapter.title}</span>
           <span aria-hidden>·</span>
           <span>{formatFuzzyDate(memory.date, "short")}</span>

@@ -4,8 +4,10 @@ import { create } from "zustand";
 import { produce, type Draft } from "immer";
 import type { AnalyticsEventName, AuditEvent, DemoDatabase } from "@/domain/models";
 import { buildSeed, SCHEMA_VERSION } from "@/data/fixtures";
+import { withNewFields } from "./migrate";
 import { clearAll, idbAvailable, isQuotaError, loadState, saveState } from "@/lib/storage/idb";
 import { uid } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 export type PersistenceMode = "pending" | "indexeddb" | "memory" | "error";
 
@@ -60,7 +62,7 @@ export const useDemoStore = create<DemoStore>()((set, get) => ({
     try {
       const stored = await loadState();
       if (stored && stored.schemaVersion === SCHEMA_VERSION) {
-        set({ db: stored, hydrated: true, persistence: "indexeddb" });
+        set({ db: withNewFields(stored, buildSeed()), hydrated: true, persistence: "indexeddb" });
       } else {
         const fresh = buildSeed();
         set({ db: fresh, hydrated: true, persistence: "indexeddb" });
@@ -85,10 +87,14 @@ export const useDemoStore = create<DemoStore>()((set, get) => ({
   },
 }));
 
-function describeError(e: unknown) {
-  if (isQuotaError(e)) return "This device is out of storage space for LifeAtlas. Remove a recording or download your archive, then try again.";
-  if (e instanceof Error) return e.message;
-  return "Could not save on this device.";
+/** Plain-language storage problems — never a raw browser error. Exported for tests. */
+export function describeError(e: unknown) {
+  if (isQuotaError(e)) return `This device is out of storage space for ${brand.name}. Remove a recording or download your archive, then try again.`;
+  const name = e instanceof DOMException || e instanceof Error ? e.name : "";
+  if (name === "SecurityError" || name === "NotAllowedError") return `This browser is blocking ${brand.name} from saving — usually a private window or a setting that blocks site data.`;
+  if (name === "InvalidStateError" || name === "UnknownError" || name === "AbortError" || name === "TransactionInactiveError") return "This browser's storage stopped responding. Your earlier changes are safe; reload the page and try again.";
+  if (name === "VersionError") return `${brand.name} is open in another tab with a different version. Close the other tab and reload.`;
+  return `${brand.name} couldn't save on this device just now. Your earlier changes are safe; try again in a moment.`;
 }
 
 function scheduleSave() {
@@ -114,8 +120,13 @@ export async function flushSave() {
   saveTimer = null;
   const { db, hydrated, persistence } = useDemoStore.getState();
   if (!hydrated || persistence === "memory" || !idbAvailable()) return;
-  await saveState(db);
-  useDemoStore.setState({ lastSavedAt: new Date().toISOString() });
+  try {
+    await saveState(db);
+    useDemoStore.setState({ lastSavedAt: new Date().toISOString(), saveError: undefined, persistence: "indexeddb" });
+  } catch (e) {
+    useDemoStore.setState({ saveError: describeError(e), persistence: "error" });
+    throw e;
+  }
 }
 
 /** Write only if a debounced save is still waiting — used when the tab is hidden or closing. */

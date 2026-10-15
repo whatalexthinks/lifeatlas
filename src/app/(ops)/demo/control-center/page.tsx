@@ -14,6 +14,7 @@ import { useDb, useHydrated, usePersistence } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { useDemoStore } from "@/store/demo-store";
 import { cn, downloadBlob, relativeTime } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 const landing: Record<PersonaKind, { href: string; label: string }> = {
   organizer: { href: "/app", label: "Studio home" },
@@ -27,7 +28,7 @@ const simulations: { event: SimulatedEvent; title: string; body: string; icon: R
   { event: "contribution", title: "A relative sends a story", body: "Daniel submits a memory through his invitation. It lands in review.", icon: MessageSquarePlus },
   { event: "invitation_opened", title: "An invitation is opened", body: "The next waiting invitation is marked opened, with a notification.", icon: Mail },
   { event: "proof_ready", title: "A new book proof arrives", body: "The fulfillment mock produces the next proof version.", icon: FileText },
-  { event: "storage_warning", title: "The device runs low on space", body: "Shows how LifeAtlas warns before recordings fail.", icon: HardDrive },
+  { event: "storage_warning", title: "The device runs low on space", body: `Shows how ${brand.name} warns before recordings fail.`, icon: HardDrive },
 ];
 
 const journeys = [
@@ -153,7 +154,7 @@ export default function ControlCenterPage() {
               variant="secondary"
               size="sm"
               leading={<Download className="size-4" />}
-              onClick={() => downloadBlob(new Blob([JSON.stringify(db, null, 2)], { type: "application/json" }), `lifeatlas-demo-${new Date().toISOString().slice(0, 10)}.json`)}
+              onClick={() => downloadBlob(new Blob([JSON.stringify(db, null, 2)], { type: "application/json" }), `${brand.filePrefix}-demo-${new Date().toISOString().slice(0, 10)}.json`)}
             >
               Download records (JSON)
             </Button>

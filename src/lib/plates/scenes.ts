@@ -980,4 +980,148 @@ export const scenes: Record<string, SceneFn> = {
     s += path(`M${f(W * 0.44)},${f(H * 0.69)} Q${f(W * 0.53)},${f(H * 0.75)} ${f(W * 0.64)},${f(H * 0.69)}`, "none", `stroke="${halos[variant]}" stroke-width="2" opacity="0.25"`);
     return s;
   },
+
+  orchard(ctx) {
+    // A wedding supper under fruit trees: string lights, a long table, two figures.
+    const { P, W, H } = ctx;
+    let s = sky(ctx, P.c("#e9b98a"), P.c("#f6dfc0"), H * 0.6);
+    s += rect(0, H * 0.58, W, H * 0.42, lin(ctx, [[0, P.c("#8c9a64")], [1, P.c("#5d6b40")]]));
+    for (let i = 0; i < 7; i++) {
+      const x = W * (0.04 + i * 0.16) + between(ctx, -12, 12);
+      const base = H * (0.6 + between(ctx, -0.01, 0.02));
+      s += rect(x - 5, base - H * 0.16, 10, H * 0.16, P.woodDark);
+      s += ellipse(x, base - H * 0.22, W * 0.085, H * 0.1, P.c("#5f7a43"));
+      s += ellipse(x - W * 0.03, base - H * 0.25, W * 0.05, H * 0.06, P.c("#78934f"), `opacity="0.8"`);
+      for (let k = 0; k < 6; k++) s += circle(x + between(ctx, -W * 0.06, W * 0.06), base - H * between(ctx, 0.17, 0.29), 3.2, P.c("#e3b34a"));
+    }
+    // string lights in two swags
+    for (const [y0, y1] of [[0.3, 0.34], [0.36, 0.41]]) {
+      s += path(`M0,${f(H * y0)} Q${f(W * 0.5)},${f(H * (y1 + 0.08))} ${W},${f(H * y0)}`, "none", `stroke="${P.c("#3a3530")}" stroke-width="1.5" opacity="0.6"`);
+      for (let i = 1; i < 18; i++) {
+        const t = i / 18;
+        const x = W * t;
+        const y = (1 - t) * (1 - t) * H * y0 + 2 * (1 - t) * t * H * (y1 + 0.08) + t * t * H * y0;
+        s += circle(x, y + 5, 4, P.light) + circle(x, y + 5, 11, P.light, `opacity="0.18"`);
+      }
+    }
+    // long table with linen and candles
+    s += rect(W * 0.08, H * 0.72, W * 0.84, H * 0.05, P.cream);
+    s += rect(W * 0.08, H * 0.77, W * 0.84, H * 0.03, P.wallShade);
+    for (let i = 0; i < 9; i++) {
+      const x = W * (0.12 + i * 0.095);
+      s += rect(x, H * 0.68, 4, H * 0.04, P.paper) + ellipse(x + 2, H * 0.675, 3, 6, P.light);
+      s += ellipse(x + W * 0.03, H * 0.722, 14, 4, P.c("#e9e4d8"));
+    }
+    s += figure(W * 0.45, H * 0.9, H * 0.36, P.paper, P.c("#8b6a55"), true);
+    s += figure(W * 0.56, H * 0.9, H * 0.39, P.c("#2f3439"), P.c("#5a4536"));
+    return s;
+  },
+
+  roadtrip(ctx) {
+    // Through a windscreen: coast road, sea to one side, a folded map on the dash.
+    const { P, W, H } = ctx;
+    let s = sky(ctx, P.skyHigh, P.sky, H * 0.5);
+    s += clouds(ctx, H * 0.18, P.fog, 3, 0.75);
+    s += rect(0, H * 0.42, W, H * 0.12, P.sea) + waterLines(ctx, H * 0.43, H * 0.53, P.fog, 26, 0.3);
+    s += ridge(ctx, H * 0.4, 30, 5, P.c("#7d8c6a"), "", W * 0.55, W, H * 0.62);
+    s += poly([[W * 0.38, H * 0.95], [W * 0.62, H * 0.95], [W * 0.53, H * 0.5], [W * 0.5, H * 0.5]], P.c("#5c5b57"));
+    for (let i = 0; i < 6; i++) {
+      const t = i / 6;
+      const y = H * (0.52 + t * 0.4);
+      s += rect(W * 0.515 - t * 6, y, 3 + t * 6, H * 0.03 * (0.4 + t), P.c("#ece6d4"));
+    }
+    s += poly([[0, H * 0.55], [W * 0.38, H * 0.95], [0, H]], P.c("#a3b07f"));
+    // car interior frame
+    s += path(`M0,0 L${W},0 L${W},${f(H * 0.12)} Q${f(W * 0.5)},${f(H * 0.06)} 0,${f(H * 0.12)} Z`, P.shadow);
+    s += poly([[0, 0], [W * 0.07, 0], [W * 0.14, H * 0.66], [0, H * 0.72]], P.shadow);
+    s += poly([[W, 0], [W * 0.93, 0], [W * 0.86, H * 0.66], [W, H * 0.72]], P.shadow);
+    s += path(`M0,${f(H * 0.66)} Q${f(W * 0.5)},${f(H * 0.6)} ${W},${f(H * 0.66)} L${W},${H} L0,${H} Z`, P.c("#3b3632"));
+    // map and coffee cup on the dash
+    s += poly([[W * 0.18, H * 0.66], [W * 0.38, H * 0.63], [W * 0.4, H * 0.7], [W * 0.2, H * 0.73]], P.paper);
+    for (let i = 0; i < 4; i++) s += line(W * (0.21 + i * 0.045), H * 0.655, W * (0.225 + i * 0.045), H * 0.72, P.c("#c7bfa9"), 1.2);
+    s += path(`M${f(W * 0.22)},${f(H * 0.69)} q${f(W * 0.05)},-${f(H * 0.03)} ${f(W * 0.1)},${f(H * 0.005)} t${f(W * 0.06)},-${f(H * 0.02)}`, "none", `stroke="${P.red}" stroke-width="2" opacity="0.8"`);
+    s += rect(W * 0.72, H * 0.6, W * 0.05, H * 0.07, P.cream) + rect(W * 0.72, H * 0.6, W * 0.05, H * 0.012, P.c("#7a5b44"));
+    s += line(W * 0.5, H * 0.12, W * 0.5, H * 0.2, P.shadow, 4) + rect(W * 0.45, H * 0.2, W * 0.1, H * 0.035, P.c("#2a2724"));
+    return s;
+  },
+
+  ferry(ctx) {
+    // A coastal ferry leaving the slip, smoke from the stack. Painted for silver tone.
+    const { P, W, H } = ctx;
+    let s = sky(ctx, P.c("#b9c3c7"), P.fog, H * 0.55);
+    s += clouds(ctx, H * 0.2, P.paper, 4, 0.6);
+    s += ridge(ctx, H * 0.5, 22, 6, P.c("#8e958f"), `opacity="0.7"`, 0, W, H * 0.56);
+    s += rect(0, H * 0.55, W, H * 0.45, lin(ctx, [[0, P.sea], [1, P.seaDeep]]));
+    s += waterLines(ctx, H * 0.56, H, P.fog, 60, 0.35);
+    // hull, decks, wheelhouse
+    const x = W * 0.18, y = H * 0.5, w = W * 0.6;
+    s += path(`M${f(x)},${f(y)} L${f(x + w)},${f(y)} L${f(x + w - w * 0.06)},${f(y + H * 0.1)} L${f(x + w * 0.05)},${f(y + H * 0.1)} Z`, P.c("#2e3135"));
+    s += rect(x + w * 0.06, y - H * 0.08, w * 0.82, H * 0.08, P.paper);
+    for (let i = 0; i < 10; i++) s += rect(x + w * (0.09 + i * 0.077), y - H * 0.065, w * 0.045, H * 0.035, P.c("#55595d"));
+    s += rect(x + w * 0.2, y - H * 0.15, w * 0.32, H * 0.07, P.cream);
+    s += rect(x + w * 0.58, y - H * 0.24, w * 0.07, H * 0.16, P.c("#2e3135"));
+    s += rect(x + w * 0.58, y - H * 0.24, w * 0.07, H * 0.03, P.red);
+    s += `<g ${blur(ctx, 9)} opacity="0.55">${ellipse(x + w * 0.66, y - H * 0.3, W * 0.05, H * 0.035, P.fog)}${ellipse(x + w * 0.76, y - H * 0.34, W * 0.07, H * 0.04, P.fog)}${ellipse(x + w * 0.9, y - H * 0.36, W * 0.09, H * 0.045, P.fog)}</g>`;
+    s += ellipse(x + w * 0.5, y + H * 0.12, w * 0.55, H * 0.012, P.fog, `opacity="0.5"`);
+    // pilings of the slip
+    for (let i = 0; i < 5; i++) s += rect(W * (0.84 + i * 0.035), H * (0.46 + i * 0.01), 8, H * 0.2, P.woodDark);
+    return s;
+  },
+
+  pie(ctx) {
+    // A lattice pie cooling on an open sill, garden beyond.
+    const { P, W, H } = ctx;
+    let s = rect(0, 0, W, H, P.wall);
+    const wx = W * 0.12, wy = H * 0.08, ww = W * 0.76, wh = H * 0.5;
+    s += rect(wx, wy, ww, wh, lin(ctx, [[0, P.sky], [1, P.c("#e8edd9")]]));
+    s += ridge(ctx, wy + wh * 0.6, 26, 5, P.c("#88a160"), "", wx, wx + ww, wy + wh);
+    for (let i = 0; i < 5; i++) s += circle(wx + ww * (0.15 + i * 0.18), wy + wh * 0.62, ww * 0.06, P.c("#6f8a4a"), `opacity="0.85"`);
+    s += windowFrame(wx, wy, ww, wh, P.plaster, 2, 12);
+    s += rect(wx - 30, wy + wh + 14, ww + 60, H * 0.06, P.woodLight);
+    s += rect(0, wy + wh + 14 + H * 0.06, W, H, P.wallShade);
+    // pie
+    const cx = W * 0.5, cy = wy + wh + 6;
+    s += ellipse(cx, cy + 4, W * 0.22, H * 0.05, P.shadow, `opacity="0.25" ${blur(ctx, 6)}`);
+    s += ellipse(cx, cy, W * 0.2, H * 0.045, P.c("#c98b4b"));
+    s += ellipse(cx, cy - 4, W * 0.18, H * 0.036, P.c("#e3b36f"));
+    for (let i = -3; i <= 3; i++) {
+      s += line(cx + i * W * 0.045 - W * 0.02, cy - H * 0.03, cx + i * W * 0.045 + W * 0.02, cy + H * 0.02, P.c("#f0cd8b"), 6, `stroke-linecap="round"`);
+      s += line(cx - W * 0.16, cy - 4 + i * 4, cx + W * 0.16, cy - 4 + i * 4, P.c("#efc887"), 4, `opacity="0.75"`);
+    }
+    for (let i = 0; i < 5; i++) s += path(`M${f(cx - W * 0.06 + i * W * 0.03)},${f(cy - H * 0.06)} q8,-${f(H * 0.04)} 0,-${f(H * 0.08)}`, "none", `stroke="${P.paper}" stroke-width="3" opacity="0.4" stroke-linecap="round"`);
+    // a folded tea towel
+    s += poly([[W * 0.72, cy + 4], [W * 0.86, cy + 2], [W * 0.88, cy + 18], [W * 0.74, cy + 20]], P.c("#d9e2ea"));
+    for (let i = 0; i < 4; i++) s += line(W * (0.74 + i * 0.035), cy + 3, W * (0.75 + i * 0.035), cy + 19, P.blue, 2, `opacity="0.6"`);
+    return s;
+  },
+
+  table(ctx) {
+    // A long family table from the end: many places, a window of evening light.
+    const { P, W, H } = ctx;
+    let s = rect(0, 0, W, H, P.c("#e7dcc6"));
+    s += rect(W * 0.3, H * 0.06, W * 0.4, H * 0.32, lin(ctx, [[0, P.dusk], [1, P.skyWarm]]));
+    s += windowFrame(W * 0.3, H * 0.06, W * 0.4, H * 0.32, P.plaster, 3, 10);
+    s += path(`M${f(W * 0.5)},0 L${f(W * 0.5)},${f(H * 0.12)}`, "none", `stroke="${P.ink}" stroke-width="2"`);
+    s += ellipse(W * 0.5, H * 0.14, W * 0.07, H * 0.02, P.c("#c9a46a"));
+    s += circle(W * 0.5, H * 0.16, 9, P.light) + circle(W * 0.5, H * 0.16, 40, P.light, `opacity="0.15"`);
+    // table in perspective
+    s += poly([[W * 0.36, H * 0.42], [W * 0.64, H * 0.42], [W * 0.98, H * 0.98], [W * 0.02, H * 0.98]], P.cream);
+    s += poly([[W * 0.36, H * 0.42], [W * 0.64, H * 0.42], [W * 0.62, H * 0.44], [W * 0.38, H * 0.44]], P.wallShade);
+    for (let i = 0; i < 5; i++) {
+      const t = i / 5;
+      const y = H * (0.46 + t * 0.44);
+      const half = W * (0.15 + t * 0.32);
+      for (const side of [-1, 1]) {
+        const x = W * 0.5 + side * half * 0.78;
+        s += ellipse(x, y, W * (0.025 + t * 0.03), H * (0.008 + t * 0.012), P.paper, `stroke="${P.wallShade}" stroke-width="2"`);
+        s += figure(W * 0.5 + side * (half + W * (0.02 + t * 0.03)), y + H * (0.1 + t * 0.08), H * (0.16 + t * 0.26), [P.c("#5d6b7a"), P.c("#9a5a43"), P.c("#6f7a52"), P.c("#3d3a36")][(i + (side > 0 ? 1 : 0)) % 4], P.c("#7a5c48"));
+      }
+    }
+    // dishes down the middle
+    s += ellipse(W * 0.5, H * 0.58, W * 0.07, H * 0.025, P.c("#c27b45"));
+    s += ellipse(W * 0.5, H * 0.75, W * 0.1, H * 0.035, P.glaze);
+    s += ellipse(W * 0.5, H * 0.74, W * 0.08, H * 0.022, P.c("#e6d7b2"));
+    for (const y of [0.5, 0.66, 0.85]) s += rect(W * 0.49, H * y - 22, 6, 22, P.paper) + ellipse(W * 0.493, H * y - 26, 3, 6, P.light);
+    return s;
+  },
 };

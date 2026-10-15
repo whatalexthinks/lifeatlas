@@ -3,8 +3,8 @@
 import * as React from "react";
 import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, Lock, Mic, Save } from "lucide-react";
-import type { FutureMessage } from "@/domain/models";
+import { Eye, History, Lock, Mic, Save } from "lucide-react";
+import type { FutureMessage, LetterDraft } from "@/domain/models";
 import { futureMessageSchema, type FutureMessageFormValues } from "@/domain/schemas";
 import { PageHeader, Panel } from "@/components/studio/primitives";
 import { LetterOpening } from "@/components/future/letter-opening";
@@ -18,7 +18,7 @@ import { Dialog } from "@/components/ui/overlay";
 import { useDb } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { addYears, describeInterval, todayIso } from "@/lib/dates";
-import { cn, formatDate } from "@/lib/utils";
+import { cn, formatDate, relativeTime } from "@/lib/utils";
 
 const milestones: { value: NonNullable<FutureMessageFormValues["milestone"]>; label: string; age?: number }[] = [
   { value: "18th_birthday", label: "18th birthday", age: 18 },
@@ -49,7 +49,7 @@ function ComposerInner() {
   const capsules = useDb((d) => d.capsules);
   const memories = useDb((d) => d.memories);
   const profile = useDb((d) => d.account.profile);
-  const [capsuleId, setCapsuleId] = React.useState<string>(existing?.capsuleId ?? capsules[0]?.id ?? "");
+  const [capsuleId, setCapsuleId] = React.useState<string>(existing?.capsuleId ?? (capsules.some((c) => c.id === params.get("capsule")) ? params.get("capsule")! : capsules[0]?.id) ?? "");
   const [v, setV] = React.useState<FutureMessageFormValues>(() => ({
     title: existing?.title ?? "",
     dedication: existing?.dedication ?? "",
@@ -77,6 +77,48 @@ function ComposerInner() {
   const photoChoices = memories.filter((m) => m.capsuleId === capsuleId && !m.deletedAt && m.photoIds.length).flatMap((m) => m.photoIds).slice(0, 18);
   const [birthYear, setBirthYear] = React.useState<string>(existing?.recipient.birthYear ? String(existing.recipient.birthYear) : "");
 
+  /* ---- Writing autosaves on this device until it's saved as a letter (it needn't be valid yet) ---- */
+  const draftKey = existing ? `letter:${existing.id}` : "letter:new";
+  const stored = useDb((d) => d.letterDrafts.find((x) => x.key === draftKey));
+  // The studio renders after saved data loads, so this sees any writing left from last time.
+  const [offer, setOffer] = React.useState<LetterDraft | null>(() => stored ?? null);
+  const [keptAt, setKeptAt] = React.useState<string | null>(null);
+  const baseline = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    const snapshot = JSON.stringify({ v, attachments, capsuleId, birthYear });
+    if (baseline.current === null) {
+      baseline.current = snapshot; // what the page opened with isn't a change
+      return;
+    }
+    if (offer || busy || snapshot === baseline.current) return;
+    const t = setTimeout(() => {
+      baseline.current = snapshot;
+      const hasWords = [v.title, v.body, v.dedication ?? "", v.recipientName].some((x) => x.trim());
+      if (!hasWords) {
+        void services().drafts.discardLetterDraft(draftKey);
+        setKeptAt(null);
+        return;
+      }
+      void services()
+        .drafts.saveLetterDraft({ key: draftKey, letterId: existing?.id, capsuleId, values: v, attachmentIds: attachments, birthYear })
+        .then((r) => r.status === "ok" && setKeptAt(r.data.updatedAt));
+    }, 600);
+    return () => clearTimeout(t);
+  }, [v, attachments, capsuleId, birthYear, offer, busy, draftKey, existing?.id]);
+
+  const restore = (d: LetterDraft) => {
+    setV((x) => ({ ...x, ...(d.values as Partial<FutureMessageFormValues>) }));
+    setAttachments(d.attachmentIds);
+    setCapsuleId(d.capsuleId);
+    setBirthYear(d.birthYear);
+    setKeptAt(d.updatedAt);
+    setOffer(null);
+  };
+  const startFresh = () => {
+    void services().drafts.discardLetterDraft(draftKey);
+    setOffer(null);
+  };
+
   const save = async (andSeal: boolean) => {
     const r = futureMessageSchema.safeParse(v);
     if (!r.success) {
@@ -99,6 +141,7 @@ function ComposerInner() {
       toast.error("Couldn't save the letter", res.status === "error" ? res.message : undefined);
       return;
     }
+    await services().drafts.discardLetterDraft(draftKey);
     if (andSeal) {
       const s = await services().futureDelivery.sealDemo(res.data.id);
       setBusy(null);
@@ -146,6 +189,26 @@ function ComposerInner() {
   return (
     <div className="mx-auto max-w-[1180px]">
       <PageHeader eyebrow="Letters Through Time · Preview feature" title={existing ? "Edit your letter" : "Design your future message"} back={{ href: "/app/future-messages", label: "All letters" }} />
+      {offer ? (
+        <div role="status" className="mb-6 flex flex-col gap-4 rounded-[18px] border border-brass/40 bg-brass-soft/50 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="flex items-start gap-3">
+            <History className="mt-0.5 size-5 shrink-0 text-brass-ink" />
+            <span>
+              <strong className="font-medium">You were in the middle of this letter.</strong>{" "}
+              <span className="text-ink-2">
+                {String(offer.values.title || "").trim() ? `“${String(offer.values.title).trim()}”` : "Untitled"}
+                {String(offer.values.recipientName || "").trim() ? ` for ${String(offer.values.recipientName).trim()}` : ""} · kept {relativeTime(offer.updatedAt)}
+              </span>
+            </span>
+          </p>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <Button onClick={() => restore(offer)}>Pick up where I left off</Button>
+            <Button variant="ghost" onClick={startFresh}>
+              {existing ? "Use the saved letter" : "Start fresh"}
+            </Button>
+          </div>
+        </div>
+      ) : null}
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-6">
           <Panel title="Who is it for?">
@@ -298,6 +361,11 @@ function ComposerInner() {
           <Button variant="ghost" block loading={busy === "seal"} leading={<Lock className="size-4" />} onClick={() => void save(true)}>
             Save &amp; seal (demo)
           </Button>
+          {keptAt ? (
+            <p className="flex items-center gap-2 text-[0.8125rem] text-ink-3" aria-live="polite">
+              <History className="size-3.5" /> Writing kept on this device {relativeTime(keptAt)}. Save the draft when you&rsquo;re ready.
+            </p>
+          ) : null}
           <DemoNotice title="Future message draft — not scheduled">Saved on this device. Sealing records a content fingerprint and can be undone. No delivery is arranged, and no payment is taken.</DemoNotice>
         </aside>
       </div>

@@ -2,7 +2,7 @@ import type { LifeEvent, Persona, Person, Relationship } from "@/domain/models";
 
 /**
  * THE ELLIS FAMILY — a fictional sample family.
- * These people do not exist and have not endorsed LifeAtlas.
+ * These people do not exist and have not endorsed OurLifeCapsule.
  *
  * Family graph (all dates internally consistent):
  *   Walter Hale (1909–1981) ── Eleanor Hale (1912–1996)
@@ -91,6 +91,8 @@ export const personas: Persona[] = [
       { capsuleId: "cap_margaret", role: "owner" },
       { capsuleId: "cap_thomas", role: "owner" },
       { capsuleId: "cap_sarah", role: "owner" },
+      { capsuleId: "cap_us", role: "owner" },
+      { capsuleId: "cap_family", role: "owner" },
     ],
   },
   {
@@ -102,6 +104,7 @@ export const personas: Persona[] = [
     roles: [
       { capsuleId: "cap_margaret", role: "storyteller" },
       { capsuleId: "cap_thomas", role: "contributor" },
+      { capsuleId: "cap_family", role: "contributor" },
     ],
   },
   {
@@ -113,17 +116,19 @@ export const personas: Persona[] = [
     roles: [
       { capsuleId: "cap_margaret", role: "contributor" },
       { capsuleId: "cap_thomas", role: "contributor" },
+      { capsuleId: "cap_us", role: "viewer" },
+      { capsuleId: "cap_family", role: "contributor" },
     ],
   },
   {
-    id: "persona_daniel",
+    id: "persona_jonah",
     kind: "viewer",
-    name: "Daniel Ellis",
-    personId: "per_daniel",
-    description: "Family viewer. Sees approved, family-visible memories only.",
+    name: "Jonah Reed",
+    personId: "per_jonah",
+    description: "Viewer on Margaret's capsule; co-editor of the couple's capsule he shares with Sarah.",
     roles: [
       { capsuleId: "cap_margaret", role: "viewer" },
-      { capsuleId: "cap_thomas", role: "contributor" },
+      { capsuleId: "cap_us", role: "organizer" },
     ],
   },
   {

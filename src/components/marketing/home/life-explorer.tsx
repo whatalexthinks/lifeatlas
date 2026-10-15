@@ -100,11 +100,11 @@ export function LifeExplorer() {
           <button
             onClick={() => setJourney((v) => !v)}
             aria-pressed={journey}
-            className={cn("inline-flex h-10 items-center gap-2 rounded-full px-4 text-[0.875rem] font-medium transition-colors", journey ? "bg-[#c4ad86] text-[#1b221e]" : "bg-white/[0.08] text-night-ink hover:bg-white/[0.12]")}
+            className={cn("inline-flex h-10 items-center gap-2 rounded-full px-4 text-[0.875rem] font-medium transition-colors", journey ? "bg-[#d7bc92] text-[#1b1a18]" : "bg-white/[0.08] text-night-ink hover:bg-white/[0.12]")}
           >
             <Route className="size-4" /> {journey ? "Hide the journey" : "Trace her journey"}
           </button>
-          <Link href="/view/cap_margaret/map" className="inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-[#d2bb93] hover:underline">
+          <Link href="/view/cap_margaret/map" className="inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-[#d7bc92] hover:underline">
             Open the full memory map <ArrowUpRight className="size-4" />
           </Link>
         </div>

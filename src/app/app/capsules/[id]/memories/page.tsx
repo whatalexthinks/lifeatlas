@@ -6,7 +6,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { LayoutGrid, Rows3, Search, Undo2 } from "lucide-react";
 import { useStudioCapsule } from "@/components/studio/capsule-frame";
 import { MemoryCard } from "@/components/capsule/memory-card";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState, toast } from "@/components/ui/feedback";
 import { Input, Segmented, Select } from "@/components/ui/field";
 import { useCapsuleMemories, useDb, type MemoryQuery } from "@/hooks/use-data";
@@ -126,7 +126,22 @@ function MemoriesInner() {
       </p>
 
       {list.length === 0 ? (
-        <EmptyState className="mt-6" title={tab === "deleted" ? "Nothing deleted" : "No memories match"} body={tab === "deleted" ? "Deleted memories wait here so you can restore them." : "Try clearing a filter, or gather a new memory."} />
+        tab === "deleted" ? (
+          <EmptyState className="mt-6" title="Nothing deleted" body="Deleted memories wait here so you can restore them." />
+        ) : all.length === 0 ? (
+          <EmptyState
+            className="mt-6"
+            title="No memories yet"
+            body={`Record ${capsule.preferredName} answering a question, type a story, or add a photograph — it becomes a page here straight away.`}
+            action={<ButtonLink href={`/app/gather?capsule=${capsule.id}`}>Gather the first memory</ButtonLink>}
+          />
+        ) : (
+          <EmptyState
+            className="mt-6"
+            title={base.length === 0 ? "No memories match" : tab === "waiting" ? "Nothing waiting for review" : tab === "drafts" ? "No drafts" : "No memories match"}
+            body={base.length === 0 ? "Try fewer words or clear a filter." : tab === "waiting" ? "Stories sent by family appear here until you've read them." : tab === "drafts" ? "Unfinished memories you've started will wait here." : "Try clearing a filter."}
+          />
+        )
       ) : layout === "grid" ? (
         <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {list.map((m) => (

@@ -43,6 +43,9 @@ export function formatFuzzyDate(d: FuzzyDate | undefined, style: "long" | "short
     case "life_stage":
       if (d.lifeStage) return lifeStageLabels[d.lifeStage];
       break;
+    case "age":
+      if (d.age !== undefined) return d.age === 0 ? "As a baby" : style === "short" ? `Age ${d.age}` : `Around age ${d.age}`;
+      break;
     case "unknown":
       return d.note ? d.note : "Date unknown";
   }
@@ -73,7 +76,7 @@ export function decadeOf(d: FuzzyDate | undefined): number | null {
 }
 
 export function isApproximate(d: FuzzyDate | undefined) {
-  return !d || ["circa", "decade", "life_stage", "unknown", "season"].includes(d.precision);
+  return !d || ["circa", "decade", "life_stage", "age", "unknown", "season"].includes(d.precision);
 }
 
 /** Add years safely, clamping Feb 29 → Feb 28 when needed. Returns YYYY-MM-DD. */

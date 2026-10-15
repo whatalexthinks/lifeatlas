@@ -1,5 +1,5 @@
 /**
- * Shared primitives for the LifeAtlas domain.
+ * Shared primitives for the OurLifeCapsule domain.
  * Every entity uses string IDs with a readable prefix and ISO-8601 timestamps,
  * which maps 1:1 onto a future Postgres schema (text PK / timestamptz).
  */
@@ -39,6 +39,7 @@ export type DatePrecision =
   | "circa"
   | "decade"
   | "life_stage"
+  | "age"
   | "unknown";
 
 /**
@@ -53,6 +54,11 @@ export interface FuzzyDate {
   season?: Season;
   decade?: number; // e.g. 1960
   lifeStage?: LifeStage;
+  /**
+   * "Around age 12". When the person's birth year is known, `year` holds birth year + age —
+   * derived only to place the memory on a timeline; the display stays "Around age 12".
+   */
+  age?: number;
   /** Optional free text, e.g. "the winter Dad broke his arm" */
   note?: string;
 }

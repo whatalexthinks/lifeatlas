@@ -23,7 +23,10 @@ Open http://localhost:3000. Good places to start:
 | `/demo/control-center` | Switch between family members' views, simulate events, reset |
 | `/demo/style-guide` | Colours, type and components, with live contrast readings |
 | `/app/heirlooms/book-builder` | Design a printed book, turn its pages, print a PDF proof |
-| `/app/together` | A pass-the-phone holiday session with a printable booklet |
+| `/app/together` | A pass-the-phone holiday session — pause any time, resume later, print the booklet |
+| `/app/family` | Roles across capsules, and *Preview* to see the archive as anyone in the family |
+| `/view/cap_margaret/stories?q=bread` | Search the archive; bookmarks gather under *Saved* |
+| `/app/preservation` | Download an archive — and restore one from a downloaded file |
 | `/future/open/example-opening` | What opening a future letter feels like |
 
 Your own recordings and edits are saved in this browser (IndexedDB). **Settings → Erase demo data** or **Control center → Reset demo** restores the sample family.
@@ -33,9 +36,10 @@ Your own recordings and edits are saved in this browser (IndexedDB). **Settings 
 ```sh
 npm run typecheck   # TypeScript, strict
 npm run lint        # ESLint incl. React compiler rules — currently 0 errors, 0 warnings
-npm test            # 86 unit, service and component tests (Vitest)
+npm test            # 109 unit, service and component tests (Vitest)
 npm run build       # Production build
-npm run test:e2e    # 20 browser tests (Playwright) incl. WCAG 2.2 AA audits, desktop + phone, against the production build
+npm run test:e2e    # 33 browser tests (Playwright): the full create → contribute → approve → explore → export journey,
+                    # keyboard-only paths, tablet and phone layouts, WCAG 2.2 AA audits — against the production build
 npm run check       # typecheck + lint + test + build
 ```
 

@@ -2,35 +2,178 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Bookmark, BookmarkCheck, BookOpenText, ArrowUpRight } from "lucide-react";
-import type { Capsule, Memory } from "@/domain/models";
+import { Bookmark, BookmarkCheck, BookOpenText, ArrowUpRight, AudioLines, Image as ImageIcon, Search, X } from "lucide-react";
+import type { Capsule, ChapterKey, Memory } from "@/domain/models";
 import { AudioPlayer } from "@/components/audio/audio-player";
 import { MediaImage, Mounted } from "@/components/media/media-image";
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/feedback";
-import { Segmented } from "@/components/ui/field";
+import { Input, Segmented, Select } from "@/components/ui/field";
 import { useCapsuleMemories, useDb } from "@/hooks/use-data";
-import { chapterById, chapterColorVar } from "@/data/chapters";
+import { chapterColorVar } from "@/data/chapters";
 import { formatFuzzyDate } from "@/lib/dates";
 import { readingMinutes } from "@/lib/memory-utils";
 import { services } from "@/services/factory";
 import { cn } from "@/lib/utils";
+import { chapterFor } from "@/domain/capsule-kinds";
 
-/** Book-like reading: chapters in the capsule's chosen order, bookmarks, continuous mode. */
-export function ChaptersView({ capsule, scope, hrefFor, tone = "paper" }: { capsule: Capsule; scope: "studio" | "viewer"; hrefFor: (m: Memory) => string; tone?: "paper" | "night" }) {
+type Kind = "all" | "audio" | "photo" | "text";
+const kindLabel: Record<Kind, string> = { all: "Any kind", audio: "With a voice", photo: "With photographs", text: "Written" };
+const decadeOf = (m: Memory) => {
+  const y = m.date.year ?? m.date.decade;
+  return y === undefined ? null : Math.floor(y / 10) * 10;
+};
+
+/** Book-like reading: chapters in the capsule's chosen order, bookmarks, continuous mode — and a finder. */
+export function ChaptersView({ capsule, scope, hrefFor, tone = "paper", initial }: { capsule: Capsule; scope: "studio" | "viewer"; hrefFor: (m: Memory) => string; tone?: "paper" | "night"; initial?: { q?: string; saved?: boolean; focus?: boolean } }) {
   const memories = useCapsuleMemories(capsule.id, { scope: scope === "viewer" ? "viewer" : "studio" });
   const bookmarks = useDb((d) => d.bookmarks);
   const places = useDb((d) => d.places);
+  const people = useDb((d) => d.people);
   const [mode, setMode] = React.useState<"contents" | "continuous">("contents");
+  const [query, setQuery] = React.useState(initial?.q ?? "");
+  const [chapter, setChapter] = React.useState<ChapterKey | "">("");
+  const [decade, setDecade] = React.useState("");
+  const [kind, setKind] = React.useState<Kind>("all");
+  const [savedOnly, setSavedOnly] = React.useState(!!initial?.saved);
   const night = tone === "night";
   const order = capsule.chapterOrder;
-  const groups = order.map((id) => ({ chapter: chapterById(id), items: memories.filter((m) => m.chapter === id) })).filter((g) => g.items.length);
+  const groups = order.map((id) => ({ chapter: chapterFor(capsule, id), items: memories.filter((m) => m.chapter === id) })).filter((g) => g.items.length);
   const isMarked = (m: Memory) => bookmarks.some((b) => b.capsuleId === capsule.id && b.memoryId === m.id);
   const marked = memories.filter(isMarked);
+  const decades = [...new Set(memories.map(decadeOf).filter((d): d is number => d !== null))].sort((a, b) => a - b);
+
+  const term = query.trim().toLowerCase();
+  const filtering = !!term || !!chapter || !!decade || kind !== "all" || savedOnly;
+  const results = filtering
+    ? memories.filter((m) => {
+        if (savedOnly && !isMarked(m)) return false;
+        if (chapter && m.chapter !== chapter) return false;
+        if (decade && decadeOf(m) !== Number(decade)) return false;
+        if (kind === "audio" && !m.audioId) return false;
+        if (kind === "photo" && !m.photoIds.length) return false;
+        if (kind === "text" && (m.audioId || m.photoIds.length)) return false;
+        if (!term) return true;
+        const place = places.find((p) => p.id === m.placeId)?.name ?? "";
+        const who = m.peopleIds.map((id) => people.find((p) => p.id === id)?.displayName ?? "").join(" ");
+        return `${m.title} ${m.narrative} ${m.quote ?? ""} ${m.tags.join(" ")} ${m.attribution.displayName} ${place} ${who}`.toLowerCase().includes(term);
+      })
+    : [];
+  const clear = () => {
+    setQuery("");
+    setChapter("");
+    setDecade("");
+    setKind("all");
+    setSavedOnly(false);
+  };
 
   if (!memories.length) return <EmptyState title="No chapters yet" body="Stories are grouped into chapters — childhood, love, work, journeys — as they're added." />;
 
+  const muted = night ? "text-night-ink-3" : "text-ink-3";
   return (
     <div>
+      <search className={cn("mb-8 block rounded-[18px] border p-3 sm:p-4", night ? "border-white/[0.09] bg-white/[0.03]" : "border-line bg-surface")} aria-label="Find a story">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <label className="relative block min-w-0 flex-1">
+            <span className="sr-only">Search stories</span>
+            <Search className={cn("pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2", muted)} aria-hidden />
+            <Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search words, places, people…" className="pl-10" autoFocus={initial?.focus} />
+          </label>
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+            <Select aria-label="Chapter" value={chapter} onChange={(e) => setChapter(e.target.value as ChapterKey | "")} className="sm:w-auto">
+              <option value="">All chapters</option>
+              {groups.map((g) => (
+                <option key={g.chapter.id} value={g.chapter.id}>
+                  {g.chapter.title}
+                </option>
+              ))}
+            </Select>
+            <Select aria-label="Decade" value={decade} onChange={(e) => setDecade(e.target.value)} className="sm:w-auto">
+              <option value="">Any time</option>
+              {decades.map((d) => (
+                <option key={d} value={d}>
+                  {d}s
+                </option>
+              ))}
+            </Select>
+            <Select aria-label="Kind of story" value={kind} onChange={(e) => setKind(e.target.value as Kind)} className="sm:w-auto">
+              {(Object.keys(kindLabel) as Kind[]).map((k) => (
+                <option key={k} value={k}>
+                  {kindLabel[k]}
+                </option>
+              ))}
+            </Select>
+            <button
+              type="button"
+              aria-pressed={savedOnly}
+              onClick={() => setSavedOnly((v) => !v)}
+              className={cn(
+                "inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] border px-4 text-[0.9375rem] transition",
+                savedOnly ? "border-evergreen bg-evergreen text-on-evergreen" : night ? "border-white/15 hover:border-white/30" : "border-line-strong hover:border-ink/30",
+              )}
+            >
+              <BookmarkCheck className="size-4" /> Saved{marked.length ? ` (${marked.length})` : ""}
+            </button>
+          </div>
+        </div>
+      </search>
+
+      {filtering ? (
+        <section aria-labelledby="find-results">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 id="find-results" className={cn("text-[0.9375rem] font-medium", night ? "text-night-ink-2" : "text-ink-2")} aria-live="polite">
+              {results.length === 1 ? "1 story" : `${results.length} stories`}
+              {savedOnly ? " saved" : ""}
+              {term ? ` matching “${query.trim()}”` : ""}
+            </h2>
+            <Button size="sm" variant="ghost" leading={<X className="size-4" />} onClick={clear}>
+              Clear
+            </Button>
+          </div>
+          {results.length ? (
+            <ol className={cn("divide-y rounded-[18px] border", night ? "divide-white/[0.07] border-white/[0.09]" : "divide-line border-line bg-surface")}>
+              {results.map((m) => {
+                const ch = chapterFor(capsule, m.chapter);
+                const place = places.find((p) => p.id === m.placeId);
+                return (
+                  <li key={m.id} className="flex items-start gap-3 px-4 py-4 sm:px-5">
+                    <span className="mt-2.5 size-2 shrink-0 rounded-full" style={{ background: chapterColorVar[ch.color] }} aria-hidden />
+                    <Link href={hrefFor(m)} className="group min-w-0 flex-1">
+                      <span className={cn("block font-serif text-[1.25rem] leading-snug group-hover:underline group-hover:underline-offset-4", night ? "text-night-ink" : "text-ink")}>
+                        <Highlight text={m.title} term={term} />
+                      </span>
+                      <span className={cn("mt-1 flex flex-wrap items-center gap-x-2 text-[0.8125rem]", muted)}>
+                        {ch.title} · {formatFuzzyDate(m.date, "short")}
+                        {place ? ` · ${place.name}` : ""} · {m.attribution.displayName}
+                        {m.audioId ? <AudioLines className="size-3.5" aria-label="Has a recording" /> : null}
+                        {m.photoIds.length ? <ImageIcon className="size-3.5" aria-label="Has photographs" /> : null}
+                      </span>
+                      {term ? (
+                        <span className={cn("mt-2 block text-[0.9375rem] leading-relaxed", night ? "text-night-ink-2" : "text-ink-2")}>
+                          <Highlight text={snippet(m.narrative, term)} term={term} />
+                        </span>
+                      ) : null}
+                    </Link>
+                    <BookmarkButton capsuleId={capsule.id} memory={m} on={isMarked(m)} night={night} />
+                  </li>
+                );
+              })}
+            </ol>
+          ) : (
+            <EmptyState
+              title={savedOnly && !marked.length ? "Nothing saved yet" : "No stories match"}
+              body={savedOnly && !marked.length ? "Tap the bookmark beside any story to keep it here." : "Try fewer words, or clear a filter."}
+              action={
+                <Button variant="secondary" onClick={clear}>
+                  Show all stories
+                </Button>
+              }
+            />
+          )}
+        </section>
+      ) : null}
+
+      <div hidden={filtering}>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <Segmented
           label="Reading mode"
@@ -42,12 +185,9 @@ export function ChaptersView({ capsule, scope, hrefFor, tone = "paper" }: { caps
           ]}
         />
         {marked.length ? (
-          <p className={cn("text-[0.875rem]", night ? "text-night-ink-3" : "text-ink-3")}>
-            {marked.length} bookmarked ·{" "}
-            <a href={`#bm`} className="underline underline-offset-2">
-              jump
-            </a>
-          </p>
+          <button type="button" onClick={() => setSavedOnly(true)} className={cn("min-h-9 text-[0.875rem] underline underline-offset-2", muted)}>
+            {marked.length} saved — show them
+          </button>
         ) : null}
       </div>
 
@@ -92,9 +232,9 @@ export function ChaptersView({ capsule, scope, hrefFor, tone = "paper" }: { caps
               {g.items.map((m) => {
                 const place = places.find((p) => p.id === m.placeId);
                 return (
-                  <article key={m.id} id={isMarked(m) ? "bm" : undefined} className="mb-16 scroll-mt-28">
+                  <article key={m.id} className="mb-16 scroll-mt-28">
                     <div className="mb-4 flex items-center justify-between gap-3">
-                      <p className={cn("catalog", night && "text-[#c4ad86]")}>
+                      <p className={cn("catalog", night && "text-[#d7bc92]")}>
                         {formatFuzzyDate(m.date)}
                         {place ? ` · ${place.name}` : ""} · {readingMinutes(m.narrative)} min
                       </p>
@@ -128,7 +268,35 @@ export function ChaptersView({ capsule, scope, hrefFor, tone = "paper" }: { caps
           ))}
         </div>
       )}
+      </div>
     </div>
+  );
+}
+
+/** A short excerpt around the first match, so search results show why they matched. */
+function snippet(text: string, term: string) {
+  const i = text.toLowerCase().indexOf(term);
+  if (i < 0) return text.length > 160 ? `${text.slice(0, 160).trimEnd()}…` : text;
+  const start = Math.max(0, i - 60);
+  const end = Math.min(text.length, i + term.length + 100);
+  return `${start > 0 ? "…" : ""}${text.slice(start, end).trim()}${end < text.length ? "…" : ""}`;
+}
+
+function Highlight({ text, term }: { text: string; term: string }) {
+  if (!term) return <>{text}</>;
+  const parts = text.split(new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"));
+  return (
+    <>
+      {parts.map((p, i) =>
+        p.toLowerCase() === term ? (
+          <mark key={i} className="rounded-[3px] bg-brass/30 px-0.5 text-inherit">
+            {p}
+          </mark>
+        ) : (
+          <React.Fragment key={i}>{p}</React.Fragment>
+        ),
+      )}
+    </>
   );
 }
 
@@ -139,7 +307,7 @@ function BookmarkButton({ capsuleId, memory, on, night }: { capsuleId: string; m
       onClick={() => void services().capsules.toggleBookmark(capsuleId, memory.id)}
       aria-pressed={on}
       aria-label={on ? `Remove bookmark from ${memory.title}` : `Bookmark ${memory.title}`}
-      className={cn("grid size-9 shrink-0 place-items-center rounded-full", night ? "text-night-ink-3 hover:bg-white/10" : "text-ink-3 hover:bg-ivory", on && (night ? "text-[#c4ad86]" : "text-terracotta"))}
+      className={cn("grid size-9 shrink-0 place-items-center rounded-full", night ? "text-night-ink-3 hover:bg-white/10" : "text-ink-3 hover:bg-ivory", on && (night ? "text-[#d7bc92]" : "text-terracotta"))}
     >
       {on ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
     </button>

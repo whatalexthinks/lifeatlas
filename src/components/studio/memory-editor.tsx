@@ -8,7 +8,7 @@ import { Sheet, ConfirmDialog } from "@/components/ui/overlay";
 import { Button } from "@/components/ui/button";
 import { Badge, DemoNotice, toast } from "@/components/ui/feedback";
 import { Checkbox, Field, Input, Label, Segmented, Select, Textarea } from "@/components/ui/field";
-import { FuzzyDateInput, PlacePicker } from "@/components/capsule/inputs";
+import { FuzzyDateInput, PhotoDateSuggestion, PlacePicker } from "@/components/capsule/inputs";
 import { MediaImage } from "@/components/media/media-image";
 import { AudioPlayer } from "@/components/audio/audio-player";
 import { PhotoAdder, type PendingPhoto } from "@/components/capture/photo-adder";
@@ -20,17 +20,45 @@ import { chapters } from "@/data/chapters";
 import { useDb, usePersona, useRole } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { cn, relativeTime } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 export function MemoryEditorSheet({ memory, capsule, open, onOpenChange }: { memory: Memory | undefined; capsule: Capsule; open: boolean; onOpenChange: (v: boolean) => void }) {
+  // The editor writes whether it has unsaved changes; closing then asks before discarding them.
+  const dirtyRef = React.useRef(false);
+  const [confirmClose, setConfirmClose] = React.useState(false);
   if (!memory) return null;
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} title={memory.title} description={<MemoryStatusBadge status={memory.status} />} width="lg">
-      <MemoryEditor key={memory.id + memory.updatedAt} memory={memory} capsule={capsule} onDone={() => onOpenChange(false)} />
-    </Sheet>
+    <>
+      <Sheet
+        open={open}
+        onOpenChange={(v) => {
+          if (!v && dirtyRef.current) setConfirmClose(true);
+          else onOpenChange(v);
+        }}
+        title={memory.title}
+        description={<MemoryStatusBadge status={memory.status} />}
+        width="lg"
+      >
+        <MemoryEditor key={memory.id + memory.updatedAt} memory={memory} capsule={capsule} dirtyRef={dirtyRef} onDone={() => onOpenChange(false)} />
+      </Sheet>
+      <ConfirmDialog
+        open={confirmClose}
+        onOpenChange={setConfirmClose}
+        tone="danger"
+        title="Discard your changes?"
+        confirmLabel="Discard changes"
+        body="You've edited this memory but haven't saved. Close without saving, or go back to keep editing."
+        onConfirm={() => {
+          dirtyRef.current = false;
+          setConfirmClose(false);
+          onOpenChange(false);
+        }}
+      />
+    </>
   );
 }
 
-export function MemoryEditor({ memory, capsule, onDone }: { memory: Memory; capsule: Capsule; onDone: () => void }) {
+export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Memory; capsule: Capsule; onDone: () => void; dirtyRef?: React.RefObject<boolean> }) {
   const persona = usePersona();
   const role = useRole(capsule.id);
   const people = useDb((d) => d.people);
@@ -43,6 +71,7 @@ export function MemoryEditor({ memory, capsule, onDone }: { memory: Memory; caps
   const [narrative, setNarrative] = React.useState(memory.narrative);
   const [quote, setQuote] = React.useState(memory.quote ?? "");
   const [date, setDate] = React.useState(memory.date);
+  const birthYear = useDb((d) => d.capsules.find((c) => c.id === memory.capsuleId)?.birthYear);
   const [placeId, setPlaceId] = React.useState(memory.placeId);
   const [chapter, setChapter] = React.useState(memory.chapter);
   const [peopleIds, setPeopleIds] = React.useState(memory.peopleIds);
@@ -63,6 +92,26 @@ export function MemoryEditor({ memory, capsule, onDone }: { memory: Memory; caps
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const featured = capsule.featuredMemoryId === memory.id;
+  const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+  const dirty =
+    title !== memory.title ||
+    narrative !== memory.narrative ||
+    quote !== (memory.quote ?? "") ||
+    !same(date, memory.date) ||
+    placeId !== memory.placeId ||
+    chapter !== memory.chapter ||
+    !same(peopleIds, memory.peopleIds) ||
+    !same(tags, memory.tags) ||
+    privacy !== memory.privacy ||
+    !same(consent, memory.consent) ||
+    !same(photoIds, memory.photoIds) ||
+    newPhotos.length > 0 ||
+    removeAudio ||
+    !!newAudio ||
+    transcript !== (existingTranscript?.text ?? "");
+  React.useEffect(() => {
+    if (dirtyRef) dirtyRef.current = dirty;
+  }, [dirty, dirtyRef]);
 
   const save = async () => {
     const parsed = memoryFormSchema.safeParse({ title, narrative, quote, date, placeId, chapter, privacy, tags, peopleIds, consent });
@@ -169,7 +218,7 @@ export function MemoryEditor({ memory, capsule, onDone }: { memory: Memory; caps
         </Field>
         <div className="space-y-2">
           <Label htmlFor="ed-date">When</Label>
-          <FuzzyDateInput id="ed-date" value={date} onChange={setDate} />
+          <FuzzyDateInput id="ed-date" value={date} onChange={setDate} birthYear={birthYear} />
           {errors.date ? <p className="text-[0.875rem] font-medium text-danger">{errors.date}</p> : null}
         </div>
         <div className="space-y-2">
@@ -261,6 +310,7 @@ export function MemoryEditor({ memory, capsule, onDone }: { memory: Memory; caps
             </div>
           ) : null}
           <PhotoAdder photos={newPhotos} onChange={setNewPhotos} />
+          <PhotoDateSuggestion takenOn={newPhotos.find((p) => p.takenOn)?.takenOn} value={date} onUse={setDate} />
         </div>
 
         {/* Audio */}
@@ -277,7 +327,7 @@ export function MemoryEditor({ memory, capsule, onDone }: { memory: Memory; caps
                   Remove recording
                 </Button>
               </div>
-              <Field label="Transcript" htmlFor="ed-transcript" optional hint="Typed by family. LifeAtlas never invents a transcript.">
+              <Field label="Transcript" htmlFor="ed-transcript" optional hint={`Typed by family. ${brand.name} never invents a transcript.`}>
                 <Textarea id="ed-transcript" value={transcript} onChange={(e) => setTranscript(e.target.value)} className="min-h-28" />
               </Field>
             </>

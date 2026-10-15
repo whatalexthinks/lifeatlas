@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronDown, Ear, Lock, SkipForward } from "lucide-react";
 import { useInvitation } from "@/components/contribute/contribute-shell";
+import { YourStories } from "@/components/contribute/your-stories";
 import { CapsuleCover } from "@/components/capsule/capsule-cover";
 import { Button } from "@/components/ui/button";
 import { DemoNotice } from "@/components/ui/feedback";
@@ -112,6 +113,8 @@ export default function InvitationWelcome() {
           ))}
         </ol>
       ) : null}
+
+      <YourStories invitation={invitation} organizerName={organizerName} className="mt-14 border-t border-line pt-10" />
 
       <DemoNotice className="mt-12" title="Invitation preview">
         Opened on this device through the demo. No email was sent, and real link security isn&rsquo;t active yet — anyone with this browser could open it.

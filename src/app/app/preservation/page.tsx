@@ -6,12 +6,14 @@ import { AlertTriangle, ArrowRight, CheckCircle2, Cloud, Download, HardDrive, La
 import type { IntegrityCheck } from "@/domain/models";
 import { PageHeader, Panel } from "@/components/studio/primitives";
 import { ExportCenter } from "@/components/studio/export-center";
+import { RestorePanel } from "@/components/studio/restore-panel";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge, Skeleton, toast } from "@/components/ui/feedback";
 import { Select } from "@/components/ui/field";
 import { useDb, useHydrated } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { cn, formatBytes, formatDate, relativeTime } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 type Persisted = "unknown" | "granted" | "not_granted" | "unsupported";
 
@@ -43,7 +45,7 @@ export default function PreservationPage() {
   const exportJobs = useDb((d) => d.exportJobs);
   const checks = useDb((d) => d.integrityChecks);
   const successors = useDb((d) => d.successors);
-  const [capsuleId, setCapsuleId] = React.useState("cap_margaret");
+  const [capsuleId, setCapsuleId] = React.useState(() => (capsules.some((c) => c.id === "cap_margaret") ? "cap_margaret" : capsules[0]?.id ?? ""));
   const capsule = capsules.find((c) => c.id === capsuleId) ?? capsules[0];
   const device = useDeviceStorage();
   const [running, setRunning] = React.useState(false);
@@ -55,7 +57,7 @@ export default function PreservationPage() {
     if (!navigator.storage?.persist) return toast.info("This browser can't protect storage from clean-up");
     const granted = await navigator.storage.persist();
     await device.refresh();
-    if (granted) toast.success("This browser will keep LifeAtlas data", "It won't be cleared automatically to free space. It's still not a backup.");
+    if (granted) toast.success(`This browser will keep ${brand.name} data`, "It won't be cleared automatically to free space. It's still not a backup.");
     else toast.info("The browser declined", "Browsers decide this themselves — often after you bookmark or install the site. Keep exporting copies.");
   };
 
@@ -134,7 +136,7 @@ export default function PreservationPage() {
       </section>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <Panel title="Protect this browser's copy" description="Ask the browser not to clear LifeAtlas data when space runs low.">
+        <Panel title="Protect this browser's copy" description={`Ask the browser not to clear ${brand.name} data when space runs low.`}>
           <div className="flex flex-wrap items-center gap-4">
             <Badge tone={device.persisted === "granted" ? "success" : "warning"} dot>
               {device.persisted === "granted" ? "Persistent storage on" : device.persisted === "unsupported" ? "Not supported here" : "Best-effort storage"}
@@ -224,11 +226,13 @@ export default function PreservationPage() {
             <h2 id="export-h" className="mt-3 font-serif text-[2rem] leading-tight">
               Download {capsule?.subjectName ? `${capsule.subjectName.split(" ")[0]}'s` : "the"} archive
             </h2>
-            <p className="mt-2 max-w-2xl text-ink-2">Ordinary files — stories as text and HTML, photos and recordings as they were added, and a manifest with fingerprints. Readable without LifeAtlas, forever.</p>
+            <p className="mt-2 max-w-2xl text-ink-2">Ordinary files — stories as text and HTML, photos and recordings as they were added, and a manifest with fingerprints. Readable without {brand.name}, forever.</p>
           </div>
         </div>
         {capsule ? <ExportCenter capsule={capsule} /> : null}
       </section>
+
+      <RestorePanel />
 
       <div className="mt-12 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
         <Panel title="A good habit: three copies">

@@ -1,15 +1,20 @@
 import type { DemoDatabase, FeatureFlag } from "@/domain/models";
-import { defaultCatalog } from "@/data/product-catalog";
+import { CATALOG_VERSION, defaultCatalog } from "@/data/product-catalog";
 import { questionLibrary } from "@/data/prompts/questions";
 import { capsules, familyGroups, memberships } from "./capsules";
 import { assignments, contributions, invitations, questionCollections, sessions } from "./collaboration";
-import { futureMessages, gifts, heirlooms, invoices, notifications, orders, printProjects, subscriptions, successors, supportRequests } from "./business";
+import { futureMessages, gifts, heirlooms, invoices, notifications, orders, printProjects, sampleCredits, sampleReferralEvents, subscriptions, successors, supportRequests } from "./business";
+import { defaultPromotions } from "@/data/promotions";
+import { makeReferralCode } from "@/domain/commerce/referrals";
 import { media, transcripts } from "./media";
 import { memories } from "./memories";
 import { lifeEvents, people, personas, relationships } from "./people";
 import { places } from "./places";
+import { extraCapsules, extraFutureMessages, extraMedia, extraMemberships, extraMemories, extraPlaces } from "./samples-couple-family";
 
 export const SCHEMA_VERSION = 3;
+/** Bump when sample capsules or the question library change, so saved devices receive them. */
+export const SAMPLE_VERSION = 2;
 
 /** Every integration flag is locked off in Part One. */
 export const featureFlags: FeatureFlag[] = [
@@ -40,13 +45,13 @@ export function buildSeed(now = new Date()): DemoDatabase {
     people,
     relationships,
     lifeEvents,
-    familyGroups,
-    capsules,
-    memberships,
-    memories,
-    media,
+    familyGroups: familyGroups.map((g) => (g.id === "fam_ellis" ? { ...g, capsuleIds: [...g.capsuleIds, ...extraCapsules.map((c) => c.id)] } : g)),
+    capsules: [...capsules, ...extraCapsules],
+    memberships: [...memberships, ...extraMemberships],
+    memories: [...memories, ...extraMemories],
+    media: [...media, ...extraMedia],
     transcripts,
-    places,
+    places: [...places, ...extraPlaces],
     questions: questionLibrary,
     questionCollections,
     assignments,
@@ -55,7 +60,7 @@ export function buildSeed(now = new Date()): DemoDatabase {
     contributions,
     shareGrants: [],
     gifts,
-    futureMessages,
+    futureMessages: [...futureMessages, ...extraFutureMessages],
     successors,
     heirlooms,
     printProjects,
@@ -76,7 +81,17 @@ export function buildSeed(now = new Date()): DemoDatabase {
     analytics: [],
     supportRequests,
     catalog: defaultCatalog,
+    catalogVersion: CATALOG_VERSION,
+    sampleVersion: SAMPLE_VERSION,
+    promotions: defaultPromotions,
+    promotionRedemptions: [],
+    referrals: { code: makeReferralCode("Sarah", "usr_sarah"), events: sampleReferralEvents },
+    credits: sampleCredits,
     bookmarks: [{ capsuleId: "cap_margaret", memoryId: "mem_seat", at: "2026-10-01T09:00:00.000Z" }],
+    questionFavorites: ["q_ourstory_1"],
+    captureDrafts: [],
+    letterDrafts: [],
+    gatherings: [],
     wizardDraft: null,
   };
   return structuredClone(seed);

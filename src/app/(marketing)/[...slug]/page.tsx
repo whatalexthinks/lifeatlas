@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { marketingPages } from "@/data/marketing-pages";
-import { Container, FaqList, PricingCards } from "@/components/marketing/blocks";
+import { Container, FaqList } from "@/components/marketing/blocks";
 import { ButtonLink } from "@/components/ui/button";
 import { BookObject, KeepsakeBox, SealedLetter } from "@/components/marketing/objects";
 import { HeroVignette } from "@/components/marketing/home/hero-vignette";
@@ -22,17 +22,17 @@ export default async function MarketingPage({ params }: Props) {
   const key = (await params).slug.join("/");
   const page = marketingPages[key];
   if (!page) notFound();
-  const cta = page.cta ?? ["Start their story", "/app/capsules/new"];
+  const cta = page.cta ?? ["Create Your LifeCapsule", "/app/capsules/new"];
   return <div className="la-page">
     <section className="la-page-hero"><Container>
       <p className="la-kicker">{page.eyebrow}</p>
       <h1>{page.title}<br /><em>{page.accent}</em></h1>
       <p className="la-page-intro">{page.intro}</p>
-      <div className="la-actions"><ButtonLink href={cta[1]} size="lg" trailing={<ArrowUpRight size={17} />}>{cta[0]}</ButtonLink><Link href="/demo" className="la-link">Explore a sample archive <ArrowRight size={16} /></Link></div>
+      <div className="la-actions"><ButtonLink href={cta[1]} size="lg" trailing={<ArrowUpRight size={17} />}>{cta[0]}</ButtonLink><Link href="/examples" className="la-link">See example capsules <ArrowRight size={16} /></Link></div>
     </Container></section>
     <Container>
       {page.chapters.length > 0 && <div className="la-page-chapters">{page.chapters.map(([title, body], i) => <article key={title}><span>0{i + 1}</span><h3>{title}</h3><p>{body}</p></article>)}</div>}
-      {key === "pricing" && <div className="mb-16"><PricingCards /><p className="la-preview-note mt-6" id="renewal">Living Archive is a proposed optional renewal at $29/year. There is no active subscription, billing, cloud storage, or backup service in this preview. Try the studio freely; nothing is charged.</p></div>}
+      
     </Container>
     {page.visual && <section className="la-page-feature"><Container>
       {page.visual === "map" ? <div className="la-explorer"><LifeExplorer /></div> : <div className="la-two-column">
@@ -41,6 +41,6 @@ export default async function MarketingPage({ params }: Props) {
       </div>}
     </Container></section>}
     {page.questions && <Container><section className="la-page-faq"><h2>A few things to know.</h2><FaqList items={page.questions} /></section></Container>}
-    <section className="la-final"><Container><p className="la-kicker">There’s so much left to ask.</p><h2>Start with someone<br /><em>you love.</em></h2><p>One question. One memory. A meaningful beginning.</p><ButtonLink href="/app/capsules/new" size="lg" trailing={<ArrowUpRight size={17} />}>Create a memory capsule</ButtonLink></Container></section>
+    <section className="la-final"><Container><p className="la-kicker">There’s so much left to ask.</p><h2>Start with someone<br /><em>you love.</em></h2><p>One question. One memory. A meaningful beginning.</p><ButtonLink href="/app/capsules/new" size="lg" trailing={<ArrowUpRight size={17} />}>Create Your LifeCapsule</ButtonLink></Container></section>
   </div>;
 }

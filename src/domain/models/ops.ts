@@ -35,7 +35,9 @@ export type AnalyticsEventName =
   | "heirloom_configured"
   | "print_started"
   | "archive_exported"
-  | "future_message_saved";
+  | "future_message_saved"
+  | "referral_link_copied"
+  | "referral_link_shared";
 
 export interface AnalyticsEvent {
   id: ID;

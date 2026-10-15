@@ -9,9 +9,10 @@ import { MemoryCard } from "@/components/capsule/memory-card";
 import { MemoryReveal } from "@/components/capture/memory-reveal";
 import { ButtonLink } from "@/components/ui/button";
 import { useCapsuleMemories, useDb } from "@/hooks/use-data";
-import { chapterById, chapterColorVar } from "@/data/chapters";
+import { chapterColorVar } from "@/data/chapters";
 import { decadesOf } from "@/lib/memory-utils";
 import { pluralize } from "@/lib/utils";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 export default function CapsuleOverview() {
   const { capsule, openMemory } = useStudioCapsule();
@@ -26,7 +27,7 @@ export default function CapsuleOverview() {
   const queued = assignments.filter((a) => a.capsuleId === capsule.id && a.status === "queued").sort((a, b) => a.order - b.order);
   const answered = assignments.filter((a) => a.capsuleId === capsule.id && a.status === "answered").length;
   const decades = decadesOf(approved);
-  const chapterCounts = capsule.chapterOrder.map((id) => ({ ch: chapterById(id), n: approved.filter((m) => m.chapter === id).length }));
+  const chapterCounts = capsule.chapterOrder.map((id) => ({ ch: chapterFor(capsule, id), n: approved.filter((m) => m.chapter === id).length }));
   const max = Math.max(1, ...chapterCounts.map((c) => c.n));
 
   return (

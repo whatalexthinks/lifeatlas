@@ -49,7 +49,7 @@ export default function GiftBuilder() {
     color: "evergreen",
     deliveryMode: "share_link_myself",
     notifyOn: nextChristmasEve(),
-    productId: "personal",
+    productId: "digital",
     addPrintedCard: true,
     addBook: false,
   });
@@ -187,7 +187,7 @@ export default function GiftBuilder() {
                 value={v.productId}
                 onChange={(p) => set({ productId: p })}
                 columns={2}
-                options={(["personal", "family"] as const).map((id) => {
+                options={(["digital", "family"] as const).map((id) => {
                   const p = catalog.find((x) => x.id === id)!;
                   return { value: id, label: `${p.name} · ${formatMoney(p.price.amount)}`, description: p.tagline };
                 })}

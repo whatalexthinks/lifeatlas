@@ -42,7 +42,8 @@ export function usePersona() {
 
 export function useRole(capsuleId: string | undefined): Role | null {
   const persona = usePersona();
-  return capsuleId ? roleFor(persona, capsuleId) : null;
+  const memberships = useDb((d) => d.memberships);
+  return capsuleId ? roleFor(persona, capsuleId, memberships) : null;
 }
 
 export interface MemoryQuery {

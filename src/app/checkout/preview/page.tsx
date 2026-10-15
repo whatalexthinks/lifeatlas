@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AlertTriangle, ArrowLeft, Lock, ShieldOff, XCircle } from "lucide-react";
 import type { CartLine, CheckoutSession } from "@/domain/models";
 import { mockCheckoutSchema, shippingAddressSchema } from "@/domain/schemas";
-import { quoteCart } from "@/domain/commerce/pricing";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Checkbox, Field, Input } from "@/components/ui/field";
 import { DemoNotice, Skeleton, toast } from "@/components/ui/feedback";
@@ -35,6 +34,8 @@ function CheckoutInner() {
   // The session is read live from the store, so completing it updates this page by itself.
   const sid = params.get("session");
   const productId = params.get("product");
+  const intervalParam = params.get("interval") === "month" ? "month" : "year";
+  const codeParam = params.get("code") ?? undefined;
   const product = productId ? catalog.find((c) => c.id === productId) : undefined;
   const productError = productId && (!product || product.availability !== "available_demo" || product.price.amount === 0) ? (product ? `${product.name} isn't available to order yet.` : "We couldn't find that product.") : null;
   const session: CheckoutSession | null = sid ? (checkouts.find((c) => c.id === sid) ?? null) : null;
@@ -43,19 +44,57 @@ function CheckoutInner() {
   React.useEffect(() => {
     if (!hydrated || sid || !product || productError || started.current) return;
     started.current = true;
-    const lines: CartLine[] = [{ id: uid("cl"), productId: product.id, quantity: 1, extrasAmount: 0 }];
+    const lines: CartLine[] = [{ id: uid("cl"), productId: product.id, quantity: 1, extrasAmount: 0, ...(product.kind === "plan" ? { interval: product.monthly ? intervalParam : "year" } : {}) }];
     mutate((d) => {
       d.cart = { id: d.cart.id, lines, purpose: "self" };
     });
+    // A friend's referral link (from /r/CODE) is remembered on this device and applied here.
+    let referral: string | undefined;
+    try {
+      referral = localStorage.getItem("lifeatlas.referral") ?? undefined;
+    } catch {
+      referral = undefined;
+    }
     void services()
-      .billing.createCheckout(lines, "self")
+      .billing.createCheckout(lines, "self", { promoCode: codeParam ?? referral })
       .then((r) => {
         if (r.status === "ok") router.replace(r.data.url, { scroll: false });
         else setCreateError(r.status === "error" ? r.message : "Checkout unavailable");
       });
-  }, [hydrated, sid, product, productError, mutate, router]);
+  }, [hydrated, sid, product, productError, mutate, router, intervalParam, codeParam]);
 
-  const quote = React.useMemo(() => (session ? quoteCart(session.lines, catalog) : null), [session, catalog]);
+  const promotions = useDb((d) => d.promotions);
+  const credits = useDb((d) => d.credits);
+  // Recomputed whenever the session, catalog, promotions or credit change (all live from the store).
+  const checkoutQuote = React.useMemo(() => {
+    void promotions;
+    void credits;
+    void catalog;
+    if (!session) return null;
+    const r = services().billing.quoteCheckout(session.id);
+    return r.status === "ok" ? r.data : null;
+  }, [session, catalog, promotions, credits]);
+  const quote = checkoutQuote?.quote ?? null;
+  const [code, setCode] = React.useState("");
+  const [codeError, setCodeError] = React.useState<string | null>(null);
+  const [applying, setApplying] = React.useState(false);
+  const applyCode = async () => {
+    if (!session) return;
+    setApplying(true);
+    const r = await services().billing.applyPromoCode(session.id, code);
+    setApplying(false);
+    if (r.status === "ok") {
+      setCodeError(null);
+      setCode("");
+      toast.success("Code applied");
+    } else setCodeError(r.status === "error" ? r.message : "That code can't be used here.");
+  };
+  const setLineInterval = (lineId: string, interval: "year" | "month") =>
+    mutate((d) => {
+      const c = d.checkouts.find((x) => x.id === session?.id);
+      const l = c?.lines.find((x) => x.id === lineId);
+      if (l) l.interval = interval;
+    });
 
   const place = async () => {
     if (!session || !quote) return;
@@ -234,27 +273,97 @@ function CheckoutInner() {
           <h2 className="font-serif text-[1.6rem]">Summary</h2>
           <ul className="mt-5 divide-y divide-line">
             {quote.lines.map((l) => {
-              const p = catalog.find((c) => c.id === session.lines.find((x) => x.id === l.id)?.productId);
+              const line = session.lines.find((x) => x.id === l.id);
+              const p = catalog.find((c) => c.id === line?.productId);
               return (
-                <li key={l.id} className="flex items-start justify-between gap-4 py-3.5">
-                  <span>
-                    <span className="block font-medium">{l.label}</span>
-                    <span className="text-[0.8125rem] text-ink-3">
-                      {l.quantity > 1 ? `${l.quantity} × ` : ""}
-                      {p?.price.interval === "year" ? "per year" : "one time"}
-                      {l.extras ? ` · includes ${formatMoney(l.extras)} options` : ""}
+                <li key={l.id} className="py-3.5">
+                  <div className="flex items-start justify-between gap-4">
+                    <span>
+                      <span className="block font-medium">{l.label}</span>
+                      <span className="text-[0.8125rem] text-ink-3">
+                        {l.quantity > 1 ? `${l.quantity} × ` : ""}
+                        {l.interval === "month" ? "per month" : l.interval === "year" ? (line?.asGift ? "one year, prepaid" : "per year") : "one time"}
+                        {l.extras ? ` · includes ${formatMoney(l.extras)} options` : ""}
+                      </span>
                     </span>
-                  </span>
-                  <span className="font-mono tabular-nums">{formatMoney(l.total, { showFree: true })}</span>
+                    <span className="font-mono tabular-nums">{formatMoney(l.total, { showFree: true })}</span>
+                  </div>
+                  <p className="mt-1.5 text-[0.8125rem] text-ink-2">
+                    {l.fulfillment === "made_to_order"
+                      ? "Made to order — printed only after you approve a proof."
+                      : l.fulfillment === "ships_after_payment"
+                        ? "Ready-made kit — would ship after payment."
+                        : p?.kind === "plan"
+                          ? "Starts right away. Invited family never pay."
+                          : null}
+                  </p>
+                  {p?.kind === "plan" && p.monthly && !line?.asGift ? (
+                    <div className="mt-2 inline-flex rounded-[9px] border border-line p-0.5 text-[0.8125rem]" role="radiogroup" aria-label={`Billing for ${p.name}`}>
+                      {(["year", "month"] as const).map((iv) => (
+                        <button key={iv} type="button" role="radio" aria-checked={(l.interval ?? "year") === iv} onClick={() => setLineInterval(l.id, iv)} className={cn("min-h-8 rounded-[7px] px-3", (l.interval ?? "year") === iv ? "bg-ink text-paper" : "text-ink-2 hover:bg-ivory")}>
+                          {iv === "year" ? `Annual · ${formatMoney(p.price.amount)}` : `Monthly · ${formatMoney(p.monthly!.amount)}`}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                 </li>
               );
             })}
           </ul>
+          <div className="border-t border-line py-4">
+            {checkoutQuote?.promo?.ok ? (
+              <p className="flex items-center justify-between gap-3 text-[0.9375rem]">
+                <span>
+                  <span className="font-mono text-[0.8125rem]">{checkoutQuote.promo.code}</span> · {checkoutQuote.promo.label}
+                </span>
+                <Button size="sm" variant="ghost" onClick={() => void services().billing.removePromoCode(session.id)}>
+                  Remove
+                </Button>
+              </p>
+            ) : (
+              <form
+                className="flex gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void applyCode();
+                }}
+              >
+                <label htmlFor="promo" className="sr-only">
+                  Promotion or referral code
+                </label>
+                <Input id="promo" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Promotion or friend's code" autoCapitalize="characters" invalid={!!codeError} aria-describedby={codeError ? "promo-error" : undefined} />
+                <Button type="submit" variant="secondary" loading={applying} disabled={!code.trim()}>
+                  Apply
+                </Button>
+              </form>
+            )}
+            {checkoutQuote?.promo && !checkoutQuote.promo.ok ? <p className="mt-2 text-[0.8125rem] text-warning">The code {checkoutQuote.promo.code} no longer applies: {checkoutQuote.promo.reason}</p> : null}
+            {codeError ? (
+              <p id="promo-error" role="alert" className="mt-2 text-[0.8125rem] text-danger">
+                {codeError}
+              </p>
+            ) : null}
+            {checkoutQuote && checkoutQuote.creditAvailable > 0 ? (
+              <Checkbox id="use-credit" className="mt-3" checked={session.useCredit !== false} onCheckedChange={(v) => void services().billing.setUseCredit(session.id, v)} label={`Use my ${formatMoney(checkoutQuote.creditAvailable)} credit`} description="Demo credit has no cash value." />
+            ) : null}
+          </div>
           <dl className="mt-2 space-y-2 border-t border-line pt-4 text-[0.9375rem]">
             <div className="flex justify-between">
               <dt className="text-ink-3">Subtotal</dt>
               <dd className="font-mono tabular-nums">{formatMoney(quote.subtotal)}</dd>
             </div>
+            {quote.discount ? (
+              <div className="flex justify-between gap-4">
+                <dt className="text-ink-3">{quote.discount.label}</dt>
+                <dd className="font-mono tabular-nums text-success">−{formatMoney(quote.discount.amount)}</dd>
+              </div>
+            ) : null}
+            {quote.credit ? (
+              <div className="flex justify-between gap-4">
+                <dt className="text-ink-3">Credit</dt>
+                <dd className="font-mono tabular-nums text-success">−{formatMoney(quote.credit)}</dd>
+              </div>
+            ) : null}
             {quote.hasPhysical ? (
               <div className="flex justify-between gap-4">
                 <dt className="text-ink-3">Shipping</dt>

@@ -32,7 +32,7 @@ export function LetterOpening({ message, mode, onOpened }: { message: FutureMess
       {stage !== "open" ? (
         <div className="flex flex-col items-center py-6 text-center">
           <div className={cn("transition-opacity duration-500", stage === "opening" && "opacity-0")}>
-            <p className="font-mono text-[0.75rem] uppercase tracking-[0.2em] text-[#c4ad86]">{mode === "example" ? "An example of opening day" : "Preview of opening day"}</p>
+            <p className="font-mono text-[0.75rem] uppercase tracking-[0.2em] text-[#d7bc92]">{mode === "example" ? "An example of opening day" : "Preview of opening day"}</p>
             <h2 className="mt-4 max-w-xl font-serif text-[clamp(2.2rem,1.7rem+2vw,3.4rem)] leading-[1.05] text-night-ink">
               {mode === "example" ? (
                 <>

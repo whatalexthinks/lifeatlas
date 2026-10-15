@@ -44,5 +44,6 @@ export function createProductionServices(): Services {
     support: unavailable("support"),
     heirlooms: unavailable("heirlooms"),
     operations: unavailable("operations"),
+    drafts: unavailable("drafts"),
   };
 }

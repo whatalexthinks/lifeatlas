@@ -22,12 +22,12 @@ describe("quoteCart", () => {
   it("sums lines and never invents shipping or tax", () => {
     const q = quoteCart(
       [
-        { id: "a", productId: "personal", quantity: 1, extrasAmount: 0 },
+        { id: "a", productId: "digital", quantity: 1, extrasAmount: 0 },
         { id: "b", productId: "book", quantity: 2, extrasAmount: 1200 },
       ],
       productCatalog,
     );
-    expect(q.subtotal).toBe(3900 + 2 * (14900 + 1200));
+    expect(q.subtotal).toBe(9900 + 2 * (11900 + 1200));
     expect(q.total).toBe(q.subtotal);
     expect(q.shipping).toBeNull();
     expect(q.tax).toBeNull();

@@ -1,13 +1,149 @@
-import type { ChapterKey, Question, QuestionCategory } from "@/domain/models";
+import type { CapsuleKind, ChapterKey, Question, QuestionCategory } from "@/domain/models";
 
 /**
- * The LifeAtlas question library — 85 authored prompts across 17 sections.
+ * The OurLifeCapsule question library — authored prompts in sections. Sections marked with
+ * audiences were written for a kind of capsule (partners asking each other, a parent
+ * writing to a child, a family across generations); the rest suit any life story.
  * Follow-ups are scripted (no AI) and offered gently after an answer.
  */
 
 type Row = [text: string, followUps?: string[]];
 
-const sections: { category: QuestionCategory; key: string; chapter: ChapterKey; rows: Row[] }[] = [
+const sections: { category: QuestionCategory; key: string; chapter: ChapterKey; audiences?: CapsuleKind[]; rows: Row[] }[] = [
+  {
+    category: "Our Story",
+    key: "ourstory",
+    chapter: "love",
+    audiences: ["couple"],
+    rows: [
+      ["What did you first notice about me?", ["Did you tell anyone about me that day?"]],
+      ["When did you realize this was something special?", ["Was it a big moment or a small one?"]],
+      ["Tell the story of how we met — your version.", ["What do you think I'd remember differently?"]],
+      ["What do you remember about our first date?", ["What were you nervous about?"]],
+      ["What's a small moment together you'll never forget?", ["Why that one, do you think?"]],
+      ["What did you think the first time you saw where I lived?"],
+      ["When did you first say 'I love you' — or know you were about to?"],
+      ["What did you want to say on our wedding day, or a day like it, that you never said?"],
+    ],
+  },
+  {
+    category: "Us, Now",
+    key: "usnow",
+    chapter: "everyday",
+    audiences: ["couple"],
+    rows: [
+      ["What's something I do that makes an ordinary day better?"],
+      ["What song makes you think of us?", ["Where were we when you first heard it together?"]],
+      ["What's a tradition we invented without meaning to?"],
+      ["What's the hardest thing we've come through together?", ["What got us through it?"]],
+      ["What's your favorite room in our home, and why?"],
+      ["What do we argue about that secretly makes you smile?"],
+      ["Where was the best trip we've taken — and the worst?", ["What made the worst one worth it anyway?"]],
+    ],
+  },
+  {
+    category: "Our Future",
+    key: "ourfuture",
+    chapter: "wisdom",
+    audiences: ["couple"],
+    rows: [
+      ["What do you hope we're doing in ten years?"],
+      ["Where do you want to go together that we haven't yet?"],
+      ["What do you want to remember about this year of our life?"],
+      ["What would you want our children, or the people after us, to know about us?"],
+      ["What promise would you make me today?"],
+    ],
+  },
+  {
+    category: "Growing Up",
+    key: "growingup",
+    chapter: "childhood",
+    audiences: ["child"],
+    rows: [
+      ["What was the day you were born like for us?", ["Who was the first person we called?"]],
+      ["What was your first word — and what did we think it meant?"],
+      ["What made you laugh hardest when you were tiny?"],
+      ["What were you completely sure about at age five?"],
+      ["What's a bedtime ritual we had?", ["Which book did you make us read again and again?"]],
+      ["What are you like right now, at this age, that I never want to forget?"],
+      ["What did you teach me without knowing it?"],
+      ["What's something you were brave about this year?"],
+    ],
+  },
+  {
+    category: "Family History",
+    key: "familyhistory",
+    chapter: "family",
+    audiences: ["family", "parent"],
+    rows: [
+      ["Where does our family come from, as far back as anyone knows?", ["Who told you, and how sure were they?"]],
+      ["Which family story gets retold at every gathering?", ["Who tells it best?"]],
+      ["What tradition has lasted the longest in our family?", ["Who started it?"]],
+      ["What dish appears at every family celebration?", ["Who makes it now?"]],
+      ["Which family member would you most like to have met?"],
+      ["What did the family do when times were hard?"],
+      ["What object has been handed down, and who had it first?"],
+      ["What should the youngest in the family know about the oldest?"],
+      ["How did the family celebrate holidays when you were young?"],
+    ],
+  },
+  {
+    category: "Funny Memories",
+    key: "funny",
+    chapter: "everyday",
+    rows: [
+      ["What's the funniest thing that ever happened at a family dinner?"],
+      ["What's a mistake you can laugh about now?", ["How long did it take to find it funny?"]],
+      ["Who is the funniest person you've ever known?", ["What would they say about this question?"]],
+      ["What's a joke or prank that still makes you smile?"],
+      ["When did you laugh so hard you couldn't stop?"],
+    ],
+  },
+  {
+    category: "Values",
+    key: "values",
+    chapter: "wisdom",
+    rows: [
+      ["What do you believe now that you didn't at twenty?"],
+      ["What makes a good life, in your experience?"],
+      ["When did you stand up for something that mattered?"],
+      ["What are you most grateful for today?"],
+      ["Whose kindness changed the course of your life?"],
+    ],
+  },
+  {
+    category: "Hopes & Dreams",
+    key: "dreams",
+    chapter: "coming_of_age",
+    rows: [
+      ["What did you want to be when you grew up?", ["How close did you come?"]],
+      ["What dream are you still holding onto?"],
+      ["If you had one free year, what would you do with it?"],
+      ["Where would you go tomorrow if you could go anywhere?"],
+    ],
+  },
+  {
+    category: "Adventures",
+    key: "adventures",
+    chapter: "journeys",
+    rows: [
+      ["What's the bravest trip you've ever taken?"],
+      ["When did you get gloriously lost?", ["How did you find your way back?"]],
+      ["What place surprised you the most?"],
+      ["What did you pack that you've never forgotten?"],
+    ],
+  },
+  {
+    category: "Advice",
+    key: "advice",
+    chapter: "wisdom",
+    rows: [
+      ["What advice would you give your younger self?"],
+      ["What should every eighteen-year-old know?"],
+      ["What would you tell someone on their wedding day?"],
+      ["What's the best advice you ever ignored?", ["Do you wish you'd listened?"]],
+    ],
+  },
   {
     category: "Childhood",
     key: "childhood",
@@ -220,6 +356,7 @@ export const questionLibrary: Question[] = sections.flatMap((s) =>
     text,
     category: s.category,
     chapter: s.chapter,
+    ...(s.audiences ? { audiences: s.audiences } : {}),
     followUps: followUps ?? [],
     custom: false,
   })),

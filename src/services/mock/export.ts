@@ -4,11 +4,14 @@ import { strToU8, zipSync, type Zippable } from "fflate";
 import type { ArchiveManifest, DemoDatabase, ExportJob, ExportOptions, MediaAsset, Memory } from "@/domain/models";
 import { isExportEligible } from "@/domain/policies/permissions";
 import { chapterById } from "@/data/chapters";
+import { capsuleKind } from "@/domain/capsule-kinds";
 import { formatFuzzyDate, sortKey } from "@/lib/dates";
 import { sha256Hex, uid } from "@/lib/utils";
 import { fail, ok, type ExportBuilder, type ExportPreview, type ExportPreviewItem } from "../contracts";
 import { mockMedia } from "./media";
+import { restoreMethods } from "./restore";
 import { actorName, db, latency, pushNotification, store } from "./shared";
+import { brand } from "@/config/brand";
 
 const EXT: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -98,7 +101,7 @@ function offlineHtml(manifest: ArchiveManifest, mediaHref: (id: string) => strin
         .join("")}${imgs}${audio}<p class="by">Shared by ${esc(m.contributor)}</p></article>`;
     })
     .join("");
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(manifest.capsule.subjectName)} — LifeAtlas archive</title><style>
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(manifest.capsule.subjectName)} — ${brand.name} archive</title><style>
 :root{--paper:#f8f6f1;--ink:#242824;--muted:#62655d;--line:#ded9cf;--green:#34473f}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:18px/1.65 Georgia,'Iowan Old Style',serif}
 header,main,footer{max-width:760px;margin:0 auto;padding:0 24px}header{padding-top:72px;padding-bottom:32px;border-bottom:1px solid var(--line)}
@@ -108,7 +111,7 @@ article{padding:48px 0;border-bottom:1px solid var(--line)}blockquote{margin:0 0
 figure{margin:24px 0}img{max-width:100%;display:block;border:10px solid #fff;box-shadow:0 10px 30px -12px #0003}figcaption{font:14px system-ui,sans-serif;color:var(--muted);margin-top:8px}
 audio{width:100%;margin-top:12px}.missing{font:14px system-ui,sans-serif;color:#9a362e;background:#f6e5e1;padding:10px 14px;border-radius:8px}
 nav ol{columns:2;font:15px system-ui,sans-serif;padding-left:20px}footer{padding:48px 24px 96px;font:14px system-ui,sans-serif;color:var(--muted)}
-</style></head><body><header><p class="eyebrow">LifeAtlas · Portable archive</p><h1>${esc(manifest.capsule.subjectName)}</h1><p>${esc(manifest.capsule.title)}${manifest.capsule.birthYear ? ` · Born ${manifest.capsule.birthYear}` : ""}</p>${manifest.capsule.dedication ? `<p><em>${esc(manifest.capsule.dedication)}</em></p>` : ""}<nav><p class="eyebrow">${manifest.memories.length} stories</p><ol>${manifest.memories.map((m) => `<li><a href="#${esc(m.id)}">${esc(m.title)}</a></li>`).join("")}</ol></nav></header><main>${stories}</main><footer><p>Exported ${esc(new Date(manifest.generatedAt).toLocaleString())} from a LifeAtlas demonstration on this device. This file opens without LifeAtlas, in any modern browser.</p>${manifest.notices.map((n) => `<p>${esc(n)}</p>`).join("")}${manifest.exclusions.length ? `<p><strong>Not included:</strong></p><ul>${manifest.exclusions.map((e) => `<li>${esc(e.kind)} ${esc(e.id)} — ${esc(e.reason)}</li>`).join("")}</ul>` : ""}</footer></body></html>`;
+</style></head><body><header><p class="eyebrow">${brand.name} · Portable archive</p><h1>${esc(manifest.capsule.subjectName)}</h1><p>${esc(manifest.capsule.title)}${manifest.capsule.birthYear ? ` · Born ${manifest.capsule.birthYear}` : ""}</p>${manifest.capsule.dedication ? `<p><em>${esc(manifest.capsule.dedication)}</em></p>` : ""}<nav><p class="eyebrow">${manifest.memories.length} stories</p><ol>${manifest.memories.map((m) => `<li><a href="#${esc(m.id)}">${esc(m.title)}</a></li>`).join("")}</ol></nav></header><main>${stories}</main><footer><p>Exported ${esc(new Date(manifest.generatedAt).toLocaleString())} from an {brand.name} demonstration on this device. This file opens without {brand.name}, in any modern browser.</p>${manifest.notices.map((n) => `<p>${esc(n)}</p>`).join("")}${manifest.exclusions.length ? `<p><strong>Not included:</strong></p><ul>${manifest.exclusions.map((e) => `<li>${esc(e.kind)} ${esc(e.id)} — ${esc(e.reason)}</li>`).join("")}</ul>` : ""}</footer></body></html>`;
 }
 
 function toManifestMemory(m: Memory, d: DemoDatabase): ArchiveManifest["memories"][number] {
@@ -117,7 +120,18 @@ function toManifestMemory(m: Memory, d: DemoDatabase): ArchiveManifest["memories
     title: m.title,
     narrative: m.narrative,
     quote: m.quote,
-    date: { display: formatFuzzyDate(m.date), precision: m.date.precision, year: m.date.year ?? (m.date.decade !== undefined ? m.date.decade : undefined), month: m.date.month, day: m.date.day },
+    date: {
+      display: formatFuzzyDate(m.date),
+      precision: m.date.precision,
+      year: m.date.year ?? (m.date.decade !== undefined ? m.date.decade : undefined),
+      month: m.date.month,
+      day: m.date.day,
+      season: m.date.season,
+      decade: m.date.decade,
+      lifeStage: m.date.lifeStage,
+      age: m.date.age,
+      note: m.date.note,
+    },
     chapter: chapterById(m.chapter).title,
     placeId: m.placeId,
     peopleIds: m.peopleIds,
@@ -141,6 +155,7 @@ async function blobToDataUri(blob: Blob) {
 }
 
 export const mockExport: ExportBuilder = {
+  ...restoreMethods,
   async preview(capsuleId, options) {
     const d = db();
     const capsule = d.capsules.find((c) => c.id === capsuleId);
@@ -223,9 +238,9 @@ export const mockExport: ExportBuilder = {
         schema: "lifeatlas.archive",
         schemaVersion: 1,
         generatedAt: new Date().toISOString(),
-        generator: "LifeAtlas Part One (local demonstration)",
+        generator: `${brand.name} Part One (local demonstration)`,
         mode: "demo_local",
-        capsule: { id: capsule.id, subjectName: capsule.subjectName, title: capsule.title, birthYear: capsule.birthYear, dedication: capsule.dedication },
+        capsule: { id: capsule.id, kind: capsuleKind(capsule), subjectName: capsule.subjectName, title: capsule.title, description: capsule.description, birthYear: capsule.birthYear, dedication: capsule.dedication },
         options,
         people: d.people.filter((p) => peopleIds.has(p.id)).map((p) => ({ id: p.id, name: p.displayName, birthYear: p.birthYear, deathYear: p.deathYear })),
         places: d.places.filter((p) => placeIds.has(p.id)).map((p) => ({ id: p.id, name: p.name, country: p.country, precision: p.precision, lat: Math.round(p.point.lat * 100) / 100, lng: Math.round(p.point.lng * 100) / 100 })),
@@ -233,12 +248,12 @@ export const mockExport: ExportBuilder = {
         media: manifestMedia,
         exclusions,
         notices: [
-          "Created from a LifeAtlas demonstration. Data came from this browser on this device only; nothing was uploaded.",
+          `Created from an ${brand.name} demonstration. Data came from this browser on this device only; nothing was uploaded.`,
           "Coordinates are rounded to city level.",
           ...(media.some((m) => m.sampleNotice) ? ["Sample illustrations and synthetic narration are labelled; they are not real photographs or voices."] : []),
         ],
       };
-      const base = `lifeatlas-${slug(capsule.subjectName)}-${new Date().toISOString().slice(0, 10)}`;
+      const base = `${brand.filePrefix}-${slug(capsule.subjectName)}-${new Date().toISOString().slice(0, 10)}`;
       let blob: Blob;
       let fileName: string;
       if (format === "json") {
@@ -255,7 +270,7 @@ export const mockExport: ExportBuilder = {
         );
         files["README.txt"] = strToU8(
           [
-            `LifeAtlas archive — ${capsule.subjectName}`,
+            `${brand.name} archive — ${capsule.subjectName}`,
             "",
             "Open index.html in any web browser to read the stories, see the photographs and listen to recordings.",
             "manifest.json describes every record in a stable, documented format (schema: lifeatlas.archive v1).",

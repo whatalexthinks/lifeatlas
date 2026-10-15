@@ -24,12 +24,15 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { BrandMark, Logo } from "@/components/brand/logo";
-import { ButtonLink } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { useBackToSelf, useOwnPersona } from "./preview-banner";
 import { Skeleton } from "@/components/ui/feedback";
-import { useHydrated, usePendingReviewCount, usePersistence, usePersona } from "@/hooks/use-data";
+import { StorageAlert } from "@/components/ui/storage-alert";
+import { useDb, useHydrated, usePendingReviewCount, usePersistence, usePersona } from "@/hooks/use-data";
 import { cn, relativeTime } from "@/lib/utils";
 import { NotificationsButton } from "./notifications";
 import { PersonaSwitcher } from "./persona-switcher";
+import { brand } from "@/config/brand";
 
 type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }>; badge?: number; match?: (p: string) => boolean };
 
@@ -101,7 +104,7 @@ export function SaveStatus({ compact }: { compact?: boolean }) {
         Demo · this device only
       </p>
       <p className="mt-1 text-[0.75rem] leading-snug text-ink-3" role="status">
-        {label}. Not backed up.{" "}
+        {label.replace(/\.$/, "")}. Not backed up.{" "}
         <Link href="/app/preservation" className="underline underline-offset-2">
           Download a copy
         </Link>
@@ -146,7 +149,7 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
 
       {/* Tablet compressed rail */}
       <aside className="sticky top-0 hidden h-dvh flex-col items-center gap-1 border-r border-line bg-ivory/50 py-4 md:flex lg:hidden" aria-label="Studio navigation">
-        <Link href="/app" aria-label="LifeAtlas studio home" className="mb-3 text-evergreen">
+        <Link href="/app" aria-label={`${brand.name} studio home`} className="mb-3 text-evergreen">
           <BrandMark className="size-8" />
         </Link>
         <PersonaSwitcher compact side="right" />
@@ -197,7 +200,10 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
           ) : nonOrganizer ? (
             <NotOrganizer />
           ) : (
-            children
+            <>
+              <StorageAlert className="mx-auto mb-6 max-w-[1240px]" />
+              {children}
+            </>
           )}
         </main>
       </div>
@@ -265,12 +271,12 @@ function TabLink({ href, label, icon: Icon, active, badge }: { href: string; lab
 
 function NotOrganizer() {
   const persona = usePersona();
-  const target =
-    persona.kind === "storyteller"
-      ? { href: "/contribute/margaret-stories", label: "Open Margaret's invitation" }
-      : persona.kind === "contributor"
-        ? { href: "/contribute/emma-blue-bowl", label: "Open Emma's invitation" }
-        : { href: "/view/cap_margaret", label: "Open the family archive" };
+  const own = useOwnPersona();
+  const back = useBackToSelf();
+  const invitation = useDb((d) => d.invitations.find((i) => i.personId && i.personId === persona.personId && i.role !== "viewer" && !["revoked_demo", "expired_demo", "revoked", "expired"].includes(i.status)));
+  const capsuleId = useDb((d) => d.memberships.find((m) => m.personId === persona.personId && m.status === "active" && m.role !== "successor")?.capsuleId) ?? "cap_margaret";
+  const first = persona.name.split(" ")[0];
+  const target = invitation ? { href: `/contribute/${invitation.token}`, label: `Open ${first}'s invitation` } : { href: `/view/${capsuleId}`, label: "Open the family archive" };
   return (
     <div className="mx-auto max-w-xl py-16 text-center">
       <p className="eyebrow justify-center">Viewing as {persona.name}</p>
@@ -282,6 +288,9 @@ function NotOrganizer() {
         <ButtonLink href={target.href} size="lg">
           {target.label}
         </ButtonLink>
+        <Button size="lg" variant="secondary" onClick={() => void back()}>
+          Back to {own.name.split(" ")[0]}
+        </Button>
         <PersonaSwitcherInline />
       </div>
       <p className="mt-6 text-[0.8125rem] text-ink-3">This gating is a simulation of permissions. Real access control is enforced on the server in a later release.</p>

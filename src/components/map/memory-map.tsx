@@ -16,7 +16,7 @@ export interface MapPoint {
 }
 
 /**
- * The LifeAtlas memory map. Offline vector cartography (Natural Earth / US
+ * The OurLifeCapsule memory map. Offline vector cartography (Natural Earth / US
  * Census boundaries bundled with the app) — no API key, no remote tiles.
  * Markers are real buttons layered over the SVG for accessibility.
  */
@@ -118,7 +118,7 @@ export function MemoryMap({
 
   const night = tone === "night";
   const colors = night
-    ? { sea: "#121815", land: "#2a342f", landFocus: "#34403a", border: "#4d5a52", grat: "#1c2420", ink: "#eee9de" }
+    ? { sea: "#121815", land: "#2a342f", landFocus: "#34403a", border: "#4d5a52", grat: "#1c2420", ink: "#f1ede6" }
     : { sea: "var(--mat)", land: "var(--linen)", landFocus: "color-mix(in srgb, var(--linen) 70%, var(--sage))", border: "var(--line-strong)", grat: "color-mix(in srgb, var(--line) 70%, transparent)", ink: "var(--ink)" };
 
   return (
@@ -137,7 +137,7 @@ export function MemoryMap({
           </g>
         ) : null}
         {showJourney && journeyPath ? (
-          <path d={journeyPath} fill="none" stroke={night ? "#c4ad86" : "var(--brass)"} strokeWidth={2} strokeDasharray="6 6" strokeLinecap="round" opacity={0.9} />
+          <path d={journeyPath} fill="none" stroke={night ? "#d7bc92" : "var(--brass)"} strokeWidth={2} strokeDasharray="6 6" strokeLinecap="round" opacity={0.9} />
         ) : null}
       </svg>
 
@@ -167,7 +167,7 @@ export function MemoryMap({
               className={cn(
                 "relative grid place-items-center rounded-full border-2 font-mono text-[11px] font-medium tabular-nums shadow-[0_6px_14px_-6px_rgb(0_0_0/0.5)] transition-[transform,background-color] duration-200 group-hover:scale-110",
                 active ? "size-9 border-[#fbf7ee] bg-terracotta text-white" : single ? "size-7 border-[#fbf7ee] bg-evergreen text-on-evergreen" : "size-9 border-[#fbf7ee] bg-ink text-[#f8f6f1]",
-                night && !active && "bg-[#c4ad86] text-[#1b221e] border-[#1b221e]",
+                night && !active && "bg-[#d7bc92] text-[#1b1a18] border-[#1b1a18]",
               )}
             >
               {single ? p.count : c.members.length}
@@ -175,7 +175,7 @@ export function MemoryMap({
             <span
               className={cn(
                 "pointer-events-none absolute left-1/2 top-full mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium shadow-sm transition-opacity",
-                night ? "bg-black/60 text-[#eee9de]" : "bg-surface/95 text-ink",
+                night ? "bg-black/60 text-[#f1ede6]" : "bg-surface/95 text-ink",
                 active ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100",
               )}
             >
@@ -200,13 +200,13 @@ export function MemoryMap({
         <button
           type="button"
           onClick={() => setView("world")}
-          className={cn("absolute left-3 top-3 z-20 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium shadow-sm", night ? "bg-black/50 text-[#eee9de]" : "bg-surface/95 text-ink-2 hover:text-ink")}
+          className={cn("absolute left-3 top-3 z-20 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium shadow-sm", night ? "bg-black/50 text-[#f1ede6]" : "bg-surface/95 text-ink-2 hover:text-ink")}
         >
           <Route className="size-3.5" />
           {offscreen.length} more {offscreen.length === 1 ? "place" : "places"} further away
         </button>
       ) : null}
-      <span className={cn("pointer-events-none absolute bottom-2 right-3 z-20 text-[10px]", night ? "text-[#bdb7aa]" : "text-ink-4")}>
+      <span className={cn("pointer-events-none absolute bottom-2 right-3 z-20 text-[10px]", night ? "text-[#c4bdb1]" : "text-ink-4")}>
         {failed ? "Map outlines unavailable — places still listed" : "Natural Earth · US Census"}
       </span>
     </div>

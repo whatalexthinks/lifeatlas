@@ -1,6 +1,8 @@
 "use client";
 
-import type { Capsule, ChapterKey, Memory, MemoryRevision, Place } from "@/domain/models";
+import type { Capsule, CapsuleKind, ChapterKey, Memory, MemoryRevision, Person, Place, Relationship } from "@/domain/models";
+import { callName, capsuleKind, capsuleKinds } from "@/domain/capsule-kinds";
+import { capsuleAllowance, countOwnedCapsules, currentPlanId } from "@/domain/commerce/plans";
 import { roleLabels } from "@/domain/policies/permissions";
 import { capsuleTransitions, canTransition, memoryTransitions } from "@/domain/workflows/state-machines";
 import { memoryFormSchema } from "@/domain/schemas";
@@ -11,15 +13,32 @@ import { uid } from "@/lib/utils";
 import { fail, ok, type CapsuleRepository } from "../contracts";
 import { actorName, db, latency, pushNotification, store } from "./shared";
 
-const titleFor = (kind: Capsule["relationshipKind"], firstName: string) =>
-  kind === "self" ? "In My Own Words" : `The Life & Stories of ${firstName}`;
+/** Splits "Margaret Ellis" into the parts a person record keeps. */
+const nameParts = (name: string) => {
+  const [given, ...rest] = name.trim().split(/\s+/);
+  return { givenName: given ?? "", familyName: rest.join(" ") };
+};
+
+/** The older relationship field, kept for screens that still read it. Derived, never asked twice. */
+function legacyRelationshipKind(kind: CapsuleKind, relationship: string): Capsule["relationshipKind"] {
+  if (kind !== "parent") return capsuleKinds[kind].relationshipKind;
+  if (/grand|nana|nan\b|gran|opa|oma|abuela|abuelo/i.test(relationship)) return "grandparent";
+  if (/father|dad|papa|pop/i.test(relationship)) return "father";
+  return "mother";
+}
 
 export const mockCapsules: CapsuleRepository = {
   async createFromWizard(v) {
+    const d0 = db();
+    const persona = d0.personas.find((p) => p.id === d0.activePersonaId);
+    const ownerPersonId = persona?.personId ?? "per_sarah";
+    if (!v.includedWithGift) {
+      const allowance = capsuleAllowance(currentPlanId(d0.subscriptions, d0.catalog), countOwnedCapsules(d0.capsules, ownerPersonId));
+      if (!allowance.allowed) return fail("forbidden", allowance.reason ?? "Your plan has no room for another capsule.");
+    }
     await latency(260);
     const now = new Date().toISOString();
     const id = uid("cap");
-    const persona = db().personas.find((p) => p.id === db().activePersonaId);
     let birthplaceId: string | undefined;
     let birthplaceLabel: string | undefined;
     if (v.birthplace) {
@@ -47,26 +66,58 @@ export const mockCapsules: CapsuleRepository = {
         }
       } else birthplaceLabel = v.birthplace;
     }
+    const kind = v.kind ?? capsuleKind({ relationshipKind: v.relationshipKind });
+    const config = capsuleKinds[kind];
     const name = v.subjectName.trim();
+    const birthYear = typeof v.birthYear === "number" ? v.birthYear : undefined;
+
+    // The people this capsule is about become person records — a partner, a parent, a
+    // child — so they can be tagged in stories and appear in the family directory.
+    const people: Person[] = [];
+    const relationships: Relationship[] = [];
+    let subjectPersonId: string | undefined;
+    const person = (displayName: string, extra: Partial<Person> = {}): Person => ({ id: uid("per"), displayName, ...nameParts(displayName), isSample: false, createdAt: now, updatedAt: now, ...extra });
+    if (kind === "personal") subjectPersonId = ownerPersonId;
+    else if (kind === "couple" && v.partnerName?.trim()) {
+      const partner = person(v.partnerName.trim(), { shortBio: v.relationship.trim() || "Partner" });
+      people.push(partner);
+      relationships.push({ id: uid("rel"), fromPersonId: ownerPersonId, toPersonId: partner.id, kind: "partner" });
+    } else if (kind === "parent" || kind === "child" || kind === "someone") {
+      const subject = person(name, { birthYear, birthplaceId, shortBio: v.relationship.trim() || undefined });
+      people.push(subject);
+      subjectPersonId = subject.id;
+      const rel = v.relationship.trim();
+      if (kind === "child") relationships.push({ id: uid("rel"), fromPersonId: ownerPersonId, toPersonId: subject.id, kind: "parent" });
+      else if (kind === "parent" && legacyRelationshipKind(kind, rel) !== "grandparent") relationships.push({ id: uid("rel"), fromPersonId: subject.id, toPersonId: ownerPersonId, kind: "parent" });
+      else if (kind === "someone" && /friend|mentor|neighbo/i.test(rel)) relationships.push({ id: uid("rel"), fromPersonId: subject.id, toPersonId: ownerPersonId, kind: "friend" });
+    }
+
+    const startingChapter = v.kind ? config.chapterOrder[0] : v.startingChapter;
+    const order = v.kind ? config.chapterOrder : defaultChapterOrder;
     const capsule: Capsule = {
       id,
+      kind,
       subjectName: name,
-      preferredName: v.preferredName?.trim() || name.split(" ")[0],
-      relationship: v.relationship.trim(),
-      relationshipKind: v.relationshipKind,
-      title: titleFor(v.relationshipKind, name.split(" ")[0]),
-      birthYear: typeof v.birthYear === "number" ? v.birthYear : undefined,
+      preferredName: v.preferredName?.trim() || (kind === "couple" || kind === "family" ? name : callName(name)),
+      subjectPersonId,
+      peopleIds: [...new Set([ownerPersonId, ...people.map((p) => p.id)])],
+      relationship: v.relationship.trim() || config.defaultRelationship,
+      relationshipKind: v.kind ? legacyRelationshipKind(kind, v.relationship) : v.relationshipKind,
+      title: v.title?.trim() || config.title(kind === "couple" || kind === "family" ? name : v.preferredName?.trim() || name),
+      description: v.description?.trim() || undefined,
+      birthYear,
       birthplaceId,
       birthplaceLabel,
       dedication: v.dedication?.trim() || undefined,
+      keyDates: v.keyDates?.length ? v.keyDates : undefined,
       theme: { palette: v.palette, typography: v.typography },
       cover: { mediaId: v.coverMediaId, layout: v.layout, focalY: 45 },
       status: "active",
       collectionMode: v.collectionMode,
       defaultPrivacy: v.defaultPrivacy,
-      startingChapter: v.startingChapter,
-      chapterOrder: [v.startingChapter, ...defaultChapterOrder.filter((c) => c !== v.startingChapter)],
-      ownerPersonId: persona?.personId ?? "per_sarah",
+      startingChapter,
+      chapterOrder: [startingChapter, ...order.filter((c) => c !== startingChapter)],
+      ownerPersonId,
       isSample: false,
       viewerEnabled: v.viewerEnabled,
       createdAt: now,
@@ -75,6 +126,8 @@ export const mockCapsules: CapsuleRepository = {
     store().mutate(
       (d) => {
         d.capsules.unshift(capsule);
+        d.people.push(...people);
+        d.relationships.push(...relationships);
         const p = d.personas.find((x) => x.id === "persona_sarah");
         p?.roles.push({ capsuleId: id, role: "owner" });
         const active = d.personas.find((x) => x.id === d.activePersonaId);
@@ -83,9 +136,9 @@ export const mockCapsules: CapsuleRepository = {
         if (d.familyGroups[0]) d.familyGroups[0].capsuleIds.push(id);
         d.wizardDraft = null;
       },
-      { actor: actorName(), action: "capsule.created", target: id },
+      { actor: actorName(), action: "capsule.created", target: id, detail: config.label },
     );
-    store().track("capsule_created", { relationship: v.relationshipKind, mode: v.collectionMode });
+    store().track("capsule_created", { kind, relationship: capsule.relationshipKind, mode: v.collectionMode });
     return ok(capsule);
   },
 
@@ -356,6 +409,20 @@ export const mockCapsules: CapsuleRepository = {
       } else d.assignments.push({ id: uid("as"), capsuleId, questionId, order: d.assignments.length + 1, status, memoryId });
     });
     return ok(null);
+  },
+
+  async toggleFavoriteQuestion(questionId) {
+    if (!db().questions.some((q) => q.id === questionId)) return fail("not_found", "That question isn't in the library.");
+    let now = false;
+    store().mutate((d) => {
+      const i = d.questionFavorites.indexOf(questionId);
+      if (i >= 0) d.questionFavorites.splice(i, 1);
+      else {
+        d.questionFavorites.unshift(questionId);
+        now = true;
+      }
+    });
+    return ok(now);
   },
 
   async setMemberRole(capsuleId, personId, role) {

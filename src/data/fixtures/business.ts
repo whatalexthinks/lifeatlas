@@ -1,4 +1,5 @@
 import type {
+  CreditEntry,
   FutureMessage,
   Gift,
   HeirloomConfiguration,
@@ -6,23 +7,25 @@ import type {
   Notification,
   Order,
   PrintProject,
+  ReferralEvent,
   Subscription,
   SuccessorDesignation,
   SupportRequest,
 } from "@/domain/models";
+import { brand } from "@/config/brand";
 
 /* ----------------------------- Orders ----------------------------- */
 
 export const orders: Order[] = [
   {
     id: "ord_1001",
-    number: "LA-DEMO-1001",
+    number: "OLC-DEMO-1001",
     kind: "digital",
-    items: [{ id: "oi_1", productId: "family", name: "Family Collection", quantity: 1, unitAmount: 6900, extrasAmount: 0 }],
-    subtotal: 6900,
+    items: [{ id: "oi_1", productId: "family", name: "Family Plan — first year", quantity: 1, unitAmount: 17900, extrasAmount: 0 }],
+    subtotal: 17900,
     shippingEstimate: null,
     taxEstimate: null,
-    total: 6900,
+    total: 17900,
     currency: "USD",
     status: "paid_mock",
     payment: "mock_uncharged",
@@ -37,7 +40,7 @@ export const orders: Order[] = [
   },
   {
     id: "ord_1002",
-    number: "LA-DEMO-1002",
+    number: "OLC-DEMO-1002",
     kind: "print",
     items: [
       {
@@ -70,13 +73,13 @@ export const orders: Order[] = [
   },
   {
     id: "ord_1003",
-    number: "LA-DEMO-1003",
+    number: "OLC-DEMO-1003",
     kind: "gift",
-    items: [{ id: "oi_3", productId: "personal", name: "Personal Capsule — gift", quantity: 1, unitAmount: 3900, extrasAmount: 0 }],
-    subtotal: 3900,
+    items: [{ id: "oi_3", productId: "digital", name: "Digital LifeCapsule — one year, as a gift", quantity: 1, unitAmount: 9900, extrasAmount: 0 }],
+    subtotal: 9900,
     shippingEstimate: null,
     taxEstimate: null,
-    total: 3900,
+    total: 9900,
     currency: "USD",
     status: "canceled_mock",
     payment: "mock_uncharged",
@@ -93,11 +96,25 @@ export const orders: Order[] = [
 ];
 
 export const invoices: Invoice[] = [
-  { id: "invc_1", orderId: "ord_1001", number: "DEMO-INV-0001", issuedAt: "2026-09-02T13:55:00.000Z", amount: 6900, status: "demo_uncharged" },
+  { id: "invc_1", orderId: "ord_1001", number: "DEMO-INV-0001", issuedAt: "2026-09-02T13:55:00.000Z", amount: 17900, status: "demo_uncharged" },
   { id: "invc_2", orderId: "ord_1002", number: "DEMO-INV-0002", issuedAt: "2026-10-03T19:04:00.000Z", amount: 34600, status: "demo_uncharged" },
 ];
 
-export const subscriptions: Subscription[] = [{ id: "sub_living", productId: "living", status: "none" }];
+/** The sample family is on the Family plan (a demo subscription — nothing renews or charges). */
+export const subscriptions: Subscription[] = [
+  { id: "sub_family", productId: "family", status: "preview_active", interval: "year", startedAt: "2026-09-02T13:55:00.000Z", renewsOn: "2027-09-02T13:55:00.000Z", orderId: "ord_1001" },
+];
+
+/* ---------------------------- Referrals --------------------------- */
+
+/** Fictional friends — illustrating the referral center, not real people or results. */
+export const sampleReferralEvents: ReferralEvent[] = [
+  { id: "ref_1", friendName: "Priya (sample)", status: "rewarded", at: "2026-09-21T15:00:00.000Z", rewardCredit: 2000, isSample: true },
+  { id: "ref_2", friendName: "A friend from book club (sample)", status: "started_preview", at: "2026-10-04T18:20:00.000Z", isSample: true },
+  { id: "ref_3", friendName: "Link copied", status: "link_shared", at: "2026-10-11T09:05:00.000Z", isSample: true },
+];
+
+export const sampleCredits: CreditEntry[] = [{ id: "cr_1", amount: 2000, reason: "Priya subscribed with your link (sample)", source: "referral", at: "2026-09-28T10:00:00.000Z", status: "demo" }];
 
 /* ---------------------------- Heirlooms --------------------------- */
 
@@ -154,7 +171,7 @@ export const gifts: Gift[] = [
     dedication: "We want to hear the stories you tell at the table — the ones we keep forgetting to write down. Merry Christmas.",
     reveal: { envelope: "winter", color: "evergreen", showGiverName: true },
     deliveryMode: "in_person",
-    productId: "personal",
+    productId: "digital",
     addOnIds: ["gift_wrap"],
     status: "ready_demo",
     createdAt: "2026-10-06T10:00:00.000Z",
@@ -280,7 +297,7 @@ export const notifications: Notification[] = [
 /* ----------------------------- Support ---------------------------- */
 
 export const supportRequests: SupportRequest[] = [
-  { id: "sup_1", createdAt: "2026-10-08T10:00:00.000Z", from: "Sample customer A", topic: "export", subject: "Will my export open without LifeAtlas?", body: "If the company disappeared, could I still open the files?", status: "resolved_demo", isSample: true },
+  { id: "sup_1", createdAt: "2026-10-08T10:00:00.000Z", from: "Sample customer A", topic: "export", subject: `Will my export open without ${brand.name}?`, body: "If the company disappeared, could I still open the files?", status: "resolved_demo", isSample: true },
   { id: "sup_2", createdAt: "2026-10-10T14:00:00.000Z", from: "Sample customer B", topic: "print", subject: "Can I change a photo after approving the proof?", body: "I noticed a typo in a caption.", status: "open_demo", isSample: true },
   { id: "sup_3", createdAt: "2026-10-11T09:30:00.000Z", from: "Sample customer C", topic: "access", subject: "My father can't hear the record prompt", body: "He uses hearing aids. Is there a larger-text, no-audio mode?", status: "new_demo", isSample: true },
   { id: "sup_4", createdAt: "2026-10-12T16:45:00.000Z", from: "Sample customer D", topic: "privacy", subject: "Remove a story my cousin added", body: "How do I remove something someone else contributed?", status: "new_demo", isSample: true },

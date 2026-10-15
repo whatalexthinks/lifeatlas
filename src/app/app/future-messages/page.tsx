@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Eye, Lock, LockOpen, PenLine, Plus, ShieldCheck, Trash2 } from "lucide-react";
+import { Eye, History, Lock, LockOpen, PenLine, Plus, ShieldCheck, Trash2 } from "lucide-react";
 import type { FutureMessage } from "@/domain/models";
 import { PageHeader, FutureStatusBadge, futureStatusCopy, Panel } from "@/components/studio/primitives";
 import { SealedLetter } from "@/components/marketing/objects";
@@ -15,12 +15,13 @@ import { ConfirmDialog, Dialog } from "@/components/ui/overlay";
 import { useDb } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { describeInterval } from "@/lib/dates";
-import { formatDate } from "@/lib/utils";
+import { formatDate, relativeTime } from "@/lib/utils";
 
 type Tab = "draft" | "prepared" | "sealed_demo" | "pending" | "example";
 
 export default function FutureMessagesPage() {
   const letters = useDb((d) => d.futureMessages);
+  const unfinished = useDb((d) => d.letterDrafts);
   const [tab, setTab] = React.useState<Tab>("draft");
   const [preview, setPreview] = React.useState<FutureMessage | null>(null);
   const [del, setDel] = React.useState<FutureMessage | null>(null);
@@ -63,6 +64,47 @@ export default function FutureMessagesPage() {
       <DemoNotice className="mb-8" title="Future message drafts — not scheduled for delivery">
         Letters live on this device. Delivery 5, 10, 20 or 30 years from now needs a service with verified contacts, succession, backups and legal review. We won&rsquo;t sell it until those exist.
       </DemoNotice>
+
+      {unfinished.length ? (
+        <Panel title="Unfinished writing" description="Kept on this device as you typed. Pick up where you left off, then save it as a letter." className="mb-8">
+          <ul className="divide-y divide-line">
+            {unfinished.map((d) => {
+              const title = String(d.values.title ?? "").trim() || "Untitled letter";
+              const to = String(d.values.recipientName ?? "").trim();
+              return (
+                <li key={d.key} className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3 first:pt-0 last:pb-0">
+                  <History className="size-4 shrink-0 text-brass-ink" aria-hidden />
+                  <p className="min-w-0 flex-1">
+                    <span className="font-medium">{title}</span>
+                    <span className="text-[0.875rem] text-ink-3">
+                      {to ? ` · for ${to}` : ""} · {d.letterId ? "changes to a saved letter" : "new letter"} · {relativeTime(d.updatedAt)}
+                    </span>
+                  </p>
+                  <div className="flex gap-1">
+                    <ButtonLink size="sm" variant="secondary" href={d.letterId ? `/app/future-messages/new?id=${d.letterId}` : "/app/future-messages/new"} aria-label={`Continue writing ${title}`}>
+                      Continue
+                    </ButtonLink>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      aria-label={`Discard unfinished writing for ${title}`}
+                      onClick={async () => {
+                        await services().drafts.discardLetterDraft(d.key);
+                        toast.success("Unfinished writing discarded", d.letterId ? "The saved letter is unchanged." : undefined, {
+                          label: "Undo",
+                          onClick: () => void services().drafts.saveLetterDraft({ key: d.key, letterId: d.letterId, capsuleId: d.capsuleId, values: d.values, attachmentIds: d.attachmentIds, birthYear: d.birthYear }),
+                        });
+                      }}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </Panel>
+      ) : null}
 
       <Segmented
         label="Letter status"

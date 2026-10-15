@@ -5,13 +5,15 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { CalendarX2, Link2Off, ShieldOff, Type } from "lucide-react";
 import type { Capsule, Invitation } from "@/domain/models";
-import { BrandMark } from "@/components/brand/logo";
+import { BrandMark, Wordmark } from "@/components/brand/logo";
 import { ButtonLink } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/feedback";
+import { StorageAlert } from "@/components/ui/storage-alert";
 import { useDb, useHydrated } from "@/hooks/use-data";
 import { useDemoStore } from "@/store/demo-store";
 import { services } from "@/services/factory";
 import { cn } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 interface Ctx {
   invitation: Invitation;
@@ -66,10 +68,8 @@ export function ContributeShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-dvh bg-paper">
       <header className="mx-auto flex h-20 max-w-3xl items-center justify-between px-5 sm:px-8">
         <span className="inline-flex items-center gap-2.5 text-evergreen">
-          <BrandMark className="size-8" />
-          <span className="font-serif text-[1.4rem] text-ink">
-            Life<em>Atlas</em>
-          </span>
+          <BrandMark className="size-8 text-oxblood" title="" />
+          <Wordmark className="text-ink" />
         </span>
         <button onClick={toggleText} className="inline-flex h-11 items-center gap-2 rounded-full border border-line-strong px-4 text-[0.9375rem] font-medium" aria-pressed={textSize === "large"}>
           <Type className="size-4" /> {textSize === "large" ? "Standard text" : "Larger text"}
@@ -85,7 +85,10 @@ export function ContributeShell({ children }: { children: React.ReactNode }) {
         ) : state.kind === "error" || !fresh || !capsule ? (
           <TokenProblem code={state.kind === "error" ? state.code : "not_found"} message={state.kind === "error" ? state.message : "We couldn't find this invitation."} />
         ) : (
-          <ContributeCtx.Provider value={{ invitation: fresh, capsule, organizerName: profile.displayName }}>{children}</ContributeCtx.Provider>
+          <ContributeCtx.Provider value={{ invitation: fresh, capsule, organizerName: profile.displayName }}>
+            <StorageAlert audience="guest" className="mt-6" />
+            {children}
+          </ContributeCtx.Provider>
         )}
       </main>
     </div>
@@ -107,7 +110,7 @@ function TokenProblem({ code, message }: { code: string; message: string }) {
       <p className="mx-auto mt-4 max-w-md text-[1.1rem] leading-relaxed text-ink-2">{body}</p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <ButtonLink href="/" variant="secondary" size="lg">
-          About LifeAtlas
+          About {brand.name}
         </ButtonLink>
         <ButtonLink href="/app/invitations" variant="ghost" size="lg">
           Organizer? Manage invitations

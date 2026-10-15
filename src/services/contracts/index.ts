@@ -1,5 +1,14 @@
+import type { Quote } from "@/domain/commerce/pricing";
 import type {
+  BillingInterval,
+  CapsuleKind,
+  KeyDate,
+  Promotion,
+  Subscription,
   AccountPreferences,
+  CaptureDraft,
+  GatheringSession,
+  LetterDraft,
   Product,
   Role,
   BookConfiguration,
@@ -58,7 +67,8 @@ export type ServiceName =
   | "analytics"
   | "support"
   | "heirlooms"
-  | "operations";
+  | "operations"
+  | "drafts";
 
 export type ServiceErrorCode = "validation" | "not_found" | "forbidden" | "conflict" | "quota" | "unsupported" | "unknown";
 
@@ -99,6 +109,8 @@ export interface AuthProvider {
   getSession(): Promise<ServiceResult<Session>>;
   /** Demo only: switch the active persona. */
   switchPersona(personaId: string): Promise<ServiceResult<Session>>;
+  /** Demo only: see the studio and viewer as a family member, using their current roles. */
+  previewAsPerson(personId: string): Promise<ServiceResult<Session>>;
   signInWithEmail(email: string): Promise<ServiceResult<{ magicLinkSent: boolean }>>;
   enrollMfa(): Promise<ServiceResult<{ secretUri: string }>>;
   signOut(): Promise<ServiceResult<null>>;
@@ -128,8 +140,24 @@ export interface NewMemoryInput extends MemoryFormValues {
   status: MemoryStatus;
 }
 
+/** Optional details from onboarding. Capsules created without them get sensible defaults. */
+export interface CapsuleCreateExtras {
+  coverMediaId?: string;
+  kind?: CapsuleKind;
+  title?: string;
+  description?: string;
+  /** Couples: the other partner's name; a person record is created for them. */
+  partnerName?: string;
+  keyDates?: KeyDate[];
+  /**
+   * A gift arrives with its own plan, so the recipient's first capsule isn't held to the
+   * giver's limit. Everything else counts toward the plan in force.
+   */
+  includedWithGift?: boolean;
+}
+
 export interface CapsuleRepository {
-  createFromWizard(values: CapsuleWizardValues & { coverMediaId?: string }): Promise<ServiceResult<Capsule>>;
+  createFromWizard(values: CapsuleWizardValues & CapsuleCreateExtras): Promise<ServiceResult<Capsule>>;
   updateCapsule(id: string, patch: Partial<Capsule>): Promise<ServiceResult<Capsule>>;
   setCapsuleStatus(id: string, to: Capsule["status"]): Promise<ServiceResult<Capsule>>;
   reorderChapters(id: string, order: ChapterKey[]): Promise<ServiceResult<Capsule>>;
@@ -144,7 +172,9 @@ export interface CapsuleRepository {
   addPlace(place: Omit<Place, "id">): Promise<ServiceResult<Place>>;
   addCustomQuestion(capsuleId: string, text: string, category: string): Promise<ServiceResult<string>>;
   setAssignments(capsuleId: string, questionIds: string[]): Promise<ServiceResult<null>>;
-  markAssignment(capsuleId: string, questionId: string, status: "queued" | "answered" | "skipped", memoryId?: string): Promise<ServiceResult<null>>;
+  markAssignment(capsuleId: string, questionId: string, status: "queued" | "answered" | "skipped" | "saved", memoryId?: string): Promise<ServiceResult<null>>;
+  /** Star or unstar a question for this account. Returns whether it is now a favourite. */
+  toggleFavoriteQuestion(questionId: string): Promise<ServiceResult<boolean>>;
   /** Grant, change or (with null) remove a person's role on a capsule. The owner can't be changed here. */
   setMemberRole(capsuleId: string, personId: string, role: Role | null): Promise<ServiceResult<null>>;
 }
@@ -229,15 +259,30 @@ export interface CheckoutCustomer {
   shipping?: ShippingAddress;
 }
 
+export interface CheckoutQuote {
+  quote: Quote;
+  /** The code on this checkout and whether it currently applies. */
+  promo: { code: string; ok: true; label: string } | { code: string; ok: false; reason: string } | null;
+  creditAvailable: number;
+}
+
 export interface BillingProvider {
-  createCheckout(lines: CartLine[], purpose: "self" | "gift"): Promise<ServiceResult<{ checkoutId: string; url: string }>>;
+  createCheckout(lines: CartLine[], purpose: "self" | "gift", opts?: { promoCode?: string }): Promise<ServiceResult<{ checkoutId: string; url: string }>>;
   getCheckout(checkoutId: string): ServiceResult<CheckoutSession>;
+  /** Totals for a checkout, with its promotion re-checked against the current rules. */
+  quoteCheckout(checkoutId: string): ServiceResult<CheckoutQuote>;
+  /** Validate and attach a promotion or referral code. Invalid codes are explained, not attached. */
+  applyPromoCode(checkoutId: string, code: string): Promise<ServiceResult<CheckoutQuote>>;
+  removePromoCode(checkoutId: string): Promise<ServiceResult<CheckoutQuote>>;
+  setUseCredit(checkoutId: string, use: boolean): Promise<ServiceResult<CheckoutQuote>>;
   completeMockCheckout(checkoutId: string, customer: CheckoutCustomer): Promise<ServiceResult<Order>>;
   cancelCheckout(checkoutId: string): Promise<ServiceResult<null>>;
   verifyWebhook(payload: string, signature: string): Promise<ServiceResult<{ eventId: string }>>;
   listPaymentMethods(): Promise<ServiceResult<{ brand: string; last4: string }[]>>;
-  startLivingArchivePreview(): Promise<ServiceResult<null>>;
-  cancelLivingArchivePreview(): Promise<ServiceResult<null>>;
+  /** Switch between monthly and annual billing from the next renewal. */
+  changeInterval(subscriptionId: string, interval: BillingInterval): Promise<ServiceResult<Subscription>>;
+  /** Cancel at the end of the paid term (nothing is deleted), or undo that. */
+  setCancelAtPeriodEnd(subscriptionId: string, cancel: boolean): Promise<ServiceResult<Subscription>>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -298,9 +343,32 @@ export interface ExportPreview {
   warnings: string[];
 }
 
+export interface ArchiveInspection {
+  /** Hands the checked archive to restoreArchive. Valid until the page is closed. */
+  token: string;
+  fileName: string;
+  format: "zip" | "json";
+  capsuleName: string;
+  generatedAt: string;
+  stories: number;
+  people: number;
+  places: number;
+  /** Files whose bytes match the SHA-256 recorded at export. */
+  verified: { photos: number; recordings: number };
+  /** Captions of files whose bytes no longer match — they won't be restored. */
+  damaged: string[];
+  /** Files listed in the manifest but not in this archive (or a records-only export). */
+  notInArchive: number;
+  warnings: string[];
+}
+
 export interface ExportBuilder {
   preview(capsuleId: string, options: ExportOptions): Promise<ServiceResult<ExportPreview>>;
   build(capsuleId: string, options: ExportOptions, format: ExportFormat): Promise<ServiceResult<{ job: ExportJob; blob: Blob }>>;
+  /** Reads a OurLifeCapsule export (.zip or .json) and checks every file against its recorded checksum. Changes nothing. */
+  inspectArchive(file: File): Promise<ServiceResult<ArchiveInspection>>;
+  /** Restores an inspected archive as a new capsule. Never overwrites anything already on this device. */
+  restoreArchive(token: string): Promise<ServiceResult<{ capsuleId: string; stories: number; files: number; skipped: string[] }>>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -383,8 +451,37 @@ export type SimulatedEvent = "contribution" | "invitation_opened" | "proof_ready
 /** Staff tools for the operations demo. In production these sit behind staff sign-in. */
 export interface OperationsService {
   updateProduct(id: string, patch: { amount?: number; availability?: Product["availability"]; note?: string }): Promise<ServiceResult<Product>>;
+  /** Activate, pause or end a promotion. Activation is refused until required reviews exist. */
+  setPromotionStatus(id: string, status: Promotion["status"]): Promise<ServiceResult<Promotion>>;
+  /** Record that a promotion's legal and eligibility review is complete (demo record only). */
+  recordLegalReview(id: string, reviewedBy: string, notes?: string): Promise<ServiceResult<Promotion>>;
   /** Plays a realistic event through the same code paths a real one would use. */
   simulate(event: SimulatedEvent): Promise<ServiceResult<string>>;
+}
+
+export interface CaptureDraftFiles {
+  /** undefined = leave as saved; null = remove. */
+  audio?: { blob: Blob; durationSec: number; peaks: number[]; source: "microphone" | "upload" } | null;
+  photos?: { blob: Blob; caption: string; width?: number; height?: number; name: string }[];
+}
+
+export interface LoadedCaptureDraft {
+  draft: CaptureDraft;
+  audio?: { blob: Blob; durationSec: number; peaks: number[]; source: "microphone" | "upload" };
+  photos: { blob: Blob; caption: string; width?: number; height?: number; name: string }[];
+}
+
+/** Autosaved answers in progress and resumable family gatherings. Local-first by design. */
+export interface DraftRepository {
+  saveCaptureDraft(fields: Omit<CaptureDraft, "audio" | "photos" | "updatedAt">, files?: CaptureDraftFiles): Promise<ServiceResult<CaptureDraft>>;
+  loadCaptureDraft(key: string): Promise<ServiceResult<LoadedCaptureDraft | null>>;
+  discardCaptureDraft(key: string): Promise<ServiceResult<null>>;
+  startGathering(input: Pick<GatheringSession, "capsuleId" | "occasion" | "guests" | "questionIds">): Promise<ServiceResult<GatheringSession>>;
+  updateGathering(id: string, patch: Partial<Pick<GatheringSession, "index" | "turn" | "answers" | "status" | "guests">>): Promise<ServiceResult<GatheringSession>>;
+  /** Letter composer writing, kept until it's saved as a letter. */
+  saveLetterDraft(draft: Omit<LetterDraft, "updatedAt">): Promise<ServiceResult<LetterDraft>>;
+  discardLetterDraft(key: string): Promise<ServiceResult<null>>;
+  removeGathering(id: string): Promise<ServiceResult<null>>;
 }
 
 export interface Services {
@@ -407,4 +504,5 @@ export interface Services {
   support: SupportProvider;
   heirlooms: HeirloomRepository;
   operations: OperationsService;
+  drafts: DraftRepository;
 }

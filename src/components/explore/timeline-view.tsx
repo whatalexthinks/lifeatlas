@@ -9,9 +9,10 @@ import { MemoryStatusBadge } from "@/components/studio/primitives";
 import { EmptyState } from "@/components/ui/feedback";
 import { Segmented, Select } from "@/components/ui/field";
 import { useCapsuleMemories, useDb } from "@/hooks/use-data";
-import { chapterById, chapterColorVar, chapters } from "@/data/chapters";
+import { chapterColorVar, chapters } from "@/data/chapters";
 import { approxYear, decadeOf, formatFuzzyDate } from "@/lib/dates";
 import { cn, excerpt } from "@/lib/utils";
+import { chapterFor } from "@/domain/capsule-kinds";
 
 /**
  * Editorial biographical timeline: a ribbon of decades on top, then the life
@@ -81,19 +82,19 @@ export function TimelineView({
 
   const renderItem = (m: Memory) => {
     const place = places.find((p) => p.id === m.placeId);
-    const ch = chapterById(m.chapter);
+    const ch = chapterFor(capsule, m.chapter);
     const content = (
       <div
         id={`tl-${m.id}`}
         className={cn(
           "group relative grid gap-4 rounded-[18px] p-3 transition-colors sm:grid-cols-[minmax(0,1fr)_auto] sm:p-4",
           night ? "hover:bg-white/[0.04]" : "hover:bg-surface",
-          highlightId === m.id && (night ? "bg-white/[0.06] ring-1 ring-[#c4ad86]/50" : "bg-surface ring-2 ring-terracotta/40"),
+          highlightId === m.id && (night ? "bg-white/[0.06] ring-1 ring-[#d7bc92]/50" : "bg-surface ring-2 ring-terracotta/40"),
         )}
       >
-        <span aria-hidden className="absolute -left-[27px] top-6 size-3 rounded-full border-2 sm:-left-[35px]" style={{ background: chapterColorVar[ch.color], borderColor: night ? "#131815" : "var(--paper)" }} />
+        <span aria-hidden className="absolute -left-[27px] top-6 size-3 rounded-full border-2 sm:-left-[35px]" style={{ background: chapterColorVar[ch.color], borderColor: night ? "#1b1a18" : "var(--paper)" }} />
         <div className="min-w-0">
-          <p className={cn("catalog flex flex-wrap items-center gap-x-2", night && "text-[#c4ad86]")}>
+          <p className={cn("catalog flex flex-wrap items-center gap-x-2", night && "text-[#d7bc92]")}>
             <span>{formatFuzzyDate(m.date)}</span>
             {place ? (
               <span className="inline-flex items-center gap-1">
@@ -159,7 +160,7 @@ export function TimelineView({
             >
               <span className="flex h-16 w-full items-end">
                 <span
-                  className={cn("w-full rounded-t-[6px] transition-colors", r.count ? (night ? "bg-[#c4ad86]/70 group-hover:bg-[#c4ad86]" : "bg-evergreen/75 group-hover:bg-evergreen") : night ? "bg-white/10" : "bg-line")}
+                  className={cn("w-full rounded-t-[6px] transition-colors", r.count ? (night ? "bg-[#d7bc92]/70 group-hover:bg-[#d7bc92]" : "bg-evergreen/75 group-hover:bg-evergreen") : night ? "bg-white/10" : "bg-line")}
                   style={{ height: `${Math.max(6, (r.count / maxCount) * 100)}%` }}
                 />
               </span>

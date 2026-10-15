@@ -2,12 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Check, Info, Lock, MailPlus, Minus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Check, Eye, Info, Lock, MailPlus, Minus } from "lucide-react";
 import type { Role } from "@/domain/models";
-import { accessMatrix, can, roleLabels } from "@/domain/policies/permissions";
+import { accessMatrix, can, membershipRole, roleLabels } from "@/domain/policies/permissions";
 import { PageHeader, Panel, Stat } from "@/components/studio/primitives";
 import { Avatar } from "@/components/studio/persona-switcher";
-import { ButtonLink } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge, toast } from "@/components/ui/feedback";
 import { useDb } from "@/hooks/use-data";
 import { services } from "@/services/factory";
@@ -22,12 +23,15 @@ export default function FamilyPage() {
   const people = useDb((d) => d.people);
   const memberships = useDb((d) => d.memberships);
   const invitations = useDb((d) => d.invitations);
+  const ownPersonId = useDb((d) => d.account.profile.personId);
+  const router = useRouter();
   const [saving, setSaving] = React.useState<string | null>(null);
+  const [previewing, setPreviewing] = React.useState<string | null>(null);
 
   const active = memberships.filter((m) => m.status === "active");
   const groupCapsules = capsules.filter((c) => !group || group.capsuleIds.includes(c.id) || c.familyGroupId === group.id);
-  // Everyone with a role somewhere, plus the people the capsules are about.
-  const memberIds = new Set([...active.map((m) => m.personId), ...groupCapsules.map((c) => c.subjectPersonId).filter(Boolean)] as string[]);
+  // Everyone who has had a role somewhere (so access can be given back), plus the people the capsules are about.
+  const memberIds = new Set([...memberships.map((m) => m.personId), ...groupCapsules.map((c) => c.subjectPersonId).filter(Boolean)] as string[]);
   const members = people.filter((p) => memberIds.has(p.id)).sort((a, b) => a.familyName.localeCompare(b.familyName) || a.givenName.localeCompare(b.givenName));
   const pending = invitations.filter((i) => i.status === "prepared" || i.status === "simulated_sent");
 
@@ -37,6 +41,18 @@ export default function FamilyPage() {
     setSaving(null);
     if (r.status === "ok") toast.success(role ? `${name} is now ${roleLabels[role].label.toLowerCase()} on ${capsuleName}` : `${name} removed from ${capsuleName}`, "Saved on this device. No one was notified.");
     else toast.error(r.status === "error" ? r.message : "Couldn't change the role");
+  };
+
+  // Open the archive they can see (or the studio, for organizers) as that person.
+  const preview = async (personId: string) => {
+    setPreviewing(personId);
+    const r = await services().auth.previewAsPerson(personId);
+    setPreviewing(null);
+    if (r.status !== "ok") return toast.error("Couldn't start the preview", r.status === "error" ? r.message : undefined);
+    const roles = groupCapsules.map((c) => ({ c, role: membershipRole(memberships, personId, c.id) }));
+    if (roles.some((x) => x.role === "organizer")) return router.push("/app");
+    const visible = roles.find((x) => x.role) ?? roles[0];
+    router.push(visible ? `/view/${visible.c.id}` : "/app");
   };
 
   return (
@@ -62,13 +78,13 @@ export default function FamilyPage() {
       <div className="mb-8 flex gap-3 rounded-[14px] bg-info-soft px-5 py-4 text-[0.9375rem]">
         <Info className="mt-0.5 size-5 shrink-0 text-info" />
         <p className="text-ink-2">
-          <strong className="font-medium text-ink">Roles are demonstrated, not enforced.</strong> Everyone in this preview uses the same browser. Secure sign-in and real access control come with accounts — until then, use the persona switcher to see each view.
+          <strong className="font-medium text-ink">Roles are demonstrated, not enforced.</strong> Everyone in this preview uses the same browser. Secure sign-in and real access control come with accounts — until then, use <em>Preview</em> to see exactly what each person would see.
         </p>
       </div>
 
       <Panel title="Who can do what, where" description="Change a role and the studio, viewer and invitations follow it immediately." bodyClassName="p-0 sm:p-0">
         <div className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-evergreen" tabIndex={0} role="region" aria-label="Roles by capsule">
-          <table className="w-full min-w-[640px] text-[0.9375rem]">
+          <table className="w-full min-w-[760px] text-[0.9375rem]">
             <thead>
               <tr className="border-b border-line text-left">
                 <th scope="col" className="sticky left-0 z-[1] bg-surface px-6 py-3 text-[0.8125rem] font-normal text-ink-3">
@@ -81,6 +97,9 @@ export default function FamilyPage() {
                     </Link>
                   </th>
                 ))}
+                <th scope="col" className="px-3 py-3 text-right text-[0.8125rem] font-normal text-ink-3">
+                  <span className="pr-3">See their view</span>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -127,6 +146,15 @@ export default function FamilyPage() {
                       </td>
                     );
                   })}
+                  <td className="px-3 py-3 text-right">
+                    {p.id === ownPersonId ? (
+                      <span className="pr-3 text-[0.8125rem] text-ink-3">You</span>
+                    ) : (
+                      <Button size="sm" variant="ghost" leading={<Eye className="size-4" />} loading={previewing === p.id} onClick={() => void preview(p.id)} aria-label={`Preview as ${p.displayName}`}>
+                        Preview
+                      </Button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

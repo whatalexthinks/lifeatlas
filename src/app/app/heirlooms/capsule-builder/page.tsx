@@ -3,13 +3,13 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, BookOpen, Box, FlaskConical, HardDrive, Image as ImageIcon, Mail, ScrollText, ShoppingBag } from "lucide-react";
+import { AlertTriangle, BookOpen, Box, FileText, FlaskConical, HardDrive, Image as ImageIcon, Mail, ScrollText, ShoppingBag } from "lucide-react";
 import type { BoxConfiguration } from "@/domain/models";
 import { boxEngravingExtras, boxFinishExtras, quoteBox } from "@/domain/commerce/pricing";
 import { PageHeader, Panel } from "@/components/studio/primitives";
 import { KeepsakeBox, boxFinishes } from "@/components/marketing/objects";
 import { MediaImage } from "@/components/media/media-image";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge, DemoNotice, Skeleton, toast } from "@/components/ui/feedback";
 import { ChoiceCards, Field, Input, Segmented, Select, Switch } from "@/components/ui/field";
 import { useDb, useHydrated } from "@/hooks/use-data";
@@ -43,7 +43,7 @@ function CapsuleBuilder() {
   const mutate = useDemoStore((s) => s.mutate);
 
   const editingId = params.get("id") ?? undefined;
-  const [capsuleId, setCapsuleId] = React.useState(() => heirlooms.find((h) => h.id === editingId)?.capsuleId ?? params.get("capsule") ?? "cap_margaret");
+  const [capsuleId, setCapsuleId] = React.useState(() => heirlooms.find((h) => h.id === editingId)?.capsuleId ?? params.get("capsule") ?? (capsules.some((c) => c.id === "cap_margaret") ? "cap_margaret" : capsules[0]?.id ?? ""));
   const capsule = capsules.find((c) => c.id === capsuleId) ?? capsules[0];
   const [savedId, setSavedId] = React.useState<string | undefined>(() => heirlooms.find((h) => h.id === editingId && h.kind === "keepsake_box")?.id);
   const [busy, setBusy] = React.useState<null | "save" | "order">(null);
@@ -124,7 +124,7 @@ function CapsuleBuilder() {
     <div className="mx-auto max-w-[1320px]">
       <PageHeader
         back={{ href: "/app/heirlooms", label: "Heirlooms" }}
-        eyebrow="Keepsake Box · Preview"
+        eyebrow="Physical LifeCapsule · Preview"
         title={
           <>
             A place to keep <em>what matters.</em>
@@ -132,19 +132,26 @@ function CapsuleBuilder() {
         }
         description="A finished box for the shelf or the mantel — the book, letters, photographs and an archive copy, together. Designed for display, not burial."
         actions={
-          <Button
-            variant="secondary"
-            loading={busy === "save"}
-            disabled={!!busy}
-            onClick={async () => {
-              setBusy("save");
-              const id = await save();
-              setBusy(null);
-              if (id) toast.success("Box design saved on this device");
-            }}
-          >
-            Save design
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {savedId ? (
+              <ButtonLink variant="ghost" href={`/proof/box/${savedId}`} target="_blank" leading={<FileText className="size-4" />}>
+                Proof
+              </ButtonLink>
+            ) : null}
+            <Button
+              variant="secondary"
+              loading={busy === "save"}
+              disabled={!!busy}
+              onClick={async () => {
+                setBusy("save");
+                const id = await save();
+                setBusy(null);
+                if (id) toast.success("Box design saved on this device", "Open the proof to check the engraving and contents.");
+              }}
+            >
+              Save design
+            </Button>
+          </div>
         }
       />
 
@@ -323,7 +330,7 @@ function CapsuleBuilder() {
             </Button>
             <p className="mt-3 text-center text-[0.8125rem] text-ink-3">Preview only — no payment is charged and nothing is made.</p>
           </section>
-          <DemoNotice title="The Keepsake Box isn't available to order yet">You can design it and walk through a demo order. Real orders open once a workshop partner is chosen and samples are approved.</DemoNotice>
+          <DemoNotice title="Nothing ships from this preview">You can design it and walk through a demo order. Real orders open once a workshop partner is chosen and samples are approved.</DemoNotice>
         </div>
       </div>
     </div>

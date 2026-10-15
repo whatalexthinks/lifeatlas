@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Lock } from "lucide-react";
 import type { FutureMessage } from "@/domain/models";
-import { BrandMark } from "@/components/brand/logo";
+import { BrandMark, Wordmark } from "@/components/brand/logo";
 import { LetterOpening } from "@/components/future/letter-opening";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/feedback";
@@ -33,11 +33,9 @@ export default function FutureOpenPage() {
   return (
     <div className="theme-evening min-h-dvh bg-night">
       <header className="mx-auto flex h-20 max-w-5xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="inline-flex items-center gap-2.5 text-[#c4ad86]">
-          <BrandMark className="size-8" />
-          <span className="font-serif text-[1.4rem] text-night-ink">
-            Life<em>Atlas</em>
-          </span>
+        <Link href="/" className="inline-flex items-center gap-2.5 text-[#d7bc92]">
+          <BrandMark className="size-8 text-oxblood" title="" />
+          <Wordmark className="text-night-ink" />
         </Link>
         <span className="rounded-full bg-white/10 px-3 py-1.5 text-[0.8125rem] text-night-ink-2">Simulated opening · no letter was delivered</span>
       </header>
@@ -53,7 +51,7 @@ export default function FutureOpenPage() {
           <LetterOpening message={message} mode={message.isExample ? "example" : "preview"} />
         ) : (
           <div className="pt-16 text-center">
-            <span className="mx-auto grid size-16 place-items-center rounded-full bg-white/10 text-[#c4ad86]">
+            <span className="mx-auto grid size-16 place-items-center rounded-full bg-white/10 text-[#d7bc92]">
               <Lock className="size-7" />
             </span>
             <h1 className="mt-6 font-serif text-[clamp(2.4rem,1.8rem+2.5vw,3.6rem)] leading-tight text-night-ink">This letter is sealed until {formatDate(message.release.date, "long")}.</h1>

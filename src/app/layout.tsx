@@ -4,23 +4,24 @@ import { editorial } from "./fonts";
 import { GeistSans } from "geist/font/sans";
 import { Providers } from "@/components/shared/providers";
 import { appConfig } from "@/lib/config";
+import { brand } from "@/config/brand";
 import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appConfig.siteUrl),
   title: {
-    default: "LifeAtlas — Every life has a story worth keeping",
-    template: "%s · LifeAtlas",
+    default: `${brand.name} — A life is made of moments. Keep them close.`,
+    template: `%s · ${brand.name}`,
   },
   description:
-    "Save their voice. Gather their photographs. Remember the places that shaped them. Create a private family archive to revisit and pass down.",
-  applicationName: "LifeAtlas",
+    "Bring your stories, photographs, voices and favorite memories together in one beautiful, private place — for yourself, someone you love, or your whole family.",
+  applicationName: brand.name,
   // The share image comes from app/opengraph-image.tsx (Next adds og:image automatically).
   openGraph: {
     type: "website",
-    siteName: "LifeAtlas",
-    title: "LifeAtlas — A whole life. In their words.",
-    description: "A private family archive of voices, photographs, places and letters.",
+    siteName: brand.name,
+    title: `${brand.name} — A life is made of moments. Keep them close.`,
+    description: "Stories, voices, photographs and memories, kept together for the people who matter.",
   },
   twitter: { card: "summary_large_image" },
   icons: { icon: "/icon.svg" },
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f8f6f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#131815" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1a18" },
   ],
   width: "device-width",
   initialScale: 1,

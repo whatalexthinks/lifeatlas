@@ -1,11 +1,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { ArrowUpRight, Check, Plus } from "lucide-react";
-import { defaultCatalog } from "@/data/product-catalog";
-import type { Product } from "@/domain/models";
 import { ButtonLink } from "@/components/ui/button";
 import { Reveal } from "@/components/shared/reveal";
-import { cn, formatMoney } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 export function Container({ children, className, size = "default" }: { children: React.ReactNode; className?: string; size?: "default" | "narrow" | "wide" }) {
   return <div className={cn("mx-auto w-full px-5 sm:px-8", size === "narrow" ? "max-w-[880px]" : size === "wide" ? "max-w-[1440px]" : "max-w-[1320px]", className)}>{children}</div>;
@@ -30,7 +28,7 @@ export function SectionHeading({
 }) {
   return (
     <Reveal className={cn(align === "center" && "mx-auto text-center", "max-w-3xl", className)}>
-      {eyebrow ? <p className={cn("eyebrow", align === "center" && "justify-center", tone === "light" && "text-[#c4ad86]")}>{eyebrow}</p> : null}
+      {eyebrow ? <p className={cn("eyebrow", align === "center" && "justify-center", tone === "light" && "text-[#d7bc92]")}>{eyebrow}</p> : null}
       <H className={cn("mt-5 font-serif text-heading", H === "h1" && "text-title", tone === "light" ? "text-night-ink" : "text-ink")}>{title}</H>
       {lead ? <div className={cn("mt-5 text-lead", tone === "light" ? "text-night-ink-2" : "text-ink-2", align === "center" && "mx-auto max-w-2xl")}>{lead}</div> : null}
     </Reveal>
@@ -48,62 +46,6 @@ export function PageHero({ eyebrow, title, lead, children, className }: { eyebro
         {children ? <div className="mt-9">{children}</div> : null}
       </Container>
     </section>
-  );
-}
-
-const planOrder = ["personal", "family", "living"];
-
-export function PricingCards({ catalog = defaultCatalog, compact = false }: { catalog?: Product[]; compact?: boolean }) {
-  const plans = planOrder.map((id) => catalog.find((p) => p.id === id)).filter((p): p is Product => !!p);
-  return (
-    <div className="grid gap-5 lg:grid-cols-3">
-      {plans.map((p, i) => {
-        const featured = p.id === "family";
-        return (
-          <Reveal key={p.id} delay={i * 80} className={cn("relative flex flex-col rounded-[24px] p-7 sm:p-8", featured ? "bg-night text-night-ink shadow-lg" : "card-paper")}>
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className={cn("eyebrow plain", featured && "text-[#c4ad86]")}>{p.tagline}</p>
-              {featured ? <span className="rounded-full bg-[#c4ad86] px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-[#1b221e]">For the whole family</span> : null}
-            </div>
-            <h3 className="mt-4 font-serif text-[2rem] leading-tight">{p.name}</h3>
-            <p className="mt-4 flex items-baseline gap-2">
-              <span className="font-serif text-[3.25rem] leading-none tracking-[-0.03em]">{formatMoney(p.price.amount)}</span>
-              <span className={cn("text-[0.9375rem]", featured ? "text-night-ink-2" : "text-ink-3")}>{p.price.interval === "year" ? "per year, optional" : "one time"}</span>
-            </p>
-            <p className={cn("mt-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em]", featured ? "text-night-ink-3" : "text-ink-4")}>Test price · not charged in this preview</p>
-            <p className={cn("mt-5 text-[0.9875rem] leading-relaxed", featured ? "text-night-ink-2" : "text-ink-2")}>{p.description}</p>
-            {!compact ? (
-              <ul className="mt-6 space-y-2.5">
-                {p.inclusions.map((x) => (
-                  <li key={x} className="flex gap-2.5 text-[0.9375rem] leading-snug">
-                    <Check className={cn("mt-0.5 size-4 shrink-0", featured ? "text-[#c4ad86]" : "text-evergreen")} />
-                    <span className={featured ? "text-night-ink" : "text-ink"}>{x}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-            {!compact && p.limitations.length ? (
-              <div className={cn("mt-5 border-t pt-4 text-[0.8125rem] leading-relaxed", featured ? "border-night-line text-night-ink-3" : "border-line text-ink-3")}>
-                {p.limitations.map((l) => (
-                  <p key={l}>{l}</p>
-                ))}
-              </div>
-            ) : null}
-            <div className="mt-auto pt-8">
-              <ButtonLink
-                href={p.id === "living" ? "/pricing#renewal" : `/checkout/preview?product=${p.id}`}
-                variant={featured ? "light" : "secondary"}
-                size="lg"
-                block
-                trailing={<ArrowUpRight className="size-4" />}
-              >
-                {p.id === "living" ? "Learn about renewal" : `Choose ${p.name}`}
-              </ButtonLink>
-            </div>
-          </Reveal>
-        );
-      })}
-    </div>
   );
 }
 
@@ -153,7 +95,7 @@ export function FeatureList({ items, tone = "ink" }: { items: string[]; tone?: "
     <ul className="space-y-3">
       {items.map((x) => (
         <li key={x} className="flex gap-3 text-[1rem] leading-snug">
-          <span className={cn("mt-1 grid size-5 shrink-0 place-items-center rounded-full", tone === "light" ? "bg-white/10 text-[#c4ad86]" : "bg-evergreen-soft text-evergreen")}>
+          <span className={cn("mt-1 grid size-5 shrink-0 place-items-center rounded-full", tone === "light" ? "bg-white/10 text-[#d7bc92]" : "bg-evergreen-soft text-evergreen")}>
             <Check className="size-3" strokeWidth={3} />
           </span>
           <span className={tone === "light" ? "text-night-ink" : "text-ink"}>{x}</span>
@@ -165,7 +107,7 @@ export function FeatureList({ items, tone = "ink" }: { items: string[]; tone?: "
 
 export function TextLink({ href, children, tone = "ink" }: { href: string; children: React.ReactNode; tone?: "ink" | "light" }) {
   return (
-    <Link href={href} className={cn("group inline-flex items-center gap-1.5 text-[1rem] font-medium", tone === "light" ? "text-[#d2bb93]" : "text-evergreen")}>
+    <Link href={href} className={cn("group inline-flex items-center gap-1.5 text-[1rem] font-medium", tone === "light" ? "text-[#d7bc92]" : "text-evergreen")}>
       <span className="link-underline">{children}</span>
       <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
     </Link>

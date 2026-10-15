@@ -10,6 +10,7 @@ import { DemoNotice, Skeleton, toast } from "@/components/ui/feedback";
 import { OrderStatusBadge } from "@/components/studio/primitives";
 import { useDb, useHydrated } from "@/hooks/use-data";
 import { formatDate, formatMoney } from "@/lib/utils";
+import { brand } from "@/config/brand";
 
 function CompleteInner() {
   const orderId = useSearchParams().get("order");
@@ -91,7 +92,7 @@ function CompleteInner() {
       {gift ? (
         <section className="mt-8 rounded-[20px] bg-ivory p-6">
           <p className="font-medium">Share the gift when you&rsquo;re ready</p>
-          <p className="mt-1 text-[0.9375rem] text-ink-2">LifeAtlas didn&rsquo;t send anything. Copy the link, or open the gift to see what {gift.recipient.name.split(" ")[0]} will see.</p>
+          <p className="mt-1 text-[0.9375rem] text-ink-2">{brand.name} didn&rsquo;t send anything. Copy the link, or open the gift to see what {gift.recipient.name.split(" ")[0]} will see.</p>
           <div className="mt-4 flex items-center gap-2 rounded-[12px] border border-line bg-surface px-3 py-2">
             <code className="min-w-0 flex-1 truncate font-mono text-[0.8125rem]">{giftLink}</code>
             <Button

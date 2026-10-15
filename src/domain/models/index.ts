@@ -8,6 +8,7 @@ export * from "./preservation";
 export * from "./commerce";
 export * from "./heirloom";
 export * from "./ops";
+export * from "./drafts";
 
 import type { AccountPreferences, CapsuleMembership, FamilyGroup, Persona, Person, Profile, Relationship, User } from "./people";
 import type {
@@ -26,7 +27,7 @@ import type { Contribution, Invitation, ShareGrant } from "./collaboration";
 import type { Gift } from "./gifting";
 import type { FutureMessage, SuccessorDesignation } from "./future";
 import type { ExportJob, IntegrityCheck } from "./preservation";
-import type { Cart, CheckoutSession, Invoice, Order, Product, Refund, Subscription } from "./commerce";
+import type { Cart, CheckoutSession, Invoice, Order, Product, Refund, Subscription, CreditEntry, Promotion, PromotionRedemption, ReferralState } from "./commerce";
 import type { HeirloomConfiguration, PrintProject } from "./heirloom";
 import type { AnalyticsEvent, AuditEvent, Notification, SupportRequest } from "./ops";
 
@@ -34,6 +35,8 @@ import type { AnalyticsEvent, AuditEvent, Notification, SupportRequest } from ".
  * The full local demonstration database. Persisted to IndexedDB.
  * Each top-level collection maps to a future Postgres table.
  */
+import type { CaptureDraft, GatheringSession, LetterDraft } from "./drafts";
+
 export interface DemoDatabase {
   schemaVersion: number;
   seededAt: string;
@@ -75,7 +78,23 @@ export interface DemoDatabase {
   analytics: AnalyticsEvent[];
   supportRequests: SupportRequest[];
   catalog: Product[];
+  /** Bumped when the default catalog changes shape or prices; older saved catalogs are replaced. */
+  catalogVersion: number;
+  /** Bumped when sample capsules or the question library change; new ones merge in by id. */
+  sampleVersion: number;
+  /** The person chose to remove the sample capsules; newer samples aren't added back. */
+  samplesRemoved?: boolean;
+  promotions: Promotion[];
+  promotionRedemptions: PromotionRedemption[];
+  referrals: ReferralState;
+  credits: CreditEntry[];
   bookmarks: { capsuleId: string; memoryId: string; at: string }[];
+  /** Questions the account has starred, across every capsule. */
+  questionFavorites: string[];
+  /** Answers in progress and family gathering sessions — autosaved, resumable. */
+  captureDrafts: CaptureDraft[];
+  letterDrafts: LetterDraft[];
+  gatherings: GatheringSession[];
   /** Capsule wizard draft — persisted so users can leave and resume. */
   wizardDraft: unknown | null;
 }

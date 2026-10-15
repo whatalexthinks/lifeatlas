@@ -14,6 +14,8 @@ import { useMediaQuery } from "@/hooks/use-reveal";
 import { services } from "@/services/factory";
 import { useDemoStore } from "@/store/demo-store";
 import { cn } from "@/lib/utils";
+import { brand } from "@/config/brand";
+import { removeSampleData } from "@/store/migrate";
 
 export default function SettingsPage() {
   const hydrated = useHydrated();
@@ -23,6 +25,9 @@ export default function SettingsPage() {
 function Settings() {
   const account = useDb((d) => d.account);
   const reset = useDemoStore((s) => s.reset);
+  const mutate = useDemoStore((s) => s.mutate);
+  const sampleCount = useDb((d) => d.capsules.filter((c) => c.isSample).length);
+  const [samplesOpen, setSamplesOpen] = React.useState(false);
   const [profile, setProfile] = React.useState({ displayName: account.profile.displayName, givenName: account.profile.givenName, pronouns: account.profile.pronouns ?? "" });
   const [savingProfile, setSavingProfile] = React.useState(false);
   const [eraseOpen, setEraseOpen] = React.useState(false);
@@ -35,7 +40,7 @@ function Settings() {
 
   return (
     <div className="mx-auto max-w-[980px]">
-      <PageHeader eyebrow="Account" title="Settings" description="How LifeAtlas looks and feels for you, and what's kept on this device." />
+      <PageHeader eyebrow="Account" title="Settings" description={`How ${brand.name} looks and feels for you, and what's kept on this device.`} />
 
       <div className="space-y-6">
         <Panel title="Profile" description="How you appear on stories you add and invitations you prepare.">
@@ -77,9 +82,9 @@ function Settings() {
               <div className="mt-3 grid grid-cols-3 gap-3" role="radiogroup" aria-label="Theme">
                 {(
                   [
-                    { value: "light", label: "Daylight", icon: Sun, swatch: "bg-[#f8f8f3] border-[#dfe2d6]", ink: "bg-[#202d27]" },
+                    { value: "light", label: "Daylight", icon: Sun, swatch: "bg-[#f8f6f1] border-[#dfe2d6]", ink: "bg-[#252421]" },
                     { value: "evening", label: "Evening", icon: Moon, swatch: "bg-[#141a17] border-[#2c3631]", ink: "bg-[#e8e6dc]" },
-                    { value: "system", label: "Match device", icon: Monitor, swatch: "bg-[linear-gradient(135deg,#f8f8f3_50%,#141a17_50%)] border-[#cfd3c6]", ink: "bg-[#7a8278]" },
+                    { value: "system", label: "Match device", icon: Monitor, swatch: "bg-[linear-gradient(135deg,#f8f6f1_50%,#141a17_50%)] border-[#cfd3c6]", ink: "bg-[#7a8278]" },
                   ] as const
                 ).map((t) => (
                   <button
@@ -180,6 +185,19 @@ function Settings() {
           </div>
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line py-5">
             <div className="max-w-lg">
+              <p className="font-medium">Remove the sample capsules</p>
+              <p className="mt-1 text-[0.9375rem] text-ink-2">
+                {sampleCount
+                  ? `Hides the ${sampleCount} example capsules about the fictional Ellis family, with their stories and pictures. Your own capsules stay exactly as they are.`
+                  : "The sample capsules have been removed. Erasing demo data below brings them back."}
+              </p>
+            </div>
+            <Button variant="secondary" disabled={!sampleCount} onClick={() => setSamplesOpen(true)}>
+              Remove samples
+            </Button>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line py-5">
+            <div className="max-w-lg">
               <p className="font-medium">Erase demo data on this device</p>
               <p className="mt-1 text-[0.9375rem] text-ink-2">Removes everything you&rsquo;ve added — stories, recordings, letters, orders — and restores the fictional Ellis family.</p>
             </div>
@@ -205,6 +223,24 @@ function Settings() {
         </Panel>
       </div>
 
+      <ConfirmDialog
+        open={samplesOpen}
+        onOpenChange={setSamplesOpen}
+        title="Remove the sample capsules?"
+        confirmLabel="Remove samples"
+        body="The example capsules and everything in them will be removed from this browser. Anything you created stays. You can bring the samples back by erasing demo data."
+        onConfirm={() => {
+          let removed = 0;
+          mutate(
+            (d) => {
+              removed = removeSampleData(d).capsules;
+            },
+            { actor: account.profile.displayName, action: "demo.samples_removed" },
+          );
+          setSamplesOpen(false);
+          toast.success(removed === 1 ? "Removed 1 sample capsule" : `Removed ${removed} sample capsules`, "Your own capsules are untouched.");
+        }}
+      />
       <ConfirmDialog
         open={eraseOpen}
         onOpenChange={setEraseOpen}

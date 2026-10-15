@@ -33,7 +33,7 @@ export default function ViewerLetters() {
                 <FutureStatusBadge status={l.status} example={l.isExample} />
               </div>
               {l.isExample ? (
-                <Link href={`/future/open/${l.token}`} className={cn("mt-5 inline-flex items-center gap-1.5 font-medium hover:underline", night ? "text-[#d2bb93]" : "text-evergreen")}>
+                <Link href={`/future/open/${l.token}`} className={cn("mt-5 inline-flex items-center gap-1.5 font-medium hover:underline", night ? "text-[#d7bc92]" : "text-evergreen")}>
                   Preview what opening feels like <ArrowUpRight className="size-4" />
                 </Link>
               ) : (

@@ -12,19 +12,19 @@ import { services } from "@/services/factory";
 
 const nav = [
   { href: "/how-it-works", label: "How it works" },
-  { href: "/demo", label: "The experience" },
-  { href: "/heirlooms", label: "Heirlooms" },
+  { href: "/couples", label: "Couples" },
+  { href: "/families", label: "Families" },
+  { href: "/legacy", label: "Legacy" },
+  { href: "/physical-capsules", label: "Keepsakes" },
   { href: "/gifts", label: "Gifts" },
   { href: "/pricing", label: "Pricing" },
 ];
 
 const moreNav = [
-  { href: "/storytelling", label: "Storytelling" },
-  { href: "/memory-map", label: "Memory map" },
-  { href: "/family-collaboration", label: "Family collaboration" },
-  { href: "/letters-through-time", label: "Letters Through Time" },
-  { href: "/preservation", label: "Preservation" },
+  { href: "/personal", label: "Your own story" },
+  { href: "/examples", label: "Example capsules" },
   { href: "/faq", label: "Questions" },
+  { href: "/support", label: "Support" },
 ];
 
 export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" }) {
@@ -50,7 +50,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
     >
       <div className="mx-auto flex h-[84px] max-w-[1380px] items-center justify-between gap-6 px-5 sm:px-8">
         <Logo />
-        <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label="Main" className="hidden items-center gap-0.5 xl:flex">
           {nav.map((n) => (
             <Link
               key={n.href}
@@ -73,11 +73,11 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
             trailing={<ArrowUpRight className="size-4" />}
             onClick={() => services().analytics.track("landing_cta_clicked", { location: "header" })}
           >
-            Create a capsule
+            Create your capsule
           </ButtonLink>
           <RD.Root open={open} onOpenChange={setOpen}>
             <RD.Trigger asChild>
-              <button className="grid size-11 place-items-center rounded-full text-ink hover:bg-ivory lg:hidden" aria-label="Open menu">
+              <button className="grid size-11 place-items-center rounded-full text-ink hover:bg-ivory xl:hidden" aria-label="Open menu">
                 <Menu className="size-5" />
               </button>
             </RD.Trigger>
@@ -106,7 +106,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
                 </nav>
                 <div className="mt-auto grid gap-3 pt-8">
                   <ButtonLink href="/app/capsules/new" size="lg" block onClick={() => setOpen(false)}>
-                    Create a memory capsule
+                    Create Your LifeCapsule
                   </ButtonLink>
                   <ButtonLink href="/app" variant="secondary" size="lg" block onClick={() => setOpen(false)}>
                     Open the studio
@@ -122,7 +122,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
 }
 
 /** Mobile sticky CTA for long marketing pages. */
-export function MobileStickyCta({ label = "Create a memory capsule", href = "/app/capsules/new" }: { label?: string; href?: string }) {
+export function MobileStickyCta({ label = "Create Your LifeCapsule", href = "/app/capsules/new" }: { label?: string; href?: string }) {
   const [show, setShow] = React.useState(false);
   React.useEffect(() => {
     const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.9);

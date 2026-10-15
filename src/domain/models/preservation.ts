@@ -1,4 +1,5 @@
 import type { ID, ISODateTime } from "./common";
+import type { CapsuleKind } from "./capsule";
 
 /**
  * Preservation health is never inferred. Each state must come from a provider
@@ -79,8 +80,11 @@ export interface ArchiveManifest {
   mode: "demo_local";
   capsule: {
     id: ID;
+    /** Added within v1; older exports omit it. */
+    kind?: CapsuleKind;
     subjectName: string;
     title: string;
+    description?: string;
     birthYear?: number;
     dedication?: string;
   };
@@ -92,7 +96,8 @@ export interface ArchiveManifest {
     title: string;
     narrative: string;
     quote?: string;
-    date: { display: string; precision: string; year?: number; month?: number; day?: number };
+    /** `display` is for people; the other fields restore the date exactly. Season, decade, lifeStage and note were added within v1 and may be absent in older exports. */
+    date: { display: string; precision: string; year?: number; month?: number; day?: number; season?: string; decade?: number; lifeStage?: string; age?: number; note?: string };
     chapter: string;
     placeId?: ID;
     peopleIds: ID[];

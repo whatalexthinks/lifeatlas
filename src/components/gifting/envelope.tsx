@@ -6,11 +6,11 @@ import { BrandMark } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 export const envelopeColors: Record<GiftReveal["color"], { paper: string; liner: string; seal: string; ink: string }> = {
-  evergreen: { paper: "#2f4339", liner: "#d7bd8a", seal: "#b5513c", ink: "#f2eee5" },
+  evergreen: { paper: "#2f4339", liner: "#d7bc92", seal: "#b5513c", ink: "#f3efe7" },
   terracotta: { paper: "#a85f45", liner: "#f3e3c8", seal: "#2f4339", ink: "#fbf1e6" },
   slate: { paper: "#4b5d6e", liner: "#e6d3a8", seal: "#a85f45", ink: "#eef1f3" },
   brass: { paper: "#c8b089", liner: "#2f4339", seal: "#7a2a1c", ink: "#2b2418" },
-  ink: { paper: "#1f2422", liner: "#c4ad86", seal: "#a85f45", ink: "#eee9de" },
+  ink: { paper: "#1f2422", liner: "#d7bc92", seal: "#a85f45", ink: "#f1ede6" },
 };
 
 export const artworkLabels: Record<EnvelopeArtwork, string> = {

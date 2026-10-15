@@ -7,6 +7,7 @@ import { deleteBlob, getBlob, isQuotaError, putBlob } from "@/lib/storage/idb";
 import { sha256Hex, uid } from "@/lib/utils";
 import { fail, notConfigured, ok, type MediaStorageProvider, type TranscriptionProvider } from "../contracts";
 import { actorName, db, latency, store } from "./shared";
+import { brand } from "@/config/brand";
 
 /** Object URLs for local blobs, created once per page session and revoked on removal. */
 const objectUrls = new Map<string, string>();
@@ -19,7 +20,7 @@ export const mockMedia: MediaStorageProvider = {
     try {
       await putBlob(blobKey, input.blob);
     } catch (e) {
-      if (isQuotaError(e)) return fail("quota", "This device is out of space for LifeAtlas. Download your archive or remove a recording, then try again.");
+      if (isQuotaError(e)) return fail("quota", `This device is out of space for ${brand.name}. Download your archive or remove a recording, then try again.`);
       return fail("unknown", "We couldn't save this file on this device. Nothing was lost from your existing archive.");
     }
     const checksum = await sha256Hex(await input.blob.arrayBuffer());

@@ -6,8 +6,9 @@ import { AudioLines, Images, Lock, Pin } from "lucide-react";
 import type { Memory } from "@/domain/models";
 import { MediaImage } from "@/components/media/media-image";
 import { MemoryStatusBadge } from "@/components/studio/primitives";
-import { usePlace } from "@/hooks/use-data";
-import { chapterById, chapterColorVar } from "@/data/chapters";
+import { useDb, usePlace } from "@/hooks/use-data";
+import { chapterColorVar } from "@/data/chapters";
+import { chapterFor } from "@/domain/capsule-kinds";
 import { formatFuzzyDate } from "@/lib/dates";
 import { cn, excerpt } from "@/lib/utils";
 
@@ -30,7 +31,8 @@ export function MemoryCard({
   catalog?: string;
 }) {
   const place = usePlace(memory.placeId);
-  const chapter = chapterById(memory.chapter);
+  const capsule = useDb((d) => d.capsules.find((c) => c.id === memory.capsuleId));
+  const chapter = chapterFor(capsule, memory.chapter);
   const cover = memory.photoIds[0];
   const body = (
     <>
