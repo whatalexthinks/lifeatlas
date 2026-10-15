@@ -56,7 +56,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
         </div>
       </div>
       <div className="mx-auto flex h-[80px] max-w-[1380px] items-center justify-between gap-6 px-5 sm:px-8">
-        <Logo />
+        <Logo tone="light" />
         <nav aria-label="Main" className="hidden items-center gap-0.5 xl:flex">
           {nav.map((n) => (
             <Link
@@ -114,7 +114,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
                 </nav>
                 <div className="mt-auto grid gap-3 pt-8">
                   <ButtonLink href="/app/capsules/new" size="lg" block onClick={() => setOpen(false)}>
-                    Create Your LifeCapsule
+                    Create a capsule
                   </ButtonLink>
                   <ButtonLink href="/app" variant="secondary" size="lg" block onClick={() => setOpen(false)}>
                     Open the studio
@@ -130,7 +130,7 @@ export function SiteHeader({ tone = "paper" }: { tone?: "paper" | "transparent" 
 }
 
 /** Mobile sticky CTA for long marketing pages. */
-export function MobileStickyCta({ label = "Create Your LifeCapsule", href = "/app/capsules/new" }: { label?: string; href?: string }) {
+export function MobileStickyCta({ label = "Create a capsule", href = "/app/capsules/new" }: { label?: string; href?: string }) {
   const [show, setShow] = React.useState(false);
   React.useEffect(() => {
     const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.9);

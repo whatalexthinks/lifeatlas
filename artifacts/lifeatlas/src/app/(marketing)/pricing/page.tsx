@@ -159,7 +159,7 @@ export default function PricingPage() {
         lead="Everything you make in the preview can be downloaded, whatever you choose."
         primary={
           <ButtonLink href="/app/capsules/new" size="xl">
-            Create Your LifeCapsule
+            Create a capsule
           </ButtonLink>
         }
         secondary={<ArrowLink href="/gifts">Give one as a gift</ArrowLink>}

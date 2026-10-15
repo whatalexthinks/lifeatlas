@@ -43,7 +43,7 @@ export const defaultPromotions: Promotion[] = [
     id: "promo_keepsake_gift",
     code: "KEEPSAKE25",
     name: "Keepsake welcome",
-    description: "$25 off a Physical LifeCapsule ordered with any plan.",
+    description: "$25 off a physical capsule ordered with any plan.",
     kind: "amount_off",
     amountOff: 2500,
     appliesTo: ["keepsake_box"],

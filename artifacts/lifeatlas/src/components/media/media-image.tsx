@@ -129,7 +129,14 @@ export function Plate({ id, className, alt, priority, focalY = 50 }: { id: strin
   const photo = photoForPlate(id);
   return (
     <div className={cn("relative overflow-hidden bg-linen", className)}>
-      <img src={photo?.url ?? `/plates/${id}`} alt={photo?.alt ?? alt} className="size-full object-cover" style={{ objectPosition: `50% ${focalY}%` }} loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} />
+      {photo ? (
+        <img src={photo.url} alt={photo.alt || alt} className="size-full object-cover" style={{ objectPosition: `50% ${focalY}%` }} loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} />
+      ) : (
+        <div className="grid size-full min-h-32 place-content-center justify-items-center gap-2 px-5 text-center text-ink-3" role="img" aria-label="No photograph supplied for this sample memory">
+          <ImageOff size={20} aria-hidden />
+          <span className="text-sm">No photograph supplied for this sample memory.</span>
+        </div>
+      )}
     </div>
   );
 }

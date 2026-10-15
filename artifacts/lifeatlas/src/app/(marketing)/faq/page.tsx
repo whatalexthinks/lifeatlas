@@ -65,7 +65,7 @@ export default function FaqPage() {
         lead="It's free to start on this device, and you can erase everything in one click."
         primary={
           <ButtonLink href="/app/capsules/new" size="xl">
-            Create Your LifeCapsule
+            Create a capsule
           </ButtonLink>
         }
         secondary={<ArrowLink href="/support">Support and help</ArrowLink>}

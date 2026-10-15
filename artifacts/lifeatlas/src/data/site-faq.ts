@@ -21,7 +21,7 @@ export const faqGroups: FaqGroup[] = [
       { q: "Whose story can a capsule hold?", a: "Your own, yours and your partner's, your family's, a parent's or grandparent's, your child's, or anyone special to you. The kind of capsule only changes which questions we suggest first and how chapters are named, any capsule can hold any kind of memory." },
       { q: "Do I need to write well, or know where to start?", a: "No. Pick a question from the library, or press Surprise Me, and answer it however is easiest: speak, type a few lines, or start from a photograph. Skip anything you'd rather not answer, save questions for later, and answer a favourite more than once." },
       { q: "Can I have more than one capsule?", a: "Yes. Many people keep one for themselves, one for their relationship and one for a parent. The Digital plan includes one capsule; the Family Plan includes up to five. Sample capsules never count." },
-      { q: "Is the sample family real?", a: "No. The Ellis family, their stories and their pictures are fictional. Illustrations were made for the demo, sample voices are synthesized, and the one photograph is AI-generated. Every sample is labelled." },
+      { q: "Is the sample family real?", a: "No. The Ellis family and their stories are fictional. The photographs are supplied examples and are not confirmed portraits of the people in those stories. Sample narration is synthetic." },
     ],
   },
   {
@@ -58,7 +58,7 @@ export const faqGroups: FaqGroup[] = [
     id: "plans",
     title: "Plans and payments",
     items: [
-      { q: "How much does it cost?", a: `You can start free on this device. The Digital LifeCapsule is ${formatMoney(launchPrices.digital.year)} a year (or ${formatMoney(launchPrices.digital.month)} a month) and the Family Plan is ${formatMoney(launchPrices.family.year)} a year (or ${formatMoney(launchPrices.family.month)} a month). The Premium Physical LifeCapsule (${formatMoney(launchPrices.physicalCapsule)}) and the Printed Legacy Book (from ${formatMoney(launchPrices.legacyBook)}) are optional add-ons. These are test prices.` },
+      { q: "How much does it cost?", a: `You can start free on this device. One digital capsule is ${formatMoney(launchPrices.digital.year)} a year (or ${formatMoney(launchPrices.digital.month)} a month) and the Family Plan is ${formatMoney(launchPrices.family.year)} a year (or ${formatMoney(launchPrices.family.month)} a month). A physical capsule (${formatMoney(launchPrices.physicalCapsule)}) and the Printed Legacy Book (from ${formatMoney(launchPrices.legacyBook)}) are optional add-ons. These are test prices.` },
       { q: "Will I be charged in the preview?", a: "No. Checkout creates a clearly labelled demonstration order. No payment provider is connected; please don't enter real card details anywhere." },
       { q: "What happens if I stop paying?", a: "You'll always be able to download a complete copy of your capsules. We'll publish the exact policy for read-only access and retention before any paid plan launches." },
       { q: "Do you have promotions or referral rewards?", a: "Founding-member and referral offers are part of the plan. Any giveaway will only run under published rules after legal review, none is running today." },
@@ -68,7 +68,7 @@ export const faqGroups: FaqGroup[] = [
     id: "keepsakes",
     title: "Physical keepsakes",
     items: [
-      { q: "What is the Premium Physical LifeCapsule?", a: "A gift-ready archival kit: a fitted keepsake box, memory prompt cards, acid-free photo sleeves and letter envelopes. The kit itself would ship once paid for; personal printed inserts are made only after you approve a proof." },
+      { q: "What is the physical capsule?", a: "A gift-ready archival kit: a fitted keepsake box, memory prompt cards, acid-free photo sleeves and letter envelopes. The kit itself would ship once paid for; personal printed inserts are made only after you approve a proof." },
       { q: "How does the Printed Legacy Book work?", a: "You choose the stories and photographs, design the cover and review a page-by-page proof. It's made to order, printed only after you approve that proof." },
       { q: "Can the physical capsule be buried?", a: "No. It's a display keepsake, not designed or rated for burial or long-term underground storage, and we won't claim otherwise." },
       { q: "Can I order one today?", a: "You can design both and place a demonstration order. Payments, printing and shipping aren't connected yet, so nothing is charged, made or sent." },

@@ -21,7 +21,7 @@ export default function MarketingPage() {
   const key = (params["*"] ?? "").replace(/\/+$/, "");
   const page = marketingPages[key];
   if (!page) notFound();
-  const cta = page.cta ?? ["Create Your LifeCapsule", "/app/capsules/new"];
+  const cta = page.cta ?? ["Create a capsule", "/app/capsules/new"];
   return <div className="la-page">
     <section className="la-page-hero"><Container>
       <p className="la-kicker">{page.eyebrow}</p>
@@ -40,6 +40,6 @@ export default function MarketingPage() {
       </div>}
     </Container></section>}
     {page.questions && <Container><section className="la-page-faq"><h2>A few things to know.</h2><FaqList items={page.questions} /></section></Container>}
-    <section className="la-final"><Container><p className="la-kicker">There’s so much left to ask.</p><h2>Start with someone<br /><em>you love.</em></h2><p>One question. One memory. A meaningful beginning.</p><ButtonLink href="/app/capsules/new" size="lg" trailing={<ArrowUpRight size={17} />}>Create Your LifeCapsule</ButtonLink></Container></section>
+    <section className="la-final"><Container><p className="la-kicker">There’s so much left to ask.</p><h2>Start with someone<br /><em>you love.</em></h2><p>One question. One memory. A meaningful beginning.</p><ButtonLink href="/app/capsules/new" size="lg" trailing={<ArrowUpRight size={17} />}>Create a capsule</ButtonLink></Container></section>
   </div>;
 }

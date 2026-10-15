@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   OurLifeCapsule design tokens
+   OurLife design tokens
    Semantic CSS variables first; Tailwind theme maps onto them so every
    utility (bg-paper, text-ink-2, border-line…) follows light/evening.
    ------------------------------------------------------------------ */
@@ -815,7 +815,7 @@
   }
 }
 
-/* Template marketing pages (legacy la-* system), recoloured to the OurLifeCapsule palette. */
+/* Template marketing pages (legacy la-* system), recoloured to the OurLife palette. */
 .la-home, .la-page { --la-muted: #6b665d; --la-rule: #e8e2d7; }
 .la-kicker { display: flex; align-items: center; gap: 9px; color: #763f43; font-size: .68rem; font-weight: 600; line-height: 1.5; letter-spacing: .12em; text-transform: uppercase; }
 .la-kicker > span { width: 6px; height: 6px; border-radius: 50%; background: #763f43; }

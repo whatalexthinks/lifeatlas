@@ -198,7 +198,7 @@ export default function PreservationPage() {
                     ))}
                 </ul>
               ) : null}
-              <p className="mt-2 text-[0.8125rem] text-ink-3">Checks this device only. Sample illustrations are generated, so they have nothing to check.</p>
+              <p className="mt-2 text-[0.8125rem] text-ink-3">Checks files saved on this device. Supplied example photographs are not your files and are not part of this check.</p>
             </div>
           ) : null}
           {capsuleChecks.length ? (

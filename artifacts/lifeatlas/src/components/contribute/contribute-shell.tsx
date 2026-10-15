@@ -5,7 +5,7 @@ import Link from "@/lib/router/link";
 import { useParams } from "@/lib/router/navigation";
 import { CalendarX2, Link2Off, ShieldOff, Type } from "lucide-react";
 import type { Capsule, Invitation } from "@/domain/models";
-import { BrandMark, Wordmark } from "@/components/brand/logo";
+import { Wordmark } from "@/components/brand/logo";
 import { ButtonLink } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/feedback";
 import { StorageAlert } from "@/components/ui/storage-alert";
@@ -68,7 +68,6 @@ export function ContributeShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-dvh bg-paper">
       <header className="mx-auto flex h-20 max-w-3xl items-center justify-between px-5 sm:px-8">
         <span className="inline-flex items-center gap-2.5 text-evergreen">
-          <BrandMark className="size-8 text-oxblood" title="" />
           <Wordmark className="text-ink" />
         </span>
         <button onClick={toggleText} className="inline-flex h-11 items-center gap-2 rounded-full border border-line-strong px-4 text-[0.9375rem] font-medium" aria-pressed={textSize === "large"}>

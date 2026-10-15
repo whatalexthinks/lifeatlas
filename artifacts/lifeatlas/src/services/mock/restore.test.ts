@@ -156,7 +156,7 @@ describe("restoring from an export", () => {
     const html = await x.inspectArchive(new File(["<!doctype html><html></html>"], "copy.html"));
     expect(html.status === "error" && html.message).toMatch(/offline reading copy/);
     const other = await x.inspectArchive(new File([JSON.stringify({ hello: "world" })], "notes.json"));
-    expect(other.status === "error" && other.message).toBe("This file isn't an OurLifeCapsule export.");
+    expect(other.status === "error" && other.message).toBe("This file isn't an OurLife Capsule export.");
     const broken = await x.inspectArchive(new File([new Uint8Array([0x50, 0x4b, 0x03, 0x04, 9, 9, 9])], "broken.zip"));
     expect(broken.status === "error" && broken.message).toMatch(/damaged or incomplete/);
     const noManifest = await x.inspectArchive(new File([zipSync({ "a.txt": strToU8("hi") }) as BlobPart], "other.zip"));

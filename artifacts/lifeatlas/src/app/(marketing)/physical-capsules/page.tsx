@@ -1,12 +1,13 @@
 import type { Metadata } from "@/lib/router/metadata";
 import { ButtonLink } from "@/components/ui/button";
 import { AddToBagButton } from "@/components/site/bag";
-import { BookObject, KeepsakeBox } from "@/components/marketing/objects";
+import { BookObject } from "@/components/marketing/objects";
 import { ArrowLink, CheckList, Container, Eyebrow, FinalCta, Heading, PageIntro, PreviewNote, Section, Split } from "@/components/site/kit";
 import { defaultCatalog } from "@/data/product-catalog";
 import { plans } from "@/domain/commerce/plans";
 import { formatMoney } from "@/lib/utils";
 import { brand } from "@/config/brand";
+import { PrintPhoto } from "@/components/marketing/home/editorial";
 
 export const metadata: Metadata = {
   title: "Physical capsules and legacy books",
@@ -41,11 +42,12 @@ export default function PhysicalCapsulesPage() {
           </>
         }
         media={
-          <div className="grid min-h-[380px] place-items-center rounded-[28px] bg-ivory p-10 sm:min-h-[480px]">
-            <div className="w-[70%] max-w-[360px]">
-              <KeepsakeBox finish="walnut" engraving="The Ellis Family · 1934, " open />
-            </div>
-          </div>
+          <PrintPhoto
+            slug="moss-green-box"
+            alt="A moss-green archival keepsake box"
+            caption="A physical home for the things that hold a story"
+            className="h-[400px] w-full rotate-[0.5deg] sm:h-[500px]"
+          />
         }
       />
 
@@ -190,7 +192,7 @@ export default function PhysicalCapsulesPage() {
         lead="Every keepsake starts with a capsule, and the capsule is free to start."
         primary={
           <ButtonLink href="/app/capsules/new" size="xl">
-            Create Your LifeCapsule
+            Create a capsule
           </ButtonLink>
         }
         secondary={<ArrowLink href="/pricing">See pricing</ArrowLink>}

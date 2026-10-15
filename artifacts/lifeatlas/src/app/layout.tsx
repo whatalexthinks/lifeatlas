@@ -6,7 +6,7 @@ import { brand } from "@/config/brand";
 export const metadata: Metadata = {
   metadataBase: new URL(appConfig.siteUrl),
   title: {
-    default: `${brand.name} · Digital and physical family memory capsules`,
+    default: `${brand.name} Capsule · Digital and physical family memory capsules`,
     template: `%s · ${brand.name}`,
   },
   description:
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: brand.name,
-    title: `${brand.name} · Beyond the family tree`,
+    title: `${brand.name} Capsule · Beyond the family tree`,
     description: "A place and a structure for family stories, voices, photographs and letters. Digital memory capsules and optional physical keepsakes.",
   },
   twitter: { card: "summary_large_image" },

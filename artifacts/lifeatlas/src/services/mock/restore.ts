@@ -95,7 +95,7 @@ async function inspectArchive(file: File) {
   if (!parsed.success) {
     const schema = (raw as { schema?: unknown; schemaVersion?: unknown } | null)?.schema;
     if (schema === "lifeatlas.archive") return fail("validation", "This export uses a format version this preview doesn't recognise, or parts of it are missing.");
-    return fail("validation", `This file isn't an ${brand.name} export.`);
+    return fail("validation", `This file isn't an ${brand.name} ${brand.product} export.`);
   }
   const manifest = parsed.data;
 

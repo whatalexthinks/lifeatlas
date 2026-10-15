@@ -12,6 +12,7 @@ import { mockMedia } from "./media";
 import { restoreMethods } from "./restore";
 import { actorName, db, latency, pushNotification, store } from "./shared";
 import { brand } from "@/config/brand";
+import { photoForPlate } from "@/lib/media/editorial-photos";
 
 const EXT: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -61,10 +62,13 @@ export function selectExportContent(d: DemoDatabase, capsuleId: string, options:
 }
 
 function mediaDecision(asset: MediaAsset, options: ExportOptions): { include: boolean; reason?: string } {
+  if (asset.source.kind === "plate" && !photoForPlate(asset.source.plateId)) {
+    return { include: false, reason: "No photograph was supplied for this sample memory" };
+  }
   if (asset.kind === "audio" && !options.includeAudio) return { include: false, reason: "Audio excluded by your choice" };
   if (asset.kind === "image" && !options.includePhotos) return { include: false, reason: "Photos excluded by your choice" };
   if (asset.kind === "video" && !options.includePhotos) return { include: false, reason: "Photos and videos excluded by your choice" };
-  if (asset.source.kind === "plate" && !options.includeSamplePlates) return { include: false, reason: "Sample illustration (not your file)" };
+  if (asset.source.kind === "plate" && !options.includeSamplePlates) return { include: false, reason: "Supplied example photograph, not your file" };
   if (asset.source.kind === "remote") return { include: false, reason: "Stored in the cloud, not connected in this preview" };
   return { include: true };
 }
@@ -265,7 +269,7 @@ export const mockExport: ExportBuilder = {
         notices: [
           `Created from an ${brand.name} demonstration. Data came from this browser on this device only; nothing was uploaded.`,
           "Coordinates are rounded to city level.",
-          ...(media.some((m) => m.sampleNotice) ? ["Sample illustrations and synthetic narration are labelled; they are not real photographs or voices."] : []),
+          ...(media.some((m) => m.sampleNotice) ? ["Photographs in the example archive are supplied samples. The family stories are fictional, and sample narration is synthetic."] : []),
         ],
       };
       const base = `${brand.filePrefix}-${slug(capsule.subjectName)}-${new Date().toISOString().slice(0, 10)}`;

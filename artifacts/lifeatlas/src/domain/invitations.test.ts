@@ -15,7 +15,7 @@ describe("what an invitation explains", () => {
   it("says who is asking and what the capsule is", () => {
     const [from, what] = explainInvitation({ ...base, invitation: { role: "contributor", relationship: "Granddaughter", mode: "questions" } });
     expect(from.body).toBe("Sarah Ellis invited you, as Margaret's granddaughter. They look after this capsule.");
-    expect(what.body).toContain("“A Life in Her Own Words” is a private LifeCapsule");
+    expect(what.body).toContain("“A Life in Her Own Words” is a private capsule");
     expect(what.body).toContain("12 stories so far");
   });
 

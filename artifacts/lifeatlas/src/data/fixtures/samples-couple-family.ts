@@ -1,5 +1,5 @@
 import type { Capsule, CapsuleMembership, FutureMessage, FuzzyDate, MediaAsset, Memory, MemoryAttribution, Place } from "@/domain/models";
-import { PLATE_NOTICE } from "./media";
+import { NO_PHOTO_NOTICE, PHOTO_NOTICE } from "./media";
 import { photoForPlate } from "@/lib/media/editorial-photos";
 
 /**
@@ -111,16 +111,16 @@ const plate = (id: string, plateId: string, capsuleId: string, caption: string, 
   kind: "image",
   source: { kind: "plate", plateId },
   storage: "fixture",
-  mimeType: "image/svg+xml",
+  mimeType: photoForPlate(plateId) ? "image/webp" : "application/octet-stream",
   width: portrait ? 900 : 1200,
   height: portrait ? 1125 : 900,
   caption,
-  alt,
+  alt: photoForPlate(plateId)?.alt ?? "",
   takenDate,
   placeId,
   contributorName: "Sample family",
   consent: { contributorAgreed: true, print: true, share: false },
-  sampleNotice: photoForPlate(plateId) ? "Editorial photograph supplied for this sample archive. The family stories are fictional." : PLATE_NOTICE,
+  sampleNotice: photoForPlate(plateId) ? PHOTO_NOTICE : NO_PHOTO_NOTICE,
   createdAt: T,
   updatedAt: T,
 });

@@ -5,6 +5,7 @@ import Link from "@/lib/router/link";
 import Image from "@/lib/router/image";
 import { ArrowUpRight, AudioLines, BookOpen, MapPin, Plus } from "lucide-react";
 import { AudioPlayer } from "@/components/audio/audio-player";
+import { editorialPhotoUrl } from "@/lib/media/editorial-photos";
 
 export function HeroVignette() {
   const [mode, setMode] = useState<"story" | "voice">("story");
@@ -13,7 +14,7 @@ export function HeroVignette() {
       <div className="la-object-back" aria-hidden />
       <div className="la-archive-cover">
         <div className="la-archive-top"><span><BookOpen size={14} /> THE ELLIS FAMILY ARCHIVE</span><span>VOL. 01</span></div>
-        <div className="la-archive-photo"><Image src="/media/coast-1972.webp" alt="Fictional family together at the Maine coast, sample artwork" fill priority sizes="(max-width: 760px) 90vw, 46vw" /><span><MapPin size={12} /> Maine, summer 1972</span></div>
+        <div className="la-archive-photo"><Image src={editorialPhotoUrl("maine-family-1972")} alt="A family sharing time together on the Maine coast" fill priority sizes="(max-width: 760px) 90vw, 46vw" /><span><MapPin size={12} /> Maine, summer 1972</span></div>
         <div className="la-archive-title"><div><span>THE LIFE & STORIES OF</span><h2>Margaret Ellis</h2></div><Link href="/view/cap_margaret" aria-label="Explore Margaret’s sample archive"><ArrowUpRight size={25} strokeWidth={1.3} /></Link></div>
       </div>
       <div className="la-memory-slip">

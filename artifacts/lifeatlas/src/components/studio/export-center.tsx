@@ -74,7 +74,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
           <div className="space-y-4">
             <Checkbox id="o-photos" checked={options.includePhotos} onCheckedChange={opt("includePhotos")} label="Photographs" />
             <Checkbox id="o-audio" checked={options.includeAudio} onCheckedChange={opt("includeAudio")} label="Voice recordings" />
-            <Checkbox id="o-plates" checked={options.includeSamplePlates} onCheckedChange={opt("includeSamplePlates")} label="Sample illustrations" description="Only relevant to the fictional sample family." />
+            <Checkbox id="o-plates" checked={options.includeSamplePlates} onCheckedChange={opt("includeSamplePlates")} label="Supplied example photographs" description="These are demo photos, not your own files." />
             <Checkbox id="o-private" checked={options.includePrivate} onCheckedChange={opt("includePrivate")} label="Private stories" description="Only for a copy you'll keep yourself." />
             <Checkbox id="o-drafts" checked={options.includeDrafts} onCheckedChange={opt("includeDrafts")} label="Drafts and unapproved contributions" />
           </div>
@@ -106,7 +106,7 @@ export function ExportCenter({ capsule }: { capsule: Capsule }) {
                   <CheckCircle2 className="size-4 shrink-0 text-success" />
                   <span className="truncate">{i.label}</span>
                 </span>
-                <Badge tone="neutral">{i.kind === "memory" ? "Story" : i.kind === "audio" ? "Recording" : i.kind === "plate" ? "Illustration" : "Photo"}</Badge>
+                <Badge tone="neutral">{i.kind === "memory" ? "Story" : i.kind === "audio" ? "Recording" : i.kind === "plate" ? (i.reason?.startsWith("No photograph") ? "No photo" : "Photo") : "Photo"}</Badge>
               </p>
             ))}
             {excluded.length ? <p className="catalog px-2 pb-1 pt-4">Not included</p> : null}

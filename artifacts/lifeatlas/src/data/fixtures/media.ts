@@ -4,15 +4,13 @@ import audioManifest from "./audio-manifest.json";
 import { editorialPhotoUrl, photoForPlate } from "@/lib/media/editorial-photos";
 
 /**
- * Sample media.
- *  - Plates are original procedurally-illustrated artworks (src/lib/plates), 
- *    clearly labelled as illustrations, never presented as real photographs.
- *  - One generated photograph (coast-1972.webp) carried over from the preview build.
+ * Sample media includes supplied photographs only. If no supplied photograph clearly
+ * matches a sample memory, the UI shows an empty state rather than generated artwork.
  *  - Audio is synthetic narration produced with the open Kokoro-82M model
  *    (Apache-2.0) by scripts/generate-sample-audio.py. It is NOT a real person's voice.
  */
 
-export const PLATE_NOTICE = "Illustrated sample plate, an original artwork made for this demo, not a real photograph.";
+export const NO_PHOTO_NOTICE = "No photograph supplied for this sample story.";
 export const PHOTO_NOTICE = "Editorial photograph supplied for this sample archive. The family stories are fictional.";
 export const AUDIO_NOTICE = "Synthetic sample narration (open-source text-to-speech). Not a real person's voice.";
 
@@ -31,25 +29,28 @@ interface PlateSeed {
   height?: number;
 }
 
-const plate = (p: PlateSeed): MediaAsset => ({
-  id: p.id,
-  capsuleId: p.capsuleId,
-  kind: "image",
-  source: { kind: "plate", plateId: p.plateId },
-  storage: "fixture",
-  mimeType: "image/svg+xml",
-  width: p.width ?? 1200,
-  height: p.height ?? 900,
-  caption: p.caption,
-  alt: p.alt,
-  takenDate: p.takenDate,
-  placeId: p.placeId,
-  contributorName: p.contributor ?? "Sample family",
-  consent: { contributorAgreed: true, print: true, share: false },
-  sampleNotice: photoForPlate(p.plateId) ? "Editorial photograph supplied for this sample archive. The family stories are fictional." : PLATE_NOTICE,
-  createdAt: T,
-  updatedAt: T,
-});
+const plate = (p: PlateSeed): MediaAsset => {
+  const photo = photoForPlate(p.plateId);
+  return {
+    id: p.id,
+    capsuleId: p.capsuleId,
+    kind: "image",
+    source: { kind: "plate", plateId: p.plateId },
+    storage: "fixture",
+    mimeType: photo ? "image/webp" : "application/octet-stream",
+    width: p.width ?? 1200,
+    height: p.height ?? 900,
+    caption: p.caption,
+    alt: photo?.alt ?? "",
+    takenDate: p.takenDate,
+    placeId: p.placeId,
+    contributorName: p.contributor ?? "Sample family",
+    consent: { contributorAgreed: true, print: true, share: false },
+    sampleNotice: photo ? PHOTO_NOTICE : NO_PHOTO_NOTICE,
+    createdAt: T,
+    updatedAt: T,
+  };
+};
 
 const M = "cap_margaret";
 const TH = "cap_thomas";

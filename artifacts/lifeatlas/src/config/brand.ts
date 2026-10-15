@@ -9,10 +9,10 @@
  */
 export const brand = {
   /** The company and website. */
-  name: "OurLifeCapsule",
-  /** What a customer creates and owns: "Create your LifeCapsule". */
-  product: "LifeCapsule",
-  productPlural: "LifeCapsules",
+  name: "OurLife",
+  /** The product category is styled separately from the OurLife brand. */
+  product: "Capsule",
+  productPlural: "Capsules",
   /** Lower-case noun for running text: "a capsule for your parents". */
   noun: "capsule",
   philosophy: "A family tree tells you who came before. A memory capsule keeps their stories.",
@@ -30,7 +30,7 @@ export const brand = {
     privacy: "privacy@ourlifecapsule.com",
   },
   /** Shown in footers and documents produced in this preview. */
-  legalLine: "OurLifeCapsule, product preview",
+  legalLine: "OurLife, product preview",
   /** File names for things people download: `ourlifecapsule-margaret-ellis-2026-10-14.zip`. */
   filePrefix: "ourlifecapsule",
 } as const;

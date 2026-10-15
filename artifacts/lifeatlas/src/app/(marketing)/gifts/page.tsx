@@ -61,7 +61,7 @@ export default function GiftsPage() {
         actions={
           <>
             <ButtonLink href="/gifts/build" size="xl">
-              Give a LifeCapsule
+              Give a memory capsule
             </ButtonLink>
             <ArrowLink href="#arrives">How the gift arrives</ArrowLink>
           </>
@@ -175,7 +175,7 @@ export default function GiftsPage() {
         lead="Usually as a story you'd never heard before."
         primary={
           <ButtonLink href="/gifts/build" size="xl">
-            Give a LifeCapsule
+            Give a memory capsule
           </ButtonLink>
         }
         secondary={<ArrowLink href="/physical-capsules">About the physical kit</ArrowLink>}

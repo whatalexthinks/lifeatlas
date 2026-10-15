@@ -150,7 +150,7 @@ describe("storage problems are explained in plain words", () => {
   it("never shows a raw browser error", async () => {
     const { describeError } = await import("@/store/demo-store");
     expect(describeError(new DOMException("x", "QuotaExceededError"))).toMatch(/out of storage space/);
-    expect(describeError(new DOMException("x", "SecurityError"))).toMatch(/blocking OurLifeCapsule from saving/);
+    expect(describeError(new DOMException("x", "SecurityError"))).toMatch(/blocking OurLife from saving/);
     expect(describeError(new DOMException("Internal error opening backing store", "UnknownError"))).toMatch(/stopped responding/);
     expect(describeError(new Error("TypeError: cannot read properties of undefined"))).not.toMatch(/TypeError|undefined/);
   });

@@ -32,7 +32,7 @@ export default function ExamplesPage() {
           </>
         }
         lead="Four capsules from the fictional Ellis family, made to show what's possible. Open any of them in the same viewer your family would use."
-        note="The Ellis family isn't real. Illustrations were made for this preview, sample voices are synthesized, and the one photograph is AI-generated."
+        note="The Ellis family and their stories are fictional. The photographs are supplied examples, not confirmed portraits of that family. Sample narration is synthetic."
       />
 
       {examples.map((e, i) => {
@@ -108,7 +108,7 @@ export default function ExamplesPage() {
         lead="That's rather the point. Start with one question."
         primary={
           <ButtonLink href="/app/capsules/new" size="xl">
-            Create Your LifeCapsule
+            Create a capsule
           </ButtonLink>
         }
       />

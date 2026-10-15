@@ -3,7 +3,6 @@
 import type { MediaAsset } from "@/domain/models";
 import { validateMediaFile } from "@/domain/media/validation";
 import { validateVideoFile } from "@/domain/media/video";
-import { plateDataUri, renderPlateSvg } from "@/lib/plates";
 import { deleteBlob, getBlob, isQuotaError, putBlob } from "@/lib/storage/idb";
 import { sha256Hex, uid } from "@/lib/utils";
 import { fail, notConfigured, ok, type MediaStorageProvider, type TranscriptionProvider } from "../contracts";
@@ -60,8 +59,7 @@ export const mockMedia: MediaStorageProvider = {
       case "plate": {
         const photo = photoForPlate(asset.source.plateId);
         if (photo) return ok(photo.url);
-        const uri = plateDataUri(asset.source.plateId);
-        return uri ? ok(uri) : fail("not_found", "Sample illustration missing.");
+        return fail("not_found", "No photograph was supplied for this sample memory.");
       }
       case "local": {
         const key = asset.source.blobKey;
@@ -107,8 +105,7 @@ export const mockMedia: MediaStorageProvider = {
             return fail("not_found", "The sample photograph could not be loaded.");
           }
         }
-        const svg = renderPlateSvg(asset.source.plateId);
-        return svg ? ok(new Blob([svg], { type: "image/svg+xml" })) : fail("not_found", "Sample illustration missing.");
+        return fail("not_found", "No photograph was supplied for this sample memory.");
       }
       case "remote":
         return notConfigured("media", "Cloud media storage is not connected in this preview.");

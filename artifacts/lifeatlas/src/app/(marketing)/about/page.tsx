@@ -102,7 +102,7 @@ export default function AboutPage() {
         }
         primary={
           <ButtonLink href="/app/capsules/new" size="xl">
-            Create Your LifeCapsule
+            Create a capsule
           </ButtonLink>
         }
         secondary={<ArrowLink href="/contact">Get in touch</ArrowLink>}

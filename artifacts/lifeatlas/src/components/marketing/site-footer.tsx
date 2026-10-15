@@ -1,5 +1,5 @@
 import Link from "@/lib/router/link";
-import { BrandMark, Wordmark } from "@/components/brand/logo";
+import { BrandMark, Logo } from "@/components/brand/logo";
 import { brand } from "@/config/brand";
 
 const cols = [
@@ -63,10 +63,7 @@ export function SiteFooter() {
         </div>
         <div className="grid gap-14 pt-14 lg:grid-cols-[1.1fr_2fr]">
           <div className="max-w-sm">
-            <div className="flex items-center gap-2.5 text-night-accent">
-              <BrandMark className="size-[34px]" />
-              <Wordmark className="text-night-ink" />
-            </div>
+            <Logo className="text-night-ink" tone="light" />
             <p className="mt-6 text-[0.9375rem] leading-relaxed text-night-ink-2">
               Private capsules for the stories, voices and photographs of the people you love. Shared only with the people you choose, and made to be handed down.
             </p>
@@ -89,7 +86,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div aria-hidden className="pointer-events-none mt-16 select-none overflow-hidden font-serif text-[clamp(4rem,15vw,15rem)] font-[300] leading-[0.8] tracking-[-0.05em] text-night-3">
-          <em>Life</em>Capsule
+          <span>OurLife</span><span className="ml-[0.14em] font-normal text-night-accent">Capsule</span>
         </div>
         <div className="mt-8 grid gap-4 border-t border-night-line pt-8 text-[0.8125rem] leading-relaxed text-night-ink-3 md:grid-cols-[1fr_auto]">
           <p>

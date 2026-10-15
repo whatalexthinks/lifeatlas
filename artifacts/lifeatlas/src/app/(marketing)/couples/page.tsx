@@ -180,7 +180,7 @@ export default function CouplesPage() {
             One plan for the two of you.
           </h2>
           <p className="lead mx-auto mt-4 max-w-2xl">
-            A Digital LifeCapsule is {formatMoney(digital.price.amount)} a year, test price, nothing is charged in the preview. Your partner joins as an editor, free. So does anyone else you invite.
+            One digital capsule is {formatMoney(digital.price.amount)} a year, test price, nothing is charged in the preview. Your partner joins as an editor, free. So does anyone else you invite.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-x-7 gap-y-3">
             <ArrowLink href="/pricing">See pricing</ArrowLink>

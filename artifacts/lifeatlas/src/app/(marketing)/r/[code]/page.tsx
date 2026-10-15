@@ -44,7 +44,7 @@ export default function ReferralPage() {
         actions={
           <>
             <ButtonLink href="/app/capsules/new" size="xl">
-              Create Your LifeCapsule
+              Create a capsule
             </ButtonLink>
             <ArrowLink href="/pricing">See pricing</ArrowLink>
           </>

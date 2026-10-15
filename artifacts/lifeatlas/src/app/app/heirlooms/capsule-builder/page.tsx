@@ -128,7 +128,7 @@ function CapsuleBuilder() {
     <div className="mx-auto max-w-[1320px]">
       <PageHeader
         back={{ href: "/app/heirlooms", label: "Heirlooms" }}
-        eyebrow="Physical LifeCapsule · Preview"
+        eyebrow="Physical capsule · Preview"
         title={
           <>
             A place to keep <em>what matters.</em>

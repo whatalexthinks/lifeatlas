@@ -38,7 +38,7 @@ export function explainInvitation(input: {
   const capsulePoint: InvitationExplainer = {
     key: "capsule",
     title: "What this is",
-    body: `“${capsule.title}” is a private ${brand.product}, a place where a family keeps the stories, voices and photographs of ${capsule.subjectName}. ${
+    body: `“${capsule.title}” is a private ${brand.product.toLowerCase()}, a place where a family keeps the stories, voices and photographs of ${capsule.subjectName}. ${
       storyCount ? `It holds ${storyCount} ${storyCount === 1 ? "story" : "stories"} so far.` : "It's just getting started."
     }${capsule.description ? ` ${capsule.description}` : ""}`,
   };

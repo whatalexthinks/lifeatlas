@@ -24,7 +24,7 @@ const price = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id
 const monthlyPrice = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id)!.monthly!.amount);
 
 const faqs: [string, React.ReactNode][] = [
-  ["What is a LifeCapsule?", "A private place for the story of a life or a relationship: written memories, recorded answers, photographs, dates and places. You can explore it as a timeline or in chapters, invite people to add what they remember, and turn it into a printed book or a physical keepsake."],
+  ["What is a memory capsule?", "A private place for the story of a life or a relationship: written memories, recorded answers, photographs, dates and places. You can explore it as a timeline or in chapters, invite people to add what they remember, and turn it into a printed book or a physical keepsake."],
   ["Do the people I invite have to pay?", "No. The owner chooses a plan; invited contributors and readers are planned to join free, with no card. In this preview, invitations are local links on this device."],
   ["What can I try today?", `Almost everything, on this device: create capsules, answer questions, record your voice, add photographs, invite family with a link, design a book and prepare future messages. Accounts, cloud storage, payments, printing and delivery aren't connected yet, the preview says so wherever it matters.`],
   ["Are my memories backed up?", "Not in this preview. What you add stays in this browser. Download a copy of anything that matters, a complete export with your stories and files is always one click away."],
@@ -291,7 +291,7 @@ export default function HomePage() {
               <dl className="mt-8 divide-y divide-line border-y border-line">
                 <div className="flex items-baseline justify-between gap-6 py-5">
                   <dt>
-                    <span className="block font-medium">Premium Physical LifeCapsule</span>
+                    <span className="block font-medium">Physical memory capsule</span>
                     <span className="mt-1 block text-[0.9375rem] text-ink-3">A gift-ready archival kit: keepsake box, prompt cards, photo sleeves and letter envelopes.</span>
                   </dt>
                   <dd className="shrink-0 font-sans text-[1.5rem] tracking-[-0.03em]">{price("keepsake_box")}</dd>
@@ -336,7 +336,7 @@ export default function HomePage() {
             >
               <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
                 <ButtonLink href="/gifts/build" variant="light" size="lg">
-                  Give a LifeCapsule
+                  Give a memory capsule
                 </ButtonLink>
                 <ArrowLink href="/gifts">How gifting works</ArrowLink>
               </div>
@@ -445,12 +445,12 @@ export default function HomePage() {
         lead="For yourself, for the two of you, or for someone you love."
         primary={
           <ButtonLink href="/app/capsules/new" size="xl">
-            Create Your LifeCapsule
+            Create a capsule
           </ButtonLink>
         }
         secondary={<ArrowLink href="/gifts/build">Or give one as a gift</ArrowLink>}
       />
-      <MobileStickyCta label="Create Your LifeCapsule" />
+      <MobileStickyCta label="Create a capsule" />
     </>
   );
 }

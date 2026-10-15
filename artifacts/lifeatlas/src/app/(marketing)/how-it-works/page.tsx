@@ -152,7 +152,7 @@ export default function HowItWorksPage() {
         actions={
           <>
             <ButtonLink href="/app/capsules/new" size="xl">
-              Create Your LifeCapsule
+              Create a capsule
             </ButtonLink>
             <ArrowLink href="#choose">Walk through it</ArrowLink>
           </>
@@ -242,7 +242,7 @@ export default function HowItWorksPage() {
         lead="Choose whose story, add a name, and answer one question."
         primary={
           <ButtonLink href="/app/capsules/new" size="xl">
-            Create Your LifeCapsule
+            Create a capsule
           </ButtonLink>
         }
         secondary={<ArrowLink href="/examples">See example capsules</ArrowLink>}

@@ -75,7 +75,7 @@ export const orders: Order[] = [
     id: "ord_1003",
     number: "OLC-DEMO-1003",
     kind: "gift",
-    items: [{ id: "oi_3", productId: "digital", name: "Digital LifeCapsule, one year, as a gift", quantity: 1, unitAmount: 9900, extrasAmount: 0 }],
+    items: [{ id: "oi_3", productId: "digital", name: "Digital capsule, one year, as a gift", quantity: 1, unitAmount: 9900, extrasAmount: 0 }],
     subtotal: 9900,
     shippingEstimate: null,
     taxEstimate: null,
