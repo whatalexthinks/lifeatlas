@@ -19,13 +19,18 @@ const planIds: PlanId[] = ["preview", "digital", "family"];
 const product = (id: string) => defaultCatalog.find((p) => p.id === id)!;
 
 export function PlanPricing({ className }: { className?: string }) {
-  const [interval, setInterval] = React.useState<BillingInterval>("year");
-  const digitalSaving = annualSavings(product("digital"));
+  const [interval, setInterval] = React.useState<BillingInterval>("month");
+  const names: Record<PlanId, string> = { preview: "Start free", digital: "One capsule", family: "Family" };
+  const blurbs: Record<PlanId, string> = {
+    preview: "Try the whole thing in this browser. Nothing leaves your device.",
+    digital: "One person's or couple's story: guided questions, voice, photographs.",
+    family: `Up to ${plans.family.capsules} capsules for the whole family, in one place.`,
+  };
   return (
     <div className={className}>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="inline-flex rounded-full border border-line-strong bg-surface p-1" role="radiogroup" aria-label="Billing">
-          {(["year", "month"] as const).map((i) => (
+          {(["month", "year"] as const).map((i) => (
             <button
               key={i}
               type="button"
@@ -38,7 +43,7 @@ export function PlanPricing({ className }: { className?: string }) {
             </button>
           ))}
         </div>
-        {digitalSaving ? <p className="text-[0.9375rem] text-ink-3">Yearly saves about {digitalSaving.percent}% compared with paying monthly.</p> : null}
+        <p className="text-[0.9375rem] text-ink-3">{interval === "month" ? "Billed each month. Switch to yearly to pay less over a year." : "Billed once a year."}</p>
       </div>
 
       <ul className="mt-8 grid gap-5 lg:grid-cols-3">
@@ -46,16 +51,20 @@ export function PlanPricing({ className }: { className?: string }) {
           const p = product(id);
           const featured = id === "digital";
           const amount = id === "preview" ? 0 : unitAmount(p, interval);
+          const saving = id === "preview" ? null : annualSavings(p);
           return (
             <li key={id} className={cn("relative flex flex-col rounded-[24px] border p-7 sm:p-8", featured ? "border-ink bg-surface shadow-[0_40px_80px_-50px_rgb(37_36_33/0.5)]" : "border-line bg-surface/70")}>
               {featured ? <span className="absolute -top-3 left-7 rounded-full bg-oxblood px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-on-oxblood">Most people start here</span> : null}
-              <h3 className="display-3">{p.name}</h3>
-              <p className="mt-2 text-[0.9375rem] text-ink-2">{p.tagline}</p>
+              <h3 className="display-3">{names[id]}</h3>
+              <p className="mt-2 text-[0.9375rem] text-ink-2">{blurbs[id]}</p>
               <p className="mt-6 flex items-baseline gap-2">
                 <span className="font-sans text-[3rem] font-[450] leading-none tracking-[-0.05em]">{amount === 0 ? "Free" : formatMoney(amount)}</span>
                 <span className="text-[0.9375rem] text-ink-3">{id === "preview" ? "on this device" : interval === "year" ? "a year" : "a month"}</span>
               </p>
-              <p className="mt-2 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-ink-4">{id === "preview" ? "Nothing to pay" : "Test price · nothing is charged"}</p>
+              {id !== "preview" && interval === "year" && saving ? (
+                <p className="mt-2 text-[0.875rem] text-evergreen">{formatMoney(p.price.amount)} billed yearly. Saves {formatMoney(saving.saving)} versus {formatMoney(saving.monthlyYear)} paid monthly.</p>
+              ) : null}
+              <p className="mt-2 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-ink-4">{id === "preview" ? "Local demo, nothing to pay" : "Test checkout · nothing is charged"}</p>
               <ul className="mt-6 space-y-2.5">
                 {p.inclusions.map((x) => (
                   <li key={x} className="flex gap-2.5 text-[0.9375rem] leading-snug">
@@ -66,7 +75,7 @@ export function PlanPricing({ className }: { className?: string }) {
               </ul>
               <div className="mt-auto pt-8">
                 <ButtonLink href={id === "preview" ? "/app/capsules/new" : `/checkout/preview?product=${id}&interval=${interval}`} variant={featured ? "primary" : "secondary"} size="lg" block>
-                  {id === "preview" ? "Start free" : `Choose ${id === "digital" ? "Digital" : "Family"}`}
+                  {id === "preview" ? "Start free" : `Choose ${names[id]}`}
                 </ButtonLink>
               </div>
             </li>
@@ -74,7 +83,7 @@ export function PlanPricing({ className }: { className?: string }) {
         })}
       </ul>
       <p className="mt-6 text-[0.9375rem] text-ink-2">
-        <span className="font-medium text-ink">Everyone you invite joins free.</span> Contributors and viewers never need a plan, a card or a trial.
+        <span className="font-medium text-ink">The owner pays. Invited contributors join free.</span> That is how memberships are planned to work; in this preview, invitations are local links on this device.
       </p>
     </div>
   );
@@ -116,10 +125,10 @@ export function KeepsakePricing({ className }: { className?: string }) {
 }
 
 const rows: { label: string; value: (id: PlanId) => React.ReactNode }[] = [
+  { label: "Guided questions, voice, photographs, timeline", value: () => true },
   { label: "Capsules", value: (id) => (id === "preview" ? `Up to ${plans[id].capsules}, on this device` : plans[id].capsules) },
   { label: "Storage for photos, voice and video", value: (id) => (plans[id].storageGb ? `${plans[id].storageGb} GB (planned)` : "Your browser only") },
-  { label: "Contributors and viewers", value: () => "Unlimited, always free" },
-  { label: "Guided questions, timeline, chapters", value: () => true },
+  { label: "Contributors and viewers", value: () => "Free to invite (local links in preview)" },
   { label: "Future messages prepared", value: (id) => (plans[id].futureMessages === "unlimited" ? "Unlimited" : plans[id].futureMessages) },
   { label: "Family directory across capsules", value: (id) => plans[id].familyDirectory },
   { label: "Keepsake discount", value: (id) => (plans[id].keepsakeDiscountPct ? `${plans[id].keepsakeDiscountPct}%` : false) },
@@ -138,7 +147,7 @@ export function PlanComparison({ className }: { className?: string }) {
             </th>
             {planIds.map((id) => (
               <th key={id} scope="col" className="p-4 font-medium">
-                {product(id).name}
+                {id === "preview" ? "Start free" : id === "digital" ? "One capsule" : "Family"}
               </th>
             ))}
           </tr>

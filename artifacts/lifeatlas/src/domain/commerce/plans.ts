@@ -40,8 +40,8 @@ export const plans: Record<PlanId, PlanEntitlements> = {
 
 /** Launch price hypotheses in cents. The catalog starts from these; operations can change them. */
 export const launchPrices = {
-  digital: { year: 9900, month: 999 },
-  family: { year: 17900, month: 1799, rangeYear: [14900, 24900] as const },
+  digital: { year: 7900, month: 799 },
+  family: { year: 14900, month: 1499, rangeYear: [14900, 24900] as const },
   physicalCapsule: 24900,
   legacyBook: 11900,
 } as const;

@@ -15,9 +15,10 @@ const promo = (id: string, over: Partial<Promotion> = {}) => ({ ...structuredClo
 
 describe("plans and entitlements", () => {
   it("prices plans yearly or monthly from one place", () => {
-    expect(unitAmount(product("digital"), "year")).toBe(9900);
-    expect(unitAmount(product("digital"), "month")).toBe(999);
-    expect(unitAmount(product("family"), "year")).toBe(17900);
+    expect(unitAmount(product("digital"), "year")).toBe(7900);
+    expect(unitAmount(product("digital"), "month")).toBe(799);
+    expect(unitAmount(product("family"), "year")).toBe(14900);
+    expect(unitAmount(product("family"), "month")).toBe(1499);
     expect(() => unitAmount({ ...product("digital"), monthly: undefined }, "month")).toThrow();
     // One-time products ignore the interval.
     expect(unitAmount(product("keepsake_box"), "month")).toBe(24900);
@@ -25,9 +26,9 @@ describe("plans and entitlements", () => {
 
   it("shows annual savings honestly", () => {
     const s = annualSavings(product("digital"))!;
-    expect(s.monthlyYear).toBe(11988);
-    expect(s.saving).toBe(2088);
-    expect(s.percent).toBe(17);
+    expect(s.monthlyYear).toBe(9588);
+    expect(s.saving).toBe(1688);
+    expect(s.percent).toBe(18);
   });
 
   it("free contributors and export on every plan", () => {
@@ -51,7 +52,7 @@ describe("plans and entitlements", () => {
   });
 
   it("keeps the launch prices the brief set", () => {
-    expect(product("digital").price.amount).toBe(9900);
+    expect(product("digital").price.amount).toBe(7900);
     expect(product("keepsake_box").price.amount).toBe(24900);
     expect(product("book").price.amount).toBe(11900);
     const fam = product("family").price.amount;
@@ -72,7 +73,7 @@ describe("promotions", () => {
 
   it("FOUNDERS takes 20% off the first year of an annual plan", () => {
     const r = evaluatePromotion(promo("promo_founders"), [line("digital", { interval: "year" })], catalog, ctx());
-    expect(r).toMatchObject({ ok: true, discount: 1980 });
+    expect(r).toMatchObject({ ok: true, discount: 1580 });
   });
 
   it("explains every refusal in words", () => {
@@ -92,7 +93,7 @@ describe("promotions", () => {
     const k = evaluatePromotion(promo("promo_keepsake_gift"), [line("keepsake_box"), line("digital")], catalog, ctx());
     expect(k).toMatchObject({ ok: true, discount: 2500 });
     const free = evaluatePromotion(promo("promo_partner_year", { status: "active" }), [line("digital", { interval: "year" })], catalog, ctx());
-    expect(free).toMatchObject({ ok: true, discount: 9900 });
+    expect(free).toMatchObject({ ok: true, discount: 7900 });
     const big = evaluatePromotion(promo("promo_keepsake_gift", { amountOff: 999_999 }), [line("keepsake_box")], catalog, ctx());
     expect(big.ok && big.discount).toBe(24900);
   });
@@ -133,7 +134,7 @@ describe("referrals", () => {
   it("the friend's offer needs a referral code", () => {
     const r = promo("promo_referral");
     expect(evaluatePromotion(r, [line("family")], catalog, ctx())).toMatchObject({ ok: false });
-    expect(evaluatePromotion(r, [line("family")], catalog, ctx({ hasReferralCode: true }))).toMatchObject({ ok: true, discount: 3580 });
+    expect(evaluatePromotion(r, [line("family")], catalog, ctx({ hasReferralCode: true }))).toMatchObject({ ok: true, discount: 2980 });
   });
 
   it("summarises activity and credit", () => {
@@ -154,19 +155,19 @@ describe("referrals", () => {
 
 describe("quotes with discounts and credit", () => {
   it("applies a discount, then credit, and never goes below zero", () => {
-    const q = quoteCart([line("digital"), line("keepsake_box")], catalog, { discount: { amount: 1980, label: "Founding members" }, availableCredit: 2000 });
-    expect(q.subtotal).toBe(9900 + 24900);
-    expect(q.discount).toEqual({ amount: 1980, label: "Founding members" });
+    const q = quoteCart([line("digital"), line("keepsake_box")], catalog, { discount: { amount: 1580, label: "Founding members" }, availableCredit: 2000 });
+    expect(q.subtotal).toBe(7900 + 24900);
+    expect(q.discount).toEqual({ amount: 1580, label: "Founding members" });
     expect(q.credit).toBe(2000);
-    expect(q.total).toBe(9900 + 24900 - 1980 - 2000);
+    expect(q.total).toBe(7900 + 24900 - 1580 - 2000);
     const tiny = quoteCart([line("digital", { interval: "month" })], catalog, { availableCredit: 50_000 });
-    expect(tiny.credit).toBe(999);
+    expect(tiny.credit).toBe(799);
     expect(tiny.total).toBe(0);
   });
 
   it("prices monthly plan lines monthly and labels what they are", () => {
     const q = quoteCart([line("family", { interval: "month" })], catalog);
-    expect(q.lines[0]).toMatchObject({ unit: 1799, interval: "month", fulfillment: "digital" });
+    expect(q.lines[0]).toMatchObject({ unit: 1499, interval: "month", fulfillment: "digital" });
     expect(q.notes.join(" ")).toMatch(/renew each month/);
   });
 

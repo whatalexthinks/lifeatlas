@@ -12,19 +12,20 @@ import { PlanPricing } from "@/components/site/pricing";
 import { formatMoney } from "@/lib/utils";
 import { defaultCatalog } from "@/data/product-catalog";
 import { brand } from "@/config/brand";
-import { ContactSheet, EditorialSpread, HeroPrints, LostThings } from "@/components/marketing/home/editorial";
+import { ContactSheet, EditorialSpread, HeroCapsule, LostThings } from "@/components/marketing/home/editorial";
 
 export const metadata: Metadata = {
-  title: { absolute: `${brand.name}, A life is made of moments. Keep them close.` },
-  description: `${brand.name} keeps the stories, voices and photographs of the people you love, yours, your partner's, your family's, in one private capsule you can share with the people you choose and hand down.`,
+  title: { absolute: `${brand.name} · Digital and physical family memory capsules` },
+  description: "Go beyond names and dates. Gather family stories, voices, photographs and letters with guided questions, then create a digital memory capsule, an optional physical keepsake, or both.",
   alternates: { canonical: "/" },
 };
 
 const price = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id)!.price.amount);
+const monthlyPrice = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id)!.monthly!.amount);
 
 const faqs: [string, React.ReactNode][] = [
   ["What is a LifeCapsule?", "A private place for the story of a life or a relationship: written memories, recorded answers, photographs, dates and places. You can explore it as a timeline or in chapters, invite people to add what they remember, and turn it into a printed book or a physical keepsake."],
-  ["Do the people I invite have to pay?", "Never. Whoever owns the capsule chooses a plan; everyone they invite, to add stories or simply to read them, joins free, with no card and no trial."],
+  ["Do the people I invite have to pay?", "No. The owner chooses a plan; invited contributors and readers are planned to join free, with no card. In this preview, invitations are local links on this device."],
   ["What can I try today?", `Almost everything, on this device: create capsules, answer questions, record your voice, add photographs, invite family with a link, design a book and prepare future messages. Accounts, cloud storage, payments, printing and delivery aren't connected yet, the preview says so wherever it matters.`],
   ["Are my memories backed up?", "Not in this preview. What you add stays in this browser. Download a copy of anything that matters, a complete export with your stories and files is always one click away."],
 ];
@@ -47,24 +48,49 @@ export default function HomePage() {
         <Container size="wide">
           <div className="grid gap-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-14">
             <div>
-              <Eyebrow className="hero-rise">A private family archive</Eyebrow>
-              <h1 className="display-1 hero-rise mt-8 [--d:120ms]">
-                A life is made of moments. <em>Keep them close.</em>
+              <Eyebrow className="hero-rise">For families who keep their history</Eyebrow>
+              <h1 className="display-1 hero-rise mt-7 text-[clamp(3.1rem,5vw,5.1rem)] [--d:120ms]">
+                A family tree tells you who came before. <em>A memory capsule keeps their stories.</em>
               </h1>
-              <p className="lead hero-rise mt-8 max-w-xl [--d:240ms]">
-                {brand.name} brings your stories, voices and photographs together in a private capsule. Keep it for yourself, share it with the people you choose, and hand it down.
+              <p className="lead hero-rise mt-7 max-w-xl [--d:240ms]">
+                Bring photographs, voices, letters and memories together, with guided questions that show you where to start. {brand.name} gives you a place and a structure to build a private family capsule: digital, physical, or both.
               </p>
-              <div className="hero-rise mt-10 flex flex-wrap items-center gap-x-7 gap-y-4 [--d:360ms]">
+              <p className="hero-rise mt-4 max-w-xl text-[0.875rem] leading-relaxed text-ink-3 [--d:300ms]">
+                One digital capsule from {monthlyPrice("digital")} a month. Physical books and keepsake boxes are separate. Demo pricing only, no charge.
+              </p>
+              <div className="hero-rise mt-9 flex flex-wrap items-center gap-x-6 gap-y-4 [--d:360ms]">
                 <ButtonLink href="/app/capsules/new" size="xl">
-                  Create Your LifeCapsule
+                  Start free
                 </ButtonLink>
-                <ArrowLink href="/how-it-works">See How It Works</ArrowLink>
+                <ButtonLink href="/examples" variant="secondary" size="xl">
+                  See a sample capsule
+                </ButtonLink>
               </div>
-              <div className="hero-rise mt-12 flex max-w-xl items-center gap-5 border-t border-line pt-6 [--d:480ms]">
-                <p className="font-mono text-[0.65rem] uppercase leading-relaxed tracking-[0.18em] text-ink-3">Free to begin on this device. No card, no account needed to try it.</p>
+              <div className="hero-rise mt-10 max-w-xl space-y-2 border-t border-line pt-5 [--d:480ms]">
+                <p className="text-[0.9375rem] text-ink-2"><span className="font-medium text-ink">The owner pays. Invited family are planned to join free.</span></p>
+                <p className="font-mono text-[0.62rem] uppercase leading-relaxed tracking-[0.16em] text-ink-3">One capsule from {monthlyPrice("digital")} a month. Demo price only, nothing is charged. This preview runs in your browser. No card, no account. Invitations are local links for now.</p>
               </div>
             </div>
-            <HeroPrints />
+            <HeroCapsule />
+          </div>
+        </Container>
+      </section>
+
+      <section aria-label="Family tree and memory capsule" className="border-y border-line bg-ivory">
+        <Container size="wide">
+          <div className="grid gap-px bg-line py-0 md:grid-cols-[1fr_1fr_1.2fr]">
+            <div className="bg-ivory py-7 md:pr-8">
+              <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink-4">A family tree</p>
+              <p className="mt-2 text-[1rem] leading-snug text-ink-2">Names, dates and who came before. Keep using the tools you already love for that.</p>
+            </div>
+            <div className="bg-ivory py-7 md:px-8">
+              <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-oxblood">A memory capsule</p>
+              <p className="mt-2 text-[1rem] leading-snug text-ink">How they sounded, what they cooked, the story behind each photograph and letter.</p>
+            </div>
+            <div className="bg-ivory py-7 md:pl-8">
+              <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-evergreen">What {brand.name} adds</p>
+              <p className="mt-2 text-[1rem] leading-snug text-ink">A place and a structure: guided questions, chapters and a timeline for the digital capsule, plus an optional printed book or keepsake box, priced separately.</p>
+            </div>
           </div>
         </Container>
       </section>
@@ -347,9 +373,10 @@ export default function HomePage() {
               eyebrow="Pricing"
               title={
                 <>
-                  Pay for what you keep. <em>Invite everyone free.</em>
+                  One owner pays monthly. <em>Family joins free.</em>
                 </>
               }
+              lead="Try everything free in this browser demo. Paid checkout is a test only and charges nothing. Invited contributors will join free on a membership; in this preview they use local links."
             />
             <ArrowLink href="/pricing">Compare plans in detail</ArrowLink>
           </div>

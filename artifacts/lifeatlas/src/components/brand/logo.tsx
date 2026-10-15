@@ -3,40 +3,36 @@ import { brand } from "@/config/brand";
 import { cn } from "@/lib/utils";
 
 /**
- * The OurLifeCapsule seal: a capsule set inside a double ring, like a wax seal or a
- * jeweller's hallmark, with one kept moment in antique gold resting in the lower half.
- * Pass `src` to swap in a commissioned vector without touching call sites.
+ * The OurLifeCapsule mark: a softened forest tile holding an antique-gold keyhole.
+ * One silhouette, no rings: a keepsake that is locked, kept and opened by the people you choose.
+ * Built on a 32 grid so it stays crisp at 16px. Pass `src` to swap in a commissioned vector.
  */
-export function BrandMark({ className, src, title = brand.name }: { className?: string; src?: string; title?: string }) {
+export function BrandMark({ className, src, title = brand.name, tone = "ink" }: { className?: string; src?: string; title?: string; tone?: "ink" | "light" }) {
   if (src) return <img src={src} alt={title} className={cn("size-8", className)} />;
+  const tile = tone === "light" ? "#e8e4d6" : "#3f4a3c";
+  const key = tone === "light" ? "#3f4a3c" : "#c2a979";
   return (
-    <svg viewBox="0 0 40 40" fill="none" className={cn("size-8", className)} {...(title ? { role: "img", "aria-label": title } : { "aria-hidden": true })}>
-      <circle cx="20" cy="20" r="18.6" stroke="currentColor" strokeWidth="1.1" />
-      <circle cx="20" cy="20" r="15.6" stroke="currentColor" strokeWidth="0.5" opacity="0.55" />
-      <rect x="14.6" y="8.6" width="10.8" height="22.8" rx="5.4" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M14.8 18.9c3.3 1.7 7.1 1.7 10.4 0" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-      <circle cx="20" cy="25.2" r="1.7" fill="var(--oxblood)" />
+    <svg viewBox="0 0 32 32" className={cn("size-8 shrink-0", className)} {...(title ? { role: "img", "aria-label": title } : { "aria-hidden": true })}>
+      <rect width="32" height="32" rx="8" fill={tile} />
+      <path d="M16 7.5a4.6 4.6 0 0 1 2.35 8.56L19.6 23.4a1 1 0 0 1-.99 1.1h-5.22a1 1 0 0 1-.99-1.1l1.25-7.34A4.6 4.6 0 0 1 16 7.5z" fill={key} />
     </svg>
   );
 }
 
-/** "OUR LifeCapsule": a tracked small-caps possessive above-left, then the serif name with Life in italic. */
-export function Wordmark({ className }: { className?: string }) {
+/** One word, one typeface: Newsreader at a single weight, with Life carried only by colour. */
+export function Wordmark({ className, tone = "ink" }: { className?: string; tone?: "ink" | "light" }) {
   return (
-    <span className={cn("inline-flex items-baseline gap-[0.32em] leading-none", className)}>
-      <span className="font-mono text-[0.58rem] font-medium uppercase tracking-[0.32em] opacity-75">Our</span>
-      <span className="font-serif text-[1.5rem] font-[380] tracking-[-0.03em]">
-        <em className="font-[300] italic">Life</em>Capsule
-      </span>
+    <span className={cn("font-serif text-[1.42rem] font-[460] leading-none tracking-[-0.025em]", tone === "light" ? "text-[#efece2]" : "text-ink", className)}>
+      Our<span className={tone === "light" ? "text-[#c9b48a]" : "text-[#8a7350]"}>Life</span>Capsule
     </span>
   );
 }
 
 export function Logo({ href = "/", className, tone = "ink", compact }: { href?: string | null; className?: string; tone?: "ink" | "light"; compact?: boolean }) {
   const inner = (
-    <span className={cn("inline-flex items-center gap-2.5", tone === "light" ? "text-[#ad9b76]" : "text-evergreen-deep", className)}>
-      <BrandMark className="size-[34px]" title="" />
-      {!compact ? <Wordmark className={tone === "light" ? "text-[#e8e7d9]" : "text-ink"} /> : <span className="sr-only">{brand.name}</span>}
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
+      <BrandMark className="size-[30px]" title="" tone={tone} />
+      {!compact ? <Wordmark tone={tone} /> : <span className="sr-only">{brand.name}</span>}
     </span>
   );
   if (href === null)

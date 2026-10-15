@@ -64,7 +64,7 @@ describe("loading older saved data", () => {
     delete old.catalogVersion;
     old.catalog = old.catalog!.map((p) => ({ ...p, price: { ...p.price, amount: 1 } }));
     const db = withNewFields(old as DemoDatabase, buildSeed());
-    expect(db.catalog.find((p) => p.id === "digital")?.price.amount).toBe(9900);
+    expect(db.catalog.find((p) => p.id === "digital")?.price.amount).toBe(7900);
   });
 
   it("is a no-op for data that's already current", () => {

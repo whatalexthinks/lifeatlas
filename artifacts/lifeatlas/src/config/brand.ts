@@ -15,8 +15,8 @@ export const brand = {
   productPlural: "LifeCapsules",
   /** Lower-case noun for running text: "a capsule for your parents". */
   noun: "capsule",
-  philosophy: "Every life is a story worth keeping.",
-  promise: "A beautiful place to preserve the stories, voices, photographs, relationships, and moments that make a life extraordinary.",
+  philosophy: "A family tree tells you who came before. A memory capsule keeps their stories.",
+  promise: "A place and a structure for your family's photographs, voices, letters and memories. Create a digital memory capsule, a physical keepsake, or both.",
   /** The intended domain. DNS and hosting are not assumed to be configured. */
   domain: "ourlifecapsule.com",
   /**

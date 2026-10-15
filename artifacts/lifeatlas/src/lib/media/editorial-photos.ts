@@ -5,7 +5,7 @@
 export const editorialPhotos: Record<string, { slug: string; alt: string }> = {
   "kitchen-1947": { slug: "flour-kitchen", alt: "A mother and child making pastry together in a flour-dusted kitchen." },
   "breadboard-1947": { slug: "flour-breadboard", alt: "A flour-dusted breadboard in a kitchen in Portland." },
-  "harbor-1952": { slug: "harbor-ferry", alt: "A passenger ferry moored beside a wooden harbor pier." },
+  "harbor-1952": { slug: "winter-harbor", alt: "Boats moored in Portland Harbor under a grey winter sky." },
   "ferry-1934": { slug: "harbor-ferry", alt: "A harbor ferry beside a timber dock, with the town beyond." },
   "lighthouse-1950s": { slug: "lighthouse-family", alt: "A family sitting on coastal rocks below a lighthouse." },
   "house-1979": { slug: "maple-house", alt: "A family home shaded by a mature maple tree." },
@@ -38,6 +38,16 @@ export const editorialPhotos: Record<string, { slug: string; alt: string }> = {
   "dance-2007": { slug: "kitchen-dance", alt: "A couple slow-dancing barefoot in their kitchen." },
   "birthday-2018": { slug: "birthday-friends", alt: "Friends gathered around a birthday table, photographed with flash." },
   "table-2020": { slug: "kitchen-stories", alt: "A family sharing stories around the kitchen table." },
+  "station-1958": { slug: "new-england-platform", alt: "A quiet train platform in New England." },
+  "cafe-1963": { slug: "physics-coffee", alt: "Two mismatched coffee cups beside a physics diagram on a napkin." },
+  "cliffs-1983": { slug: "pacific-dusk", alt: "Pacific coast cliffs at dusk." },
+  "kiln-1986": { slug: "garage-kiln", alt: "The warm glow of a pottery kiln in a garage." },
+  "garden-1992": { slug: "paris-garden-bench", alt: "A quiet bench in a Paris church garden." },
+  "porch-2024": { slug: "porch-margaret", alt: "A woman sitting on a porch on the Maine coast." },
+  "nightlight-2005": { slug: "nursery-lamplight", alt: "A nursery lit by a small lamp at night." },
+  "nightlight-2004": { slug: "first-night-home", alt: "A family's quiet first night home with a baby." },
+  "roadtrip-2003": { slug: "nova-scotia-drive", alt: "A coastal drive through Nova Scotia." },
+  "porch-2025": { slug: "maine-coffee", alt: "Quiet coffee together on the Maine coast." },
 };
 
 export const editorialPhotoUrl = (slug: string) =>

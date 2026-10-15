@@ -57,6 +57,69 @@ const sheet: [string, string, string][] = [
   ["birthday-friends", "Friends together around a birthday table", "Another year together"],
 ];
 
+function Photo({ slug, alt, className, eager }: { slug: string; alt: string; className?: string; eager?: boolean }) {
+  return (
+    <div className={cn("print-photo", className)}>
+      <img src={src(slug)} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async" />
+    </div>
+  );
+}
+
+/**
+ * Hero explainer: three inputs (guided answer, voice, photograph) flow into one private capsule.
+ * The printed book is shown as a separately sold option, never as part of the membership.
+ */
+export function HeroCapsule() {
+  const inputs = [
+    { k: "01", label: "Guided answer", body: "\u201cWhat did the house in Maine smell like in summer?\u201d" },
+  { k: "02", label: "A story read aloud", body: "The kitchen always smelled of bread." },
+    { k: "03", label: "Photograph", body: "Maine, 1972, with the story of who took it" },
+  ];
+  return (
+    <div className="relative mx-auto w-full max-w-[640px]">
+      <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 sm:gap-5">
+        <ol className="flex flex-col gap-2.5 sm:gap-3" aria-label="What you collect">
+          {inputs.map((x, i) => (
+            <li key={x.k} className="hero-rise rounded-[3px] border border-line bg-surface p-3 shadow-[var(--shadow-sm)] sm:p-4" style={{ ["--d" as string]: `${200 + i * 140}ms` }}>
+              <p className="flex items-center justify-between font-mono text-[0.58rem] uppercase tracking-[0.18em] text-oxblood">
+                <span>{x.label}</span>
+                <span className="text-ink-4">{x.k}</span>
+              </p>
+              {i === 1 ? (
+                <div className="mt-2 flex h-5 items-end gap-[3px]" aria-hidden>
+                  {[5, 9, 14, 8, 17, 11, 6, 13, 18, 9, 12, 7, 15, 10, 5, 11].map((h, j) => (
+                    <span key={j} className="w-[3px] rounded-full bg-evergreen" style={{ height: h }} />
+                  ))}
+                </div>
+              ) : null}
+              <p className={cn("mt-1.5 leading-snug text-ink-2", i === 0 ? "font-serif text-[0.95rem] italic sm:text-[1.05rem]" : "text-[0.78rem] sm:text-[0.85rem]")}>{x.body}</p>
+              {i === 2 ? <Photo slug="maine-family-1972" alt="A family sharing a joyful moment on the Maine coast" eager className="mt-2 aspect-[16/10] rounded-[1px]" /> : null}
+            </li>
+          ))}
+        </ol>
+        <div className="hero-rise relative flex flex-col rounded-[4px] bg-night p-3 text-night-ink shadow-[var(--shadow-object)] sm:p-5 [--d:640ms]">
+          <p className="font-mono text-[0.58rem] uppercase tracking-[0.2em] text-night-accent">Becomes one private capsule</p>
+          <p className="mt-1 font-serif text-[1.25rem] italic leading-tight sm:text-[1.6rem]">Margaret&rsquo;s story</p>
+          <Photo slug="porch-margaret" alt="Margaret on her porch" eager className="mt-3 aspect-[4/5] rounded-[1px]" />
+          <Link href="/view/cap_margaret/voices" className="mt-3 flex items-center gap-2.5 rounded-[3px] bg-night-3 p-2.5 transition-colors hover:bg-night-line focus-visible:outline focus-visible:outline-2 focus-visible:outline-night-accent" aria-label="Listen to sample family recordings">
+            <span className="grid size-7 shrink-0 place-items-center rounded-full bg-night-accent text-night" aria-hidden>
+              <svg viewBox="0 0 10 10" className="size-2.5 fill-current"><path d="M2 1l7 4-7 4z" /></svg>
+            </span>
+            <p className="text-[0.72rem] leading-snug text-night-ink-2 sm:text-[0.8rem]">Listen to the sample family story</p>
+          </Link>
+          <p className="mt-3 text-[0.68rem] leading-snug text-night-ink-3 sm:text-[0.75rem]">Timeline, chapters and the stories behind each photograph. Shared only with the family you invite.</p>
+        </div>
+      </div>
+      <div className="hero-rise mt-4 flex items-center gap-4 rounded-[3px] border border-dashed border-line-strong bg-ivory/70 p-3 [--d:820ms]">
+        <Photo slug="family-storybook" alt="An optional printed family storybook" className="aspect-square w-16 shrink-0 rounded-[1px] sm:w-20" />
+        <p className="text-[0.78rem] leading-snug text-ink-3 sm:text-[0.85rem]">
+          <span className="font-medium text-ink">Optional, sold separately:</span> a printed book or keepsake box made from your capsule. Not included in any membership.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /** A slowly drifting contact sheet. Duplicated once so the loop is seamless. */
 export function ContactSheet() {
   const row = [...sheet, ...sheet];

@@ -11,15 +11,15 @@ import { brand } from "@/config/brand";
  * Internal ids `book` and `keepsake_box` predate the rebrand and are kept so existing
  * designs and orders stay valid.
  */
-export const CATALOG_VERSION = 3;
+export const CATALOG_VERSION = 4;
 
 export const defaultCatalog: Product[] = [
   {
     id: "preview",
     kind: "plan",
     planId: "preview",
-    name: "Preview",
-    tagline: "Try it on this device.",
+    name: "Start free",
+    tagline: "Begin with one story. Try the tools on this device.",
     description: `Explore the sample capsules and start up to three of your own. Everything you add stays in this browser, nothing is hosted or backed up until you choose a plan.`,
     price: { amount: 0, currency: "USD", interval: "one_time", isTestPrice: true },
     availability: "available_demo",
@@ -33,8 +33,8 @@ export const defaultCatalog: Product[] = [
     id: "digital",
     kind: "plan",
     planId: "digital",
-    name: `Digital ${brand.product}`,
-    tagline: "One life, one love, or one family story, beautifully kept.",
+    name: "One capsule",
+    tagline: "Give one person's life, your relationship or your family a place to be remembered.",
     description: "A private capsule for you, your partner, your family or someone you love: stories, voices, photographs, timelines and future messages, with free invitations for everyone who contributes.",
     price: { amount: launchPrices.digital.year, currency: "USD", interval: "year", isTestPrice: true },
     monthly: { amount: launchPrices.digital.month },
@@ -42,11 +42,11 @@ export const defaultCatalog: Product[] = [
     fulfillment: "digital",
     inclusions: [
       "One capsule of any kind",
-      "25 GB for photographs, recordings and videos (planned allowance)",
-      "Unlimited family contributors and viewers, free for them",
       "Guided questions, voice recording, timelines and chapters",
-      "Up to 10 future messages prepared",
+      "Photographs, letters and the stories behind them",
+      "Unlimited family contributors and viewers, free for them",
       "Download a complete copy any time",
+      "25 GB for photographs, recordings and videos (planned allowance)",
     ],
     limitations: ["Hosted storage and sign-in arrive with accounts; this preview keeps everything in your browser", "Cancel any time, you can still download everything"],
     note: "Test price · billed yearly, or monthly",
@@ -57,7 +57,7 @@ export const defaultCatalog: Product[] = [
     id: "family",
     kind: "plan",
     planId: "family",
-    name: "Family Plan",
+    name: "Family",
     tagline: "Every capsule your family needs, in one place.",
     description: "For the people keeping several stories at once, your parents, your relationship, your children, with a shared family directory and more room for media.",
     price: { amount: launchPrices.family.year, currency: "USD", interval: "year", isTestPrice: true },

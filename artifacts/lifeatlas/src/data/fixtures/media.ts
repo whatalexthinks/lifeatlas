@@ -1,7 +1,7 @@
 import type { FuzzyDate, MediaAsset, Transcript } from "@/domain/models";
 import { memories } from "./memories";
 import audioManifest from "./audio-manifest.json";
-import { photoForPlate } from "@/lib/media/editorial-photos";
+import { editorialPhotoUrl, photoForPlate } from "@/lib/media/editorial-photos";
 
 /**
  * Sample media.
@@ -13,7 +13,7 @@ import { photoForPlate } from "@/lib/media/editorial-photos";
  */
 
 export const PLATE_NOTICE = "Illustrated sample plate, an original artwork made for this demo, not a real photograph.";
-export const PHOTO_NOTICE = "AI-generated sample photograph of a fictional family. Not a real photograph of real people.";
+export const PHOTO_NOTICE = "Editorial photograph supplied for this sample archive. The family stories are fictional.";
 export const AUDIO_NOTICE = "Synthetic sample narration (open-source text-to-speech). Not a real person's voice.";
 
 const T = "2026-09-03T12:00:00.000Z";
@@ -99,7 +99,7 @@ export const photoMedia: MediaAsset[] = [
     id: "med_coast_1972",
     capsuleId: M,
     kind: "image",
-    source: { kind: "static", url: "/media/coast-1972.webp" },
+    source: { kind: "static", url: editorialPhotoUrl("maine-family-1972") },
     storage: "fixture",
     mimeType: "image/webp",
     width: 1500,

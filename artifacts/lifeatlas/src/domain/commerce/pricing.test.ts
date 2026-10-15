@@ -27,7 +27,7 @@ describe("quoteCart", () => {
       ],
       productCatalog,
     );
-    expect(q.subtotal).toBe(9900 + 2 * (11900 + 1200));
+    expect(q.subtotal).toBe(7900 + 2 * (11900 + 1200));
     expect(q.total).toBe(q.subtotal);
     expect(q.shipping).toBeNull();
     expect(q.tax).toBeNull();

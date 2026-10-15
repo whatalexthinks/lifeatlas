@@ -1,2 +1,3 @@
 - [Imported dependency detection](import-dependency-detection.md) — validate migration helper dependency suggestions against real imports before installing.
 - [Visual direction](visual-direction.md) — premium, bespoke photo-led styling; no em dashes in site copy.
+- [Positioning and pricing](product-positioning.md) — guided digital and physical memory capsules, distinct from ancestry; make the value clear immediately and lead with monthly pricing.

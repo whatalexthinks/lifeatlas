@@ -189,12 +189,12 @@ describe("plans, promotions and credit at checkout", () => {
     if (c.status !== "ok") throw new Error("no checkout");
     expect((await b.applyPromoCode(c.data.checkoutId, "nope")).status).toBe("error");
     const applied = await b.applyPromoCode(c.data.checkoutId, " founders ");
-    expect(applied.status === "ok" && applied.data.quote.discount?.amount).toBe(1980);
+    expect(applied.status === "ok" && applied.data.quote.discount?.amount).toBe(1580);
     const before = db().promotions.find((p) => p.id === "promo_founders")!.redemptions;
     await b.setUseCredit(c.data.checkoutId, false);
     const o = await b.completeMockCheckout(c.data.checkoutId, customer);
     if (o.status !== "ok") throw new Error("not completed");
-    expect(o.data).toMatchObject({ total: 9900 - 1980, payment: "mock_uncharged", discount: { promotionId: "promo_founders", amount: 1980 } });
+    expect(o.data).toMatchObject({ total: 7900 - 1580, payment: "mock_uncharged", discount: { promotionId: "promo_founders", amount: 1580 } });
     expect(db().promotions.find((p) => p.id === "promo_founders")!.redemptions).toBe(before + 1);
     expect(db().promotionRedemptions[0]).toMatchObject({ promotionId: "promo_founders", orderId: o.data.id });
     // The plan becomes this account's subscription; nothing renews or charges.
@@ -208,7 +208,7 @@ describe("plans, promotions and credit at checkout", () => {
     const own = await b.applyPromoCode(c.data.checkoutId, db().referrals.code);
     expect(own.status === "error" && own.message).toMatch(/your own referral code/);
     const friend = await b.applyPromoCode(c.data.checkoutId, "PRIYA-7KQ2");
-    expect(friend.status === "ok" && friend.data.quote.discount?.amount).toBe(3580);
+    expect(friend.status === "ok" && friend.data.quote.discount?.amount).toBe(2980);
   });
 
   it("credit is used once and recorded", async () => {
@@ -235,7 +235,7 @@ describe("plans, promotions and credit at checkout", () => {
     expect(second.status).toBe("error");
     const q = b.quoteCart();
     if (q.status !== "ok") throw new Error("no quote");
-    expect(q.data.subtotal).toBe(9900 + 2 * 24900);
+    expect(q.data.subtotal).toBe(7900 + 2 * 24900);
     expect(q.data.memberDiscount?.amount).toBe(4980);
     const kit = db().cart.lines.find((l) => l.productId === "keepsake_box")!;
     await b.updateCartLine(kit.id, { quantity: 1 });
