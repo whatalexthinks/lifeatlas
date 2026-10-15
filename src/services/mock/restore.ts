@@ -101,6 +101,7 @@ async function inspectArchive(file: File) {
   const damaged = new Set<string>();
   let photos = 0;
   let recordings = 0;
+  let videos = 0;
   let notInArchive = 0;
   for (const m of manifest.media) {
     const data = m.path ? files.get(m.path) : undefined;
@@ -113,6 +114,7 @@ async function inspectArchive(file: File) {
       continue;
     }
     if (m.kind === "audio") recordings++;
+    else if (m.kind === "video") videos++;
     else photos++;
   }
 
@@ -133,7 +135,7 @@ async function inspectArchive(file: File) {
     stories: manifest.memories.length,
     people: manifest.people.length,
     places: manifest.places.length,
-    verified: { photos, recordings },
+    verified: { photos, recordings, videos },
     damaged: manifest.media.filter((m) => damaged.has(m.id)).map((m) => m.caption || m.id),
     notInArchive,
     warnings,
@@ -202,7 +204,7 @@ async function restoreArchive(token: string) {
       skipped.push(`${m.caption || m.id}: vector (SVG) files aren't restored, because they can carry scripts. Add it again as a PNG or JPEG.`);
       continue;
     }
-    const kind = m.kind === "audio" ? "audio" : "image";
+    const kind = m.kind === "audio" ? "audio" : m.kind === "video" ? "video" : "image";
     const r = await mockMedia.put({ capsuleId, blob: new Blob([data as BlobPart], { type: m.mimeType }), kind, caption: m.caption, alt: m.caption, contributorName: "Restored" });
     if (r.status === "ok") mediaIds.set(m.id, r.data.id);
     else skipped.push(`${m.caption || m.id}: ${r.status === "error" ? r.message : "not saved"}`);
@@ -253,7 +255,8 @@ async function restoreArchive(token: string) {
       tags: m.tags.slice(0, 12),
       peopleIds: m.peopleIds.map((id) => peopleIds.get(id)).filter((x): x is string => !!x),
       consent: { print: false, export: true, share: false },
-      photoIds: own.filter((x) => x.kind !== "audio").map((x) => x.id!),
+      photoIds: own.filter((x) => x.kind !== "audio" && x.kind !== "video").map((x) => x.id!),
+      videoIds: own.filter((x) => x.kind === "video").map((x) => x.id!),
       audioId: own.find((x) => x.kind === "audio")?.id,
       attribution: { displayName: m.contributor || "Unknown", via: "restored" },
       status: statuses.includes(m.status as MemoryStatus) ? (m.status as MemoryStatus) : "approved",

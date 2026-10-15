@@ -11,7 +11,7 @@ import { MemoryCard } from "@/components/capsule/memory-card";
 import { AudioPlayer } from "@/components/audio/audio-player";
 import { InvitationStatusBadge, MemoryStatusBadge, Panel } from "@/components/studio/primitives";
 import { formatFuzzyDate } from "@/lib/dates";
-import { capsuleKind, capsuleKinds, questionsForKind } from "@/domain/capsule-kinds";
+import { askingWhom, capsuleKind, capsuleKinds, questionsForKind } from "@/domain/capsule-kinds";
 import { chapterProgress, contributorsOf, nextActions, upcomingDates, whenLabel } from "@/domain/dashboard";
 import { capsuleAllowance, countOwnedCapsules, currentPlanId } from "@/domain/commerce/plans";
 import { Avatar } from "@/components/studio/persona-switcher";
@@ -73,7 +73,7 @@ export default function StudioHome() {
   const [shuffle, setShuffle] = React.useState(0);
   const dayIndex = Math.floor(now / 86_400_000);
   const todaysQuestion = shuffle === 0 && nextQuestion ? nextQuestion : suggested.length ? suggested[(dayIndex + shuffle * 7) % suggested.length] : nextQuestion;
-  const questionFor = featuredKind === "personal" ? "you" : featuredKind === "couple" ? "the two of you" : featuredKind === "family" ? "the family" : featuredCapsule?.preferredName;
+  const questionFor = featuredCapsule ? askingWhom(featuredCapsule) : "you";
   const coming = upcomingDates(active, new Date(now), 120).slice(0, 4);
   const steps = nextActions({ capsules: active, memories: live, invitations, exportJobs, successors, futureMessages });
   const allowance = capsuleAllowance(currentPlanId(subscriptions, catalog), countOwnedCapsules(capsules, personId));

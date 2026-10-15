@@ -174,6 +174,15 @@ export function surpriseQuestion(kind: CapsuleKind, questions: Question[], exclu
   return from[Math.floor(random() * from.length)];
 }
 
+/** Who a question is for, in running text: "you", "the two of you", "the family", "Rosa". */
+export function askingWhom(c: Pick<Capsule, "kind" | "relationshipKind" | "preferredName" | "subjectName">) {
+  const kind = capsuleKind(c);
+  if (kind === "personal") return "you";
+  if (kind === "couple") return "the two of you";
+  if (kind === "family") return "the family";
+  return c.preferredName || callName(c.subjectName) || "them";
+}
+
 /** The chapter with the name this capsule uses for it. Falls back to the standard chapter. */
 export function chapterFor(c: Pick<Capsule, "kind" | "relationshipKind"> | undefined, key: ChapterKey) {
   const ch = chapterById(key);

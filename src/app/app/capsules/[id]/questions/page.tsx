@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { ArrowDown, ArrowUp, Bookmark, Check, ListPlus, MailPlus, Mic, Plus, RotateCcw, Shuffle, SkipForward, Star, Trash2, Undo2 } from "lucide-react";
-import { capsuleKind, capsuleKinds, surpriseQuestion } from "@/domain/capsule-kinds";
+import { askingWhom, capsuleKind, surpriseQuestion } from "@/domain/capsule-kinds";
 import { useStudioCapsule } from "@/components/studio/capsule-frame";
 import { QuestionPicker } from "@/components/capsule/question-picker";
 import { Panel } from "@/components/studio/primitives";
@@ -35,7 +35,9 @@ export default function StudioQuestions() {
   const skipped = assignments.filter((a) => a.status === "skipped");
   const saved = assignments.filter((a) => a.status === "saved");
   const qText = (id: string) => questions.find((q) => q.id === id)?.text ?? "Question";
-  const answersTo = (id: string) => memories.filter((m) => m.questionId === id);
+  const answersTo = (id: string) => memories.filter((m) => m.questionId === id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  // Answered means a story answers it — whether or not it was ever queued.
+  const answeredIds = [...new Set([...answered.map((a) => a.questionId), ...memories.filter((m) => m.questionId).map((m) => m.questionId!)])];
   const isFavorite = (id: string) => favorites.includes(id);
   const toggleFavorite = async (id: string) => {
     const r = await services().capsules.toggleFavoriteQuestion(id);
@@ -43,7 +45,7 @@ export default function StudioQuestions() {
   };
 
   // Surprise me: a question suited to this capsule that hasn't been used here yet.
-  const used = new Set(assignments.map((a) => a.questionId));
+  const used = new Set([...assignments.map((a) => a.questionId), ...answeredIds]);
   const [surpriseId, setSurpriseId] = React.useState<string | null>(null);
   const [seen, setSeen] = React.useState<string[]>([]);
   const surprise = questions.find((q) => q.id === surpriseId);
@@ -73,7 +75,7 @@ export default function StudioQuestions() {
         <section className="relative overflow-hidden rounded-[22px] bg-night p-6 text-night-ink sm:p-7" aria-labelledby="surprise-title">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="surprise-title" className="font-mono text-[0.75rem] uppercase tracking-[0.14em] text-night-accent">
-              A question for {capsuleKinds[kind].about(capsule.preferredName || capsule.subjectName)}
+              A question for {askingWhom(capsule)}
             </h2>
             <button type="button" onClick={drawSurprise} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-night-line px-4 text-[0.875rem] font-medium hover:bg-white/10">
               <Shuffle className="size-4" aria-hidden /> {surprise ? "Another" : "Surprise me"}
@@ -219,28 +221,29 @@ export default function StudioQuestions() {
         </Panel>
 
         <Panel title="Answered & skipped">
-          {answered.length + skipped.length === 0 ? (
+          {answeredIds.length + skipped.length === 0 ? (
             <p className="text-ink-3">Nothing yet.</p>
           ) : (
             <ul className="space-y-1.5">
-              {answered.map((a) => {
-                const count = answersTo(a.questionId).length;
+              {answeredIds.map((qid) => {
+                const answers = answersTo(qid);
+                const latest = answers[0]?.id ?? answered.find((a) => a.questionId === qid)?.memoryId;
                 return (
-                  <li key={a.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-2 py-2">
+                  <li key={qid} className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-2 py-2">
                     <span className="flex min-w-0 flex-1 items-start gap-2.5">
                       <Check className="mt-1 size-4 shrink-0 text-success" />
                       <span>
-                        <span className="block font-serif text-[1.1rem] leading-snug">{qText(a.questionId)}</span>
-                        {count > 1 ? <span className="text-[0.8125rem] text-ink-3">{pluralize(count, "answer")} — each one kept</span> : null}
+                        <span className="block font-serif text-[1.1rem] leading-snug">{qText(qid)}</span>
+                        {answers.length > 1 ? <span className="text-[0.8125rem] text-ink-3">{pluralize(answers.length, "answer")} — each one kept</span> : null}
                       </span>
                     </span>
                     <span className="flex gap-1">
-                      {a.memoryId ? (
-                        <Button size="sm" variant="ghost" onClick={() => openMemory(a.memoryId!)}>
-                          Open answer
+                      {latest ? (
+                        <Button size="sm" variant="ghost" onClick={() => openMemory(latest)}>
+                          {answers.length > 1 ? "Open latest" : "Open answer"}
                         </Button>
                       ) : null}
-                      <ButtonLink size="sm" variant="ghost" href={`/app/gather?capsule=${capsule.id}&question=${a.questionId}`} leading={<RotateCcw className="size-3.5" />}>
+                      <ButtonLink size="sm" variant="ghost" href={`/app/gather?capsule=${capsule.id}&question=${qid}`} leading={<RotateCcw className="size-3.5" />}>
                         Answer again
                       </ButtonLink>
                     </span>
@@ -347,7 +350,7 @@ export default function StudioQuestions() {
         onConfirm={(ids) => void services().capsules.setAssignments(capsule.id, ids)}
         max={30}
         title="Questions to ask next"
-        answeredIds={answered.map((a) => a.questionId)}
+        answeredIds={answeredIds}
       />
     </div>
   );

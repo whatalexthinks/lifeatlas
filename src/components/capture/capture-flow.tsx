@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRight, Check, ChevronDown, History, ImagePlus, Keyboard, Mic, RotateCcw, SkipForward, Sparkles } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Film, History, ImagePlus, Keyboard, Mic, RotateCcw, SkipForward, Sparkles } from "lucide-react";
 import type { Capsule, FuzzyDate, Memory, MemoryAttribution, MemoryStatus, Question } from "@/domain/models";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { DemoNotice, ProgressBar, toast } from "@/components/ui/feedback";
@@ -11,6 +11,7 @@ import { FuzzyDateInput, PhotoDateSuggestion, PlacePicker } from "@/components/c
 import { MediaImage } from "@/components/media/media-image";
 import { Recorder, type RecordedAudio } from "./recorder";
 import { PhotoAdder, type PendingPhoto } from "./photo-adder";
+import { VideoAdder, type PendingVideo } from "@/components/media/video-clip";
 import { MemoryReveal } from "./memory-reveal";
 import { services } from "@/services/factory";
 import type { LoadedCaptureDraft } from "@/services/contracts";
@@ -49,6 +50,8 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
   const [audio, setAudio] = React.useState<RecordedAudio | null>(null);
   const [text, setText] = React.useState("");
   const [photos, setPhotos] = React.useState<PendingPhoto[]>([]);
+  const [videos, setVideos] = React.useState<PendingVideo[]>([]);
+  const [showVideos, setShowVideos] = React.useState(false);
   const [showPhotos, setShowPhotos] = React.useState(false);
   const [details, setDetails] = React.useState(false);
   const [title, setTitle] = React.useState("");
@@ -93,7 +96,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
   const q = questions[index];
   const total = Math.max(1, questions.length);
   const done = !freeform && index >= questions.length;
-  const hasContent = !!audio || text.trim().length > 0 || photos.length > 0;
+  const hasContent = !!audio || text.trim().length > 0 || photos.length > 0 || videos.length > 0;
   const autosaving = draftReady && !offer && !justSaved && !done;
   const draftFields = { key: draftKey, capsuleId: capsule.id, questionId: q?.id, label: freeform ? "A memory of your own" : (q?.text ?? "A memory"), who: attribution.displayName, text, title, date, placeId };
 
@@ -178,6 +181,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
     setAudio(null);
     setText("");
     setPhotos([]);
+    setVideos([]);
     setShowPhotos(false);
     setDetails(false);
     setTitle("");
@@ -204,7 +208,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
 
   const save = async () => {
     if (!hasContent) {
-      setError("Record, type or add a photo first — or skip this question.");
+      setError("Record, type, or add a photo or video first — or skip this question.");
       return;
     }
     setSaving(true);
@@ -216,6 +220,12 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
         const r = await s.media.put({ capsuleId: capsule.id, blob: p.file, kind: "image", caption: p.caption, alt: p.caption || `Photo shared by ${attribution.displayName}`, contributorName: attribution.displayName, width: p.width, height: p.height });
         if (r.status !== "ok") throw new Error(r.message);
         photoIds.push(r.data.id);
+      }
+      const videoIds: string[] = [];
+      for (const v of videos) {
+        const r = await s.media.put({ capsuleId: capsule.id, blob: v.file, kind: "video", caption: v.caption, alt: v.caption || `Video shared by ${attribution.displayName}`, contributorName: attribution.displayName, durationSec: v.durationSec });
+        if (r.status !== "ok") throw new Error(r.message);
+        videoIds.push(r.data.id);
       }
       let audioId: string | undefined;
       const finalTitle = title.trim() || (freeform ? "A memory" : titleFromQuestion(q)) || "A memory";
@@ -237,6 +247,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
         peopleIds: [],
         consent: { print: true, export: true, share: false },
         photoIds,
+        videoIds,
         audioId,
         questionId: q?.id,
         attribution,
@@ -250,6 +261,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
       setJustSaved(res.data);
       setFollowUp(q?.followUps?.[0] ?? null);
       photos.forEach((p) => URL.revokeObjectURL(p.url));
+      videos.forEach((v) => URL.revokeObjectURL(v.url));
       if (firstMemory && saved.length === 0) s.analytics.track("first_memory_saved", { capsuleId: capsule.id });
     } catch (e) {
       setError(e instanceof Error ? e.message : "We couldn't save this on your device. Nothing else was changed.");
@@ -487,10 +499,27 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
             <PhotoDateSuggestion takenOn={photos.find((p) => p.takenOn)?.takenOn} value={date} onUse={setDate} />
           </div>
         ) : (
-          <Button variant="secondary" size={senior ? "lg" : "md"} onClick={() => setShowPhotos(true)} leading={<ImagePlus className="size-5" />}>
-            Add a photo
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" size={senior ? "lg" : "md"} onClick={() => setShowPhotos(true)} leading={<ImagePlus className="size-5" />}>
+              Add a photo
+            </Button>
+            {!showVideos && !videos.length ? (
+              <Button variant="ghost" size={senior ? "lg" : "md"} onClick={() => setShowVideos(true)} leading={<Film className="size-5" />}>
+                Add a short video
+              </Button>
+            ) : null}
+          </div>
         )}
+        {showVideos || videos.length ? (
+          <div className="mt-5">
+            <VideoAdder videos={videos} onChange={setVideos} />
+            {videos.length ? <p className="mt-2 text-[0.8125rem] text-ink-3">Clips are kept once you save this memory; they aren&rsquo;t part of the autosaved draft.</p> : null}
+          </div>
+        ) : (showPhotos || photos.length) && !showVideos ? (
+          <button type="button" onClick={() => setShowVideos(true)} className="mt-4 inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-ink-2 underline-offset-4 hover:text-ink hover:underline">
+            <Film className="size-4" aria-hidden /> Add a short video too
+          </button>
+        ) : null}
       </div>
 
       {/* Details */}

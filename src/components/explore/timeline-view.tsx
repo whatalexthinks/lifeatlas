@@ -2,21 +2,27 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { AudioLines, Images, MapPin } from "lucide-react";
-import type { Capsule, Memory } from "@/domain/models";
+import { AudioLines, Diamond, Film, Images, MapPin, PenLine } from "lucide-react";
+import type { Capsule, ChapterKey, FuzzyDate, Memory } from "@/domain/models";
 import { MediaImage } from "@/components/media/media-image";
 import { MemoryStatusBadge } from "@/components/studio/primitives";
-import { EmptyState } from "@/components/ui/feedback";
-import { Segmented, Select } from "@/components/ui/field";
-import { useCapsuleMemories, useDb } from "@/hooks/use-data";
+import { EmptyState, toast } from "@/components/ui/feedback";
+import { Field, Input, Segmented, Select } from "@/components/ui/field";
+import { Dialog } from "@/components/ui/overlay";
+import { Button } from "@/components/ui/button";
+import { FuzzyDateInput } from "@/components/capsule/inputs";
+import { useCapsuleMemories, useDb, usePersona } from "@/hooks/use-data";
+import { buildTimeline, milestonesFor, type Milestone } from "@/domain/timeline";
+import { services } from "@/services/factory";
 import { chapterColorVar, chapters } from "@/data/chapters";
-import { approxYear, decadeOf, formatFuzzyDate } from "@/lib/dates";
+import { decadeOf, formatFuzzyDate } from "@/lib/dates";
 import { cn, excerpt } from "@/lib/utils";
 import { chapterFor } from "@/domain/capsule-kinds";
 
 /**
- * Editorial biographical timeline: a ribbon of decades on top, then the life
- * in chapters of ten years. Elegant with 2 stories or 200.
+ * Editorial biographical timeline: a ribbon of decades on top, then the life in chapters of
+ * ten years, with years, milestones and a way to jump straight to one. Grouping is done by the
+ * pure timeline engine; off-screen decades skip rendering, so it stays light with thousands.
  */
 export function TimelineView({
   capsule,
@@ -39,18 +45,20 @@ export function TimelineView({
   const memories = useCapsuleMemories(capsule.id, { scope: scope === "viewer" ? "viewer" : "studio", chapter: chapter || undefined, type: type || undefined });
   const all = useCapsuleMemories(capsule.id, { scope: scope === "viewer" ? "viewer" : "studio" });
   const places = useDb((d) => d.places);
+  const lifeEvents = useDb((d) => d.lifeEvents);
   const night = tone === "night";
+  const [editing, setEditing] = React.useState<Memory | null>(null);
 
-  const dated = memories.filter((m) => approxYear(m.date) !== null);
-  const undated = memories.filter((m) => approxYear(m.date) === null);
-  const decades = React.useMemo(() => {
-    const map = new Map<number, Memory[]>();
-    for (const m of dated) {
-      const d = decadeOf(m.date)!;
-      map.set(d, [...(map.get(d) ?? []), m]);
-    }
-    return [...map.entries()].sort((a, b) => a[0] - b[0]);
-  }, [dated]);
+  // Milestones aren't memories, so they step aside while a filter is on.
+  const milestones = chapter || type ? [] : milestonesFor(capsule, lifeEvents);
+  const timeline = buildTimeline(memories, milestones);
+  const undated = timeline.undated;
+  const jumpTo = (year: string) => {
+    if (!year) return;
+    const el = document.getElementById(`year-${year}`) ?? document.getElementById(`decade-${Math.floor(Number(year) / 10) * 10}`);
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    (el?.querySelector("h3, h2") as HTMLElement | null)?.focus({ preventScroll: true });
+  };
 
   const ribbon = React.useMemo(() => {
     const map = new Map<number, number>();
@@ -116,7 +124,14 @@ export function TimelineView({
             ) : null}
             {m.photoIds.length ? (
               <span className="inline-flex items-center gap-1">
-                <Images className="size-3.5" /> {m.photoIds.length}
+                <Images className="size-3.5" aria-hidden /> {m.photoIds.length}
+                <span className="sr-only">{m.photoIds.length === 1 ? "photo" : "photos"}</span>
+              </span>
+            ) : null}
+            {m.videoIds?.length ? (
+              <span className="inline-flex items-center gap-1">
+                <Film className="size-3.5" aria-hidden /> {m.videoIds.length}
+                <span className="sr-only">{m.videoIds.length === 1 ? "video" : "videos"}</span>
               </span>
             ) : null}
           </p>
@@ -133,18 +148,39 @@ export function TimelineView({
         ) : null}
       </div>
     );
-    if (hrefFor)
-      return (
-        <Link href={hrefFor(m)} className="block rounded-[18px]">
-          {content}
-        </Link>
-      );
-    return (
+    const opener = hrefFor ? (
+      <Link href={hrefFor(m)} className="block rounded-[18px]">
+        {content}
+      </Link>
+    ) : (
       <button type="button" onClick={() => onOpen?.(m)} className="block w-full rounded-[18px] text-left">
         {content}
       </button>
     );
+    if (scope !== "studio") return opener;
+    return (
+      <div className="group/item relative">
+        {opener}
+        <button
+          type="button"
+          onClick={() => setEditing(m)}
+          className="absolute right-2 top-2 grid size-9 place-items-center rounded-full bg-surface/90 text-ink-3 opacity-0 shadow-sm ring-1 ring-line transition-opacity hover:text-ink focus-visible:opacity-100 group-hover/item:opacity-100 [@media(hover:none)]:opacity-100"
+          aria-label={`Quick edit “${m.title}”`}
+        >
+          <PenLine className="size-4" />
+        </button>
+      </div>
+    );
   };
+
+  const renderMilestone = (ms: Milestone) => (
+    <div className={cn("relative flex items-center gap-3 rounded-[14px] px-3 py-2.5 sm:px-4", night ? "text-night-ink-2" : "text-ink-2")}>
+      <Diamond aria-hidden className={cn("absolute -left-[27px] size-3 fill-current sm:-left-[35px]", night ? "text-[#d7bc92]" : "text-oxblood")} />
+      <span className="font-mono text-[0.6875rem] uppercase tracking-[0.12em]">{formatFuzzyDate(ms.date, "short")}</span>
+      <span className="font-medium">{ms.label}</span>
+      <span className="sr-only">(milestone)</span>
+    </div>
+  );
 
   return (
     <div>
@@ -180,6 +216,16 @@ export function TimelineView({
             </option>
           ))}
         </Select>
+        {timeline.years.length > 3 ? (
+          <Select defaultValue="" onChange={(e) => jumpTo(e.target.value)} aria-label="Jump to a year" className="h-10 w-40 rounded-full text-[0.875rem]">
+            <option value="">Jump to a year…</option>
+            {timeline.years.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </Select>
+        ) : null}
         <Segmented
           label="Type of memory"
           size="sm"
@@ -209,22 +255,27 @@ export function TimelineView({
         <EmptyState className="mt-10" title="Nothing here yet" body={chapter || type ? "No memories match these filters." : "As memories arrive, this life will unfold here, decade by decade."} />
       ) : (
         <div className="mt-10 space-y-14">
-          {decades.map(([decade, ms]) => (
-            <section key={decade} id={`decade-${decade}`} className="scroll-mt-28" aria-labelledby={`h-${decade}`}>
+          {timeline.decades.map((d) => (
+            <section key={d.decade} id={`decade-${d.decade}`} className="scroll-mt-28 [content-visibility:auto] [contain-intrinsic-size:auto_900px]" aria-labelledby={`h-${d.decade}`}>
               <div className="mb-5 flex items-baseline gap-4">
-                <h2 id={`h-${decade}`} className={cn("font-serif text-[clamp(2.6rem,2rem+2vw,3.8rem)] leading-none tracking-[-0.03em]", night ? "text-night-ink" : "text-ink")}>
-                  {decade}
+                <h2 id={`h-${d.decade}`} tabIndex={-1} className={cn("font-serif text-[clamp(2.6rem,2rem+2vw,3.8rem)] leading-none tracking-[-0.03em] outline-none", night ? "text-night-ink" : "text-ink")}>
+                  {d.decade}
                   <span className={night ? "text-night-ink-3" : "text-ink-4"}>s</span>
                 </h2>
-                {ageLabel(decade) ? <span className={cn("catalog", night && "text-night-ink-3")}>{ageLabel(decade)}</span> : null}
+                {ageLabel(d.decade) ? <span className={cn("catalog", night && "text-night-ink-3")}>{ageLabel(d.decade)}</span> : null}
               </div>
-              <ol className={cn("ml-3 space-y-2 border-l pl-5 sm:ml-4 sm:pl-7", night ? "border-white/15" : "border-line-strong")}>
-                {ms.map((m) => (
-                  <li key={m.id}>
-                    {renderItem(m)}
-                  </li>
+              <div className={cn("ml-3 space-y-6 border-l pl-5 sm:ml-4 sm:pl-7", night ? "border-white/15" : "border-line-strong")}>
+                {d.years.map((y) => (
+                  <div key={y.year ?? "decade"} id={y.year ? `year-${y.year}` : undefined} className="scroll-mt-28">
+                    <h3 tabIndex={-1} className={cn("catalog mb-1 outline-none", night && "text-night-ink-3")}>{y.year ?? `Sometime in the ${d.decade}s`}</h3>
+                    <ol className="space-y-2">
+                      {y.entries.map((e) => (
+                        <li key={e.type === "memory" ? e.memory.id : e.milestone.id}>{e.type === "memory" ? renderItem(e.memory) : renderMilestone(e.milestone)}</li>
+                      ))}
+                    </ol>
+                  </div>
                 ))}
-              </ol>
+              </div>
             </section>
           ))}
           {undated.length ? (
@@ -246,6 +297,63 @@ export function TimelineView({
           ) : null}
         </div>
       )}
+      {editing ? <QuickEdit memory={editing} capsule={capsule} onClose={() => setEditing(null)} /> : null}
     </div>
+  );
+}
+
+/** Fix a title, a date or a chapter without leaving the timeline. Revisions are kept as usual. */
+function QuickEdit({ memory, capsule, onClose }: { memory: Memory; capsule: Capsule; onClose: () => void }) {
+  const persona = usePersona();
+  const [title, setTitle] = React.useState(memory.title);
+  const [date, setDate] = React.useState<FuzzyDate>(memory.date);
+  const [chapter, setChapter] = React.useState<ChapterKey>(memory.chapter);
+  const [error, setError] = React.useState<string | null>(null);
+  const [saving, setSaving] = React.useState(false);
+  const save = async () => {
+    setSaving(true);
+    const r = await services().capsules.updateMemory(memory.id, { title, date, chapter }, persona?.name ?? "Editor");
+    setSaving(false);
+    if (r.status === "ok") {
+      toast.success("Saved", "The earlier version is kept in the story's history.");
+      onClose();
+    } else setError(r.status === "error" ? r.message : "Couldn't save this change.");
+  };
+  return (
+    <Dialog
+      open
+      onOpenChange={(v) => (!v ? onClose() : undefined)}
+      title="Quick edit"
+      description={memory.title}
+      footer={
+        <>
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={() => void save()} loading={saving}>
+            Save
+          </Button>
+        </>
+      }
+    >
+      <div className="space-y-5">
+        <Field label="Title" htmlFor="qe-title" error={error ?? undefined}>
+          <Input id="qe-title" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={160} />
+        </Field>
+        <div className="space-y-2">
+          <p className="text-[0.9375rem] font-medium">When</p>
+          <FuzzyDateInput id="qe-date" value={date} onChange={setDate} birthYear={capsule.birthYear} />
+        </div>
+        <Field label="Chapter" htmlFor="qe-chapter">
+          <Select id="qe-chapter" value={chapter} onChange={(e) => setChapter(e.target.value as ChapterKey)}>
+            {capsule.chapterOrder.map((k) => (
+              <option key={k} value={k}>
+                {chapterFor(capsule, k).title}
+              </option>
+            ))}
+          </Select>
+        </Field>
+      </div>
+    </Dialog>
   );
 }

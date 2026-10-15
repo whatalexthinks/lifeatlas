@@ -181,8 +181,8 @@ export const mockCapsules: CapsuleRepository = {
   async createMemory(input) {
     const parsed = memoryFormSchema.safeParse(input);
     if (!parsed.success) return fail("validation", parsed.error.issues[0]?.message ?? "Please check the form.");
-    if (!input.narrative.trim() && input.photoIds.length === 0 && !input.audioId) {
-      return fail("validation", "Add a few words, a photo or a recording before saving.");
+    if (!input.narrative.trim() && input.photoIds.length === 0 && !input.audioId && !input.videoIds?.length) {
+      return fail("validation", "Add a few words, a photo, a video or a recording before saving.");
     }
     await latency(200);
     const now = new Date().toISOString();
@@ -199,6 +199,7 @@ export const mockCapsules: CapsuleRepository = {
       peopleIds: parsed.data.peopleIds,
       tags: parsed.data.tags,
       photoIds: input.photoIds,
+      ...(input.videoIds?.length ? { videoIds: input.videoIds } : {}),
       audioId: input.audioId,
       questionId: input.questionId,
       attribution: input.attribution,
@@ -253,6 +254,7 @@ export const mockCapsules: CapsuleRepository = {
     if (patch.placeId !== undefined && patch.placeId !== current.placeId) changes.push("place");
     if (patch.privacy && patch.privacy !== current.privacy) changes.push("privacy");
     if (patch.photoIds) changes.push("photos");
+    if (patch.videoIds) changes.push("videos");
     const revision: MemoryRevision = {
       id: uid("rev"),
       at: new Date().toISOString(),

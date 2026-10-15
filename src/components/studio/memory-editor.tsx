@@ -12,6 +12,7 @@ import { FuzzyDateInput, PhotoDateSuggestion, PlacePicker } from "@/components/c
 import { MediaImage } from "@/components/media/media-image";
 import { AudioPlayer } from "@/components/audio/audio-player";
 import { PhotoAdder, type PendingPhoto } from "@/components/capture/photo-adder";
+import { VideoAdder, VideoClip, type PendingVideo } from "@/components/media/video-clip";
 import { Recorder, type RecordedAudio } from "@/components/capture/recorder";
 import { MemoryStatusBadge, privacyCopy } from "./primitives";
 import { canEditMemory } from "@/domain/policies/permissions";
@@ -81,6 +82,8 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
   const [consent, setConsent] = React.useState(memory.consent);
   const [photoIds, setPhotoIds] = React.useState(memory.photoIds);
   const [newPhotos, setNewPhotos] = React.useState<PendingPhoto[]>([]);
+  const [videoIds, setVideoIds] = React.useState(memory.videoIds ?? []);
+  const [newVideos, setNewVideos] = React.useState<PendingVideo[]>([]);
   const [removeAudio, setRemoveAudio] = React.useState(false);
   const [newAudio, setNewAudio] = React.useState<RecordedAudio | null>(null);
   const [recording, setRecording] = React.useState(false);
@@ -106,6 +109,8 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
     !same(consent, memory.consent) ||
     !same(photoIds, memory.photoIds) ||
     newPhotos.length > 0 ||
+    !same(videoIds, memory.videoIds ?? []) ||
+    newVideos.length > 0 ||
     removeAudio ||
     !!newAudio ||
     transcript !== (existingTranscript?.text ?? "");
@@ -131,13 +136,19 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
         if (r.status !== "ok") throw new Error(r.message);
         added.push(r.data.id);
       }
+      const addedVideos: string[] = [];
+      for (const v of newVideos) {
+        const r = await s.media.put({ capsuleId: capsule.id, blob: v.file, kind: "video", caption: v.caption, alt: v.caption || memory.title, contributorName: persona.name, durationSec: v.durationSec });
+        if (r.status !== "ok") throw new Error(r.message);
+        addedVideos.push(r.data.id);
+      }
       let audioId: string | null | undefined = undefined;
       if (newAudio) {
         const r = await s.media.put({ capsuleId: capsule.id, blob: newAudio.blob, kind: "audio", caption: `“${title}”`, alt: `Recording for ${title}`, contributorName: persona.name, durationSec: newAudio.durationSec, peaks: newAudio.peaks });
         if (r.status !== "ok") throw new Error(r.message);
         audioId = r.data.id;
       } else if (removeAudio) audioId = null;
-      const res = await s.capsules.updateMemory(memory.id, { ...parsed.data, quote: quote.trim(), photoIds: [...photoIds, ...added], audioId }, persona.name);
+      const res = await s.capsules.updateMemory(memory.id, { ...parsed.data, quote: quote.trim(), photoIds: [...photoIds, ...added], videoIds: [...videoIds, ...addedVideos], audioId }, persona.name);
       if (res.status !== "ok") throw new Error(res.message);
       const targetAudio = typeof audioId === "string" ? audioId : audioId === null ? undefined : memory.audioId;
       if (targetAudio && transcript.trim() !== (existingTranscript?.text ?? "").trim()) await s.transcription.saveManualTranscript(targetAudio, transcript.trim());
@@ -311,6 +322,24 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
           ) : null}
           <PhotoAdder photos={newPhotos} onChange={setNewPhotos} />
           <PhotoDateSuggestion takenOn={newPhotos.find((p) => p.takenOn)?.takenOn} value={date} onUse={setDate} />
+        </div>
+
+        {/* Videos */}
+        <div className="space-y-3">
+          <Label>Video clips</Label>
+          {videoIds.length ? (
+            <ul className="space-y-3">
+              {videoIds.map((id, i) => (
+                <li key={id} className="relative">
+                  <VideoClip mediaId={id} title={`Video ${i + 1}`} />
+                  <button type="button" onClick={() => setVideoIds(videoIds.filter((x) => x !== id))} className="absolute right-2 top-2 grid size-9 place-items-center rounded-full bg-black/60 text-white" aria-label={`Remove video ${i + 1} from this memory`}>
+                    <X className="size-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <VideoAdder videos={newVideos} onChange={setNewVideos} max={Math.max(0, 3 - videoIds.length)} />
         </div>
 
         {/* Audio */}

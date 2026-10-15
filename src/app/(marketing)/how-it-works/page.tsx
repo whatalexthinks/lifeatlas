@@ -62,7 +62,7 @@ const steps: { id: string; n: string; title: React.ReactNode; body: React.ReactN
     ),
     body: (
       <>
-        <p>Each memory can hold words, a voice recording and photographs, with a date, a place and the people in it.</p>
+        <p>Each memory can hold words, a voice recording, photographs and short video clips, with a date, a place and the people in it.</p>
         <CheckList
           className="mt-6"
           items={[

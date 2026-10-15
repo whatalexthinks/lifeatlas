@@ -134,6 +134,7 @@ export interface AccountRepository {
 export interface NewMemoryInput extends MemoryFormValues {
   capsuleId: string;
   photoIds: string[];
+  videoIds?: string[];
   audioId?: string;
   questionId?: string;
   attribution: Memory["attribution"];
@@ -162,7 +163,7 @@ export interface CapsuleRepository {
   setCapsuleStatus(id: string, to: Capsule["status"]): Promise<ServiceResult<Capsule>>;
   reorderChapters(id: string, order: ChapterKey[]): Promise<ServiceResult<Capsule>>;
   createMemory(input: NewMemoryInput): Promise<ServiceResult<Memory>>;
-  updateMemory(id: string, patch: Partial<MemoryFormValues> & { photoIds?: string[]; audioId?: string | null }, editor: string): Promise<ServiceResult<Memory>>;
+  updateMemory(id: string, patch: Partial<MemoryFormValues> & { photoIds?: string[]; videoIds?: string[]; audioId?: string | null }, editor: string): Promise<ServiceResult<Memory>>;
   transitionMemory(id: string, to: MemoryStatus, note?: string, reviewer?: string): Promise<ServiceResult<Memory>>;
   softDeleteMemory(id: string): Promise<ServiceResult<Memory>>;
   restoreMemory(id: string): Promise<ServiceResult<Memory>>;
@@ -186,7 +187,7 @@ export interface CapsuleRepository {
 export interface PutMediaInput {
   capsuleId: string;
   blob: Blob;
-  kind: "image" | "audio";
+  kind: "image" | "audio" | "video";
   caption?: string;
   alt?: string;
   contributorName: string;
@@ -329,7 +330,7 @@ export interface GeocodingProvider {
 
 export interface ExportPreviewItem {
   id: string;
-  kind: "memory" | "photo" | "audio" | "plate";
+  kind: "memory" | "photo" | "video" | "audio" | "plate";
   label: string;
   included: boolean;
   reason?: string;
@@ -354,7 +355,7 @@ export interface ArchiveInspection {
   people: number;
   places: number;
   /** Files whose bytes match the SHA-256 recorded at export. */
-  verified: { photos: number; recordings: number };
+  verified: { photos: number; recordings: number; videos?: number };
   /** Captions of files whose bytes no longer match — they won't be restored. */
   damaged: string[];
   /** Files listed in the manifest but not in this archive (or a records-only export). */

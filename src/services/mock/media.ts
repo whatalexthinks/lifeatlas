@@ -2,6 +2,7 @@
 
 import type { MediaAsset } from "@/domain/models";
 import { validateMediaFile } from "@/domain/media/validation";
+import { validateVideoFile } from "@/domain/media/video";
 import { plateDataUri, renderPlateSvg } from "@/lib/plates";
 import { deleteBlob, getBlob, isQuotaError, putBlob } from "@/lib/storage/idb";
 import { sha256Hex, uid } from "@/lib/utils";
@@ -14,7 +15,7 @@ const objectUrls = new Map<string, string>();
 
 export const mockMedia: MediaStorageProvider = {
   async put(input) {
-    const v = validateMediaFile({ type: input.blob.type, size: input.blob.size, name: "upload" }, input.kind);
+    const v = input.kind === "video" ? validateVideoFile({ type: input.blob.type, size: input.blob.size, name: "upload" }) : validateMediaFile({ type: input.blob.type, size: input.blob.size, name: "upload" }, input.kind);
     if (!v.ok) return fail("validation", v.reason);
     const blobKey = uid("blob");
     try {

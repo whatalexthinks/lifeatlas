@@ -67,7 +67,7 @@ export interface ExportJob {
   completedAt?: ISODateTime;
   fileName?: string;
   byteSize?: number;
-  counts?: { memories: number; photos: number; audio: number; missing: number; excluded: number };
+  counts?: { memories: number; photos: number; audio: number; videos?: number; missing: number; excluded: number };
   error?: string;
 }
 

@@ -162,6 +162,8 @@ export interface Memory extends Timestamps {
   tags: string[];
   /** Image media in display order. */
   photoIds: ID[];
+  /** Short video clips. Optional so memories saved before video existed stay valid. */
+  videoIds?: ID[];
   audioId?: ID;
   questionId?: ID;
   attribution: MemoryAttribution;
