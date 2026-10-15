@@ -7,8 +7,10 @@ The user asked for a premium makeover of colors, fonts, logo and brand-name styl
 
 The user preferred the supplied archive screenshot's colors: deep forest-green backgrounds, warm ivory text, and muted antique-gold accents. Do not replace that palette with red-orange or bright gold.
 
+Never present generated or AI-created images as photographs. Use supplied photographs only when their subject matches the scene. When there is no suitable match, show an honest no-photo state instead of substituting unrelated or generated imagery.
+
 The brand name is **OurLife**. **Capsule** is a separate product descriptor, never concatenate it into the brand name or split out “Life” as a color accent. The user rejected keyhole/lock iconography and generic-looking logomarks; make the identity typographic and deliberately bespoke.
 
-**Why:** The user explicitly requested this direction after importing the existing app.
+**Why:** The user explicitly requested this direction after importing the existing app and asked that no placeholder photographs be used.
 
 **How to apply:** Keep future visual work consistent with this direction and avoid adding em dashes to interface or marketing copy. Use the separate name/product hierarchy consistently in lockups and page titles. Do not add generic icon tiles or change functional behavior while applying visual polish.

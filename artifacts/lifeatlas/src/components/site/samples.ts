@@ -6,6 +6,7 @@ import { audioMedia, media } from "@/data/fixtures/media";
 import { places } from "@/data/fixtures/places";
 import { extraCapsules, extraMedia, extraMemories, extraPlaces } from "@/data/fixtures/samples-couple-family";
 import { sortKey } from "@/lib/dates";
+import { photoForPlate } from "@/lib/media/editorial-photos";
 
 /**
  * The fictional sample family, read straight from the fixtures. Public pages use these, 
@@ -18,20 +19,21 @@ const allMemories = [...memories, ...extraMemories];
 const allMedia: MediaAsset[] = [...media, ...extraMedia];
 const allPlaces = [...places, ...extraPlaces];
 
-/** The illustration behind a sample media id, when it is one. */
+/** The supplied photograph's scene id behind a sample media item, when it has one. */
 export function plateOf(mediaId: string | undefined) {
   const m = allMedia.find((x) => x.id === mediaId);
   return m?.source.kind === "plate" ? m.source.plateId : undefined;
 }
 
-/** Cover plates for samples whose cover is a photograph rather than an illustration. */
-const coverFallback: Record<string, string> = { cap_margaret: "shells-1972", cap_sarah: "portrait-sarah" };
+/** Supplied cover photographs for sample capsules whose media is otherwise stored separately. */
+const coverFallback: Record<string, string> = { cap_margaret: "portrait-margaret", cap_sarah: "portrait-sarah" };
 
-/** A sample capsule with its cover drawn from an illustration, independent of stored files. */
+/** A sample capsule with a supplied photograph, or a type-only cover when none matches. */
 export function sampleCapsule(id: string): Capsule {
   const c = allCapsules.find((x) => x.id === id);
   if (!c) throw new Error(`Unknown sample capsule ${id}`);
-  const plateId = plateOf(c.cover.mediaId) ?? coverFallback[id];
+  const candidate = plateOf(c.cover.mediaId) ?? coverFallback[id];
+  const plateId = candidate && photoForPlate(candidate) ? candidate : undefined;
   return { ...c, cover: { ...c.cover, mediaId: undefined, plateId, layout: plateId ? (c.cover.layout === "type_only" ? "type_only" : c.cover.layout) : "type_only" } };
 }
 

@@ -3,8 +3,8 @@ import { brand } from "@/config/brand";
 import { cn } from "@/lib/utils";
 
 /**
- * Monogram for tight spaces (favicons, seals, envelopes): a single serif O with a small l,
- * set as type, no container shape. Pass `src` to swap in a commissioned vector.
+ * Optional small-space monogram set as type in one ink color, without a container shape.
+ * Pass `src` to swap in a commissioned vector.
  */
 export function BrandMark({ className, src, title = brand.name, tone = "ink" }: { className?: string; src?: string; title?: string; tone?: "ink" | "light" }) {
   if (src) return <img src={src} alt={title} className={cn("size-8", className)} />;

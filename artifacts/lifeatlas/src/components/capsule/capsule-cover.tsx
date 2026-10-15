@@ -19,13 +19,13 @@ export function typographyClass(t: Capsule["theme"]["typography"]) {
   return t === "italic" ? "font-serif italic" : t === "modern" ? "font-sans font-medium tracking-[-0.035em]" : "font-serif";
 }
 
-/** A stored photograph, or, for public previews, a sample illustration drawn by id. */
+/** A photograph stored by the user or supplied for a public sample. */
 function CoverImage({ cover, className }: { cover: Capsule["cover"]; className?: string }) {
   if (!cover.mediaId && cover.plateId) return <Plate id={cover.plateId} alt="" className={className} focalY={cover.focalY} />;
   return <MediaImage mediaId={cover.mediaId} className={className} focalY={cover.focalY} />;
 }
 
-/** Editorial cover for a capsule. Works with or without a photograph. */
+/** Editorial cover for a capsule. Uses a typographic cover when no photograph is available. */
 export function CapsuleCover({
   capsule,
   size = "md",

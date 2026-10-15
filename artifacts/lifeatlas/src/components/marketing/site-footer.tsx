@@ -1,5 +1,5 @@
 import Link from "@/lib/router/link";
-import { BrandMark, Logo } from "@/components/brand/logo";
+import { Logo } from "@/components/brand/logo";
 import { brand } from "@/config/brand";
 
 const cols = [
@@ -55,9 +55,7 @@ export function SiteFooter() {
             The ordinary days are the ones <em className="text-night-accent">we miss most.</em>
           </p>
           <Link href="/app/capsules/new" className="group inline-flex items-center gap-4 font-mono text-[0.7rem] uppercase tracking-[0.22em] text-night-ink-2 hover:text-night-ink">
-            <span className="seal size-14 transition-transform duration-500 group-hover:rotate-[18deg]">
-              <BrandMark className="size-9 text-[#f6e9dc]" title="" />
-            </span>
+            <span className="font-serif text-[1.15rem] font-medium tracking-[-0.06em] text-night-accent">OL</span>
             Begin a capsule
           </Link>
         </div>
@@ -85,8 +83,9 @@ export function SiteFooter() {
             ))}
           </div>
         </div>
-        <div aria-hidden className="pointer-events-none mt-16 select-none overflow-hidden font-serif text-[clamp(4rem,15vw,15rem)] font-[300] leading-[0.8] tracking-[-0.05em] text-night-3">
-          <span>OurLife</span><span className="ml-[0.14em] font-normal text-night-accent">Capsule</span>
+        <div aria-hidden className="pointer-events-none mt-16 flex flex-wrap items-baseline gap-x-5 select-none overflow-hidden font-serif">
+          <span className="text-[clamp(4rem,15vw,15rem)] font-[300] leading-[0.8] tracking-[-0.05em] text-night-3">{brand.name}</span>
+          <span className="mb-[0.1em] border-l border-night-accent/60 pl-3 font-sans text-[clamp(0.75rem,2.1vw,1.5rem)] font-medium uppercase tracking-[0.24em] text-night-accent sm:pl-5">{brand.product}</span>
         </div>
         <div className="mt-8 grid gap-4 border-t border-night-line pt-8 text-[0.8125rem] leading-relaxed text-night-ink-3 md:grid-cols-[1fr_auto]">
           <p>
