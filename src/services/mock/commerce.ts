@@ -308,6 +308,8 @@ export const mockBilling: BillingProvider = {
     );
     store().track("checkout_completed_mock", { total: order.total, kind, promotion: order.discount?.promotionId ?? "none" });
     pushNotification({ kind: "order", title: `Demo order ${order.number}`, body: "Preview only — no payment was charged and nothing will ship.", href: `/app/orders#${order.id}` });
+    // An order must not vanish because the tab closed right after "Place order".
+    await flushSave().catch(() => undefined);
     return ok(order);
   },
 
@@ -484,6 +486,7 @@ export const mockGifts: GiftService = {
     store().mutate((d) => {
       d.subscriptions.push(sub);
     }, { actor: g.recipient.name, action: "gift.accepted_demo", target: g.id, detail: `From ${g.giverName}` });
+    await flushSave().catch(() => undefined);
     return ok(sub);
   },
 };

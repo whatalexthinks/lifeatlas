@@ -39,7 +39,7 @@ Screens call `services()` (`src/services/factory.ts`). With `NEXT_PUBLIC_LIFEATL
 3. **Invitations** (`communications`).
    - *Security:* single-use or expiring, high-entropy tokens, stored hashed; revocation; verified sending domain (SPF/DKIM/DMARC); never put story content in email bodies.
 4. **Payments** (`billing`, `orders`, `gifts`).
-   - *Security:* Stripe Checkout so card data never touches LifeAtlas; verify webhook signatures; idempotent order creation (the mock already refuses double completion); server-side prices from the catalog, never from the client; refunds by a human.
+   - *Security:* Stripe Checkout so card data never touches OurLifeCapsule; verify webhook signatures; idempotent order creation (the mock already refuses double completion); server-side prices from the catalog, never from the client; refunds by a human.
 5. **Transcription and place search** (`transcription`, `geocoding`).
    - *Security:* explicit per-recording consent before audio leaves the platform; providers that don't train on customer data; city-level place precision by default.
 6. **Printing and shipping** (`fulfillment`, `heirlooms`).

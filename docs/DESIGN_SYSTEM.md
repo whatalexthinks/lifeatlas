@@ -1,6 +1,6 @@
 # Design system
 
-LifeAtlas should feel like a future heirloom: warm, deliberate and tactile, never loud. The interface stays restrained so the stories can be expressive. The public-site refresh (PR #2, see [design/README.md](design/README.md)) set the current direction; the studio follows it.
+OurLifeCapsule should feel like a future heirloom — an ultra-premium, editorial object: warm, deliberate and tactile, never loud. The interface stays restrained so the stories can be expressive. The public-site refresh (PR #2, see [design/README.md](design/README.md)) set the current direction; the studio follows it.
 
 All tokens live in `src/app/globals.css` as CSS variables and are exposed to Tailwind 4 through `@theme inline`.
 
@@ -20,15 +20,15 @@ Fluid type tokens: `text-display`, `text-title`, `text-heading`, `text-subheadin
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `paper` | `#f8f8f3` | Page background |
-| `surface` | `#fefdf9` | Cards and panels (`.card-paper`) |
-| `ivory`, `linen`, `mat` | warm neutrals | Quiet fills, photo mounts |
-| `ink` → `ink-4` | `#202d27` → `#6c6962` | Text hierarchy; every step passes 4.5:1 on paper and surfaces |
-| `evergreen` + `on-evergreen` | `#294f3e` / `#f8f6f1` | Primary actions, selection, progress. Text on an evergreen fill **always** uses `on-evergreen`, which flips with the theme |
+| `paper` — **Porcelain** | `#f8f6f1` | Page background |
+| `ivory` — **Soft paper** | `#f0ece4` | Quiet fills, inset panels |
+| `surface` | `#fcfbf8` | Cards and panels (`.card-paper`) |
+| `ink` — **Charcoal** → `ink-4` | `#252421` → `#6b665d` | Text hierarchy; every step passes 4.5:1 on paper and surfaces |
+| `evergreen` — **Muted forest** + `on-evergreen` | `#586354` / `#f8f6f1` | Primary actions, selection, progress. Text on an evergreen fill **always** uses `on-evergreen`, which flips with the theme |
+| `oxblood` — **Oxblood** | `#763f43` | The single warm accent: seals, emphasis, keepsake details |
+| `taupe` — **Taupe** (`brass`) + `brass-ink` | `#a99b89` / `#6b5a47` | Rules, demo markers, foil, eyebrows (`brass-ink` for text) |
 | `danger` + `on-danger` | `#9a362e` / `#ffffff` | Destructive actions; same pairing rule |
-| `brass`, `brass-ink` | `#ae9874`, `#765c36` | Demo markers, foil, eyebrows |
-| `terracotta`, `slate`, `smoke`, `moss` | | Chapter identities only |
-| `success` / `warning` / `danger` / `info` (+ `-soft`) | | Status only, always with an icon and a word |
+| `terracotta`, `slate`, `smoke`, `moss` | | Chapter accents only — never brand colour |
 | `night`, `night-ink-*` | `#131815`… | Evening theme, the viewer's night tone, letter opening |
 
 Evening theme: `data-theme="evening"` (or *Match device*, or the viewer's night tone via `.theme-evening`) remaps the same tokens, including lifted chapter colours. Components never hard-code light colours for UI chrome — a hard-coded colour on a token background is how contrast breaks when the theme flips. Panels that must stay dark in both themes (the featured-question card, PR #2's voice section) use a fixed deep green (`#213d31`) with fixed light text.

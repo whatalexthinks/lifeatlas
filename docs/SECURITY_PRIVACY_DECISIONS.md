@@ -1,6 +1,6 @@
 # Security & privacy decisions
 
-LifeAtlas holds some of the most personal material a family has. These decisions shape Part One, and the Part Two notes say what must change before real people's stories are stored on a server.
+OurLifeCapsule holds some of the most personal material a family has. These decisions shape Part One, and the Part Two notes say what must change before real people's stories are stored on a server.
 
 ## Part One: nothing leaves the device
 
@@ -13,7 +13,7 @@ LifeAtlas holds some of the most personal material a family has. These decisions
 | Real-delivery and real-payment states unreachable | Prevents "it looks live" mistakes | `state-machines.ts` + tests |
 | A preservation state shows green only with evidence | No false reassurance | `preservationStateIsHonest()` |
 | Fictional sample family; synthetic narration labelled | Never imply real people or voices | fixtures, `sampleNotice` |
-| Erase demo data clears IndexedDB and LifeAtlas `localStorage` keys | People can leave cleanly | Settings |
+| Erase demo data clears IndexedDB and the app's `lifeatlas.*` `localStorage` keys | People can leave cleanly | Settings |
 
 ## Content and access
 

@@ -1,79 +1,77 @@
-# LifeAtlas
+# OurLifeCapsule
 
-A private family archive: capture a loved one's voice, stories, photographs and places; explore them as a living life story; turn them into printed heirlooms; and prepare letters for the future.
+A private, browser-based place to preserve the stories, voices, photographs and relationships that make a life — for couples, families, and anyone writing their own. Capsules can be explored as a timeline, shared with the people you choose, turned into a printed book or a physical keepsake, and accompanied by letters for the future.
 
-This repository is **Part One** — a complete, working local demonstration. Everything runs in your browser with a fictional sample family (the Ellises). Nothing is sent, charged, printed, emailed or backed up, and every screen says so.
+This repository is a **complete, working demonstration**. Everything runs in your browser with fictional sample families. Nothing is sent, charged, printed, emailed or backed up — and every screen says so. Production services (accounts, storage, payments, email, printing, scheduled delivery) are designed behind typed boundaries and listed in the [integration checklist](docs/INTEGRATION_CHECKLIST.md).
 
-## Run it
+> The domain is intended to be **ourlifecapsule.com**; DNS and hosting are not assumed to exist.
 
-Requires Node 20.9 or later. No accounts, keys or services are needed.
+## Development setup
+
+Requires **Node 20.9+**. No accounts, keys or services are needed.
 
 ```sh
 npm ci
-npm run dev
+npm run dev          # http://localhost:3000
 ```
 
-Open http://localhost:3000. Good places to start:
+No `.env` file is required. [`.env.example`](.env.example) lists the few optional settings used today and the names production will need later (never fill those in for the demo).
+
+Good places to start:
 
 | Where | What you'll see |
 | --- | --- |
-| `/` | The public site (designed in the PR #2 refresh) |
-| `/demo` | Margaret Ellis's fictional archive in the family viewer |
-| `/app` | The organizer's studio |
-| `/demo/control-center` | Switch between family members' views, simulate events, reset |
-| `/demo/style-guide` | Colours, type and components, with live contrast readings |
-| `/app/heirlooms/book-builder` | Design a printed book, turn its pages, print a PDF proof |
-| `/app/together` | A pass-the-phone holiday session — pause any time, resume later, print the booklet |
-| `/app/family` | Roles across capsules, and *Preview* to see the archive as anyone in the family |
-| `/view/cap_margaret/stories?q=bread` | Search the archive; bookmarks gather under *Saved* |
-| `/app/preservation` | Download an archive — and restore one from a downloaded file |
-| `/future/open/example-opening` | What opening a future letter feels like |
+| `/` | The public site: homepage, `/how-it-works`, `/couples`, `/families`, `/personal`, `/legacy`, `/gifts`, `/physical-capsules`, `/pricing`, `/examples`, `/faq` |
+| `/app/capsules/new` | Onboarding — “Whose story would you like to preserve?” |
+| `/app` | Your dashboard and capsules |
+| `/app/gather` | Answer a question by voice, text, photos or a short video |
+| `/app/capsules/cap_us/timeline` | A couple's timeline, with approximate dates, milestones and quick edit |
+| `/app/future-messages` | Letters for the future, with an honest delivery ladder |
+| `/app/heirlooms/book-builder` · `/capsule-builder` | Design a printed book or a keepsake box, proof it, print a PDF |
+| `/checkout/bag` | The bag and a clearly labelled demo checkout — nothing is charged |
+| `/app/preservation` | Download everything, and restore from a download |
+| `/demo/control-center` | Switch family members' views, simulate events, reset the demo |
 
-Your own recordings and edits are saved in this browser (IndexedDB). **Settings → Erase demo data** or **Control center → Reset demo** restores the sample family.
+Your own recordings and edits are stored in this browser (IndexedDB). **Settings → Erase demo data** or **Control center → Reset demo** restores the sample families; **Settings → Remove sample data** keeps only your own.
 
-## Check it
+## Testing
 
 ```sh
 npm run typecheck   # TypeScript, strict
-npm run lint        # ESLint incl. React compiler rules — currently 0 errors, 0 warnings
-npm test            # 109 unit, service and component tests (Vitest)
+npm run lint        # ESLint, including React Compiler rules
+npm test            # Vitest: domain rules, services, persistence, export/import, pricing, permissions
 npm run build       # Production build
-npm run test:e2e    # 33 browser tests (Playwright): the full create → contribute → approve → explore → export journey,
-                    # keyboard-only paths, tablet and phone layouts, WCAG 2.2 AA audits — against the production build
+npm run test:e2e    # Playwright against the production build (start it with `npm run build` first)
 npm run check       # typecheck + lint + test + build
 ```
 
-For browser tests, install Chromium once with `npx playwright install chromium`, or point `PLAYWRIGHT_CHROMIUM_PATH` at an existing Chromium.
+The browser suite covers the full 16-step customer journey (homepage → onboarding → first memory → voice → photos → timeline → invitation → plans → keepsakes → book → export → **close and reopen the browser**), error and recovery paths, sharing and permissions, commerce, keyboard-only use, phone/tablet/desktop layouts, and WCAG 2.2 AA audits with axe.
+
+For browser tests, install Chromium once with `npx playwright install chromium`, or set `PLAYWRIGHT_CHROMIUM_PATH` to an existing Chromium. `E2E_PORT` picks the port (default 3100); use a fresh port if an old server might still be running.
 
 ## How it's built
 
-- **Next.js 16** (App Router, Turbopack), **React 19.2**, **TypeScript** (strict), **Tailwind CSS 4**.
-- **One switch between demo and real services.** Screens call `services()` from `src/services/factory.ts` and never import a provider SDK. Every contract in `src/services/contracts` has a mock implementation (`src/services/mock`) and a production stub that returns a typed `not_configured` result. Part Two replaces stubs one service at a time.
-- **Domain first.** Models, Zod schemas, state machines, permission rules and pricing (integer cents) live in `src/domain` and are covered by unit tests.
-- **Local persistence.** A Zustand store (`src/store/demo-store.ts`) persists to IndexedDB with debounced saves that flush when the tab is hidden or closed. Media blobs live in their own store.
-- **Honest by construction.** Payment, delivery and preservation states that need a real provider can't be reached from the demo; the state machines and tests enforce it.
+Next.js 16 (App Router), React 19, TypeScript (strict), Tailwind CSS 4, Zustand persisted to IndexedDB, Zod. The short version:
 
-```
-src/
-  app/            routes — (marketing), app (studio), view, contribute, gift, future, checkout, proof, (ops)/demo
-  components/     UI by area — studio, capture, explore, heirlooms, viewer, marketing, ui
-  domain/         models, schemas, workflows (state machines), policies, commerce, media validation
-  services/       contracts, mock adapters, production stubs, factory
-  store/          local database + persistence
-  data/           sample family fixtures, question library, catalog, marketing copy
-e2e/              Playwright specs
-docs/             design, status, data model, integrations, QA, security & privacy
-```
+- **Screens never talk to providers.** They call `services()`; every contract has a working mock today and a production stub that returns a typed `not_configured` result.
+- **Rules live in `src/domain`** — permissions, pricing (integer cents), promotions, fulfilment, the future-delivery ladder, timelines — and are unit-tested.
+- **Brand, plans and connected services are configuration**: `src/config/brand.ts`, `src/domain/commerce/plans.ts`, `src/config/integrations.ts`.
+
+See **[Architecture](docs/ARCHITECTURE.md)** for the full picture.
 
 ## Documentation
 
-- [Implementation status](docs/IMPLEMENTATION_STATUS.md) — every route and feature: implemented, demo-only, or Part Two
-- [Design system](docs/DESIGN_SYSTEM.md) and the [design refresh notes](docs/design/README.md)
-- [Data model](docs/DATA_MODEL.md)
-- [Integrations for Part Two](docs/INTEGRATIONS_PART_TWO.md) — what each real service needs, in order, with security notes
-- [QA checklist](docs/QA_CHECKLIST.md) — what was verified and how, plus known limitations
-- [Security & privacy decisions](docs/SECURITY_PRIVACY_DECISIONS.md)
+| Document | What it covers |
+| --- | --- |
+| [Architecture](docs/ARCHITECTURE.md) | Layers, data flow, persistence, honesty rules, key decisions |
+| [Integration checklist](docs/INTEGRATION_CHECKLIST.md) | Connecting real services, one at a time, with what each must prove first |
+| [Integrations in depth](docs/INTEGRATIONS_PART_TWO.md) | Each contract, its provider and its security notes |
+| [Known limitations](docs/KNOWN_LIMITATIONS.md) | What is simulated, partial or not built yet |
+| [Release-readiness checklist](docs/RELEASE_CHECKLIST.md) | What must be true before real customers |
+| [Implementation status](docs/IMPLEMENTATION_STATUS.md) | Route-by-route status |
+| [Design system](docs/DESIGN_SYSTEM.md) | Palette, type, motion, components (live at `/demo/style-guide`) |
+| [Data model](docs/DATA_MODEL.md) · [Security & privacy](docs/SECURITY_PRIVACY_DECISIONS.md) · [QA checklist](docs/QA_CHECKLIST.md) | Reference |
 
 ## About the sample content
 
-The Ellis family is fictional. Sample narration is synthesized speech (Kokoro-82M, Apache-2.0) and is labelled as such; sample artwork is illustrative. Please don't use the demo for irreplaceable material — it isn't a backup.
+The Ellis family and the other sample capsules are fictional. Sample narration is synthesized speech (Kokoro-82M, Apache-2.0) and is labelled as such; sample artwork is illustrative. Please don't use the demo for irreplaceable material — it is not a backup.
