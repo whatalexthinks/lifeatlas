@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /view
+Disallow: /contribute
+Disallow: /gift/
+Disallow: /future
+Disallow: /checkout
+Disallow: /demo
+Disallow: /proof
+Disallow: /r/
+
+Sitemap: /sitemap.xml

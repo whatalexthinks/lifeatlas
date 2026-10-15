@@ -1,45 +1,32 @@
-# [Project name]
+# LifeAtlas / OurLifeCapsule
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A privacy-first family legacy platform for gathering stories, photographs, voices, and future messages. This port preserves the imported Part One local demonstration, not a connected production service.
 
-## Run & Operate
+## Run and test
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Start the managed workflow `artifacts/lifeatlas: web` to run the app at `/`.
+- `pnpm --filter @workspace/lifeatlas test` runs the imported unit and component tests.
+- `pnpm --filter @workspace/lifeatlas test:e2e` runs the imported Playwright suite against the running workflow through the shared proxy.
+- Browser tests default to `http://localhost:80`; set `E2E_BASE_URL` to test another reachable instance.
+- `pnpm --filter @workspace/lifeatlas assets` regenerates the original SVG illustrations and social share image. Both development startup and production build run this automatically.
+
+## Workspace
+
+- `artifacts/lifeatlas/`: migrated React + Vite app, original pages, components, domain logic, and local service implementations.
+- `artifacts/lifeatlas/docs/`: original product, privacy, data model, integration, and QA documentation.
+- `artifacts/lifeatlas/e2e/`: original browser test journeys.
+- `.migration-backup/`: original Next.js source retained for comparison; not deployed.
+- `artifacts/api-server/`, `lib/`, and `artifacts/mockup-sandbox/`: pre-existing workspace scaffold, unused by this local demo.
+
+## Migration constraints
+
+- Preserve the original visual design, routes, media, and local-first behavior. Do not redesign as part of maintenance.
+- IndexedDB and browser storage hold demo data and media on the current device. There is no cross-device sync or cloud backup.
+- Accounts, payments, email delivery, scheduled delivery, print fulfillment, and cloud storage remain explicitly disconnected, as in the original app. Do not imply they are live.
+- The frontend needs no secrets or database to run. Optional public configuration uses `VITE_APP_MODE`, `VITE_LIFEATLAS_MODE`, `VITE_SITE_URL`, and `VITE_DEMO_LATENCY`.
+- Never put private family material in social preview images. The original typographic social card is generated from bundled fonts.
+- Preserve privacy headers, private-route noindex behavior, and robots exclusions.
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
-
-## Where things live
-
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
-
-## Architecture decisions
-
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
-
-## Product
-
-_Describe the high-level user-facing capabilities of this app once they exist._
-
-## User preferences
-
-_Populate as you build — explicit user instructions worth remembering across sessions._
-
-## Gotchas
-
-_Populate as you build — sharp edges, "always run X before Y" rules._
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+pnpm workspace, React 19, Vite, TypeScript, Tailwind CSS 4, React Router, Zustand, IndexedDB, Vitest, and Playwright.

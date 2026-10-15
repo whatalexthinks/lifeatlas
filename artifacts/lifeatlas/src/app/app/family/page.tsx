@@ -1,0 +1,170 @@
+"use client";
+
+import * as React from "react";
+import Link from "@/lib/router/link";
+import { useRouter } from "@/lib/router/navigation";
+import { Eye, Info, Lock, MailPlus } from "lucide-react";
+import type { Role } from "@/domain/models";
+import { membershipRole, roleLabels } from "@/domain/policies/permissions";
+import { AccessMatrix } from "@/components/studio/access-matrix";
+import { PageHeader, Panel, Stat } from "@/components/studio/primitives";
+import { Avatar } from "@/components/studio/persona-switcher";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { Badge, toast } from "@/components/ui/feedback";
+import { useDb } from "@/hooks/use-data";
+import { services } from "@/services/factory";
+import { cn } from "@/lib/utils";
+
+const assignable: Role[] = ["organizer", "contributor", "viewer", "successor"];
+
+export default function FamilyPage() {
+  const group = useDb((d) => d.familyGroups[0]);
+  const capsules = useDb((d) => d.capsules);
+  const people = useDb((d) => d.people);
+  const memberships = useDb((d) => d.memberships);
+  const invitations = useDb((d) => d.invitations);
+  const ownPersonId = useDb((d) => d.account.profile.personId);
+  const router = useRouter();
+  const [saving, setSaving] = React.useState<string | null>(null);
+  const [previewing, setPreviewing] = React.useState<string | null>(null);
+
+  const active = memberships.filter((m) => m.status === "active");
+  const groupCapsules = capsules.filter((c) => !group || group.capsuleIds.includes(c.id) || c.familyGroupId === group.id);
+  // Everyone who has had a role somewhere (so access can be given back), plus the people the capsules are about.
+  const memberIds = new Set([...memberships.map((m) => m.personId), ...groupCapsules.map((c) => c.subjectPersonId).filter(Boolean)] as string[]);
+  const members = people.filter((p) => memberIds.has(p.id)).sort((a, b) => a.familyName.localeCompare(b.familyName) || a.givenName.localeCompare(b.givenName));
+  const pending = invitations.filter((i) => i.status === "prepared" || i.status === "simulated_sent");
+
+  const setRole = async (capsuleId: string, personId: string, role: Role | null, name: string, capsuleName: string) => {
+    setSaving(`${capsuleId}:${personId}`);
+    const r = await services().capsules.setMemberRole(capsuleId, personId, role);
+    setSaving(null);
+    if (r.status === "ok") toast.success(role ? `${name} is now ${roleLabels[role].label.toLowerCase()} on ${capsuleName}` : `${name} removed from ${capsuleName}`, "Saved on this device. No one was notified.");
+    else toast.error(r.status === "error" ? r.message : "Couldn't change the role");
+  };
+
+  // Open the archive they can see (or the studio, for organizers) as that person.
+  const preview = async (personId: string) => {
+    setPreviewing(personId);
+    const r = await services().auth.previewAsPerson(personId);
+    setPreviewing(null);
+    if (r.status !== "ok") return toast.error("Couldn't start the preview", r.status === "error" ? r.message : undefined);
+    const roles = groupCapsules.map((c) => ({ c, role: membershipRole(memberships, personId, c.id) }));
+    if (roles.some((x) => x.role === "organizer")) return router.push("/app");
+    const visible = roles.find((x) => x.role) ?? roles[0];
+    router.push(visible ? `/view/${visible.c.id}` : "/app");
+  };
+
+  return (
+    <div className="mx-auto max-w-[1240px]">
+      <PageHeader
+        eyebrow="Family collection"
+        title={group?.name ?? "Your family"}
+        description={group?.description ?? "Everyone who helps keep these stories, and what each of them can do."}
+        actions={
+          <ButtonLink href="/app/invitations" leading={<MailPlus className="size-4" />}>
+            Invite someone
+          </ButtonLink>
+        }
+      />
+
+      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <Stat label="Capsules" value={groupCapsules.length} />
+        <Stat label="People" value={members.length} />
+        <Stat label="Contributors" value={new Set(active.filter((m) => m.role === "contributor").map((m) => m.personId)).size} />
+        <Stat label="Invitations waiting" value={pending.length} hint={pending.length ? "Previews only — not sent" : undefined} />
+      </div>
+
+      <div className="mb-8 flex gap-3 rounded-[14px] bg-info-soft px-5 py-4 text-[0.9375rem]">
+        <Info className="mt-0.5 size-5 shrink-0 text-info" />
+        <p className="text-ink-2">
+          <strong className="font-medium text-ink">Roles are demonstrated, not enforced.</strong> Everyone in this preview uses the same browser. Secure sign-in and real access control come with accounts — until then, use <em>Preview</em> to see exactly what each person would see.
+        </p>
+      </div>
+
+      <Panel title="Who can do what, where" description="Change a role and the studio, viewer and invitations follow it immediately." bodyClassName="p-0 sm:p-0">
+        <div className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-evergreen" tabIndex={0} role="region" aria-label="Roles by capsule">
+          <table className="w-full min-w-[760px] text-[0.9375rem]">
+            <thead>
+              <tr className="border-b border-line text-left">
+                <th scope="col" className="sticky left-0 z-[1] bg-surface px-6 py-3 text-[0.8125rem] font-normal text-ink-3">
+                  Person
+                </th>
+                {groupCapsules.map((c) => (
+                  <th key={c.id} scope="col" className="px-3 py-3 text-[0.8125rem] font-normal text-ink-3">
+                    <Link href={`/app/capsules/${c.id}`} className="hover:text-ink hover:underline">
+                      {c.subjectName}
+                    </Link>
+                  </th>
+                ))}
+                <th scope="col" className="px-3 py-3 text-right text-[0.8125rem] font-normal text-ink-3">
+                  <span className="pr-3">See their view</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-line">
+              {members.map((p) => (
+                <tr key={p.id}>
+                  <th scope="row" className="sticky left-0 z-[1] bg-surface px-6 py-3 text-left font-normal">
+                    <span className="flex items-center gap-3">
+                      <Avatar name={p.displayName} size="sm" />
+                      <span className="min-w-0">
+                        <span className="block truncate font-medium">{p.displayName}</span>
+                        {p.shortBio ? <span className="block truncate text-[0.8125rem] text-ink-3">{p.shortBio}</span> : null}
+                      </span>
+                    </span>
+                  </th>
+                  {groupCapsules.map((c) => {
+                    const m = active.find((x) => x.capsuleId === c.id && x.personId === p.id);
+                    const isSubject = c.subjectPersonId === p.id;
+                    const busy = saving === `${c.id}:${p.id}`;
+                    if (m?.role === "owner")
+                      return (
+                        <td key={c.id} className="px-3 py-3">
+                          <Badge tone="brand">
+                            <Lock className="size-3" /> Owner
+                          </Badge>
+                        </td>
+                      );
+                    const options: Role[] = isSubject ? ["storyteller", ...assignable] : assignable;
+                    return (
+                      <td key={c.id} className="px-3 py-3">
+                        <select
+                          aria-label={`${p.displayName}'s role on ${c.subjectName}'s capsule`}
+                          value={m?.role ?? ""}
+                          disabled={busy}
+                          onChange={(e) => void setRole(c.id, p.id, (e.target.value || null) as Role | null, p.givenName, `${c.subjectName.split(" ")[0]}'s capsule`)}
+                          className={cn("h-9 min-w-[9.5rem] rounded-[8px] border bg-surface px-2.5 text-[0.875rem] transition", m ? "border-line-strong text-ink" : "border-dashed border-line text-ink-4", busy && "opacity-50")}
+                        >
+                          <option value="">No access</option>
+                          {options.map((r) => (
+                            <option key={r} value={r}>
+                              {roleLabels[r].label}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                    );
+                  })}
+                  <td className="px-3 py-3 text-right">
+                    {p.id === ownPersonId ? (
+                      <span className="pr-3 text-[0.8125rem] text-ink-3">You</span>
+                    ) : (
+                      <Button size="sm" variant="ghost" leading={<Eye className="size-4" />} loading={previewing === p.id} onClick={() => void preview(p.id)} aria-label={`Preview as ${p.displayName}`}>
+                        Preview
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+
+      <Panel title="What each role can do" className="mt-6" bodyClassName="p-0 sm:p-0">
+        <AccessMatrix />
+      </Panel>
+    </div>
+  );
+}

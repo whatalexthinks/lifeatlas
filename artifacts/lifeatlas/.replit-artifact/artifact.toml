@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "LifeAtlas"
+description = "A privacy-first family legacy platform for preserving memories, voices, family stories, and future messages, with the original local demonstration experience."
+version = "1.0.0"
+id = "artifacts/lifeatlas"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22052
+
+[services.development]
+run = "pnpm --filter @workspace/lifeatlas run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lifeatlas", "run", "build" ]
+
+[services.production.run]
+args = ["pnpm", "--filter", "@workspace/lifeatlas", "run", "serve"]
+
+[services.production.run.env]
+NODE_ENV = "production"
+
+[services.env]
+PORT = "22052"
+BASE_PATH = "/"

@@ -1,0 +1,350 @@
+import { beforeEach, describe, expect, it } from "vitest";
+import { useDemoStore } from "@/store/demo-store";
+import { quoteBook, estimateBookPages } from "@/domain/commerce/pricing";
+import { selectExportContent } from "./export";
+import { services } from "../factory";
+import { seed } from "@/tests/fixtures";
+import type { ExportOptions } from "@/domain/models";
+
+const db = () => useDemoStore.getState().db;
+
+beforeEach(() => {
+  useDemoStore.setState({ db: seed(), hydrated: true });
+});
+
+describe("checkout never charges", () => {
+  it("creates an uncharged order, a demo invoice and a proof for a book", async () => {
+    const s = services();
+    const book = db().heirlooms.find((h) => h.kind === "book")!;
+    await s.heirlooms.save({ id: book.id, kind: "book", capsuleId: book.capsuleId, name: book.name, book: book.book });
+    const line = s.heirlooms.toCartLine(book.id);
+    expect(line.status).toBe("ok");
+    if (line.status !== "ok") return;
+    const c = await s.billing.createCheckout([line.data], "self");
+    expect(c.status).toBe("ok");
+    if (c.status !== "ok") return;
+    const shipping = { name: "Sarah Ellis", line1: "12 Sample St", city: "Portland", region: "ME", postalCode: "04101", country: "United States" };
+    const o = await s.billing.completeMockCheckout(c.data.checkoutId, { name: "Sarah Ellis", email: "sarah@example.com", shipping });
+    expect(o.status).toBe("ok");
+    if (o.status !== "ok") return;
+    expect(o.data.payment).toBe("mock_uncharged");
+    expect(o.data.status).toBe("proof_required");
+    expect(o.data.shippingEstimate).toBeNull();
+    expect(db().invoices[0]).toMatchObject({ orderId: o.data.id, status: "demo_uncharged" });
+    expect(db().printProjects.some((p) => p.orderId === o.data.id)).toBe(true);
+    // Completing twice returns the same order instead of charging again.
+    const again = await s.billing.completeMockCheckout(c.data.checkoutId, { name: "Sarah Ellis", email: "sarah@example.com", shipping });
+    expect(again.status === "ok" && again.data.id).toBe(o.data.id);
+  });
+  it("refuses an empty bag", async () => {
+    expect((await services().billing.createCheckout([], "self")).status).toBe("error");
+  });
+  it("reports payment methods as not configured rather than faking a card", async () => {
+    expect((await services().billing.listPaymentMethods()).status).toBe("not_configured");
+  });
+});
+
+describe("heirlooms", () => {
+  const book = () => structuredClone(db().heirlooms.find((h) => h.kind === "book")!.book!);
+  it("needs a title and at least three stories", async () => {
+    const s = services().heirlooms;
+    expect((await s.save({ kind: "book", capsuleId: "cap_margaret", name: "x", book: { ...book(), title: " " } })).status).toBe("error");
+    expect((await s.save({ kind: "book", capsuleId: "cap_margaret", name: "x", book: { ...book(), storyIds: ["mem_bread"] } })).status).toBe("error");
+  });
+  it("prices a saved book exactly like the pricing module", async () => {
+    const s = services().heirlooms;
+    const r = await s.save({ kind: "book", capsuleId: "cap_margaret", name: "Test book", book: { ...book(), copies: 3, material: "soft_touch" } });
+    expect(r.status).toBe("ok");
+    if (r.status !== "ok") return;
+    const line = s.toCartLine(r.data.id);
+    if (line.status !== "ok") throw new Error("no line");
+    const memories = db().memories.filter((m) => r.data.book!.storyIds.includes(m.id));
+    const pages = estimateBookPages(memories.length, memories.reduce((n, m) => n + m.photoIds.length, 0), r.data.book!.includeTimeline);
+    const q = quoteBook(db().catalog.find((p) => p.id === "book")!.price.amount, r.data.book!, pages);
+    expect(line.data.quantity).toBe(3);
+    expect(line.data.extrasAmount).toBe(q.extras);
+  });
+  it("won't configure a burial capsule", async () => {
+    const r = await services().heirlooms.save({
+      kind: "keepsake_box",
+      capsuleId: "cap_margaret",
+      name: "Box",
+      box: { finish: "walnut", engraving: "none", engravingText: "", contents: { book: false, letterBundle: false, photoPrints: 0, archiveDrive: false, preservationGuide: true }, selectedLetterIds: [], selectedPhotoIds: [], intendedUse: "burial_concept" },
+    });
+    expect(r.status).toBe("error");
+  });
+  it("won't remove a design that's part of an order", async () => {
+    const ordered = db().heirlooms.find((h) => h.status === "ordered_demo")!;
+    expect((await services().heirlooms.remove(ordered.id)).status).toBe("error");
+  });
+});
+
+describe("family roles", () => {
+  it("never changes the owner", async () => {
+    const r = await services().capsules.setMemberRole("cap_margaret", "per_sarah", "viewer");
+    expect(r.status).toBe("error");
+  });
+  it("only lets the subject be the storyteller", async () => {
+    expect((await services().capsules.setMemberRole("cap_margaret", "per_emma", "storyteller")).status).toBe("error");
+  });
+  it("grants, changes and removes a role", async () => {
+    const s = services().capsules;
+    await s.setMemberRole("cap_thomas", "per_june", "viewer");
+    const active = () => db().memberships.find((m) => m.capsuleId === "cap_thomas" && m.personId === "per_june" && m.status === "active");
+    expect(active()?.role).toBe("viewer");
+    await s.setMemberRole("cap_thomas", "per_june", "contributor");
+    expect(active()?.role).toBe("contributor");
+    await s.setMemberRole("cap_thomas", "per_june", null);
+    expect(active()).toBeUndefined();
+    expect(db().auditEvents[0].action).toBe("membership.removed");
+  });
+  it("adds someone new to the family when they open their invitation", async () => {
+    const c = services().communications;
+    const inv = await c.prepareInvitation("cap_margaret", { recipientName: "Rosa Delgado", relationship: "Neighbour", recipientContact: "", role: "contributor", mode: "open", questionIds: [], message: "", channel: "link" });
+    if (inv.status !== "ok") throw new Error(inv.status === "error" ? inv.message : "not prepared");
+    expect((await c.accept(inv.data.token)).status).toBe("ok");
+    const personId = db().invitations.find((i) => i.id === inv.data.id)!.personId!;
+    expect(db().people.find((p) => p.id === personId)).toMatchObject({ displayName: "Rosa Delgado", givenName: "Rosa", familyName: "Delgado" });
+    expect(db().memberships.filter((m) => m.personId === personId && m.status === "active").map((m) => m.role)).toEqual(["contributor"]);
+    // Opening it again doesn't add them twice.
+    await c.accept(inv.data.token);
+    expect(db().people.filter((p) => p.displayName === "Rosa Delgado")).toHaveLength(1);
+  });
+  it("previews anyone using their current roles, and switches back", async () => {
+    const a = services().auth;
+    await services().capsules.setMemberRole("cap_thomas", "per_june", "viewer");
+    const r = await a.previewAsPerson("per_june");
+    expect(r.status === "ok" && r.data.persona).toMatchObject({ name: "June Whitaker", personId: "per_june", kind: "contributor" });
+    expect(db().personas.filter((p) => p.id === "persona_preview")).toHaveLength(1);
+    // A person who already has a demo identity uses it.
+    const e = await a.previewAsPerson("per_emma");
+    expect(e.status === "ok" && e.data.personaId).toBe("persona_emma");
+    await a.switchPersona("persona_sarah");
+    expect(db().activePersonaId).toBe("persona_sarah");
+  });
+});
+
+describe("contributor resubmission", () => {
+  it("a returned story can be edited and sent back to review", async () => {
+    const s = services().capsules;
+    const id = db().memories.find((m) => m.attribution.invitationId === "inv_emma")!.id;
+    await s.transitionMemory(id, "returned", "Roughly what year?", "Sarah Ellis");
+    expect(db().memories.find((m) => m.id === id)!.reviewNote).toBe("Roughly what year?");
+    await s.updateMemory(id, { narrative: "It was 2009." }, "Emma Ellis");
+    const r = await s.transitionMemory(id, "submitted", undefined, "Emma Ellis");
+    expect(r.status === "ok" && r.data).toMatchObject({ status: "submitted", narrative: "It was 2009." });
+    expect(db().contributions.find((c) => c.memoryId === id)!.reviews[0]).toMatchObject({ decision: "returned", note: "Roughly what year?" });
+  });
+});
+
+describe("operations", () => {
+  it("stores prices as whole cents only", async () => {
+    const s = services().operations;
+    expect((await s.updateProduct("digital", { amount: 39.5 })).status).toBe("error");
+    const r = await s.updateProduct("digital", { amount: 4400 });
+    expect(r.status === "ok" && r.data.price.amount).toBe(4400);
+  });
+  it("can't put the untested Legacy Capsule on sale", async () => {
+    expect((await services().operations.updateProduct("legacy_capsule", { availability: "available_demo" })).status).toBe("error");
+  });
+  it("simulates a contribution that lands in review", async () => {
+    const before = db().memories.filter((m) => m.status === "submitted").length;
+    expect((await services().operations.simulate("contribution")).status).toBe("ok");
+    expect(db().memories.filter((m) => m.status === "submitted").length).toBe(before + 1);
+  });
+});
+
+describe("letters and preservation", () => {
+  it("seals with a real content fingerprint and never schedules delivery", async () => {
+    const s = services().futureDelivery;
+    const draft = db().futureMessages.find((m) => m.status === "draft" && !m.isExample)!;
+    const r = await s.sealDemo(draft.id);
+    expect(r.status).toBe("ok");
+    if (r.status === "ok") expect(r.data.snapshotHash).toMatch(/^[0-9a-f]{64}$/);
+    expect((await s.schedule(draft.id)).status).toBe("not_configured");
+  });
+  it("is honest that backups aren't connected", async () => {
+    const r = await services().preservation.status("cap_margaret");
+    expect(r.status === "ok" && r.data.primary).toBe("unconfigured");
+    expect((await services().preservation.runRestoreTest("cap_margaret")).status).toBe("not_configured");
+  });
+  it("keeps private stories out of exports unless asked", () => {
+    const base: ExportOptions = { includePhotos: true, includeAudio: true, includePrivate: false, includeDrafts: false, includeSamplePlates: true };
+    const d = db();
+    const priv = d.memories.find((m) => m.capsuleId === "cap_margaret" && m.privacy === "private" && !m.deletedAt);
+    const without = selectExportContent(d, "cap_margaret", base);
+    const withPrivate = selectExportContent(d, "cap_margaret", { ...base, includePrivate: true, includeDrafts: true });
+    if (priv) expect(without.memories.some((m) => m.id === priv.id)).toBe(false);
+    expect(withPrivate.memories.length).toBeGreaterThanOrEqual(without.memories.length);
+  });
+});
+
+describe("plans, promotions and credit at checkout", () => {
+  const customer = { name: "Sarah Ellis", email: "sarah@example.com" };
+  const shipping = { name: "Sarah Ellis", line1: "12 Sample St", city: "Portland", region: "ME", postalCode: "04101", country: "United States" };
+
+  it("a promo code is checked, shown, recorded and counted once", async () => {
+    const b = services().billing;
+    const c = await b.createCheckout([{ id: "l1", productId: "digital", quantity: 1, extrasAmount: 0, interval: "year" }], "self");
+    if (c.status !== "ok") throw new Error("no checkout");
+    expect((await b.applyPromoCode(c.data.checkoutId, "nope")).status).toBe("error");
+    const applied = await b.applyPromoCode(c.data.checkoutId, " founders ");
+    expect(applied.status === "ok" && applied.data.quote.discount?.amount).toBe(1980);
+    const before = db().promotions.find((p) => p.id === "promo_founders")!.redemptions;
+    await b.setUseCredit(c.data.checkoutId, false);
+    const o = await b.completeMockCheckout(c.data.checkoutId, customer);
+    if (o.status !== "ok") throw new Error("not completed");
+    expect(o.data).toMatchObject({ total: 9900 - 1980, payment: "mock_uncharged", discount: { promotionId: "promo_founders", amount: 1980 } });
+    expect(db().promotions.find((p) => p.id === "promo_founders")!.redemptions).toBe(before + 1);
+    expect(db().promotionRedemptions[0]).toMatchObject({ promotionId: "promo_founders", orderId: o.data.id });
+    // The plan becomes this account's subscription; nothing renews or charges.
+    expect(db().subscriptions.find((s) => s.productId === "digital")).toMatchObject({ status: "preview_active", interval: "year", orderId: o.data.id });
+  });
+
+  it("your own referral code is refused kindly", async () => {
+    const b = services().billing;
+    const c = await b.createCheckout([{ id: "l1", productId: "family", quantity: 1, extrasAmount: 0 }], "self");
+    if (c.status !== "ok") throw new Error("no checkout");
+    const own = await b.applyPromoCode(c.data.checkoutId, db().referrals.code);
+    expect(own.status === "error" && own.message).toMatch(/your own referral code/);
+    const friend = await b.applyPromoCode(c.data.checkoutId, "PRIYA-7KQ2");
+    expect(friend.status === "ok" && friend.data.quote.discount?.amount).toBe(3580);
+  });
+
+  it("credit is used once and recorded", async () => {
+    const b = services().billing;
+    const balance = () => db().credits.reduce((s, x) => s + x.amount, 0);
+    expect(balance()).toBe(2000);
+    const c = await b.createCheckout([{ id: "l1", productId: "keepsake_box", quantity: 1, extrasAmount: 0 }], "self");
+    if (c.status !== "ok") throw new Error("no checkout");
+    const o = await b.completeMockCheckout(c.data.checkoutId, { ...customer, shipping });
+    if (o.status !== "ok") throw new Error("not completed");
+    // The sample account is on the Family plan: 10% off keepsakes comes first, then the credit.
+    expect(o.data).toMatchObject({ creditApplied: 2000, total: 24900 - 2490 - 2000 });
+    expect(balance()).toBe(0);
+  });
+
+  it("the bag holds a plan and a keepsake together, and checks out as one order", async () => {
+    const b = services().billing;
+    await b.addToCart({ productId: "digital", quantity: 1, extrasAmount: 0, interval: "year" });
+    await b.addToCart({ productId: "keepsake_box", quantity: 1, extrasAmount: 0 });
+    await b.addToCart({ productId: "keepsake_box", quantity: 1, extrasAmount: 0 });
+    expect(db().cart.lines.map((l) => [l.productId, l.quantity])).toEqual([["digital", 1], ["keepsake_box", 2]]);
+    // One plan at a time in the bag.
+    const second = await b.addToCart({ productId: "family", quantity: 1, extrasAmount: 0 });
+    expect(second.status).toBe("error");
+    const q = b.quoteCart();
+    if (q.status !== "ok") throw new Error("no quote");
+    expect(q.data.subtotal).toBe(9900 + 2 * 24900);
+    expect(q.data.memberDiscount?.amount).toBe(4980);
+    const kit = db().cart.lines.find((l) => l.productId === "keepsake_box")!;
+    await b.updateCartLine(kit.id, { quantity: 1 });
+    expect((await b.updateCartLine(kit.id, { quantity: 0 })).status).toBe("error");
+    const c = await b.checkoutCart();
+    if (c.status !== "ok") throw new Error("no checkout");
+    const o = await b.completeMockCheckout(c.data.checkoutId, { ...customer, shipping });
+    if (o.status !== "ok") throw new Error("not completed");
+    expect(o.data.items.map((i) => i.productId)).toEqual(["digital", "keepsake_box"]);
+    expect(o.data.payment).toBe("mock_uncharged");
+    expect(db().cart.lines).toEqual([]);
+  });
+
+  it("a completed gift starts one prepaid, non-renewing year for the recipient — a draft starts nothing", async () => {
+    const draft = db().gifts.find((g) => !g.orderId);
+    if (draft) expect((await services().gifts.accept(draft.token)).status).toBe("error");
+    const done = db().gifts.find((g) => g.orderId);
+    if (!done) return;
+    const r = await services().gifts.accept(done.token);
+    if (r.status !== "ok") throw new Error("not accepted");
+    expect(r.data).toMatchObject({ giftedBy: done.giverName, cancelAtPeriodEnd: true, interval: "year" });
+    // Accepting twice doesn't grant a second year.
+    await services().gifts.accept(done.token);
+    expect(db().subscriptions.filter((s) => s.orderId === done.orderId && s.giftedBy)).toHaveLength(1);
+  });
+
+  it("a ready-made kit waits for shipping; a personalised book waits for its proof", async () => {
+    const b = services().billing;
+    const kit = await b.createCheckout([{ id: "l1", productId: "keepsake_box", quantity: 1, extrasAmount: 0 }], "self");
+    if (kit.status !== "ok") throw new Error("no checkout");
+    const k = await b.completeMockCheckout(kit.data.checkoutId, { ...customer, shipping });
+    expect(k.status === "ok" && k.data.status).toBe("ready_for_fulfillment");
+    const bookId = db().heirlooms.find((h) => h.kind === "book")!.id;
+    const book = await b.createCheckout([{ id: "l2", productId: "book", quantity: 1, extrasAmount: 0, configurationId: bookId }], "self");
+    if (book.status !== "ok") throw new Error("no checkout");
+    const bo = await b.completeMockCheckout(book.data.checkoutId, { ...customer, shipping });
+    expect(bo.status === "ok" && bo.data.status).toBe("proof_required");
+  });
+
+  it("subscriptions switch billing and cancel at the end of the term without deleting anything", async () => {
+    const b = services().billing;
+    const sub = db().subscriptions[0];
+    const m = await b.changeInterval(sub.id, "month");
+    expect(m.status === "ok" && m.data.interval).toBe("month");
+    const cancel = await b.setCancelAtPeriodEnd(sub.id, true);
+    expect(cancel.status === "ok" && cancel.data.cancelAtPeriodEnd).toBe(true);
+    expect(db().capsules.length).toBeGreaterThan(0);
+    const keep = await b.setCancelAtPeriodEnd(sub.id, false);
+    expect(keep.status === "ok" && keep.data.cancelAtPeriodEnd).toBe(false);
+  });
+});
+
+describe("creating a capsule for each kind of story", () => {
+  const base = {
+    relationshipKind: "other" as const,
+    relationship: "",
+    subjectName: "",
+    preferredName: "",
+    birthYear: "" as const,
+    birthplace: "",
+    dedication: "",
+    collectionMode: "in_person" as const,
+    startingChapter: "childhood" as const,
+    palette: "linen" as const,
+    typography: "classic" as const,
+    layout: "type_only" as const,
+    defaultPrivacy: "family" as const,
+    viewerEnabled: true,
+  };
+
+  it("a couple's capsule names both partners and records the partner as a person", async () => {
+    const r = await services().capsules.createFromWizard({ ...base, kind: "couple", subjectName: "Ana & Luis", partnerName: "Luis Ortega", relationship: "Husband", keyDates: [{ id: "kd1", label: "Our anniversary", kind: "anniversary", month: 5, day: 4, year: 2012, recurring: true }] });
+    expect(r.status).toBe("ok");
+    if (r.status !== "ok") return;
+    expect(r.data).toMatchObject({ kind: "couple", title: "Our Story", relationshipKind: "partner", startingChapter: "love" });
+    const luis = db().people.find((p) => p.displayName === "Luis Ortega")!;
+    expect(luis).toMatchObject({ givenName: "Luis", familyName: "Ortega", isSample: false });
+    expect(r.data.peopleIds).toContain(luis.id);
+    expect(db().relationships.some((x) => x.toPersonId === luis.id && x.kind === "partner")).toBe(true);
+    expect(r.data.keyDates?.[0].label).toBe("Our anniversary");
+  });
+
+  it("a grandparent's capsule gets a person, a fitting title and no invented parent link", async () => {
+    const r = await services().capsules.createFromWizard({ ...base, kind: "parent", subjectName: "Rosa Delgado", relationship: "Grandmother", birthYear: 1938 });
+    if (r.status !== "ok") throw new Error("expected ok");
+    expect(r.data).toMatchObject({ kind: "parent", title: "In Rosa's Own Words", relationshipKind: "grandparent" });
+    const rosa = db().people.find((p) => p.id === r.data.subjectPersonId)!;
+    expect(rosa).toMatchObject({ displayName: "Rosa Delgado", birthYear: 1938 });
+    expect(db().relationships.some((x) => x.fromPersonId === rosa.id)).toBe(false);
+  });
+
+  it("a child's capsule links the child to you; your own capsule is about you", async () => {
+    const child = await services().capsules.createFromWizard({ ...base, kind: "child", subjectName: "Mia", relationship: "Daughter" });
+    if (child.status !== "ok") throw new Error("expected ok");
+    expect(child.data.title).toBe("For Mia");
+    expect(db().relationships.some((x) => x.fromPersonId === "per_sarah" && x.toPersonId === child.data.subjectPersonId && x.kind === "parent")).toBe(true);
+    const mine = await services().capsules.createFromWizard({ ...base, kind: "personal", subjectName: "Sarah Ellis", title: "Notes for Emma" });
+    if (mine.status !== "ok") throw new Error("expected ok");
+    expect(mine.data).toMatchObject({ title: "Notes for Emma", subjectPersonId: "per_sarah", relationshipKind: "self" });
+  });
+
+  it("holds new capsules to the plan in force, and says why in plain words", async () => {
+    useDemoStore.setState((s) => ({ db: { ...s.db, subscriptions: [{ id: "s", productId: "digital", status: "preview_active" }] } }));
+    const first = await services().capsules.createFromWizard({ ...base, kind: "someone", subjectName: "Aunt Rose", relationship: "Aunt" });
+    expect(first.status).toBe("ok");
+    const second = await services().capsules.createFromWizard({ ...base, kind: "someone", subjectName: "Uncle Ray", relationship: "Uncle" });
+    expect(second).toMatchObject({ status: "error", code: "forbidden" });
+    if (second.status === "error") expect(second.message).toMatch(/Family plan makes room for five/);
+    // A gift's capsule comes with its own plan.
+    expect((await services().capsules.createFromWizard({ ...base, relationshipKind: "self", subjectName: "Gift", includedWithGift: true })).status).toBe("ok");
+  });
+});

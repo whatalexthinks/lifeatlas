@@ -1,0 +1,1 @@
+- [Imported dependency detection](import-dependency-detection.md) — validate migration helper dependency suggestions against real imports before installing.
