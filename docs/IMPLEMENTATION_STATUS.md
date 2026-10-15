@@ -39,7 +39,8 @@ Built in the design refresh (PR #2) — see [design/README.md](design/README.md)
 | Invitations & review queue: approve, return with a note, don't include | ✅ / 🟡 | Links work in this browser; **no email/SMS is sent**. Opening an invitation adds the person to the family |
 | Family roles across capsules | ✅ / 🟡 | Roles come from memberships, so changes apply everywhere at once; access is demonstrated, not enforced (no accounts) |
 | *Preview as* any family member | ✅ / 🟡 | Banner and one-click way back; a demonstration, not a security boundary |
-| Letters Through Time: compose, attach, voice note, seal / unseal, preview opening, delete | ✅ / 🟡 | Seal stores a real SHA-256 fingerprint; **never scheduled for delivery** |
+| Letters Through Time: compose, photos, voice note, video message, stories given with the letter, occasions (date, years, a particular year, milestones incl. anniversary), seal / unseal, preview opening, delete | ✅ / 🟡 | Seal stores a real SHA-256 fingerprint; each letter shows its delivery ladder; **never scheduled for delivery** |
+| Memory visibility: Family, Selected people, Owner & editors, Only me | ✅ / 🟡 | Enforced in every view, export and restore on this device; server enforcement arrives with accounts |
 | Unfinished letter writing autosaves (even before it's valid) and can be restored or discarded (undoable) | ✅ | |
 | Successor designation | 🟡 | Saved locally; no one is contacted or verified |
 | Heirlooms — book builder, spread preview, PDF proof | ✅ | Proof prints at trim size via the browser; zero text overflow verified at all three trims |
@@ -63,8 +64,9 @@ Built in the design refresh (PR #2) — see [design/README.md](design/README.md)
 | Viewer finder: search (words, places, people), chapter / decade / kind filters, *Saved* bookmarks | ✅ | Header search on every archive page; `?q=` and `?saved=1` link to results |
 | Contributor `/contribute/[token]` and recording | ✅ | No account needed |
 | Contributor *Your stories*: status of each story; returned stories show the note and can be changed and sent again | ✅ | |
-| Gift opening `/gift/[token]` and first memory | ✅ | |
+| Gift opening `/gift/[token]` and first memory | ✅ | Shows what the gift includes; taking it up starts one prepaid, non-renewing year (demo) |
 | Future letter opening `/future/open/[token]` | ✅ / 🟡 | Example and previews only |
+| Bag `/checkout/bag` | ✅ | Several lines (a plan plus keepsakes), quantities, billing interval, Family keepsake discount |
 | Checkout `/checkout/preview` → `/checkout/complete` | 🟡 | Creates an uncharged order; no card fields exist |
 
 ## Operations demo
