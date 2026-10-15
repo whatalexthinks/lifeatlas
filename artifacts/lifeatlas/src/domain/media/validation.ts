@@ -7,10 +7,30 @@ export const AUDIO_TYPES = ["audio/webm", "audio/ogg", "audio/mp4", "audio/mpeg"
 export type MediaValidation = { ok: true; kind: "image" | "audio"; mime: string } | { ok: false; reason: string };
 
 const baseMime = (t: string) => t.split(";")[0].trim().toLowerCase();
+const mimeByExtension: Record<string, string> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  avif: "image/avif",
+  gif: "image/gif",
+  heic: "image/heic",
+  heif: "image/heif",
+  mp3: "audio/mpeg",
+  m4a: "audio/mp4",
+  mp4: "audio/mp4",
+  wav: "audio/wav",
+  ogg: "audio/ogg",
+  oga: "audio/ogg",
+  webm: "audio/webm",
+  aac: "audio/aac",
+};
 
 /** Fast checks on declared type and size. */
 export function validateMediaFile(file: Pick<File, "type" | "size" | "name">, expect: "image" | "audio"): MediaValidation {
-  const mime = baseMime(file.type || "");
+  const declaredMime = baseMime(file.type || "");
+  const extensionMime = mimeByExtension[file.name.split(".").pop()?.toLowerCase() ?? ""];
+  const mime = !declaredMime || declaredMime === "application/octet-stream" ? extensionMime ?? declaredMime : declaredMime;
   if (file.size === 0) return { ok: false, reason: "This file is empty." };
   if (expect === "image") {
     if (!IMAGE_TYPES.includes(mime as (typeof IMAGE_TYPES)[number])) {
@@ -55,5 +75,8 @@ export async function validateFileDeep(file: File, expect: "image" | "audio"): P
   if (!sniffed) return { ok: false, reason: "We couldn't recognise this file. It may be damaged or in an unsupported format." };
   const family = sniffed.split("/")[0];
   if (family !== expect) return { ok: false, reason: `This file looks like ${family === "image" ? "an image" : "audio"}, not ${expect === "image" ? "a photo" : "a recording"}.` };
+  if (expect === "image" && sniffed !== quick.mime) {
+    return { ok: false, reason: "The file extension or declared type does not match the image content." };
+  }
   return { ok: true, kind: expect, mime: quick.mime };
 }

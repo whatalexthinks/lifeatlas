@@ -83,7 +83,7 @@ export function PlanPricing({ className }: { className?: string }) {
         })}
       </ul>
       <p className="mt-6 text-[0.9375rem] text-ink-2">
-        <span className="font-medium text-ink">The owner pays. Invited contributors join free.</span> That is how memberships are planned to work; in this preview, invitations are local links on this device.
+        <span className="font-medium text-ink">The owner pays. Invited contributors are planned to join free.</span> Family invitations and shared access are not connected yet.
       </p>
     </div>
   );
@@ -128,7 +128,7 @@ const rows: { label: string; value: (id: PlanId) => React.ReactNode }[] = [
   { label: "Guided questions, voice, photographs, timeline", value: () => true },
   { label: "Capsules", value: (id) => (id === "preview" ? `Up to ${plans[id].capsules}, on this device` : plans[id].capsules) },
   { label: "Storage for photos, voice and video", value: (id) => (plans[id].storageGb ? `${plans[id].storageGb} GB (planned)` : "Your browser only") },
-  { label: "Contributors and viewers", value: () => "Free to invite (local links in preview)" },
+  { label: "Contributors and viewers", value: () => "Planned, not available yet" },
   { label: "Future messages prepared", value: (id) => (plans[id].futureMessages === "unlimited" ? "Unlimited" : plans[id].futureMessages) },
   { label: "Family directory across capsules", value: (id) => plans[id].familyDirectory },
   { label: "Keepsake discount", value: (id) => (plans[id].keepsakeDiscountPct ? `${plans[id].keepsakeDiscountPct}%` : false) },

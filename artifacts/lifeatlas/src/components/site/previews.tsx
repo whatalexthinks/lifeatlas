@@ -240,8 +240,8 @@ export function InvitationPreview({ className }: { className?: string }) {
 
 const ladder: { label: string; detail: string; state: "done" | "available" | "not_yet" }[] = [
   { label: "Draft", detail: "Write a letter, record your voice, add photographs.", state: "done" },
-  { label: "Saved on this device", detail: "Kept in your browser as you write.", state: "done" },
-  { label: "Uploaded", detail: "Needs hosted accounts, not in this preview.", state: "not_yet" },
+  { label: "Saved", detail: "Stored in demo mode or synced to your signed-in account.", state: "done" },
+  { label: "Uploaded", detail: "Available to signed-in account owners using private media storage.", state: "available" },
   { label: "Scheduled", detail: "Only when a real delivery service confirms it.", state: "not_yet" },
   { label: "Delivered", detail: "Reported by that service, never assumed.", state: "not_yet" },
 ];

@@ -9,7 +9,7 @@ import { clearAll, idbAvailable, isQuotaError, loadState, saveState } from "@/li
 import { uid } from "@/lib/utils";
 import { brand } from "@/config/brand";
 
-export type PersistenceMode = "pending" | "indexeddb" | "memory" | "error";
+export type PersistenceMode = "pending" | "indexeddb" | "cloud" | "memory" | "error";
 
 interface DemoStore {
   db: DemoDatabase;
@@ -28,6 +28,16 @@ interface DemoStore {
 const INITIAL = buildSeed(new Date("2026-10-13T12:00:00.000Z"));
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
+let cloudPersistenceActive = false;
+
+/** Keep the unauthenticated preview cache separate from signed-in cloud workspaces. */
+export function setCloudPersistenceActive(active: boolean) {
+  cloudPersistenceActive = active;
+}
+
+export function isCloudPersistenceActive() {
+  return cloudPersistenceActive;
+}
 
 export const useDemoStore = create<DemoStore>()((set, get) => ({
   db: INITIAL,
@@ -99,7 +109,7 @@ export function describeError(e: unknown) {
 
 function scheduleSave() {
   const { persistence } = useDemoStore.getState();
-  if (persistence === "memory" || typeof window === "undefined") return;
+  if (cloudPersistenceActive || persistence === "memory" || typeof window === "undefined") return;
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
     saveTimer = null;
@@ -119,7 +129,7 @@ export async function flushSave() {
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = null;
   const { db, hydrated, persistence } = useDemoStore.getState();
-  if (!hydrated || persistence === "memory" || !idbAvailable()) return;
+  if (cloudPersistenceActive || !hydrated || persistence === "memory" || !idbAvailable()) return;
   try {
     await saveState(db);
     useDemoStore.setState({ lastSavedAt: new Date().toISOString(), saveError: undefined, persistence: "indexeddb" });
@@ -131,7 +141,7 @@ export async function flushSave() {
 
 /** Write only if a debounced save is still waiting, used when the tab is hidden or closing. */
 export function flushPendingSave() {
-  if (saveTimer) void flushSave().catch(() => undefined);
+  if (!cloudPersistenceActive && saveTimer) void flushSave().catch(() => undefined);
 }
 
 export const getDb = () => useDemoStore.getState().db;

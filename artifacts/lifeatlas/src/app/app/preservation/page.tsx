@@ -10,7 +10,7 @@ import { RestorePanel } from "@/components/studio/restore-panel";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge, Skeleton, toast } from "@/components/ui/feedback";
 import { Select } from "@/components/ui/field";
-import { useDb, useHydrated } from "@/hooks/use-data";
+import { useDb, useHydrated, usePersistence } from "@/hooks/use-data";
 import { services } from "@/services/factory";
 import { cn, formatBytes, formatDate, relativeTime } from "@/lib/utils";
 import { brand } from "@/config/brand";
@@ -41,6 +41,7 @@ function useDeviceStorage() {
 
 export default function PreservationPage() {
   const hydrated = useHydrated();
+  const persistence = usePersistence();
   const capsules = useDb((d) => d.capsules);
   const exportJobs = useDb((d) => d.exportJobs);
   const checks = useDb((d) => d.integrityChecks);
@@ -107,7 +108,9 @@ export default function PreservationPage() {
       <div role="alert" className="mb-8 flex gap-4 rounded-[16px] border border-danger/25 bg-danger-soft px-5 py-5 sm:px-6">
         <ShieldAlert className="mt-0.5 size-6 shrink-0 text-danger" />
         <div>
-          <p className="font-medium text-ink">These stories are not backed up.</p>
+          <p className="font-medium text-ink">
+            {persistence.mode === "cloud" ? "Your latest capsule changes are saved to your account." : "These stories are not backed up."}
+          </p>
           <p className="mt-1 max-w-3xl text-[0.9375rem] leading-relaxed text-ink-2">
             In this preview everything lives only in this browser on this device. Clearing site data, a browser reset or a lost laptop removes it, and there is no server to recover from. Download a copy of anything you can&rsquo;t replace, and keep your original files.
           </p>

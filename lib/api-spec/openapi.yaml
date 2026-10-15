@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: account
+    description: Account profile and private capsule workspace storage
 paths:
   /healthz:
     get:
@@ -24,6 +26,193 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /account/snapshot:
+    get:
+      operationId: getAccountSnapshot
+      tags: [account]
+      summary: Get the signed-in account's capsule workspace
+      responses:
+        "200":
+          description: The latest private workspace snapshot, or an empty result for a new account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountSnapshot"
+        "401":
+          description: Sign-in required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    put:
+      operationId: putAccountSnapshot
+      tags: [account]
+      summary: Save the signed-in account's capsule workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountSnapshotInput"
+      responses:
+        "200":
+          description: Workspace saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountSnapshot"
+        "400":
+          description: Invalid or oversized workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Sign-in required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "409":
+          description: The workspace changed in another session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /storage/uploads/request-url:
+    post:
+      operationId: requestUploadUrl
+      tags: [account]
+      summary: Create a private, account-owned media upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/UploadUrlRequest"
+      responses:
+        "200":
+          description: A short-lived URL for directly uploading a file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+        "400":
+          description: Invalid media details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Sign-in required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /storage/uploads/finalize:
+    post:
+      operationId: finalizeUpload
+      tags: [account]
+      summary: Confirm an upload and attach it to the signed-in account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/UploadFinalizeRequest"
+      responses:
+        "200":
+          description: The uploaded file is now available in the private capsule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadFinalizeResult"
+        "400":
+          description: Invalid upload or file metadata mismatch
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "401":
+          description: Sign-in required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Upload does not belong to this account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /storage/objects/uploads/{objectId}:
+    get:
+      operationId: getPrivateObject
+      tags: [account]
+      summary: Read an account-owned private media object
+      parameters:
+        - in: path
+          name: objectId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Private media file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "401":
+          description: Sign-in required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Object does not belong to this account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    delete:
+      operationId: deletePrivateObject
+      tags: [account]
+      summary: Permanently remove an account-owned private media object
+      parameters:
+        - in: path
+          name: objectId
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Object deleted
+        "401":
+          description: Sign-in required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Object does not belong to this account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Object not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +222,85 @@ components:
           type: string
       required:
         - status
+    AccountSnapshot:
+      type: object
+      required: [data, version, updatedAt]
+      properties:
+        data:
+          type: [object, "null"]
+          additionalProperties: true
+        version:
+          type: integer
+          minimum: 0
+        updatedAt:
+          type: [string, "null"]
+          format: date-time
+    AccountSnapshotInput:
+      type: object
+      required: [data, version]
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+        version:
+          type: integer
+          minimum: 0
+    UploadUrlRequest:
+      type: object
+      required: [name, size, contentType, capsuleId]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        size:
+          type: integer
+          minimum: 1
+        contentType:
+          type: string
+          minLength: 1
+          maxLength: 128
+        capsuleId:
+          type: string
+          minLength: 1
+          maxLength: 128
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath, metadata]
+      properties:
+        uploadURL:
+          type: string
+          format: uri
+        objectPath:
+          type: string
+        metadata:
+          type: object
+          required: [name, size, contentType]
+          properties:
+            name:
+              type: string
+            size:
+              type: integer
+            contentType:
+              type: string
+    UploadFinalizeRequest:
+      allOf:
+        - $ref: "#/components/schemas/UploadUrlRequest"
+        - type: object
+          required: [objectPath]
+          properties:
+            objectPath:
+              type: string
+    UploadFinalizeResult:
+      type: object
+      required: [objectPath]
+      properties:
+        objectPath:
+          type: string
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
 

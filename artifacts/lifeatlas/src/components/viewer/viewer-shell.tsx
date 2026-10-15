@@ -105,7 +105,7 @@ export function ViewerShell({ children }: { children: React.ReactNode }) {
           </span>
           <h1 className="mt-6 font-serif text-[2.8rem] leading-tight text-night-ink">This archive isn&rsquo;t shared with {persona.name.split(" ")[0]} yet.</h1>
           <p className="mt-4 text-night-ink-2">
-            {capsule.viewerEnabled ? "Only people the owner or an editor invites can open it." : "The capsule's owner hasn't turned on the family viewer."} In this preview the check is simulated for the selected demo identity, real access control arrives with accounts.
+            This is a family-viewer preview. Only the signed-in owner can access account capsules today; invitations and guest access are not connected.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <BackToSelfButton />

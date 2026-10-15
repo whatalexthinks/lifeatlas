@@ -1,5 +1,6 @@
 "use client";
 
+import { isCloudPersistenceActive } from "@/store/demo-store";
 import type { Capsule, CapsuleKind, ChapterKey, Memory, MemoryRevision, Person, Place, Relationship } from "@/domain/models";
 import { callName, capsuleKind, capsuleKinds } from "@/domain/capsule-kinds";
 import { capsuleAllowance, countOwnedCapsules, currentPlanId } from "@/domain/commerce/plans";
@@ -187,7 +188,7 @@ export const mockCapsules: CapsuleRepository = {
     if (parsed.data.privacy === "selected" && !parsed.data.sharedWith?.length) return fail("validation", "Choose at least one person to share it with.");
     await latency(200);
     const now = new Date().toISOString();
-    const isFirstUserMemory = !db().memories.some((m) => m.storage === "this_device");
+    const isFirstUserMemory = !db().memories.some((m) => m.storage === "this_device" || m.storage === "remote");
     const memory: Memory = {
       id: uid("mem"),
       capsuleId: input.capsuleId,
@@ -210,7 +211,7 @@ export const mockCapsules: CapsuleRepository = {
       consent: parsed.data.consent,
       pinned: false,
       revisions: [],
-      storage: "this_device",
+      storage: isCloudPersistenceActive() ? "remote" : "this_device",
       createdAt: now,
       updatedAt: now,
     };

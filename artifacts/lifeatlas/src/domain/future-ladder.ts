@@ -98,7 +98,7 @@ export function ladderSummary(message: LetterLike, services: Integrations = conn
   const missing = steps.filter((s) => s.state === "unavailable").map((s) => s.key);
   const caveat =
     missing.includes("stored") && missing.includes("scheduled")
-      ? "Not uploaded, not scheduled."
+      ? "Saved with your capsule, not scheduled."
       : missing.includes("scheduled")
         ? "Not scheduled."
         : message.status === "failed"

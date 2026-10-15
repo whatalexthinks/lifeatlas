@@ -125,7 +125,7 @@ export function HeroCapsule() {
             </span>
             <p className="text-[0.72rem] leading-snug text-night-ink-2 sm:text-[0.8rem]">Listen to the sample family story</p>
           </Link>
-          <p className="mt-3 text-[0.68rem] leading-snug text-night-ink-3 sm:text-[0.75rem]">Timeline, chapters and the stories behind each photograph. Shared only with the family you invite.</p>
+          <p className="mt-3 text-[0.68rem] leading-snug text-night-ink-3 sm:text-[0.75rem]">Photographs, voices and stories brought together in one private capsule.</p>
         </div>
       </div>
       <div className="hero-rise mt-4 flex items-center gap-4 rounded-[3px] border border-dashed border-line-strong bg-ivory/70 p-3 [--d:820ms]">

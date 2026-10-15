@@ -17,7 +17,7 @@ export interface Timestamps {
 export type StorageLocation =
   | "fixture" // shipped with the app as sample content
   | "this_device" // IndexedDB in this browser only
-  | "remote"; // Part Two: private cloud object storage
+  | "remote"; // private cloud object storage
 
 export type Season = "spring" | "summer" | "autumn" | "winter";
 

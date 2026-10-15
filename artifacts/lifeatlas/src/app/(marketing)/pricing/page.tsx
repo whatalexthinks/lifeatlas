@@ -27,8 +27,8 @@ export default function PricingPage() {
             One capsule, or the whole family. <em>Monthly or yearly.</em>
           </>
         }
-        lead="A membership gives you guided questions, voice recording and photo stories gathered into a private capsule. Choose One capsule for a single story, or Family for up to five. The owner pays; invited contributors are planned to join free. Start free to try everything in this browser first."
-        note="Paid checkout is test-only in this preview: it creates a labelled demonstration order and charges nothing. Invitations are local links. Printed books and keepsake boxes are separate optional purchases."
+        lead="A membership gives you guided questions, voice recording and photo stories gathered into a private capsule. Choose One capsule for a single story, or Family for up to five. The owner pays; invited contributors are planned to join free. Start with a private account capsule."
+        note="Prices are test prices. Subscription checkout is not connected, no charge is made, and family invitations are not available yet. Printed books and keepsake boxes are separate optional purchases."
       />
 
       <Section space="none" className="pb-20 sm:pb-28" labelledBy="plans">
@@ -52,7 +52,7 @@ export default function PricingPage() {
             }
           />
           <PlanComparison className="mt-12" />
-          <p className="mt-4 text-[0.875rem] text-ink-3">Storage allowances are planned for hosted accounts. In the preview, everything is kept in your browser.</p>
+          <p className="mt-4 text-[0.875rem] text-ink-3">Signed-in capsules and private media are stored with your account. Storage allowances are test assumptions, not metered limits; checkout, managed backups and recovery are not connected.</p>
         </Container>
       </Section>
 
@@ -88,7 +88,7 @@ export default function PricingPage() {
             columns={4}
             items={[
               { title: "Owners pay", body: "Whoever starts a capsule chooses its plan, billed monthly or yearly. Yearly costs less over twelve months." },
-              { title: "Contributors join free", body: "Invited family are planned to add stories without a plan or card. In this preview, invitations are local links." },
+              { title: "Contributors join free", body: "Family access is planned to be free, but invitations and shared access are not connected yet." },
               { title: "Download what you make", body: "Export your stories, photographs and recordings from this preview at any time." },
               { title: "Gifts work the same way", body: "Give someone a year of their own capsule. They never pay to add stories or invite their family." },
             ]}

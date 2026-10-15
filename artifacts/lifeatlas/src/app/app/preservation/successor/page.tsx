@@ -26,7 +26,7 @@ export default function SuccessorPage() {
         description="A successor is the person who could look after these stories, and any letters you've written for the future, if you no longer can."
       />
       <DemoNotice className="mb-8" title="Nothing is granted or sent in this preview">
-        Successors are saved on this device only. No one is contacted, and the verification service that would make this real doesn&rsquo;t exist yet.
+        Successor details are saved with your account. No one is contacted, and identity checks and handover are not connected yet.
       </DemoNotice>
       <ul className="mb-8 grid gap-4 sm:grid-cols-2">
         {principles.map(({ icon: Icon, title, body }) => (

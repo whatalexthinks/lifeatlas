@@ -33,6 +33,7 @@ import { cn, relativeTime } from "@/lib/utils";
 import { NotificationsButton } from "./notifications";
 import { PersonaSwitcher } from "./persona-switcher";
 import { brand } from "@/config/brand";
+import { UserButton } from "@clerk/react";
 
 type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }>; badge?: number; match?: (p: string) => boolean };
 
@@ -88,7 +89,9 @@ function RailLink({ item, pathname, compact }: { item: NavItem; pathname: string
 export function SaveStatus({ compact }: { compact?: boolean }) {
   const { mode, lastSavedAt, error } = usePersistence();
   const label =
-    mode === "memory"
+    mode === "cloud"
+      ? `Saved to your account${lastSavedAt ? ` · ${relativeTime(lastSavedAt)}` : ""}`
+      : mode === "memory"
       ? "This browser can't save, changes vanish on reload"
       : error
         ? error
@@ -99,12 +102,12 @@ export function SaveStatus({ compact }: { compact?: boolean }) {
   if (compact) return <span className={cn("block size-2 rounded-full", tone)} title={label} aria-label={label} />;
   return (
     <div className="rounded-[14px] border border-brass/30 bg-brass-soft/60 p-3.5">
-      <p className="flex items-center gap-2 text-[0.8125rem] font-medium text-ink">
+        <p className="flex items-center gap-2 text-[0.8125rem] font-medium text-ink">
         <span className={cn("size-2 rounded-full", tone)} aria-hidden />
-        Demo · this device only
+        {mode === "cloud" ? "Your account · cloud copy" : "Demo · this device only"}
       </p>
       <p className="mt-1 text-[0.75rem] leading-snug text-ink-3" role="status">
-        {label.replace(/\.$/, "")}. Not backed up.{" "}
+        {label.replace(/\.$/, "")}{mode === "cloud" ? ". Available wherever you sign in. " : ". Not backed up. "}
         <Link href="/app/preservation" className="underline underline-offset-2">
           Download a copy
         </Link>
@@ -116,6 +119,8 @@ export function SaveStatus({ compact }: { compact?: boolean }) {
 export function StudioShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const hydrated = useHydrated();
+  const persistence = usePersistence();
+  const cloudAccount = persistence.mode === "cloud";
   const persona = usePersona();
   const { primary, secondary } = useNav();
   const [moreOpen, setMoreOpen] = React.useState(false);
@@ -128,10 +133,18 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
       <aside className="sticky top-0 hidden h-dvh flex-col border-r border-line bg-ivory/50 px-4 pb-4 pt-5 lg:flex" aria-label="Studio navigation">
         <div className="flex items-center justify-between px-2">
           <Logo href="/app" />
+          <UserButton
+            appearance={{
+              variables: { colorPrimary: "#c9b48a", colorBackground: "#172019", colorForeground: "#efece2" },
+              elements: { avatarBox: { width: "2rem", height: "2rem" } },
+            }}
+          />
         </div>
-        <div className="mt-6">
-          <PersonaSwitcher />
-        </div>
+        {!cloudAccount ? (
+          <div className="mt-6">
+            <PersonaSwitcher />
+          </div>
+        ) : null}
         <ButtonLink href="/app/gather" className="mt-5" block leading={<Plus className="size-4" />}>
           Gather a memory
         </ButtonLink>
@@ -152,7 +165,7 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
         <Link href="/app" aria-label={`${brand.name} studio home`} className="mb-3 text-evergreen">
           <BrandMark className="size-8" />
         </Link>
-        <PersonaSwitcher compact side="right" />
+        {cloudAccount ? <UserButton /> : <PersonaSwitcher compact side="right" />}
         <Link href="/app/gather" aria-label="Gather a memory" title="Gather a memory" className="my-3 grid size-11 place-items-center rounded-full bg-evergreen text-on-evergreen shadow-md">
           <Plus className="size-5" />
         </Link>
@@ -172,18 +185,20 @@ export function StudioShell({ children }: { children: React.ReactNode }) {
           </div>
           <div className="hidden min-w-0 items-center gap-2 text-[0.8125rem] text-ink-3 md:flex">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-brass-soft px-2.5 py-1 font-medium text-brass-ink">
-              <span className="size-1.5 rounded-full bg-brass" aria-hidden /> Demo mode
+              <span className="size-1.5 rounded-full bg-brass" aria-hidden /> {cloudAccount ? "Account mode" : "Demo mode"}
             </span>
-            <span className="truncate">Sample family &amp; local data only, nothing is sent, charged or backed up.</span>
+            <span className="truncate">
+              {cloudAccount
+                ? "Your capsule content syncs to your account. Family sharing and payments are not connected yet."
+                : "Sample family and local data only. Nothing is sent, charged, or backed up."}
+            </span>
           </div>
           <div className="flex items-center gap-1">
             <Link href="/view/cap_margaret" className="hidden h-10 items-center gap-1.5 rounded-full px-3.5 text-[0.875rem] text-ink-2 hover:bg-ivory hover:text-ink sm:inline-flex">
               Open viewer <ArrowUpRight className="size-3.5" />
             </Link>
             <NotificationsButton />
-            <div className="md:hidden">
-              <PersonaSwitcher compact align="end" />
-            </div>
+            <div className="md:hidden">{cloudAccount ? <UserButton /> : <PersonaSwitcher compact align="end" />}</div>
           </div>
         </header>
 
@@ -293,7 +308,7 @@ function NotOrganizer() {
         </Button>
         <PersonaSwitcherInline />
       </div>
-      <p className="mt-6 text-[0.8125rem] text-ink-3">This gating is a simulation of permissions. Real access control is enforced on the server in a later release.</p>
+      <p className="mt-6 text-[0.8125rem] text-ink-3">This page simulates collaborator roles. Server access is limited to the signed-in owner; family roles and sharing are not connected yet.</p>
     </div>
   );
 }

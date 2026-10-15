@@ -185,7 +185,7 @@ export default function LegacyPage() {
             items={[
               { title: "A printed book", body: "Their stories and photographs, designed by you and printed only after you approve a proof.", aside: <ArrowLink href="/physical-capsules#book">The Legacy Book</ArrowLink> },
               { title: "A copy for everyone", body: "Download the whole capsule, readable stories, photographs and recordings, and give each grandchild their own copy.", aside: <ArrowLink href="/preservation">How we think about keeping</ArrowLink> },
-              { title: "Someone to look after it", body: "Name a successor you trust to care for the capsule in future. The verified handover arrives with hosted accounts.", aside: <ArrowLink href="/faq#keeping">About successors</ArrowLink> },
+              { title: "Someone to look after it", body: "Record the person you trust to care for the capsule in future. Verified handover and access for another person are not connected yet.", aside: <ArrowLink href="/faq#keeping">About successors</ArrowLink> },
             ]}
           />
           <PlateStrip className="mt-16" memoryIds={["mem_fam_ferry", "mem_fam_colette", "mem_fam_recipe", "mem_fam_canoe"]} />

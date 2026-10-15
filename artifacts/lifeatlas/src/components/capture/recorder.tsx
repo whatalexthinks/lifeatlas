@@ -218,7 +218,7 @@ export function Recorder({
           <p id="record-help" className={cn("mx-auto mt-2 max-w-sm leading-snug text-ink-3", big ? "text-[1rem]" : "text-[0.875rem]")}>
             {r.status === "requesting"
               ? "Your browser is asking to use the microphone. Choose “Allow”."
-              : "When you tap, your browser will ask to use the microphone. Your recording stays on this device in this demo."}
+              : "When you tap, your browser will ask to use the microphone. Demo recordings stay on this device; signed-in account recordings upload to private storage."}
           </p>
           <button type="button" onClick={() => fileRef.current?.click()} className="mt-4 inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-ink-3 underline-offset-4 hover:text-ink hover:underline">
             <Upload className="size-4" /> or upload a recording

@@ -214,7 +214,7 @@ function Settings() {
               variant="ghost"
               onClick={async () => {
                 const r = await services().account.requestAccountDeletion();
-                if (r.status === "not_configured") toast.info("No account to delete yet", r.message);
+                if (r.status === "not_configured") toast.info("Account deletion is not available yet", "Your account is still active. Nothing was deleted.");
               }}
             >
               Request deletion

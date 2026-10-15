@@ -194,7 +194,7 @@ export type MediaSource =
   | { kind: "plate"; plateId: string } // procedurally illustrated sample plate
   | { kind: "static"; url: string } // file shipped in /public (sample)
   | { kind: "local"; blobKey: string } // IndexedDB on this device
-  | { kind: "remote"; objectKey: string }; // Part Two
+  | { kind: "remote"; objectKey: string };
 
 export interface MediaConsent {
   contributorAgreed: boolean;

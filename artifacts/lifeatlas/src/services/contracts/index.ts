@@ -200,7 +200,7 @@ export interface PutMediaInput {
 
 export interface MediaStorageProvider {
   put(input: PutMediaInput): Promise<ServiceResult<MediaAsset>>;
-  /** Returns a URL valid for this page session (object URL / static path / signed URL in Part Two). */
+  /** Returns a URL valid for this page session (object URL, static path, or authenticated private-object route). */
   resolveUrl(asset: MediaAsset): Promise<ServiceResult<string>>;
   getBlob(asset: MediaAsset): Promise<ServiceResult<Blob>>;
   remove(mediaId: string): Promise<ServiceResult<null>>;

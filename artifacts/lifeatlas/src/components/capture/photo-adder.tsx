@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, ImagePlus, X } from "lucide-react";
 import { validateFileDeep } from "@/domain/media/validation";
 import { takenDateOf, type TakenDate } from "@/lib/media/exif";
 import { cn } from "@/lib/utils";
+import { usePersistence } from "@/hooks/use-data";
 
 export interface PendingPhoto {
   id: string;
@@ -32,6 +33,7 @@ async function dimensions(url: string) {
  * is read so it can be offered, never assumed.
  */
 export function PhotoAdder({ photos, onChange, max = 6, size = "standard" }: { photos: PendingPhoto[]; onChange: (p: PendingPhoto[]) => void; max?: number; size?: "senior" | "standard" }) {
+  const persistence = usePersistence();
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [dropping, setDropping] = React.useState(false);
@@ -175,7 +177,10 @@ export function PhotoAdder({ photos, onChange, max = 6, size = "standard" }: { p
           {error}
         </p>
       ) : null}
-      <p className="mt-2 text-[0.8125rem] text-ink-3">Drop photos here or choose them. JPEG, PNG, WebP, AVIF or GIF, up to 15 MB each. The first photo leads the story. Photos stay in this browser in the preview.</p>
+      <p className="mt-2 text-[0.8125rem] text-ink-3">
+        Drop photos here or choose them. JPEG, PNG, WebP, AVIF or GIF, up to 15 MB each. The first photo leads the story.{" "}
+        {persistence.mode === "cloud" ? "Photos upload to private storage in your account." : "Photos stay in this browser in demo mode and are not backed up."}
+      </p>
       <p className="sr-only" aria-live="polite">
         {announce}
       </p>

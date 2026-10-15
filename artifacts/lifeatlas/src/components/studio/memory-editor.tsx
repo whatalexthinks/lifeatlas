@@ -471,7 +471,9 @@ export function MemoryEditor({ memory, capsule, onDone, dirtyRef }: { memory: Me
       ) : null}
 
       <div className="flex flex-wrap items-center gap-3 text-[0.8125rem] text-ink-3">
-        <Badge tone={memory.storage === "fixture" ? "neutral" : "demo"}>{memory.storage === "fixture" ? "Sample content" : "Stored on this device"}</Badge>
+        <Badge tone={memory.storage === "fixture" ? "neutral" : memory.storage === "remote" ? "success" : "demo"}>
+          {memory.storage === "fixture" ? "Sample content" : memory.storage === "remote" ? "Saved to your account" : "Stored on this device"}
+        </Badge>
         <span>Added {relativeTime(memory.createdAt)} by {memory.attribution.displayName}</span>
         {memory.status === "approved" ? (
           <Link href={`/view/${capsule.id}/stories/${memory.id}`} className="inline-flex items-center gap-1 text-evergreen hover:underline">

@@ -28,10 +28,10 @@ export const faqGroups: FaqGroup[] = [
     id: "privacy",
     title: "Privacy and safety",
     items: [
-      { q: "Who can see my capsule?", a: "Only the people you invite. Capsules are never public and never listed. Within a capsule, each memory can be kept to yourself, shared with the owner and editors, shared with particular people you choose, or shared with everyone you've invited. The capsule's owner can always see everything in it." },
-      { q: "Is my data encrypted?", a: "In this preview, everything stays in your own browser on your own device; nothing is sent to our servers. When hosted accounts launch we will describe exactly how data is protected in transit and at rest, we won't make security claims before they're true." },
+      { q: "Who can see my capsule?", a: "At this stage, only the signed-in account owner can access their capsules. Capsules are not public or listed. Family invitations and per-person sharing controls are still being built." },
+      { q: "Is my data encrypted?", a: "Signed-in capsule content is saved to your account, and uploaded photos and recordings use private object storage. We restrict access to your account and do not make encryption claims beyond the protections documented by our hosting providers. Family sharing is still being built." },
       { q: "Do you use my stories to train AI or sell them?", a: "No. Your stories are yours. We don't sell personal data, and we won't use your memories to train models." },
-      { q: "Can I delete everything?", a: "Yes. You can delete single memories (they wait in Recently deleted for a while in case of mistakes), whole capsules, or, in this preview, erase everything on this device from Settings." },
+      { q: "Can I delete everything?", a: "You can delete individual memories and whole capsules from the studio. An account-wide deletion control is not available yet." },
     ],
   },
   {
@@ -58,7 +58,7 @@ export const faqGroups: FaqGroup[] = [
     id: "plans",
     title: "Plans and payments",
     items: [
-      { q: "How much does it cost?", a: `You can start free on this device. One digital capsule is ${formatMoney(launchPrices.digital.year)} a year (or ${formatMoney(launchPrices.digital.month)} a month) and the Family Plan is ${formatMoney(launchPrices.family.year)} a year (or ${formatMoney(launchPrices.family.month)} a month). A physical capsule (${formatMoney(launchPrices.physicalCapsule)}) and the Printed Legacy Book (from ${formatMoney(launchPrices.legacyBook)}) are optional add-ons. These are test prices.` },
+      { q: "How much does it cost?", a: `You can start free with an account. One digital capsule is ${formatMoney(launchPrices.digital.month)} per month, or ${formatMoney(launchPrices.digital.year)} billed annually. The Family Plan is ${formatMoney(launchPrices.family.month)} per month, or ${formatMoney(launchPrices.family.year)} billed annually. A physical capsule (${formatMoney(launchPrices.physicalCapsule)}) and the Printed Legacy Book (from ${formatMoney(launchPrices.legacyBook)}) are optional add-ons. These are test prices, and checkout is not connected yet.` },
       { q: "Will I be charged in the preview?", a: "No. Checkout creates a clearly labelled demonstration order. No payment provider is connected; please don't enter real card details anywhere." },
       { q: "What happens if I stop paying?", a: "You'll always be able to download a complete copy of your capsules. We'll publish the exact policy for read-only access and retention before any paid plan launches." },
       { q: "Do you have promotions or referral rewards?", a: "Founding-member and referral offers are part of the plan. Any giveaway will only run under published rules after legal review, none is running today." },
@@ -88,7 +88,7 @@ export const faqGroups: FaqGroup[] = [
     items: [
       { q: "Are my memories backed up?", a: "Not in this preview. What you add stays in this browser, and clearing site data can remove it. Download a copy of anything that matters." },
       { q: "Can I download everything?", a: "Yes, a complete export with your stories as readable files and structured data, plus your photographs and recordings. It's always free, on every plan." },
-      { q: "What happens to a capsule if something happens to me?", a: "You can name a successor, someone you trust to look after your capsules. The verified handover process arrives with hosted accounts." },
+      { q: "What happens to a capsule if something happens to me?", a: "You can record a successor, but verified handover and access for another person are not connected yet." },
     ],
   },
 ];

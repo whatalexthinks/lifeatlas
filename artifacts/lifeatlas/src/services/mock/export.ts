@@ -3,6 +3,7 @@
 import { strToU8, zipSync, type Zippable } from "fflate";
 import type { ArchiveManifest, DemoDatabase, ExportJob, ExportOptions, MediaAsset, Memory } from "@/domain/models";
 import { isExportEligible, roleFor } from "@/domain/policies/permissions";
+import { isCloudPersistenceActive } from "@/store/demo-store";
 import { chapterById } from "@/data/chapters";
 import { capsuleKind } from "@/domain/capsule-kinds";
 import { formatFuzzyDate, sortKey } from "@/lib/dates";
@@ -267,7 +268,9 @@ export const mockExport: ExportBuilder = {
         media: manifestMedia,
         exclusions,
         notices: [
-          `Created from an ${brand.name} demonstration. Data came from this browser on this device only; nothing was uploaded.`,
+          isCloudPersistenceActive()
+            ? `Created from your signed-in ${brand.name} account workspace. Keep this archive as a copy independent of the service.`
+            : `Created from a ${brand.name} demonstration. Data came from this browser on this device only; nothing was uploaded.`,
           "Coordinates are rounded to city level.",
           ...(media.some((m) => m.sampleNotice) ? ["Photographs in the example archive are supplied samples. The family stories are fictional, and sample narration is synthetic."] : []),
         ],

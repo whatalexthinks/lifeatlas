@@ -68,7 +68,7 @@ export default function AboutPage() {
                 A working product, <em>still being built.</em>
               </>
             }
-            lead={`${brand.name} is a product preview. Nearly everything works on your own device, creating capsules, recording, inviting, designing keepsakes, using a fictional sample family to show what's possible. Accounts, cloud storage, payments, printing and delivery come next, and we won't pretend they exist before they do.`}
+            lead={`${brand.name} gives families a place and a structure to build a digital memory capsule. Signed-in owners can write stories, record voices, upload photographs and sync their capsule to a private account. The sample family is fictional. Family invitations, paid checkout, physical production and scheduled delivery are still being built.`}
           >
             <PreviewNote className="mt-8">{brand.name} is a working name; branding and trademark are pending. The domain is ourlifecapsule.com.</PreviewNote>
             <div className="mt-8 flex flex-wrap gap-x-7 gap-y-3">

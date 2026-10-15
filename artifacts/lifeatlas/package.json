@@ -104,5 +104,9 @@
     "wouter": "^3.3.5",
     "zod": "catalog:",
     "zustand": "^5.0.15"
+  },
+  "dependencies": {
+    "@clerk/react": "^6.17.8",
+    "@clerk/themes": "^2.4.57"
   }
 }

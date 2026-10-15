@@ -90,7 +90,7 @@ export const mockCommunications: CommunicationsProvider = {
       .join("\n");
     return ok({
       subject: inv.role === "storyteller" ? `${from} would love to hear your stories` : `A story for ${about}?`,
-      preheader: "Free for you. No account needed. Skip anything you like.",
+      preheader: "An invitation preview. Skip anything you like.",
       body,
       sms: `${from} invited you to add a story to ${about}'s ${brand.name}: ${link}`,
       link,

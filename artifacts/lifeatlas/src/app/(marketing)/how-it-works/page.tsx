@@ -128,7 +128,7 @@ const today: [string, boolean][] = [
   ["Answer questions by voice, text or photograph; drafts autosave", true],
   ["Invite people with a link (works in this browser)", true],
   ["Review contributions and set who sees each memory", true],
-  ["Timeline, chapters, map and a family viewer", true],
+  ["Timeline, chapters and map views", true],
   ["Design a book or physical capsule; prepare future messages", true],
   ["Download a complete copy", true],
   ["Accounts and sign-in across devices", false],

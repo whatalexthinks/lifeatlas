@@ -32,6 +32,9 @@ describe("validateMediaFile", () => {
     expect(validateMediaFile({ type: "image/jpeg", size: 1000, name: "a.jpg" }, "image")).toEqual({ ok: true, kind: "image", mime: "image/jpeg" });
     expect(validateMediaFile({ type: "image/jpeg", size: 0, name: "a.jpg" }, "image").ok).toBe(false);
   });
+  it("infers the MIME type from a supported extension when the browser omits it", () => {
+    expect(validateMediaFile({ type: "", size: 1000, name: "family-photo.png" }, "image")).toEqual({ ok: true, kind: "image", mime: "image/png" });
+  });
   it("explains HEIC instead of failing silently", () => {
     const r = validateMediaFile({ type: "", size: 1000, name: "IMG_0001.HEIC" }, "image");
     expect(r.ok).toBe(false);

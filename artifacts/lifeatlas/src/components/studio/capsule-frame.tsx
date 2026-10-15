@@ -9,7 +9,7 @@ import { CapsuleCover } from "@/components/capsule/capsule-cover";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge, EmptyState } from "@/components/ui/feedback";
 import { MemoryEditorSheet } from "./memory-editor";
-import { useCapsule, useCapsuleMemories, useDb, usePendingReviewCount } from "@/hooks/use-data";
+import { useCapsule, useCapsuleMemories, useDb, usePendingReviewCount, usePersistence } from "@/hooks/use-data";
 import { cn, pluralize } from "@/lib/utils";
 
 interface CapsuleCtx {
@@ -33,6 +33,7 @@ export function CapsuleFrame({ children }: { children: React.ReactNode }) {
   const { id } = useParams<{ id: string }>();
   const pathname = usePathname();
   const capsule = useCapsule(id);
+  const persistence = usePersistence();
   const memories = useCapsuleMemories(id, { scope: "studio" });
   const allMemories = useDb((d) => d.memories);
   const pending = usePendingReviewCount(id);
@@ -82,7 +83,9 @@ export function CapsuleFrame({ children }: { children: React.ReactNode }) {
                 <Badge tone={statusTone[capsule.status]} dot>
                   {statusLabel[capsule.status]}
                 </Badge>
-                {capsule.isSample ? <Badge tone="demo">Sample family</Badge> : <Badge tone="demo">This device only</Badge>}
+                {capsule.isSample
+                  ? <Badge tone="demo">Sample family</Badge>
+                  : <Badge tone={persistence.mode === "cloud" ? "success" : "demo"}>{persistence.mode === "cloud" ? "Saved to your account" : "This device only"}</Badge>}
               </div>
               <h1 className="mt-2.5 font-serif text-[clamp(2.2rem,1.8rem+1.6vw,3.2rem)] leading-[1] tracking-[-0.022em]">{capsule.subjectName}</h1>
               <p className="mt-1.5 text-[0.9375rem] text-ink-3">

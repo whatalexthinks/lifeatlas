@@ -24,9 +24,9 @@ const price = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id
 const monthlyPrice = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id)!.monthly!.amount);
 
 const faqs: [string, React.ReactNode][] = [
-  ["What is a memory capsule?", "A private place for the story of a life or a relationship: written memories, recorded answers, photographs, dates and places. You can explore it as a timeline or in chapters, invite people to add what they remember, and turn it into a printed book or a physical keepsake."],
-  ["Do the people I invite have to pay?", "No. The owner chooses a plan; invited contributors and readers are planned to join free, with no card. In this preview, invitations are local links on this device."],
-  ["What can I try today?", `Almost everything, on this device: create capsules, answer questions, record your voice, add photographs, invite family with a link, design a book and prepare future messages. Accounts, cloud storage, payments, printing and delivery aren't connected yet, the preview says so wherever it matters.`],
+  ["What is a memory capsule?", "A private place for the story of a life or a relationship: written memories, recorded answers, photographs, dates and places. Explore it as a timeline or in chapters. Family invitations are still being built; the archive can become a printed book or physical keepsake."],
+  ["Do the people I invite have to pay?", "Family members are intended to join free. Invitations and shared access are not connected yet."],
+  ["What can I try today?", "Create a private account capsule, answer guided questions, record your voice and upload photographs. Family invitations, paid checkout, physical production and scheduled message delivery are not connected yet. You can explore book and keepsake-box designs."],
   ["Are my memories backed up?", "Not in this preview. What you add stays in this browser. Download a copy of anything that matters, a complete export with your stories and files is always one click away."],
 ];
 
@@ -68,7 +68,7 @@ export default function HomePage() {
               </div>
               <div className="hero-rise mt-10 max-w-xl space-y-2 border-t border-line pt-5 [--d:480ms]">
                 <p className="text-[0.9375rem] text-ink-2"><span className="font-medium text-ink">The owner pays. Invited family are planned to join free.</span></p>
-                <p className="font-mono text-[0.62rem] uppercase leading-relaxed tracking-[0.16em] text-ink-3">One capsule from {monthlyPrice("digital")} a month. Demo price only, nothing is charged. This preview runs in your browser. No card, no account. Invitations are local links for now.</p>
+                <p className="font-mono text-[0.62rem] uppercase leading-relaxed tracking-[0.16em] text-ink-3">One capsule from {monthlyPrice("digital")} a month. Test price only, checkout is not connected and nothing is charged. Sign in to save your capsule to your account. Family invitations are still being built.</p>
               </div>
             </div>
             <HeroCapsule />
@@ -376,7 +376,7 @@ export default function HomePage() {
                   One owner pays monthly. <em>Family joins free.</em>
                 </>
               }
-              lead="Try everything free in this browser demo. Paid checkout is a test only and charges nothing. Invited contributors will join free on a membership; in this preview they use local links."
+              lead="Start a private capsule with a free account. Monthly plan prices are test estimates; checkout is not connected, and no payment is charged. Family invitations are still being built."
             />
             <ArrowLink href="/pricing">Compare plans in detail</ArrowLink>
           </div>

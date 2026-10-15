@@ -293,7 +293,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
         </div>
         <MemoryReveal memory={justSaved} subjectName={capsule.subjectName} />
         <DemoNotice compact className="mt-4">
-          Saved on this device for the demo, not uploaded or backed up.
+          Saved with this capsule. Demo sessions stay on this device; signed-in accounts sync to the account that owns the capsule.
         </DemoNotice>
         {followUp && !isLast ? (
           <div className="mt-6 rounded-[18px] border border-line bg-surface p-5">
@@ -567,7 +567,7 @@ export function CaptureFlow({ capsule, questions, attribution, status, variant, 
         </div>
         <p className="mt-3 text-[0.8125rem] text-ink-3" aria-live="polite">
           {draftSavedAt ? <span className="font-medium text-ink-2">Draft saved {relativeTime(draftSavedAt)}, you can close this and come back. </span> : null}
-          Saved on this device for the demo, not uploaded or backed up. {status === "submitted" ? "The owner or an editor reviews it before it appears." : ""}
+          Saved with this capsule. Demo sessions stay on this device; signed-in accounts sync to the account that owns the capsule. {status === "submitted" ? "The owner or an editor reviews it before it appears." : ""}
         </p>
       </div>
       {saved.length ? (

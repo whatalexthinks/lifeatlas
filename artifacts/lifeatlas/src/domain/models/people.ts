@@ -7,7 +7,7 @@ export type PersonaKind = "organizer" | "storyteller" | "contributor" | "viewer"
 
 export interface User extends Timestamps {
   id: ID;
-  email: string; // fictional, example.com only
+  email: string;
   mfaIntent: "not_set" | "planned"; // real MFA is Part Two
 }
 

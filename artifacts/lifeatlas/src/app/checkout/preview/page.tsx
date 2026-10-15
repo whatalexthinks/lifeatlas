@@ -177,7 +177,7 @@ function CheckoutInner() {
         </button>
         <h1 className="font-serif text-[clamp(2.2rem,1.8rem+1.6vw,3rem)] leading-tight">{session.purpose === "gift" ? "Review your gift" : "Review your order"}</h1>
         <DemoNotice className="mt-6" title="Preview only, no payment will be charged" icon={<AlertTriangle className="size-[18px]" />}>
-          Payments aren&rsquo;t connected in this preview. There are no card fields, and nothing is sent to a payment provider. Completing this step creates a demo order on this device only.
+          Payments aren&rsquo;t connected in this preview. There are no card fields, and nothing is sent to a payment provider. Completing this step records a demo order in your current capsule workspace, not a paid order.
         </DemoNotice>
 
         <section className="mt-10 space-y-5" aria-labelledby="contact-h">
@@ -295,7 +295,7 @@ function CheckoutInner() {
                       : l.fulfillment === "ships_after_payment"
                         ? "Ready-made kit, would ship after payment."
                         : p?.kind === "plan"
-                          ? "Starts right away. Invited family never pay."
+                          ? "Plan activation and family invitations are not connected yet."
                           : null}
                   </p>
                   {p?.kind === "plan" && p.monthly && !line?.asGift ? (

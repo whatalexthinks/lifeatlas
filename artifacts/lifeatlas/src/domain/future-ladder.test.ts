@@ -30,7 +30,7 @@ describe("future delivery ladder", () => {
         ["delivered", "unavailable"],
       ]);
     }
-    expect(ladderSummary({ status: "sealed_demo" }, none)).toEqual({ position: 2, total: 6, current: "Saved on this device", caveat: "Not uploaded, not scheduled." });
+    expect(ladderSummary({ status: "sealed_demo" }, none)).toEqual({ position: 2, total: 6, current: "Saved on this device", caveat: "Saved with your capsule, not scheduled." });
   });
 
   it("with real services, later steps are possible but not claimed until they happen", () => {

@@ -28,7 +28,7 @@ export default function TermsPage() {
         {
           id: "what",
           title: "What this is",
-          body: <p>{brand.name} is a working product preview. You can create capsules, record and write memories, invite people with a link, design keepsakes and prepare future messages, all stored in your own browser. Accounts, cloud storage, payments, printing, shipping and message delivery are not connected.</p>,
+          body: <p>{brand.name} is an early product preview. Signed-in owners can create capsules, write memories, upload photographs and recordings, and sync that content to their account. Demo content stays in the browser. Family invitations, shared access, paid subscriptions, printing, shipping and scheduled message delivery are not connected.</p>,
         },
         {
           id: "money",

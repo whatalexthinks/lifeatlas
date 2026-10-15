@@ -9,14 +9,103 @@ import { fail, notConfigured, ok, type MediaStorageProvider, type TranscriptionP
 import { actorName, db, latency, store } from "./shared";
 import { brand } from "@/config/brand";
 import { photoForPlate } from "@/lib/media/editorial-photos";
+import { isCloudPersistenceActive } from "@/store/demo-store";
 
 /** Object URLs for local blobs, created once per page session and revoked on removal. */
 const objectUrls = new Map<string, string>();
 
+function privateObjectUrl(objectKey: string): string | null {
+  const match = /^\/objects\/uploads\/([0-9a-f-]{36})$/i.exec(objectKey);
+  return match ? `/api/storage/objects/uploads/${match[1]}` : null;
+}
+
+async function responseError(response: Response, fallback: string): Promise<string> {
+  const body = await response.json().catch(() => ({}));
+  return typeof body?.error === "string" ? body.error : fallback;
+}
+
+async function putInCloud(
+  input: Parameters<MediaStorageProvider["put"]>[0],
+  mime: string,
+): Promise<Awaited<ReturnType<MediaStorageProvider["put"]>>> {
+  try {
+    const reservationResponse = await fetch("/api/storage/uploads/request-url", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: `lifeatlas-${input.kind}`,
+        size: input.blob.size,
+        contentType: mime,
+        capsuleId: input.capsuleId,
+      }),
+    });
+    if (!reservationResponse.ok) return fail("unknown", await responseError(reservationResponse, "We could not prepare this upload."));
+    const reservation = await reservationResponse.json() as { uploadURL?: string; objectPath?: string };
+    if (!reservation.uploadURL || !reservation.objectPath || !privateObjectUrl(reservation.objectPath)) {
+      return fail("unknown", "The private storage service returned an invalid upload address.");
+    }
+
+    const uploadResponse = await fetch(reservation.uploadURL, {
+      method: "PUT",
+      headers: { "Content-Type": mime },
+      body: input.blob,
+    });
+    if (!uploadResponse.ok) return fail("unknown", "The file could not be uploaded. Your existing capsule was not changed.");
+
+    const finalizeResponse = await fetch("/api/storage/uploads/finalize", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: `lifeatlas-${input.kind}`,
+        size: input.blob.size,
+        contentType: mime,
+        capsuleId: input.capsuleId,
+        objectPath: reservation.objectPath,
+      }),
+    });
+    if (!finalizeResponse.ok) return fail("unknown", await responseError(finalizeResponse, "The uploaded file could not be added to your capsule."));
+
+    const now = new Date().toISOString();
+    const asset: MediaAsset = {
+      id: uid("med"),
+      capsuleId: input.capsuleId,
+      kind: input.kind,
+      source: { kind: "remote", objectKey: reservation.objectPath },
+      storage: "remote",
+      mimeType: mime,
+      byteSize: input.blob.size,
+      width: input.width,
+      height: input.height,
+      durationSec: input.durationSec,
+      caption: input.caption ?? "",
+      alt: input.alt ?? "",
+      contributorName: input.contributorName,
+      consent: { contributorAgreed: true, print: input.kind === "image", share: false },
+      checksum: await sha256Hex(await input.blob.arrayBuffer()),
+      peaks: input.peaks,
+      createdAt: now,
+      updatedAt: now,
+    };
+    store().mutate((d) => {
+      d.media.push(asset);
+    }, { actor: input.contributorName, action: `media.${input.kind}_saved_to_private_cloud`, target: asset.id });
+    return ok(asset, "production");
+  } catch {
+    return fail("unknown", "We could not complete the upload. Check your connection and try again.");
+  }
+}
+
 export const mockMedia: MediaStorageProvider = {
   async put(input) {
-    const v = input.kind === "video" ? validateVideoFile({ type: input.blob.type, size: input.blob.size, name: "upload" }) : validateMediaFile({ type: input.blob.type, size: input.blob.size, name: "upload" }, input.kind);
+    const blobName = "name" in input.blob && typeof input.blob.name === "string" ? input.blob.name : "";
+    const fallbackName = input.kind === "image" ? "upload.png" : input.kind === "audio" ? "recording.webm" : "upload";
+    const v = input.kind === "video"
+      ? validateVideoFile({ type: input.blob.type, size: input.blob.size, name: blobName || fallbackName })
+      : validateMediaFile({ type: input.blob.type, size: input.blob.size, name: blobName || fallbackName }, input.kind);
     if (!v.ok) return fail("validation", v.reason);
+    if (isCloudPersistenceActive()) return putInCloud(input, v.mime);
     const blobKey = uid("blob");
     try {
       await putBlob(blobKey, input.blob);
@@ -76,7 +165,9 @@ export const mockMedia: MediaStorageProvider = {
         }
       }
       case "remote":
-        return notConfigured("media", "Cloud media storage is not connected in this preview.");
+        return privateObjectUrl(asset.source.objectKey)
+          ? ok(privateObjectUrl(asset.source.objectKey)!, "production")
+          : fail("not_found", "This private media reference is invalid.");
     }
   },
 
@@ -108,7 +199,16 @@ export const mockMedia: MediaStorageProvider = {
         return fail("not_found", "No photograph was supplied for this sample memory.");
       }
       case "remote":
-        return notConfigured("media", "Cloud media storage is not connected in this preview.");
+        {
+          const url = privateObjectUrl(asset.source.objectKey);
+          if (!url) return fail("not_found", "This private media reference is invalid.");
+          try {
+            const response = await fetch(url, { credentials: "include" });
+            return response.ok ? ok(await response.blob(), "production") : fail("not_found", "This private file is no longer available.");
+          } catch {
+            return fail("unknown", "The private file could not be opened. Check your connection and try again.");
+          }
+        }
     }
   },
 
@@ -122,6 +222,16 @@ export const mockMedia: MediaStorageProvider = {
       if (url) {
         URL.revokeObjectURL(url);
         objectUrls.delete(key);
+      }
+    }
+    if (asset.source.kind === "remote") {
+      const url = privateObjectUrl(asset.source.objectKey);
+      if (!url) return fail("not_found", "This private media reference is invalid.");
+      try {
+        const response = await fetch(url, { method: "DELETE", credentials: "include" });
+        if (!response.ok) return fail("unknown", await responseError(response, "This file could not be removed."));
+      } catch {
+        return fail("unknown", "This file could not be removed. Check your connection and try again.");
       }
     }
     await latency();

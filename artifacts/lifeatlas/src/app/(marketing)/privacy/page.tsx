@@ -27,21 +27,21 @@ export default function PrivacyPage() {
       sections={[
         {
           id: "today",
-          title: "What the preview stores, and where",
+          title: "What your account stores, and where",
           body: (
             <>
-              <p>Everything you create, capsules, stories, recordings, photographs, drafts, invitations and demonstration orders, is stored in your own browser, on your own device, using the browser&rsquo;s IndexedDB storage. A few small preferences (such as text size, or a friend&rsquo;s referral code) are kept in the browser&rsquo;s local storage.</p>
-              <p>None of it is uploaded to us. We have no copy, cannot read it, and cannot recover it if it&rsquo;s lost.</p>
+              <p>When you sign in, capsule content is saved to your account workspace. Photos and recordings you upload are stored in private object storage. Demo-mode content and a few local preferences remain in this browser.</p>
+              <p>At this stage, account capsules are accessible only to the signed-in owner. Family sharing, account-wide deletion, managed backups and recovery are not connected. Keep your originals and an independent copy of important material.</p>
             </>
           ),
         },
         {
           id: "third-parties",
-          title: "What leaves your device",
+          title: "Services that operate your account",
           body: (
             <>
-              <p>The pages, fonts, illustrations and map are served with the site itself; the preview makes no requests to advertising, analytics or other third-party services. The server that hosts the site may keep ordinary request logs (such as IP addresses and pages requested); those arrangements will be described in full before launch.</p>
-              <p>Usage events used to improve the product (for example “a capsule was created”) are recorded in your browser only, and are erased with everything else.</p>
+              <p>Sign-in is provided by Clerk, and uploaded media uses private object storage. These providers process the requests needed to authenticate you and save or retrieve your capsule files. This build has no advertising integration.</p>
+              <p>Account changes are sent to the app so your capsule workspace can sync across sessions. Hosting providers may retain ordinary service logs. Product analytics integrations are not connected in this build.</p>
             </>
           ),
         },
@@ -50,9 +50,9 @@ export default function PrivacyPage() {
           title: "Who can see a capsule",
           body: (
             <>
-              <p>Capsules are private by default and are never public or listed. In the preview, the people you invite open a link in the same browser, and the visibility settings on each memory decide what each role can see.</p>
+              <p>Signed-in capsules are private and accessible only to their account owner. Capsules are never public or listed. Family invitations and per-person visibility controls are not active yet.</p>
               <p>
-                <strong>An honest limit:</strong> because there are no accounts yet, these settings are not a security boundary, anyone using the same browser profile could open the studio. Real access control arrives with accounts. Please use sample or non-sensitive material until then.
+                <strong>An honest limit:</strong> demo roles and visibility settings simulate how sharing could work, but do not grant server access to other people. Only the signed-in owner can access account capsules today.
               </p>
             </>
           ),

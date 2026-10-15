@@ -171,7 +171,7 @@ export default function BillingPage() {
             </>
           ) : (
             <div className="mt-5 border-t border-line pt-5">
-              <p className="max-w-lg text-ink-2">You&rsquo;re exploring on this device. Everything works here; a plan keeps your capsules beyond this browser once hosting is connected, and invited family never pay.</p>
+              <p className="max-w-lg text-ink-2">Your capsule content already syncs to this account. The plans and monthly prices shown here are test pricing only. Subscription checkout, billing, and family access are not connected.</p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {planIds
                   .filter((id) => id !== "preview")
@@ -204,7 +204,7 @@ export default function BillingPage() {
                 <span className="tabular-nums text-ink-2">{hydrated && storage ? formatBytes(storage.usage) : "…"}</span>
               </div>
               <p className="mt-1.5 text-[0.8125rem] text-ink-3">
-                Measured on this device.{ent.storageGb ? ` Your plan's ${ent.storageGb} GB is the planned hosted allowance, hosted storage isn't connected yet.` : " The preview doesn't include hosted storage."}{" "}
+                Usage reflects this device and does not report account-wide cloud storage. Plan limits, managed backups, and recovery guarantees are not connected yet.{" "}
                 <Link href="/app/preservation" className="text-link">
                   Download a copy
                 </Link>
