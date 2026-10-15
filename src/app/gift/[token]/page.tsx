@@ -9,7 +9,7 @@ import { BrandMark, Wordmark } from "@/components/brand/logo";
 import { GiftEnvelope } from "@/components/gifting/envelope";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { DemoNotice, Skeleton } from "@/components/ui/feedback";
-import { useHydrated } from "@/hooks/use-data";
+import { useDb, useHydrated } from "@/hooks/use-data";
 import { usePrefersReducedMotion } from "@/hooks/use-reveal";
 import { services } from "@/services/factory";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,8 @@ export default function GiftOpening() {
   const hydrated = useHydrated();
   const reduced = usePrefersReducedMotion();
   const [gift, setGift] = React.useState<Gift | null>(null);
+  const catalog = useDb((d) => d.catalog);
+  const product = gift ? catalog.find((p) => p.id === gift.productId) : undefined;
   const [error, setError] = React.useState<string | null>(null);
   const [open, setOpen] = React.useState(false);
   const [revealed, setRevealed] = React.useState(false);
@@ -99,6 +101,15 @@ export default function GiftOpening() {
                 <p className="eyebrow">Your memory capsule</p>
                 <h2 className="mt-4 font-serif text-[2.2rem] leading-tight">A place for your stories, in your own words.</h2>
                 <p className="mt-3 text-[1.1rem] leading-relaxed text-ink-2">{gift.giverName} would love to hear the stories only you can tell. Here&rsquo;s how it works:</p>
+                <div className="mt-5 rounded-[16px] bg-ivory px-5 py-4 text-[1rem]">
+                  <p className="font-medium">What&rsquo;s included</p>
+                  <p className="mt-1 text-ink-2">
+                    {gift.status === "draft"
+                      ? `${product?.name ?? "A capsule plan"} — once ${gift.giverName.split(" ")[0]} completes the gift.`
+                      : `One year of the ${product?.name ?? "capsule plan"}, prepaid by ${gift.giverName}. No card needed, and it won't renew on its own.`}{" "}
+                    Your family joins free.
+                  </p>
+                </div>
                 <ul className="mt-6 space-y-4 text-[1.05rem]">
                   <li className="flex gap-3">
                     <Mic className="mt-1 size-5 shrink-0 text-evergreen" /> One gentle question at a time. Tap once to answer out loud.

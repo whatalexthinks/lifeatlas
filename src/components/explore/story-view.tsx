@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Bookmark, BookmarkCheck, MapPin, Share2 } from "
 import type { Capsule, Memory } from "@/domain/models";
 import { AudioPlayer } from "@/components/audio/audio-player";
 import { MediaImage, Mounted } from "@/components/media/media-image";
+import { VideoClip } from "@/components/media/video-clip";
 import { MemoryMap } from "@/components/map/memory-map";
 import { displayCoords } from "@/components/map/geo";
 import { Button } from "@/components/ui/button";
@@ -109,8 +110,15 @@ export function StoryView({ capsule, memory, scope, hrefFor, tone = "paper", bac
               ))}
             </div>
           ) : (
-            <p className={night ? "text-night-ink-3" : "text-ink-3"}>This memory was shared as {audio ? "a recording" : "photographs"}.</p>
+            <p className={night ? "text-night-ink-3" : "text-ink-3"}>This memory was shared as {audio ? "a recording" : memory.videoIds?.length && !memory.photoIds.length ? "a video" : "photographs"}.</p>
           )}
+          {memory.videoIds?.length ? (
+            <div className="mt-12 space-y-6">
+              {memory.videoIds.map((id) => (
+                <VideoClip key={id} mediaId={id} title={`${memory.title} — video`} />
+              ))}
+            </div>
+          ) : null}
           {rest.length ? (
             <div className="mt-12 grid gap-5 sm:grid-cols-2">
               {rest.map((id) => (

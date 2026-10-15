@@ -58,6 +58,8 @@ export default function GiftBegin() {
           if (g) g.capsuleId = c.data.id;
         });
         setCapsuleId(c.data.id);
+        // Taking up the gift starts the plan it carries (one prepaid term, never auto-renewed).
+        await services().gifts.accept(token);
       }
     })();
   }, [hydrated, token, capsules, mutate]);

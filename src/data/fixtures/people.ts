@@ -29,7 +29,7 @@ const person = (p: Omit<Person, "createdAt" | "updatedAt" | "isSample">): Person
 export const people: Person[] = [
   person({ id: "per_margaret", displayName: "Margaret Ellis", givenName: "Margaret", familyName: "Ellis", birthYear: 1940, birthplaceId: "pl_portland", shortBio: "Potter, nurse's daughter, keeper of the blue bowl. Born in Portland, Maine." }),
   person({ id: "per_thomas", displayName: "Thomas Ellis", givenName: "Thomas", familyName: "Ellis", birthYear: 1938, deathYear: 2013, birthplaceId: "pl_boston", shortBio: "Physics teacher, woodworker, terrible whistler. Margaret's husband of 48 years." }),
-  person({ id: "per_sarah", displayName: "Sarah Ellis", givenName: "Sarah", familyName: "Ellis", birthYear: 1968, birthplaceId: "pl_boston", shortBio: "Margaret and Thomas's daughter. Organizer of the family archive." }),
+  person({ id: "per_sarah", displayName: "Sarah Ellis", givenName: "Sarah", familyName: "Ellis", birthYear: 1968, birthplaceId: "pl_boston", shortBio: "Margaret and Thomas's daughter. Keeps the family archive." }),
   person({ id: "per_daniel", displayName: "Daniel Ellis", givenName: "Daniel", familyName: "Ellis", birthYear: 1971, birthplaceId: "pl_boston", shortBio: "Margaret and Thomas's son. Remembers every road trip argument." }),
   person({ id: "per_emma", displayName: "Emma Ellis", givenName: "Emma", familyName: "Ellis", birthYear: 2005, birthplaceId: "pl_providence", shortBio: "Sarah's daughter. Margaret's first grandchild." }),
   person({ id: "per_leo", displayName: "Leo Ellis", givenName: "Leo", familyName: "Ellis", birthYear: 2010, shortBio: "Daniel and Priya's son." }),
@@ -86,7 +86,7 @@ export const personas: Persona[] = [
     kind: "organizer",
     name: "Sarah Ellis",
     personId: "per_sarah",
-    description: "Owner and organizer. Sees everything, manages invitations, billing and exports.",
+    description: "Owner of the family capsules. Sees everything, manages invitations, billing and exports.",
     roles: [
       { capsuleId: "cap_margaret", role: "owner" },
       { capsuleId: "cap_thomas", role: "owner" },

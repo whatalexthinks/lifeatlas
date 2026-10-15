@@ -2,7 +2,7 @@
 
 import { strToU8, zipSync, type Zippable } from "fflate";
 import type { ArchiveManifest, DemoDatabase, ExportJob, ExportOptions, MediaAsset, Memory } from "@/domain/models";
-import { isExportEligible } from "@/domain/policies/permissions";
+import { isExportEligible, roleFor } from "@/domain/policies/permissions";
 import { chapterById } from "@/data/chapters";
 import { capsuleKind } from "@/domain/capsule-kinds";
 import { formatFuzzyDate, sortKey } from "@/lib/dates";
@@ -40,8 +40,11 @@ const slug = (s: string) =>
 
 /** Pure: which memories and media an export would contain. Unit-tested. */
 export function selectExportContent(d: DemoDatabase, capsuleId: string, options: ExportOptions) {
+  // Whoever is exporting gets only what they can see. (No identity, e.g. in tests: no filter.)
+  const persona = d.personas.find((p) => p.id === d.activePersonaId);
+  const exporter = persona?.personId ? { role: roleFor(persona, capsuleId, d.memberships), personId: persona.personId } : undefined;
   const memories = d.memories
-    .filter((m) => m.capsuleId === capsuleId && isExportEligible(m, { includePrivate: options.includePrivate, includeDrafts: options.includeDrafts }))
+    .filter((m) => m.capsuleId === capsuleId && isExportEligible(m, { includePrivate: options.includePrivate, includeDrafts: options.includeDrafts }, exporter))
     .sort((a, b) => sortKey(a.date) - sortKey(b.date));
   const excludedMemories = d.memories
     .filter((m) => m.capsuleId === capsuleId && !memories.includes(m))
@@ -50,7 +53,7 @@ export function selectExportContent(d: DemoDatabase, capsuleId: string, options:
       id: m.id,
       reason: m.deletedAt ? "Deleted" : !m.consent.export ? "Contributor did not consent to export" : m.status !== "approved" ? `Not approved (${m.status.replace("_", " ")})` : "Private",
     }));
-  const mediaIds = new Set(memories.flatMap((m) => [...m.photoIds, ...(m.audioId ? [m.audioId] : [])]));
+  const mediaIds = new Set(memories.flatMap((m) => [...m.photoIds, ...(m.videoIds ?? []), ...(m.audioId ? [m.audioId] : [])]));
   const capsule = d.capsules.find((c) => c.id === capsuleId);
   if (capsule?.cover.mediaId) mediaIds.add(capsule.cover.mediaId);
   const media = d.media.filter((x) => mediaIds.has(x.id));
@@ -60,6 +63,7 @@ export function selectExportContent(d: DemoDatabase, capsuleId: string, options:
 function mediaDecision(asset: MediaAsset, options: ExportOptions): { include: boolean; reason?: string } {
   if (asset.kind === "audio" && !options.includeAudio) return { include: false, reason: "Audio excluded by your choice" };
   if (asset.kind === "image" && !options.includePhotos) return { include: false, reason: "Photos excluded by your choice" };
+  if (asset.kind === "video" && !options.includePhotos) return { include: false, reason: "Photos and videos excluded by your choice" };
   if (asset.source.kind === "plate" && !options.includeSamplePlates) return { include: false, reason: "Sample illustration (not your file)" };
   if (asset.source.kind === "remote") return { include: false, reason: "Stored in the cloud — not connected in this preview" };
   return { include: true };
@@ -85,6 +89,16 @@ function offlineHtml(manifest: ArchiveManifest, mediaHref: (id: string) => strin
             : `<p class="missing">Photo not included: ${esc(x!.caption || x!.id)} — ${esc(x!.reason ?? "")}</p>`;
         })
         .join("");
+      const videos = m.media
+        .map((id) => mediaById.get(id))
+        .filter((x) => x && x.kind === "video")
+        .map((x) => {
+          const href = x!.included ? mediaHref(x!.id) : null;
+          return href
+            ? `<figure><video controls preload="metadata" src="${esc(href)}"></video><figcaption>${esc(x!.caption)}</figcaption></figure>`
+            : `<p class="missing">Video not included: ${esc(x!.caption || x!.id)} — ${esc(x!.reason ?? "")}</p>`;
+        })
+        .join("");
       const audio = m.media
         .map((id) => mediaById.get(id))
         .filter((x) => x && x.kind === "audio")
@@ -98,7 +112,7 @@ function offlineHtml(manifest: ArchiveManifest, mediaHref: (id: string) => strin
       return `<article id="${esc(m.id)}"><p class="meta">${esc(m.date.display)}${place ? ` · ${esc(place)}` : ""} · ${esc(m.chapter)}</p><h2>${esc(m.title)}</h2>${m.quote ? `<blockquote>${esc(m.quote)}</blockquote>` : ""}${m.narrative
         .split(/\n{2,}/)
         .map((p) => `<p>${esc(p)}</p>`)
-        .join("")}${imgs}${audio}<p class="by">Shared by ${esc(m.contributor)}</p></article>`;
+        .join("")}${imgs}${videos}${audio}<p class="by">Shared by ${esc(m.contributor)}</p></article>`;
     })
     .join("");
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(manifest.capsule.subjectName)} — ${brand.name} archive</title><style>
@@ -138,8 +152,9 @@ function toManifestMemory(m: Memory, d: DemoDatabase): ArchiveManifest["memories
     tags: m.tags,
     contributor: m.attribution.displayName,
     privacy: m.privacy,
+    ...(m.privacy === "selected" ? { sharedWith: m.sharedWith ?? [] } : {}),
     status: m.status,
-    media: [...m.photoIds, ...(m.audioId ? [m.audioId] : [])].filter((id) => d.media.some((x) => x.id === id)),
+    media: [...m.photoIds, ...(m.videoIds ?? []), ...(m.audioId ? [m.audioId] : [])].filter((id) => d.media.some((x) => x.id === id)),
     createdAt: m.createdAt,
     updatedAt: m.updatedAt,
   };
@@ -177,7 +192,7 @@ export const mockExport: ExportBuilder = {
           reason = "Missing from this device";
         }
       }
-      const kind = a.source.kind === "plate" ? "plate" : a.kind === "audio" ? "audio" : "photo";
+      const kind = a.source.kind === "plate" ? "plate" : a.kind === "audio" ? "audio" : a.kind === "video" ? "video" : "photo";
       items.push({ id: a.id, kind, label: a.caption || a.alt || a.id, included, reason, byteSize: a.byteSize });
       if (included) estimated += a.byteSize ?? (a.source.kind === "plate" ? 60_000 : 250_000);
     }
@@ -212,7 +227,7 @@ export const mockExport: ExportBuilder = {
         const transcript = a.transcriptId ? d.transcripts.find((t) => t.id === a.transcriptId)?.text : undefined;
         const dec = mediaDecision(a, options);
         const ext = EXT[a.mimeType] ?? "bin";
-        const path = `media/${a.kind === "audio" ? "audio" : "images"}/${slug(a.caption || a.id)}-${a.id.slice(-6)}.${ext}`;
+        const path = `media/${a.kind === "audio" ? "audio" : a.kind === "video" ? "videos" : "images"}/${slug(a.caption || a.id)}-${a.id.slice(-6)}.${ext}`;
         if (!dec.include) {
           exclusions.push({ kind: a.kind, id: a.id, reason: dec.reason! });
           manifestMedia.push({ id: a.id, kind: a.kind, caption: a.caption, mimeType: a.mimeType, path: null, included: false, reason: dec.reason, transcript, sampleNotice: a.sampleNotice });
@@ -290,6 +305,7 @@ export const mockExport: ExportBuilder = {
         memories: manifest.memories.length,
         photos: manifestMedia.filter((m) => m.kind === "image" && m.included).length,
         audio: manifestMedia.filter((m) => m.kind === "audio" && m.included).length,
+        videos: manifestMedia.filter((m) => m.kind === "video" && m.included).length,
         missing,
         excluded: exclusions.length,
       };

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Archive, Check, Minus, RotateCcw, Trash2 } from "lucide-react";
+import { Archive, RotateCcw, Trash2 } from "lucide-react";
 import type { LocationVisibility, MemoryPrivacy, Role } from "@/domain/models";
 import { useStudioCapsule } from "@/components/studio/capsule-frame";
 import { Panel, privacyCopy } from "@/components/studio/primitives";
@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Badge, DemoNotice, toast } from "@/components/ui/feedback";
 import { ChoiceCards, Select, Switch } from "@/components/ui/field";
 import { ConfirmDialog } from "@/components/ui/overlay";
-import { accessMatrix, roleCapabilities, roleLabels } from "@/domain/policies/permissions";
-import { useCapsuleMemories, useDb } from "@/hooks/use-data";
+import { roleLabels } from "@/domain/policies/permissions";
+import { AccessMatrix } from "@/components/studio/access-matrix";
+import { useCapsuleMemories, useDb, usePersona } from "@/hooks/use-data";
 import { useDemoStore } from "@/store/demo-store";
 import { services } from "@/services/factory";
 import { formatDate } from "@/lib/utils";
@@ -25,9 +26,10 @@ export default function StudioPrivacy() {
   const places = useDb((d) => d.places);
   const memories = useCapsuleMemories(capsule.id, { scope: "studio" });
   const mutate = useDemoStore((s) => s.mutate);
+  const persona = usePersona();
   const [confirm, setConfirm] = React.useState<null | "delete" | "archive">(null);
   const usedPlaces = places.filter((p) => memories.some((m) => m.placeId === p.id));
-  const counts = (["family", "organizers", "private"] as MemoryPrivacy[]).map((p) => [p, memories.filter((m) => m.privacy === p).length] as const);
+  const counts = (["family", "selected", "organizers", "private"] as MemoryPrivacy[]).map((p) => [p, memories.filter((m) => m.privacy === p).length] as const);
 
   const setRole = (membershipId: string, role: Role) => {
     mutate(
@@ -35,7 +37,7 @@ export default function StudioPrivacy() {
         const m = d.memberships.find((x) => x.id === membershipId);
         if (m) m.role = role;
       },
-      { actor: "Sarah Ellis", action: "membership.role_changed", target: membershipId, detail: role },
+      { actor: persona.name, action: "membership.role_changed", target: membershipId, detail: role },
     );
     toast.success("Role updated", "Simulated in this preview — real enforcement arrives with accounts.");
   };
@@ -78,7 +80,7 @@ export default function StudioPrivacy() {
               </li>
             ))}
           </ul>
-          <p className="mt-5 text-[0.875rem] text-ink-3">Change an individual story&rsquo;s visibility from its editor. Contributors also choose whether their story may be printed or shared.</p>
+          <p className="mt-5 text-[0.875rem] text-ink-3">Change an individual story&rsquo;s visibility from its editor — including sharing it with selected people only. Contributors also choose whether their story may be printed or shared.</p>
         </Panel>
       </div>
 
@@ -113,33 +115,7 @@ export default function StudioPrivacy() {
       </Panel>
 
       <Panel title="What each role can do" bodyClassName="p-0 sm:p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-[0.875rem]">
-            <thead>
-              <tr className="border-b border-line">
-                <th className="px-5 py-3 text-left font-medium text-ink-3">Permission</th>
-                {ROLES.map((r) => (
-                  <th key={r} className="px-3 py-3 text-center font-medium text-ink-3">
-                    {roleLabels[r].label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {accessMatrix.map((row) => (
-                <tr key={row.capability} className="border-b border-line last:border-0">
-                  <td className="px-5 py-2.5">{row.label}</td>
-                  {ROLES.map((r) => (
-                    <td key={r} className="px-3 py-2.5 text-center">
-                      {roleCapabilities[r].includes(row.capability) ? <Check className="mx-auto size-4 text-success" aria-label="Allowed" /> : <Minus className="mx-auto size-4 text-ink-4" aria-label="Not allowed" />}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="border-t border-line px-5 py-3 text-[0.8125rem] text-ink-3">Successors have no access now. In a later release, a verified handover process can grant stewardship — never automatically.</p>
+        <AccessMatrix />
       </Panel>
 
       <Panel title="Places" description="Places are stored at city or landmark level. Hide any you'd rather not show on the map.">
@@ -162,7 +138,7 @@ export default function StudioPrivacy() {
                 }
               >
                 <option value="family">Show on map</option>
-                <option value="organizers">Organizers only</option>
+                <option value="organizers">Owner &amp; editors only</option>
                 <option value="hidden">Hide from map</option>
               </Select>
             </li>

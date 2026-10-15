@@ -73,7 +73,9 @@ export function useCapsuleMemories(capsuleId: string | undefined, q: MemoryQuery
         if (scope === "all") return true;
         if (m.deletedAt) return false;
         if (scope === "viewer") return m.status === "approved" && canViewMemory(m, role, persona?.personId);
-        return true;
+        // Studio: everything the person may see, drafts and reviews included. (Who may open the
+        // studio at all is decided by the studio shell; the operations identity has no role.)
+        return role === null || canViewMemory(m, role, persona?.personId);
       })
       .filter((m) => !chapter || m.chapter === chapter)
       .filter((m) => decade === undefined || Math.floor(((m.date.year ?? m.date.decade ?? -1) as number) / 10) * 10 === decade)

@@ -181,9 +181,10 @@ export const mockCapsules: CapsuleRepository = {
   async createMemory(input) {
     const parsed = memoryFormSchema.safeParse(input);
     if (!parsed.success) return fail("validation", parsed.error.issues[0]?.message ?? "Please check the form.");
-    if (!input.narrative.trim() && input.photoIds.length === 0 && !input.audioId) {
-      return fail("validation", "Add a few words, a photo or a recording before saving.");
+    if (!input.narrative.trim() && input.photoIds.length === 0 && !input.audioId && !input.videoIds?.length) {
+      return fail("validation", "Add a few words, a photo, a video or a recording before saving.");
     }
+    if (parsed.data.privacy === "selected" && !parsed.data.sharedWith?.length) return fail("validation", "Choose at least one person to share it with.");
     await latency(200);
     const now = new Date().toISOString();
     const isFirstUserMemory = !db().memories.some((m) => m.storage === "this_device");
@@ -199,10 +200,12 @@ export const mockCapsules: CapsuleRepository = {
       peopleIds: parsed.data.peopleIds,
       tags: parsed.data.tags,
       photoIds: input.photoIds,
+      ...(input.videoIds?.length ? { videoIds: input.videoIds } : {}),
       audioId: input.audioId,
       questionId: input.questionId,
       attribution: input.attribution,
       privacy: parsed.data.privacy,
+      ...(parsed.data.privacy === "selected" ? { sharedWith: parsed.data.sharedWith } : {}),
       status: input.status,
       consent: parsed.data.consent,
       pinned: false,
@@ -245,6 +248,7 @@ export const mockCapsules: CapsuleRepository = {
     const merged = { ...current, ...patch };
     const parsed = memoryFormSchema.safeParse({ ...merged, quote: merged.quote ?? "" });
     if (!parsed.success) return fail("validation", parsed.error.issues[0]?.message ?? "Please check the form.");
+    if (parsed.data.privacy === "selected" && !parsed.data.sharedWith?.length) return fail("validation", "Choose at least one person to share it with.");
     await latency();
     const changes: string[] = [];
     if (patch.title !== undefined && patch.title !== current.title) changes.push("title");
@@ -252,7 +256,9 @@ export const mockCapsules: CapsuleRepository = {
     if (patch.date && formatFuzzyDate(patch.date) !== formatFuzzyDate(current.date)) changes.push("date");
     if (patch.placeId !== undefined && patch.placeId !== current.placeId) changes.push("place");
     if (patch.privacy && patch.privacy !== current.privacy) changes.push("privacy");
+    else if (patch.sharedWith && JSON.stringify(patch.sharedWith) !== JSON.stringify(current.sharedWith ?? [])) changes.push("who it's shared with");
     if (patch.photoIds) changes.push("photos");
+    if (patch.videoIds) changes.push("videos");
     const revision: MemoryRevision = {
       id: uid("rev"),
       at: new Date().toISOString(),
@@ -269,6 +275,7 @@ export const mockCapsules: CapsuleRepository = {
         else if (audioId !== undefined) m.audioId = audioId;
         if (m.quote === "") m.quote = undefined;
         if (m.placeId === "") m.placeId = undefined;
+        if (m.privacy !== "selected") m.sharedWith = undefined;
         m.updatedAt = revision.at;
         m.revisions.unshift(revision);
         if (m.revisions.length > 20) m.revisions.length = 20;

@@ -41,6 +41,7 @@ const manifestSchema = z.object({
       tags: z.array(z.string()),
       contributor: z.string(),
       privacy: z.string(),
+      sharedWith: z.array(z.string()).optional(),
       status: z.string(),
       media: z.array(z.string()),
     }),
@@ -101,6 +102,7 @@ async function inspectArchive(file: File) {
   const damaged = new Set<string>();
   let photos = 0;
   let recordings = 0;
+  let videos = 0;
   let notInArchive = 0;
   for (const m of manifest.media) {
     const data = m.path ? files.get(m.path) : undefined;
@@ -113,6 +115,7 @@ async function inspectArchive(file: File) {
       continue;
     }
     if (m.kind === "audio") recordings++;
+    else if (m.kind === "video") videos++;
     else photos++;
   }
 
@@ -133,7 +136,7 @@ async function inspectArchive(file: File) {
     stories: manifest.memories.length,
     people: manifest.people.length,
     places: manifest.places.length,
-    verified: { photos, recordings },
+    verified: { photos, recordings, videos },
     damaged: manifest.media.filter((m) => damaged.has(m.id)).map((m) => m.caption || m.id),
     notInArchive,
     warnings,
@@ -202,7 +205,7 @@ async function restoreArchive(token: string) {
       skipped.push(`${m.caption || m.id}: vector (SVG) files aren't restored, because they can carry scripts. Add it again as a PNG or JPEG.`);
       continue;
     }
-    const kind = m.kind === "audio" ? "audio" : "image";
+    const kind = m.kind === "audio" ? "audio" : m.kind === "video" ? "video" : "image";
     const r = await mockMedia.put({ capsuleId, blob: new Blob([data as BlobPart], { type: m.mimeType }), kind, caption: m.caption, alt: m.caption, contributorName: "Restored" });
     if (r.status === "ok") mediaIds.set(m.id, r.data.id);
     else skipped.push(`${m.caption || m.id}: ${r.status === "error" ? r.message : "not saved"}`);
@@ -241,6 +244,10 @@ async function restoreArchive(token: string) {
     const chapter = (chapters.find((c) => c.title === m.chapter || c.id === m.chapter)?.id ?? "everyday") as ChapterKey;
     const own = m.media.map((id) => ({ old: id, kind: manifest.media.find((x) => x.id === id)?.kind, id: mediaIds.get(id) })).filter((x) => x.id);
     const date = restoreDate(m.date);
+    // People a story was shared with must exist here; unknown ones are dropped. If nobody is
+    // left, the story falls back to owner & editors — narrower, never wider.
+    const sharedWith = m.privacy === "selected" ? (m.sharedWith ?? []).map((id) => peopleIds.get(id) ?? (db().people.some((p) => p.id === id) ? id : undefined)).filter((x): x is string => !!x) : [];
+    const privacy = m.privacy === "selected" ? (sharedWith.length ? "selected" : "organizers") : m.privacy === "private" || m.privacy === "organizers" ? m.privacy : "family";
     const r = await mockCapsules.createMemory({
       capsuleId,
       title: m.title.length >= 2 ? m.title.slice(0, 160) : `${m.title || "Untitled"} story`,
@@ -249,11 +256,13 @@ async function restoreArchive(token: string) {
       date,
       chapter,
       placeId: m.placeId ? placeIds.get(m.placeId) : undefined,
-      privacy: m.privacy === "private" || m.privacy === "organizers" ? m.privacy : "family",
+      privacy,
+      sharedWith: privacy === "selected" ? sharedWith : undefined,
       tags: m.tags.slice(0, 12),
       peopleIds: m.peopleIds.map((id) => peopleIds.get(id)).filter((x): x is string => !!x),
       consent: { print: false, export: true, share: false },
-      photoIds: own.filter((x) => x.kind !== "audio").map((x) => x.id!),
+      photoIds: own.filter((x) => x.kind !== "audio" && x.kind !== "video").map((x) => x.id!),
+      videoIds: own.filter((x) => x.kind === "video").map((x) => x.id!),
       audioId: own.find((x) => x.kind === "audio")?.id,
       attribution: { displayName: m.contributor || "Unknown", via: "restored" },
       status: statuses.includes(m.status as MemoryStatus) ? (m.status as MemoryStatus) : "approved",

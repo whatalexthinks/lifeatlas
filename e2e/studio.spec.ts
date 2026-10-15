@@ -103,8 +103,12 @@ test("a printed book goes from design to an uncharged demo order with a proof", 
   await page.getByRole("button", { name: /Cover/ }).first().click();
   await page.locator("#b-title").fill("Grandma Margaret");
   await page.getByRole("radio", { name: "terracotta" }).click();
-  await page.getByRole("button", { name: /Review a demo order/ }).click();
+  await page.getByRole("button", { name: /Add to bag/ }).click();
 
+  await page.waitForURL(/\/checkout\/bag/);
+  await expect(page.getByText("Grandma Margaret — printed book")).toBeVisible();
+  await expect(page.getByText("Made to order — printed only after you approve a proof.")).toBeVisible();
+  await page.getByRole("button", { name: "Continue to checkout" }).click();
   await page.waitForURL(/\/checkout\/preview\?session=/);
   await expect(page.locator('input[autocomplete^="cc-"]')).toHaveCount(0);
   await page.getByLabel("Name", { exact: true }).fill("Sarah Ellis");

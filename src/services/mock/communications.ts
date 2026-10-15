@@ -7,6 +7,7 @@ import { token as makeToken, uid } from "@/lib/utils";
 import { fail, notConfigured, ok, type CommunicationsProvider } from "../contracts";
 import { actorName, db, latency, pushNotification, store } from "./shared";
 import { brand } from "@/config/brand";
+import { explainInvitation } from "@/domain/invitations";
 
 function setStatus(id: string, to: Invitation["status"], note?: string) {
   store().mutate(
@@ -70,12 +71,16 @@ export const mockCommunications: CommunicationsProvider = {
         : inv.role === "viewer"
           ? `${from} has invited you to explore ${about}'s archive.`
           : `${from} is gathering stories for ${about}'s archive, and would love one from you.`;
+    // The same five answers the invitation page gives: who, what, the ask, cost, and use.
+    const points = capsule
+      ? explainInvitation({ invitation: inv, capsule, inviterName: from, questions: qs, storyCount: db().memories.filter((m) => m.capsuleId === capsule.id && !m.deletedAt && m.status === "approved").length })
+      : [];
     const body = [
       `Hi ${first},`,
       "",
       roleLine,
       inv.message ? `\n“${inv.message}”\n— ${from}` : "",
-      qs.length ? `\nA few questions to start with:\n${qs.map((q) => `  • ${q}`).join("\n")}` : "",
+      ...points.map((p) => `\n${p.title}\n${p.body}${p.questions?.length ? `\n${p.questions.map((q) => `  • ${q}`).join("\n")}` : ""}`),
       "",
       `Open your invitation: ${link}`,
       "",
@@ -85,7 +90,7 @@ export const mockCommunications: CommunicationsProvider = {
       .join("\n");
     return ok({
       subject: inv.role === "storyteller" ? `${from} would love to hear your stories` : `A story for ${about}?`,
-      preheader: "One question, one story. No account needed.",
+      preheader: "Free for you. No account needed. Skip anything you like.",
       body,
       sms: `${from} invited you to add a story to ${about}'s ${brand.name}: ${link}`,
       link,
@@ -110,7 +115,7 @@ export const mockCommunications: CommunicationsProvider = {
     await latency(120);
     const inv = db().invitations.find((i) => i.token === tok);
     if (!inv) return fail("not_found", "We couldn't find this invitation.");
-    if (inv.status === "revoked_demo" || inv.status === "revoked") return fail("forbidden", "This invitation was withdrawn by the organizer.");
+    if (inv.status === "revoked_demo" || inv.status === "revoked") return fail("forbidden", "This invitation was withdrawn by the person who sent it.");
     if (inv.status === "expired_demo" || inv.status === "expired" || isExpired(inv)) return fail("conflict", "This invitation has expired.");
     return ok({ ...inv });
   },

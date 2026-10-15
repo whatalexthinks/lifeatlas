@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertTriangle, BookOpen, Box, FileText, FlaskConical, HardDrive, Image as ImageIcon, Mail, ScrollText, ShoppingBag } from "lucide-react";
 import type { BoxConfiguration } from "@/domain/models";
-import { boxEngravingExtras, boxFinishExtras, quoteBox } from "@/domain/commerce/pricing";
+import { boxBreakdown, boxContentExtras, boxEngravingExtras, boxFinishExtras, quoteBox } from "@/domain/commerce/pricing";
+import { boxBlockers, fulfillmentFor } from "@/domain/commerce/fulfillment";
+import { isPrintEligible } from "@/domain/policies/permissions";
 import { PageHeader, Panel } from "@/components/studio/primitives";
 import { KeepsakeBox, boxFinishes } from "@/components/marketing/objects";
 import { MediaImage } from "@/components/media/media-image";
@@ -14,7 +16,6 @@ import { Badge, DemoNotice, Skeleton, toast } from "@/components/ui/feedback";
 import { ChoiceCards, Field, Input, Segmented, Select, Switch } from "@/components/ui/field";
 import { useDb, useHydrated } from "@/hooks/use-data";
 import { services } from "@/services/factory";
-import { useDemoStore } from "@/store/demo-store";
 import { cn, formatMoney, pluralize } from "@/lib/utils";
 
 export default function CapsuleBuilderPage() {
@@ -40,7 +41,7 @@ function CapsuleBuilder() {
   const letters = useDb((d) => d.futureMessages);
   const catalog = useDb((d) => d.catalog);
   const heirlooms = useDb((d) => d.heirlooms);
-  const mutate = useDemoStore((s) => s.mutate);
+  const memories = useDb((d) => d.memories);
 
   const editingId = params.get("id") ?? undefined;
   const [capsuleId, setCapsuleId] = React.useState(() => heirlooms.find((h) => h.id === editingId)?.capsuleId ?? params.get("capsule") ?? (capsules.some((c) => c.id === "cap_margaret") ? "cap_margaret" : capsules[0]?.id ?? ""));
@@ -103,14 +104,17 @@ function CapsuleBuilder() {
       setBusy(null);
       return toast.error("Couldn't price this box", line.status === "error" ? line.message : undefined);
     }
-    mutate((d) => {
-      d.cart = { id: d.cart.id, lines: [line.data], purpose: "self" };
-    });
-    const c = await services().billing.createCheckout([line.data], "self");
+    const c = await services().billing.addToCart(line.data);
     setBusy(null);
-    if (c.status === "ok") router.push(c.data.url);
-    else toast.error("Couldn't open checkout", c.status === "error" ? c.message : undefined);
+    if (c.status === "ok") router.push("/checkout/bag");
+    else toast.error("Couldn't add it to your bag", c.status === "error" ? c.message : undefined);
   };
+  const blockers = boxBlockers(box, {
+    printableStories: memories.filter((m) => m.capsuleId === capsule?.id && isPrintEligible(m)).length,
+    printablePhotos: photos.length,
+    letters: box.selectedLetterIds.length || 0,
+  });
+  const madeToOrder = fulfillmentFor(boxProduct, box) === "made_to_order";
 
   const inside: { icon: React.ReactNode; label: string; detail: string; on: boolean }[] = [
     { icon: <BookOpen className="size-5" />, label: "The printed book", detail: "Your latest book design, bound to fit the box", on: box.contents.book },
@@ -274,7 +278,7 @@ function CapsuleBuilder() {
           <Panel title="Contents">
             <div className="space-y-5">
               <Switch id="x-book" checked={box.contents.book} onCheckedChange={(v) => contents({ book: v })} label={`Include the printed book · +${formatMoney(bookProduct.price.amount)}`} description="Uses your most recent book design." />
-              <Switch id="x-letters" checked={box.contents.letterBundle} onCheckedChange={(v) => contents({ letterBundle: v })} label="Include a bundle of printed letters · +$18.00" description={userLetters.length ? `${pluralize(userLetters.length, "letter")} from Letters Through Time` : "Write letters in Letters Through Time to include them."} />
+              <Switch id="x-letters" checked={box.contents.letterBundle} onCheckedChange={(v) => contents({ letterBundle: v })} label={`Include a bundle of printed letters · +${formatMoney(boxContentExtras.letterBundle)}`} description={userLetters.length ? `${pluralize(userLetters.length, "letter")} from Letters Through Time` : "Write letters in Letters Through Time to include them."} />
               {box.contents.letterBundle && userLetters.length ? (
                 <ul className="ml-14 space-y-2">
                   {userLetters.map((l) => (
@@ -301,12 +305,12 @@ function CapsuleBuilder() {
                   onChange={(v) => contents({ photoPrints: Number(v) })}
                   options={[
                     { value: "0", label: "None" },
-                    { value: "12", label: "12 · +$18" },
-                    { value: "24", label: "24 · +$36" },
+                    { value: "12", label: `12 · +${formatMoney(12 * boxContentExtras.photoPrint)}` },
+                    { value: "24", label: `24 · +${formatMoney(24 * boxContentExtras.photoPrint)}` },
                   ]}
                 />
               </div>
-              <Switch id="x-drive" checked={box.contents.archiveDrive} onCheckedChange={(v) => contents({ archiveDrive: v })} label="Archive copy on a drive · +$22.00" description="A convenience copy of the open archive. Never the only copy — keep your own backups." />
+              <Switch id="x-drive" checked={box.contents.archiveDrive} onCheckedChange={(v) => contents({ archiveDrive: v })} label={`Archive copy on a drive · +${formatMoney(boxContentExtras.archiveDrive)}`} description="A convenience copy of the open archive. Never the only copy — keep your own backups." />
               <Switch id="x-guide" checked disabled onCheckedChange={() => undefined} label="Preservation guide" description="Always included." />
             </div>
           </Panel>
@@ -320,13 +324,35 @@ function CapsuleBuilder() {
               <Badge tone="demo">Preview only</Badge>
             </div>
             <dl className="mt-5 space-y-2 border-t border-line pt-4 text-[0.9375rem]">
-              <Row label={`Box, ${boxFinishes[box.finish].label.toLowerCase()} base`} value={formatMoney(boxProduct.price.amount)} />
-              {quote.extras ? <Row label="Finish, engraving & contents" value={`+${formatMoney(quote.extras)}`} /> : null}
+              <Row label="Keepsake box" value={formatMoney(boxProduct.price.amount)} />
+              {boxBreakdown(box, bookProduct.price.amount).map((r) => (
+                <Row key={r.key} label={breakdownLabel(r.key, box)} value={`+${formatMoney(r.amount)}`} />
+              ))}
               <Row label="Shipping" value="Calculated at fulfillment" muted />
               <Row label="Tax" value="Calculated at fulfillment" muted />
             </dl>
-            <Button size="lg" block className="mt-5" leading={<ShoppingBag className="size-4" />} onClick={() => void onOrder()} loading={busy === "order"} disabled={!!busy}>
-              Review a demo order
+            <p className="mt-5 rounded-[12px] bg-ivory px-4 py-3 text-[0.875rem] text-ink-2">
+              {madeToOrder ? (
+                <>
+                  <strong className="font-medium">Made to order.</strong> Because it holds your own words, photos or engraving, it&rsquo;s made only after you approve a proof.
+                </>
+              ) : (
+                <>
+                  <strong className="font-medium">Ready-made kit.</strong> Nothing personal inside, so it would ship after payment once fulfillment is connected.
+                </>
+              )}
+            </p>
+            {blockers.length ? (
+              <ul className="mt-4 space-y-1.5 text-[0.875rem] text-warning" aria-label="Before this box can be ordered">
+                {blockers.map((b) => (
+                  <li key={b} className="flex gap-2">
+                    <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden /> {b}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <Button size="lg" block className="mt-5" leading={<ShoppingBag className="size-4" />} onClick={() => void onOrder()} loading={busy === "order"} disabled={!!busy || blockers.length > 0}>
+              Add to bag
             </Button>
             <p className="mt-3 text-center text-[0.8125rem] text-ink-3">Preview only — no payment is charged and nothing is made.</p>
           </section>
@@ -344,4 +370,13 @@ function Row({ label, value, muted }: { label: string; value: string; muted?: bo
       <dd className={cn("tabular-nums", muted && "text-ink-3")}>{value}</dd>
     </div>
   );
+}
+
+function breakdownLabel(key: string, box: BoxConfiguration) {
+  if (key === "finish") return `${boxFinishes[box.finish].label} finish`;
+  if (key === "engraving") return "Lid engraving";
+  if (key === "book") return "Printed book";
+  if (key === "letters") return "Printed letters";
+  if (key === "prints") return `${box.contents.photoPrints} photograph prints`;
+  return "Archive drive";
 }

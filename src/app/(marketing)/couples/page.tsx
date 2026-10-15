@@ -141,9 +141,9 @@ export default function CouplesPage() {
           />
           <ul className="mt-12 grid gap-5 md:grid-cols-3">
             {[
-              { Icon: Lock, title: "Only me", body: "A private note you're not ready to share — even with each other." },
+              { Icon: Lock, title: "Only me", body: "Kept from family and editors. The capsule's owner can always see everything, so for thoughts that are yours alone, keep a Personal capsule of your own." },
               { Icon: Eye, title: "The two of us", body: "Shared between you as the capsule's editors, and no one else." },
-              { Icon: Users, title: "Everyone we've invited", body: "For children, parents and friends you've asked to read along." },
+              { Icon: Users, title: "Everyone we've invited", body: "For children, parents and friends you've asked to read along — or only the few you choose." },
             ].map(({ Icon, title, body }) => (
               <li key={title} className="rounded-[20px] border border-line bg-paper p-6">
                 <Icon className="size-5 text-oxblood" aria-hidden />

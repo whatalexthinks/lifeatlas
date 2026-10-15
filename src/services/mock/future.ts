@@ -22,8 +22,9 @@ export const mockFutureDelivery: FutureDeliveryProvider = {
       title: v.title,
       dedication: v.dedication || undefined,
       body: v.body,
-      format: opts.attachmentIds.length ? "letter_with_media" : "letter",
+      format: !v.body && opts.attachmentIds.length ? "voice" : opts.attachmentIds.length || opts.memoryIds?.length ? "letter_with_media" : "letter",
       attachmentIds: opts.attachmentIds,
+      memoryIds: opts.memoryIds?.length ? opts.memoryIds : undefined,
       recipient: {
         name: v.recipientName,
         relationship: v.recipientRelationship,
@@ -36,6 +37,7 @@ export const mockFutureDelivery: FutureDeliveryProvider = {
         kind: v.releaseKind,
         date: v.releaseDate,
         intervalYears: v.releaseKind === "interval" ? v.intervalYears : undefined,
+        year: v.releaseKind === "year" ? v.releaseYear : undefined,
         milestone: v.releaseKind === "milestone" ? v.milestone : undefined,
         milestoneNote: v.milestoneNote || undefined,
         requiresReconfirmationEveryYears: 2,
@@ -100,7 +102,7 @@ export const mockFutureDelivery: FutureDeliveryProvider = {
     }
     const cur = db().futureMessages.find((x) => x.id === id)!;
     if (!canTransition(futureMessageTransitions, cur.status, "sealed_demo")) return fail("conflict", "This letter can't be sealed right now.");
-    const snapshot = JSON.stringify({ title: cur.title, dedication: cur.dedication, body: cur.body, recipient: cur.recipient.name, release: cur.release, attachments: cur.attachmentIds });
+    const snapshot = JSON.stringify({ title: cur.title, dedication: cur.dedication, body: cur.body, recipient: cur.recipient.name, release: cur.release, attachments: cur.attachmentIds, ...(cur.memoryIds?.length ? { memories: cur.memoryIds } : {}) });
     const hash = await sha256Hex(snapshot);
     await latency(400);
     store().mutate(

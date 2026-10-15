@@ -7,11 +7,17 @@ import type { Capsule, CapsuleMembership, Memory, MemoryPrivacy, Persona, Role }
  */
 
 export type Capability =
+  /** Stories shared with the whole family. */
   | "view_approved"
+  /** Stories limited to the owner & editors, or to selected people (stewards see all of them). */
+  | "view_restricted"
+  /** Other people's "Only me" stories. Owner only: they answer for exports and deletion. */
   | "view_private"
   | "add_memory"
   | "edit_any_memory"
   | "edit_own_memory"
+  | "delete_any_memory"
+  | "delete_own_memory"
   | "review_contributions"
   | "manage_invitations"
   | "manage_privacy"
@@ -23,10 +29,13 @@ export type Capability =
 export const roleCapabilities: Record<Role, Capability[]> = {
   owner: [
     "view_approved",
+    "view_restricted",
     "view_private",
     "add_memory",
     "edit_any_memory",
     "edit_own_memory",
+    "delete_any_memory",
+    "delete_own_memory",
     "review_contributions",
     "manage_invitations",
     "manage_privacy",
@@ -35,9 +44,9 @@ export const roleCapabilities: Record<Role, Capability[]> = {
     "delete_capsule",
     "order_heirlooms",
   ],
-  organizer: ["view_approved", "view_private", "add_memory", "edit_any_memory", "edit_own_memory", "review_contributions", "manage_invitations", "export_archive", "order_heirlooms"],
-  storyteller: ["view_approved", "add_memory", "edit_own_memory", "export_archive"],
-  contributor: ["view_approved", "add_memory", "edit_own_memory"],
+  organizer: ["view_approved", "view_restricted", "add_memory", "edit_any_memory", "edit_own_memory", "delete_any_memory", "delete_own_memory", "review_contributions", "manage_invitations", "export_archive", "order_heirlooms"],
+  storyteller: ["view_approved", "add_memory", "edit_own_memory", "delete_own_memory", "export_archive"],
+  contributor: ["view_approved", "add_memory", "edit_own_memory", "delete_own_memory"],
   viewer: ["view_approved"],
   successor: [], // designated for the future; no access now
 };
@@ -61,12 +70,12 @@ export const everydayRoles: Role[] = ["owner", "organizer", "contributor", "view
 export function roleSummary(role: Role) {
   const c = roleCapabilities[role];
   return {
-    read: c.includes("view_private") ? ("everything" as const) : c.includes("view_approved") ? ("shared" as const) : ("nothing" as const),
+    read: c.includes("view_private") ? ("everything" as const) : c.includes("view_restricted") ? ("all_but_private" as const) : c.includes("view_approved") ? ("shared" as const) : ("nothing" as const),
     add: c.includes("add_memory"),
     edit: c.includes("edit_any_memory") ? ("all" as const) : c.includes("edit_own_memory") ? ("own" as const) : ("none" as const),
     invite: c.includes("manage_invitations"),
     export: c.includes("export_archive"),
-    delete: c.includes("delete_capsule"),
+    delete: c.includes("delete_capsule") ? ("capsule" as const) : c.includes("delete_any_memory") ? ("all" as const) : c.includes("delete_own_memory") ? ("own" as const) : ("none" as const),
     billing: c.includes("manage_billing"),
   };
 }
@@ -96,26 +105,39 @@ export function can(role: Role | null, capability: Capability) {
   return role ? roleCapabilities[role].includes(capability) : false;
 }
 
-/** Which privacy levels a role may see (for approved content). */
-export function visiblePrivacyLevels(role: Role | null): MemoryPrivacy[] {
-  if (role === "owner" || role === "organizer") return ["private", "organizers", "family"];
-  if (role === "storyteller" || role === "contributor" || role === "viewer") return ["family"];
-  return [];
+/**
+ * Whom a privacy setting lets in, besides the memory's author (who always sees their own).
+ * "Only me" really is private: editors don't see someone else's private story — only the
+ * owner does, because they answer for the capsule's exports and deletion.
+ */
+export function privacyAdmits(memory: Pick<Memory, "privacy" | "sharedWith">, role: Role | null, personId?: string): boolean {
+  const steward = role === "owner" || role === "organizer";
+  const member = steward || role === "storyteller" || role === "contributor" || role === "viewer";
+  const level: MemoryPrivacy = memory.privacy;
+  switch (level) {
+    case "family":
+      return member;
+    case "selected":
+      return steward || (member && !!personId && (memory.sharedWith ?? []).includes(personId));
+    case "organizers":
+      return steward;
+    case "private":
+      return role === "owner";
+  }
 }
 
 /**
- * Can this persona see this memory in the capsule *viewer*?
- * - Only approved, non-deleted memories appear in the viewer.
- * - Private items are visible to owners/organizers, and to the person who wrote them.
+ * Can this persona see this memory?
+ * - Deleted memories are never shown.
+ * - Authors always see their own.
+ * - Stories waiting for review are seen by the owner and editors, who review them.
+ * - Approved stories follow their privacy setting (privacyAdmits).
  */
 export function canViewMemory(memory: Memory, role: Role | null, personId?: string): boolean {
   if (memory.deletedAt) return false;
-  const isAuthor = !!personId && memory.attribution.personId === personId;
-  if (memory.status !== "approved") {
-    return isAuthor || role === "owner" || role === "organizer";
-  }
-  if (isAuthor) return true;
-  return visiblePrivacyLevels(role).includes(memory.privacy);
+  if (!!personId && memory.attribution.personId === personId) return true;
+  if (memory.status !== "approved") return role === "owner" || role === "organizer";
+  return privacyAdmits(memory, role, personId);
 }
 
 /** Visible in the public-facing sample viewer (no persona) — sample capsule only, approved family items. */
@@ -128,16 +150,26 @@ export function canEditMemory(memory: Memory, role: Role | null, personId?: stri
   return can(role, "edit_own_memory") && !!personId && memory.attribution.personId === personId;
 }
 
+export function canDeleteMemory(memory: Memory, role: Role | null, personId?: string) {
+  if (can(role, "delete_any_memory")) return true;
+  return can(role, "delete_own_memory") && !!personId && memory.attribution.personId === personId;
+}
+
 /** Content eligible for a printed heirloom: approved and consented. */
 export function isPrintEligible(memory: Memory) {
   return !memory.deletedAt && memory.status === "approved" && memory.consent.print;
 }
 
-export function isExportEligible(memory: Memory, opts: { includePrivate: boolean; includeDrafts: boolean }) {
+/**
+ * Whether a memory belongs in an export. `includePrivate` covers the limited levels ("Only me"
+ * and "Selected people"); when the exporter is known, nothing they couldn't see is included.
+ */
+export function isExportEligible(memory: Memory, opts: { includePrivate: boolean; includeDrafts: boolean }, exporter?: { role: Role | null; personId?: string }) {
   if (memory.deletedAt) return false;
   if (!memory.consent.export) return false;
   if (!opts.includeDrafts && memory.status !== "approved") return false;
-  if (!opts.includePrivate && memory.privacy === "private") return false;
+  if (!opts.includePrivate && (memory.privacy === "private" || memory.privacy === "selected")) return false;
+  if (exporter && !canViewMemory(memory, exporter.role, exporter.personId)) return false;
   return true;
 }
 
@@ -145,16 +177,40 @@ export function capsuleIsEditable(capsule: Capsule) {
   return capsule.status === "draft" || capsule.status === "active";
 }
 
-/** Matrix for the privacy screen. */
-export const accessMatrix: { capability: Capability; label: string }[] = [
-  { capability: "view_approved", label: "See approved family stories" },
-  { capability: "view_private", label: "See private stories" },
-  { capability: "add_memory", label: "Add memories" },
-  { capability: "edit_any_memory", label: "Edit anyone's memories" },
-  { capability: "review_contributions", label: "Approve contributions" },
-  { capability: "manage_invitations", label: "Invite people" },
-  { capability: "export_archive", label: "Export the archive" },
-  { capability: "order_heirlooms", label: "Order printed heirlooms" },
-  { capability: "manage_billing", label: "Manage billing" },
-  { capability: "delete_capsule", label: "Delete the capsule" },
+/** The in-app permissions table, grouped by what people actually do: read, edit, invite, export, delete. */
+export const accessMatrix: { group: string; rows: { capability: Capability; label: string }[] }[] = [
+  {
+    group: "Reading",
+    rows: [
+      { capability: "view_approved", label: "Family stories" },
+      { capability: "view_restricted", label: "Stories for owner & editors or selected people" },
+      { capability: "view_private", label: "Other people's “Only me” stories" },
+    ],
+  },
+  {
+    group: "Adding & editing",
+    rows: [
+      { capability: "add_memory", label: "Add stories" },
+      { capability: "edit_own_memory", label: "Edit their own stories" },
+      { capability: "edit_any_memory", label: "Edit anyone's stories" },
+      { capability: "review_contributions", label: "Approve contributions" },
+    ],
+  },
+  { group: "Inviting", rows: [{ capability: "manage_invitations", label: "Invite people and change roles" }] },
+  {
+    group: "Exporting",
+    rows: [
+      { capability: "export_archive", label: "Download the archive" },
+      { capability: "order_heirlooms", label: "Order printed keepsakes" },
+    ],
+  },
+  {
+    group: "Deleting",
+    rows: [
+      { capability: "delete_own_memory", label: "Remove their own stories" },
+      { capability: "delete_any_memory", label: "Remove anyone's stories" },
+      { capability: "delete_capsule", label: "Delete the whole capsule" },
+    ],
+  },
+  { group: "Account", rows: [{ capability: "manage_billing", label: "Plan and billing" }] },
 ];

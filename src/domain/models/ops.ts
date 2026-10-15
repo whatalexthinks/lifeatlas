@@ -21,6 +21,7 @@ export interface AuditEvent {
 
 export type AnalyticsEventName =
   | "landing_cta_clicked"
+  | "cart_added"
   | "preview_started"
   | "capsule_created"
   | "first_memory_saved"

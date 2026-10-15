@@ -15,6 +15,7 @@ import type {
   BoxConfiguration,
   HeirloomConfiguration,
   Capsule,
+  Cart,
   CartLine,
   CheckoutSession,
   ChapterKey,
@@ -134,6 +135,7 @@ export interface AccountRepository {
 export interface NewMemoryInput extends MemoryFormValues {
   capsuleId: string;
   photoIds: string[];
+  videoIds?: string[];
   audioId?: string;
   questionId?: string;
   attribution: Memory["attribution"];
@@ -162,7 +164,7 @@ export interface CapsuleRepository {
   setCapsuleStatus(id: string, to: Capsule["status"]): Promise<ServiceResult<Capsule>>;
   reorderChapters(id: string, order: ChapterKey[]): Promise<ServiceResult<Capsule>>;
   createMemory(input: NewMemoryInput): Promise<ServiceResult<Memory>>;
-  updateMemory(id: string, patch: Partial<MemoryFormValues> & { photoIds?: string[]; audioId?: string | null }, editor: string): Promise<ServiceResult<Memory>>;
+  updateMemory(id: string, patch: Partial<MemoryFormValues> & { photoIds?: string[]; videoIds?: string[]; audioId?: string | null }, editor: string): Promise<ServiceResult<Memory>>;
   transitionMemory(id: string, to: MemoryStatus, note?: string, reviewer?: string): Promise<ServiceResult<Memory>>;
   softDeleteMemory(id: string): Promise<ServiceResult<Memory>>;
   restoreMemory(id: string): Promise<ServiceResult<Memory>>;
@@ -186,7 +188,7 @@ export interface CapsuleRepository {
 export interface PutMediaInput {
   capsuleId: string;
   blob: Blob;
-  kind: "image" | "audio";
+  kind: "image" | "audio" | "video";
   caption?: string;
   alt?: string;
   contributorName: string;
@@ -267,6 +269,14 @@ export interface CheckoutQuote {
 }
 
 export interface BillingProvider {
+  /** The bag: lines gathered before checkout. Physical items can be combined with a plan. */
+  addToCart(line: Omit<CartLine, "id">, purpose?: Cart["purpose"]): Promise<ServiceResult<Cart>>;
+  updateCartLine(lineId: string, patch: { quantity?: number; interval?: BillingInterval }): Promise<ServiceResult<Cart>>;
+  removeCartLine(lineId: string): Promise<ServiceResult<Cart>>;
+  /** Totals for the bag as it stands, including any standing plan discount. */
+  quoteCart(): ServiceResult<Quote>;
+  /** Start a checkout from everything in the bag. */
+  checkoutCart(opts?: { promoCode?: string }): Promise<ServiceResult<{ checkoutId: string; url: string }>>;
   createCheckout(lines: CartLine[], purpose: "self" | "gift", opts?: { promoCode?: string }): Promise<ServiceResult<{ checkoutId: string; url: string }>>;
   getCheckout(checkoutId: string): ServiceResult<CheckoutSession>;
   /** Totals for a checkout, with its promotion re-checked against the current rules. */
@@ -301,6 +311,8 @@ export interface GiftService {
   updateGift(id: string, values: GiftFormValues): Promise<ServiceResult<Gift>>;
   resolveToken(token: string): Promise<ServiceResult<Gift>>;
   markOpened(token: string): Promise<ServiceResult<Gift>>;
+  /** The recipient takes up a completed gift: one prepaid, non-renewing term of the plan. */
+  accept(token: string): Promise<ServiceResult<Subscription>>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -329,7 +341,7 @@ export interface GeocodingProvider {
 
 export interface ExportPreviewItem {
   id: string;
-  kind: "memory" | "photo" | "audio" | "plate";
+  kind: "memory" | "photo" | "video" | "audio" | "plate";
   label: string;
   included: boolean;
   reason?: string;
@@ -354,7 +366,7 @@ export interface ArchiveInspection {
   people: number;
   places: number;
   /** Files whose bytes match the SHA-256 recorded at export. */
-  verified: { photos: number; recordings: number };
+  verified: { photos: number; recordings: number; videos?: number };
   /** Captions of files whose bytes no longer match — they won't be restored. */
   damaged: string[];
   /** Files listed in the manifest but not in this archive (or a records-only export). */
@@ -389,7 +401,7 @@ export interface PreservationProvider {
 /* ------------------------------------------------------------------ */
 
 export interface FutureDeliveryProvider {
-  saveDraft(values: FutureMessageFormValues, opts: { id?: string; capsuleId?: string; attachmentIds: string[]; authorName: string; recipientBirthYear?: number }): Promise<ServiceResult<FutureMessage>>;
+  saveDraft(values: FutureMessageFormValues, opts: { id?: string; capsuleId?: string; attachmentIds: string[]; memoryIds?: string[]; authorName: string; recipientBirthYear?: number }): Promise<ServiceResult<FutureMessage>>;
   transition(id: string, to: FutureMessageStatus): Promise<ServiceResult<FutureMessage>>;
   /** Demo seal: computes a real SHA-256 snapshot hash locally; reversible. */
   sealDemo(id: string): Promise<ServiceResult<FutureMessage>>;

@@ -141,7 +141,8 @@ export const memoryFormSchema = z.object({
   date: fuzzyDateSchema,
   placeId: z.string().optional(),
   chapter: z.enum(["childhood", "coming_of_age", "love", "family", "work", "journeys", "everyday", "wisdom"]),
-  privacy: z.enum(["private", "organizers", "family"]),
+  privacy: z.enum(["private", "organizers", "selected", "family"]),
+  sharedWith: z.array(z.string()).max(50).optional(),
   tags: z.array(z.string().trim().min(1).max(32)).max(12, "Up to 12 tags."),
   peopleIds: z.array(z.string()).max(30),
   consent: z.object({ print: z.boolean(), export: z.boolean(), share: z.boolean() }),
@@ -178,15 +179,18 @@ export const futureMessageSchema = z
   .object({
     title: trimmed(2, 120, "Give this letter a title."),
     dedication: optionalText(240),
-    body: z.string().trim().min(10, "Write at least a sentence or two.").max(20_000),
+    body: z.string().trim().max(20_000),
+    /** A voice note or video can carry the message on its own; then the written part is optional. */
+    hasRecording: z.boolean().optional(),
     recipientName: trimmed(1, 80, "Who is this for?"),
     recipientRelationship: trimmed(1, 60, "How are they related to you?"),
     recipientContact: optionalEmail,
     backupName: optionalText(80),
-    releaseKind: z.enum(["date", "interval", "milestone"]),
+    releaseKind: z.enum(["date", "interval", "milestone", "year"]),
     releaseDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Choose a date."),
     intervalYears: z.union([z.literal(5), z.literal(10), z.literal(20), z.literal(30)]).optional(),
-    milestone: z.enum(["18th_birthday", "21st_birthday", "graduation", "wedding", "first_child", "30th_birthday", "custom"]).optional(),
+    releaseYear: z.number().int().optional(),
+    milestone: z.enum(["18th_birthday", "21st_birthday", "graduation", "wedding", "anniversary", "first_child", "30th_birthday", "custom"]).optional(),
     milestoneNote: optionalText(120),
     recipientOnly: z.boolean(),
     allowFamilyAfterOpening: z.boolean(),
@@ -197,6 +201,8 @@ export const futureMessageSchema = z
     if (v.releaseDate <= today) ctx.addIssue({ code: "custom", path: ["releaseDate"], message: "Choose a date in the future." });
     if (v.releaseDate > addYears(today, 50)) ctx.addIssue({ code: "custom", path: ["releaseDate"], message: "Choose a date within the next 50 years." });
     if (v.releaseKind === "milestone" && !v.milestone) ctx.addIssue({ code: "custom", path: ["milestone"], message: "Choose a milestone." });
+    if (v.releaseKind === "year" && !v.releaseYear) ctx.addIssue({ code: "custom", path: ["releaseYear"], message: "Choose a year." });
+    if (!v.hasRecording && v.body.length < 10) ctx.addIssue({ code: "custom", path: ["body"], message: "Write at least a sentence or two — or record a voice note or video instead." });
   });
 export type FutureMessageFormValues = z.infer<typeof futureMessageSchema>;
 

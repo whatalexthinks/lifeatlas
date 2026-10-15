@@ -219,8 +219,47 @@ describe("plans, promotions and credit at checkout", () => {
     if (c.status !== "ok") throw new Error("no checkout");
     const o = await b.completeMockCheckout(c.data.checkoutId, { ...customer, shipping });
     if (o.status !== "ok") throw new Error("not completed");
-    expect(o.data).toMatchObject({ creditApplied: 2000, total: 24900 - 2000 });
+    // The sample account is on the Family plan: 10% off keepsakes comes first, then the credit.
+    expect(o.data).toMatchObject({ creditApplied: 2000, total: 24900 - 2490 - 2000 });
     expect(balance()).toBe(0);
+  });
+
+  it("the bag holds a plan and a keepsake together, and checks out as one order", async () => {
+    const b = services().billing;
+    await b.addToCart({ productId: "digital", quantity: 1, extrasAmount: 0, interval: "year" });
+    await b.addToCart({ productId: "keepsake_box", quantity: 1, extrasAmount: 0 });
+    await b.addToCart({ productId: "keepsake_box", quantity: 1, extrasAmount: 0 });
+    expect(db().cart.lines.map((l) => [l.productId, l.quantity])).toEqual([["digital", 1], ["keepsake_box", 2]]);
+    // One plan at a time in the bag.
+    const second = await b.addToCart({ productId: "family", quantity: 1, extrasAmount: 0 });
+    expect(second.status).toBe("error");
+    const q = b.quoteCart();
+    if (q.status !== "ok") throw new Error("no quote");
+    expect(q.data.subtotal).toBe(9900 + 2 * 24900);
+    expect(q.data.memberDiscount?.amount).toBe(4980);
+    const kit = db().cart.lines.find((l) => l.productId === "keepsake_box")!;
+    await b.updateCartLine(kit.id, { quantity: 1 });
+    expect((await b.updateCartLine(kit.id, { quantity: 0 })).status).toBe("error");
+    const c = await b.checkoutCart();
+    if (c.status !== "ok") throw new Error("no checkout");
+    const o = await b.completeMockCheckout(c.data.checkoutId, { ...customer, shipping });
+    if (o.status !== "ok") throw new Error("not completed");
+    expect(o.data.items.map((i) => i.productId)).toEqual(["digital", "keepsake_box"]);
+    expect(o.data.payment).toBe("mock_uncharged");
+    expect(db().cart.lines).toEqual([]);
+  });
+
+  it("a completed gift starts one prepaid, non-renewing year for the recipient — a draft starts nothing", async () => {
+    const draft = db().gifts.find((g) => !g.orderId);
+    if (draft) expect((await services().gifts.accept(draft.token)).status).toBe("error");
+    const done = db().gifts.find((g) => g.orderId);
+    if (!done) return;
+    const r = await services().gifts.accept(done.token);
+    if (r.status !== "ok") throw new Error("not accepted");
+    expect(r.data).toMatchObject({ giftedBy: done.giverName, cancelAtPeriodEnd: true, interval: "year" });
+    // Accepting twice doesn't grant a second year.
+    await services().gifts.accept(done.token);
+    expect(db().subscriptions.filter((s) => s.orderId === done.orderId && s.giftedBy)).toHaveLength(1);
   });
 
   it("a ready-made kit waits for shipping; a personalised book waits for its proof", async () => {

@@ -83,7 +83,7 @@ export default function GiftBuilder() {
       return;
     }
     const lines = [
-      { id: uid("cl"), productId: v.productId, quantity: 1, extrasAmount: 0, giftId: g.data.id, label: `${product.name} — gift for ${v.recipientName}` },
+      { id: uid("cl"), productId: v.productId, quantity: 1, extrasAmount: 0, giftId: g.data.id, asGift: true, interval: "year" as const, label: `${product.name} — gift for ${v.recipientName}` },
       ...(v.addPrintedCard ? [{ id: uid("cl"), productId: "gift_wrap", quantity: 1, extrasAmount: 0, label: "Printable gift card" }] : []),
     ];
     mutate((d) => {

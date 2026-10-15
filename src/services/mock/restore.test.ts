@@ -22,6 +22,8 @@ const db = () => useDemoStore.getState().db;
 const options: ExportOptions = { includePhotos: true, includeAudio: true, includePrivate: false, includeDrafts: false, includeSamplePlates: false };
 // A real PNG signature followed by arbitrary bytes — enough for type checks and fingerprints.
 const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3, 4, 5, 6, 7, 8]);
+// The start of an MP4 ("....ftypisom") followed by arbitrary bytes.
+const mp4 = new Uint8Array([0, 0, 0, 0x18, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d, 9, 8, 7, 6, 5, 4, 3, 2]);
 
 beforeEach(() => {
   useDemoStore.setState({ db: seed(), hydrated: true });
@@ -112,6 +114,8 @@ describe("restoring from an export", () => {
       { precision: "season" as const, season: "summer" as const, year: 1963 },
       { precision: "decade" as const, decade: 1970 },
       { precision: "life_stage" as const, lifeStage: "teenage_years" as const },
+      { precision: "age" as const, age: 12 },
+      { precision: "unknown" as const, note: "Before we moved to California" },
     ];
     for (const [i, date] of dates.entries())
       await s.capsules.createMemory({ capsuleId: "cap_sarah", title: `Dated story ${i}`, narrative: "Words.", quote: "", date, chapter: "love", privacy: "family", tags: [], peopleIds: [], consent: { print: true, export: true, share: false }, photoIds: [], attribution: { displayName: "Sarah Ellis", via: "organizer" }, status: "approved" });
@@ -123,6 +127,28 @@ describe("restoring from an export", () => {
     if (restored.status !== "ok") throw new Error("not restored");
     const back = (i: number) => db().memories.find((m) => m.capsuleId === restored.data.capsuleId && m.title === `Dated story ${i}`)!.date;
     dates.forEach((d, i) => expect(back(i)).toMatchObject(d));
+  });
+
+  it("keeps video clips as videos, from the bytes to the restored story", async () => {
+    const s = services();
+    const clip = await s.media.put({ capsuleId: "cap_sarah", blob: new Blob([mp4], { type: "video/mp4" }), kind: "video", caption: "Emma's first steps", contributorName: "Sarah Ellis", durationSec: 14 });
+    if (clip.status !== "ok") throw new Error(clip.status === "error" ? clip.message : "clip not saved");
+    expect(clip.data.kind).toBe("video");
+    const m = await s.capsules.createMemory({ capsuleId: "cap_sarah", title: "First steps", narrative: "", quote: "", date: { precision: "month", year: 2006, month: 4 }, chapter: "family", privacy: "family", tags: [], peopleIds: [], consent: { print: true, export: true, share: false }, photoIds: [], videoIds: [clip.data.id], attribution: { displayName: "Sarah Ellis", via: "organizer" }, status: "approved" });
+    if (m.status !== "ok") throw new Error(m.status === "error" ? m.message : "video-only memory not saved");
+    const built = await s.export.build("cap_sarah", options, "zip");
+    if (built.status !== "ok") throw new Error("export failed");
+    const files = unzipSync(new Uint8Array(await built.data.blob.arrayBuffer()));
+    expect(Object.keys(files).some((p) => p.startsWith("media/videos/"))).toBe(true);
+    const r = await s.export.inspectArchive(await asFile(built.data.blob, "clips.zip"));
+    if (r.status !== "ok") throw new Error("not inspected");
+    expect(r.data.verified.videos).toBe(1);
+    const restored = await s.export.restoreArchive(r.data.token);
+    if (restored.status !== "ok") throw new Error("not restored");
+    const back = db().memories.find((x) => x.capsuleId === restored.data.capsuleId && x.title === "First steps")!;
+    expect(back.photoIds).toEqual([]);
+    expect(back.videoIds).toHaveLength(1);
+    expect(db().media.find((a) => a.id === back.videoIds![0])).toMatchObject({ kind: "video", caption: "Emma's first steps" });
   });
 
   it("explains why other files can't be restored", async () => {

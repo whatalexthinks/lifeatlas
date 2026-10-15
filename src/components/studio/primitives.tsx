@@ -76,7 +76,8 @@ export function MemoryStatusBadge({ status }: { status: MemoryStatus }) {
 
 const privacy: Record<MemoryPrivacy, { label: string; tone: StatusTone }> = {
   private: { label: "Private", tone: "neutral" },
-  organizers: { label: "Organizers", tone: "info" },
+  organizers: { label: "Owner & editors", tone: "info" },
+  selected: { label: "Selected people", tone: "info" },
   family: { label: "Family", tone: "brand" },
 };
 
@@ -85,9 +86,10 @@ export function PrivacyBadge({ value }: { value: MemoryPrivacy }) {
 }
 
 export const privacyCopy: Record<MemoryPrivacy, { label: string; description: string }> = {
-  private: { label: "Only me", description: "Visible to the owner and the person who added it." },
-  organizers: { label: "Organizers", description: "Owner and organizers only — good for drafts and sensitive stories." },
-  family: { label: "Family", description: "Everyone invited to view this capsule. Never public." },
+  private: { label: "Only me", description: "Visible only to the person who added it and the capsule's owner. Editors don't see it." },
+  organizers: { label: "Owner & editors", description: "The owner and editors only — good for drafts and sensitive stories." },
+  selected: { label: "Selected people", description: "Only the people you choose, plus the owner and editors." },
+  family: { label: "Family", description: "Everyone invited to this capsule. Never public." },
 };
 
 const invitation: Record<InvitationStatus, { label: string; tone: StatusTone }> = {
@@ -124,10 +126,11 @@ const order: Record<OrderStatus, { label: string; tone: StatusTone }> = {
   refunded_mock: { label: "Refunded · simulated", tone: "neutral" },
 };
 
-export function OrderStatusBadge({ status }: { status: OrderStatus }) {
+/** `readyMade`: an order with nothing to proof — "ready" means ready to pack, never "proof approved". */
+export function OrderStatusBadge({ status, readyMade }: { status: OrderStatus; readyMade?: boolean }) {
   return (
     <Badge tone={order[status].tone} dot>
-      {order[status].label}
+      {readyMade && status === "ready_for_fulfillment" ? "Ready to pack · demo" : order[status].label}
     </Badge>
   );
 }

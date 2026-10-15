@@ -7,6 +7,8 @@ import type { FutureMessage } from "@/domain/models";
 import { PageHeader, FutureStatusBadge, futureStatusCopy, Panel } from "@/components/studio/primitives";
 import { SealedLetter } from "@/components/marketing/objects";
 import { LetterOpening } from "@/components/future/letter-opening";
+import { DeliveryLadderSummary } from "@/components/future/delivery-ladder";
+import { releaseLabel } from "@/domain/future-release";
 import { SuccessorPanel } from "@/components/studio/successor-panel";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { DemoNotice, EmptyState, toast } from "@/components/ui/feedback";
@@ -153,7 +155,7 @@ export default function FutureMessagesPage() {
         <div className="grid gap-6 lg:grid-cols-2">
           {list.map((l) => (
             <article key={l.id} className="card-paper flex flex-col p-6">
-              <SealedLetter to={l.recipient.name} openOn={l.release.milestone ? l.release.milestone.replace(/_/g, " ") : formatDate(l.release.date, "long")} className="mx-auto" />
+              <SealedLetter to={l.recipient.name} openOn={releaseLabel(l.release)} className="mx-auto" />
               <div className="mt-6 flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h2 className="font-serif text-[1.6rem] leading-tight">{l.title}</h2>
@@ -188,6 +190,7 @@ export default function FutureMessagesPage() {
                 ) : null}
               </dl>
               <p className="mt-4 text-[0.875rem] text-ink-3">{l.isExample ? "A sample showing how opening day will feel. Not a real delivery." : futureStatusCopy[l.status].explain}</p>
+              {l.isExample ? null : <DeliveryLadderSummary message={l} className="mt-4" />}
               <div className="mt-auto flex flex-wrap gap-2 pt-5">
                 <Button size="sm" variant="secondary" leading={<Eye className="size-4" />} onClick={() => setPreview(l)}>
                   Preview opening

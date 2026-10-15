@@ -1,3 +1,5 @@
+import { formatMoney } from "@/lib/utils";
+import { launchPrices } from "@/domain/commerce/plans";
 import { brand } from "@/config/brand";
 
 /**
@@ -15,7 +17,7 @@ export const faqGroups: FaqGroup[] = [
     id: "starting",
     title: "Getting started",
     items: [
-      { q: `What is ${brand.name}?`, a: `${brand.name} keeps the story of a life or a relationship in one private capsule: written memories, recorded answers and photographs, with dates, places and the people in them. You can explore it as a timeline or in chapters, invite people to add what they remember, prepare messages for the future, and turn it into a printed book or a physical keepsake.` },
+      { q: `What is ${brand.name}?`, a: `${brand.name} keeps the story of a life or a relationship in one private capsule: written memories, recorded answers, photographs and short videos, with dates, places and the people in them. You can explore it as a timeline or in chapters, invite people to add what they remember, prepare messages for the future, and turn it into a printed book or a physical keepsake.` },
       { q: "Whose story can a capsule hold?", a: "Your own, yours and your partner's, your family's, a parent's or grandparent's, your child's, or anyone special to you. The kind of capsule only changes which questions we suggest first and how chapters are named — any capsule can hold any kind of memory." },
       { q: "Do I need to write well, or know where to start?", a: "No. Pick a question from the library — or press Surprise Me — and answer it however is easiest: speak, type a few lines, or start from a photograph. Skip anything you'd rather not answer, save questions for later, and answer a favourite more than once." },
       { q: "Can I have more than one capsule?", a: "Yes. Many people keep one for themselves, one for their relationship and one for a parent. The Digital plan includes one capsule; the Family Plan includes up to five. Sample capsules never count." },
@@ -26,7 +28,7 @@ export const faqGroups: FaqGroup[] = [
     id: "privacy",
     title: "Privacy and safety",
     items: [
-      { q: "Who can see my capsule?", a: "Only the people you invite. Capsules are never public and never listed. Within a capsule, each memory can be kept to yourself, shared with the capsule's editors, or shared with everyone you've invited." },
+      { q: "Who can see my capsule?", a: "Only the people you invite. Capsules are never public and never listed. Within a capsule, each memory can be kept to yourself, shared with the owner and editors, shared with particular people you choose, or shared with everyone you've invited. The capsule's owner can always see everything in it." },
       { q: "Is my data encrypted?", a: "In this preview, everything stays in your own browser on your own device; nothing is sent to our servers. When hosted accounts launch we will describe exactly how data is protected in transit and at rest — we won't make security claims before they're true." },
       { q: "Do you use my stories to train AI or sell them?", a: "No. Your stories are yours. We don't sell personal data, and we won't use your memories to train models." },
       { q: "Can I delete everything?", a: "Yes. You can delete single memories (they wait in Recently deleted for a while in case of mistakes), whole capsules, or — in this preview — erase everything on this device from Settings." },
@@ -49,14 +51,14 @@ export const faqGroups: FaqGroup[] = [
       { q: "Can I record voice answers?", a: "Yes, in any modern browser with a microphone. If recording isn't possible on a device, you can upload an audio file or type the answer instead." },
       { q: "Will you transcribe recordings?", a: "Not automatically, today. Recordings are kept exactly as spoken, and any transcript is one you (or someone you invite) type. We never present an invented transcript." },
       { q: "What about photo dates and places?", a: "If a photo carries a date from the camera, we offer it as a suggestion for you to confirm. We never invent a date, a place or who's in a picture — approximate dates like “Summer 1998” or “Around age 12” are welcome." },
-      { q: "Can I add video?", a: "Not yet. Short video clips are next on the list; larger video libraries will need hosted storage, which arrives with accounts." },
+      { q: "Can I add video?", a: "Yes — short clips (MP4, MOV or WebM, up to 150 MB and 10 minutes each) can be added to any memory, and they come with you in a downloaded copy. In the preview they're kept in your browser; larger libraries need hosted storage, which arrives with accounts." },
     ],
   },
   {
     id: "plans",
     title: "Plans and payments",
     items: [
-      { q: "How much does it cost?", a: "You can start free on this device. The Digital LifeCapsule is $99 a year (or $9.99 a month) and the Family Plan is $179 a year (or $17.99 a month). The Premium Physical LifeCapsule ($249) and the Printed Legacy Book (from $119) are optional add-ons. These are test prices." },
+      { q: "How much does it cost?", a: `You can start free on this device. The Digital LifeCapsule is ${formatMoney(launchPrices.digital.year)} a year (or ${formatMoney(launchPrices.digital.month)} a month) and the Family Plan is ${formatMoney(launchPrices.family.year)} a year (or ${formatMoney(launchPrices.family.month)} a month). The Premium Physical LifeCapsule (${formatMoney(launchPrices.physicalCapsule)}) and the Printed Legacy Book (from ${formatMoney(launchPrices.legacyBook)}) are optional add-ons. These are test prices.` },
       { q: "Will I be charged in the preview?", a: "No. Checkout creates a clearly labelled demonstration order. No payment provider is connected; please don't enter real card details anywhere." },
       { q: "What happens if I stop paying?", a: "You'll always be able to download a complete copy of your capsules. We'll publish the exact policy for read-only access and retention before any paid plan launches." },
       { q: "Do you have promotions or referral rewards?", a: "Founding-member and referral offers are part of the plan. Any giveaway will only run under published rules after legal review — none is running today." },

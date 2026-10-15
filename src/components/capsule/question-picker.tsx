@@ -85,7 +85,7 @@ export function QuestionPicker({
       <div className="sticky top-0 z-10 -mx-1 space-y-3 bg-surface px-1 pb-3">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-4" />
-          <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="Search 85+ questions" className="pl-10" aria-label="Search questions" />
+          <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder={`Search ${questions.length} questions`} className="pl-10" aria-label="Search questions" />
         </div>
         <div className="scrollbar-none -mx-1 flex gap-1.5 overflow-x-auto px-1">
           {cats.map((c) => (

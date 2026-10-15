@@ -50,7 +50,13 @@ export interface StoryChapter {
 
 export type CapsuleStatus = "draft" | "active" | "archived" | "deletion_pending";
 export type CollectionMode = "in_person" | "link" | "family";
-export type MemoryPrivacy = "private" | "organizers" | "family";
+/**
+ * Who may see a memory besides the person who added it:
+ * family — everyone with a role on the capsule; selected — the owner, editors and the people
+ * in `sharedWith`; organizers — the owner and editors ("organizer" is the stored id for Editor);
+ * private — the owner only.
+ */
+export type MemoryPrivacy = "private" | "organizers" | "selected" | "family";
 
 export interface CapsuleTheme {
   palette: "evergreen" | "terracotta" | "slate" | "linen" | "night";
@@ -162,10 +168,14 @@ export interface Memory extends Timestamps {
   tags: string[];
   /** Image media in display order. */
   photoIds: ID[];
+  /** Short video clips. Optional so memories saved before video existed stay valid. */
+  videoIds?: ID[];
   audioId?: ID;
   questionId?: ID;
   attribution: MemoryAttribution;
   privacy: MemoryPrivacy;
+  /** People (person ids) a "selected" memory is shared with. Ignored for other privacy levels. */
+  sharedWith?: ID[];
   status: MemoryStatus;
   consent: MemoryConsent;
   pinned: boolean;

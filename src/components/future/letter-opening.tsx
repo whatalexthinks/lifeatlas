@@ -5,6 +5,9 @@ import type { FutureMessage } from "@/domain/models";
 import { BrandMark } from "@/components/brand/logo";
 import { AudioPlayer } from "@/components/audio/audio-player";
 import { MediaImage } from "@/components/media/media-image";
+import { VideoClip } from "@/components/media/video-clip";
+import { releasePhrase } from "@/domain/future-release";
+import { formatFuzzyDate } from "@/lib/dates";
 import { Button } from "@/components/ui/button";
 import { useDb } from "@/hooks/use-data";
 import { usePrefersReducedMotion } from "@/hooks/use-reveal";
@@ -17,6 +20,8 @@ export function LetterOpening({ message, mode, onOpened }: { message: FutureMess
   const media = useDb((d) => d.media);
   const reduced = usePrefersReducedMotion();
   const attachments = message.attachmentIds.map((id) => media.find((m) => m.id === id)).filter(Boolean);
+  const allMemories = useDb((d) => d.memories);
+  const stories = (message.memoryIds ?? []).map((id) => allMemories.find((m) => m.id === id && !m.deletedAt)).filter((m) => !!m);
   const open = () => {
     setStage("opening");
     setTimeout(
@@ -44,7 +49,7 @@ export function LetterOpening({ message, mode, onOpened }: { message: FutureMess
                 </>
               )}
             </h2>
-            <p className="mt-3 text-night-ink-2">To be opened {message.release.milestone ? `on ${message.release.milestone.replace(/_/g, " ")}` : formatDate(message.release.date, "long")}</p>
+            <p className="mt-3 text-night-ink-2">{releasePhrase(message.release)}</p>
           </div>
           <div className="relative mt-12 aspect-[1.55] w-full max-w-md" style={{ perspective: "1400px" }}>
             {/* back of the envelope */}
@@ -134,6 +139,8 @@ export function LetterOpening({ message, mode, onOpened }: { message: FutureMess
               {attachments.map((a) =>
                 a!.kind === "audio" ? (
                   <AudioPlayer key={a!.id} asset={a!} title={`A recording from ${message.authorName.split(" ")[0]}`} />
+                ) : a!.kind === "video" ? (
+                  <VideoClip key={a!.id} mediaId={a!.id} title={`A video from ${message.authorName.split(" ")[0]}`} />
                 ) : (
                   <figure key={a!.id} className="mount">
                     <MediaImage asset={a!} className="aspect-[4/3]" />
@@ -144,6 +151,22 @@ export function LetterOpening({ message, mode, onOpened }: { message: FutureMess
             </div>
           ) : null}
           <p className="mt-10 font-serif text-[1.3rem] italic">— {message.authorName}</p>
+          {stories.length ? (
+            <section className="mt-12 border-t border-[#d9ccb4] pt-8" aria-label="Stories given with this letter">
+              <p className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-[#74613f]">
+                {stories.length === 1 ? "A story" : `${stories.length} stories`} given with this letter
+              </p>
+              <ul className="mt-5 space-y-6">
+                {stories.map((m) => (
+                  <li key={m.id}>
+                    <h3 className="font-serif text-[1.4rem] leading-snug">{m.title}</h3>
+                    <p className="mt-1 text-[0.8125rem] text-[#5e5a50]">{formatFuzzyDate(m.date)}</p>
+                    {m.narrative ? <p className="mt-2 line-clamp-4 font-serif text-[1.05rem] leading-relaxed text-[#242824]">{m.narrative}</p> : null}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
         </article>
       )}
     </div>

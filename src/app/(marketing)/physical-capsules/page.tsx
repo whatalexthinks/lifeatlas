@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ButtonLink } from "@/components/ui/button";
+import { AddToBagButton } from "@/components/site/bag";
 import { BookObject, KeepsakeBox } from "@/components/marketing/objects";
 import { ArrowLink, CheckList, Container, Eyebrow, FinalCta, Heading, PageIntro, PreviewNote, Section, Split } from "@/components/site/kit";
 import { defaultCatalog } from "@/data/product-catalog";
@@ -33,6 +34,9 @@ export default function PhysicalCapsulesPage() {
             <ButtonLink href="/app/heirlooms/capsule-builder" size="xl">
               Design your physical capsule
             </ButtonLink>
+            <AddToBagButton productId="keepsake_box" variant="secondary">
+              Add the ready-made kit
+            </AddToBagButton>
             <ArrowLink href="#book">The Legacy Book</ArrowLink>
           </>
         }
