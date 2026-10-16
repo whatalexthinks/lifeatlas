@@ -1,9 +1,8 @@
 /**
- * Supplied editorial photographs, matched only to scenes they actually depict.
- * If there is no suitable supplied photograph, the UI shows an empty state instead of
- * substituting generated artwork or an unrelated photograph. User uploads are never replaced.
+ * Supplied editorial photographs and explicitly labeled generated illustrations.
+ * User uploads are never replaced, and generated artwork is never presented as a supplied photo.
  */
-export const editorialPhotos: Record<string, { slug: string; alt: string }> = {
+export const editorialPhotos: Record<string, { slug: string; alt: string; generated?: boolean }> = {
   "kitchen-1947": { slug: "flour-kitchen", alt: "A mother and child making pastry together in a flour-dusted kitchen." },
   "breadboard-1947": { slug: "flour-breadboard", alt: "A flour-dusted breadboard in a kitchen in Portland." },
   "harbor-1952": { slug: "winter-harbor", alt: "Boats moored in Portland Harbor under a grey winter sky." },
@@ -14,7 +13,7 @@ export const editorialPhotos: Record<string, { slug: string; alt: string }> = {
   "bookshop-1989": { slug: "london-bookshop", alt: "A quiet bookshop lined with shelves and well-loved books." },
   "window-1961": { slug: "boston-suitcase", alt: "A blue suitcase beside a window overlooking Boston rooftops." },
   "rooftops-1998": { slug: "florence-rooftops", alt: "Terracotta rooftops and a cathedral dome in Florence." },
-  "rooftops-2000": { slug: "florence-rooftops", alt: "Terracotta rooftops and a cathedral dome in Florence." },
+  "rooftops-2000": { slug: "florence-balcony-2000", alt: "Generated illustrative view from a fictional family archive, looking across Florence rooftops toward the Duomo.", generated: true },
   "radio-1949": { slug: "valve-radio", alt: "A valve radio on a repair bench beside tools and circuit drawings." },
   "classroom-1966": { slug: "physics-classroom", alt: "Afternoon light falling across a physics classroom." },
   "pie-1979": { slug: "apple-pie", alt: "A lattice-topped apple pie cooling beside a sunny kitchen window." },
@@ -36,7 +35,6 @@ export const editorialPhotos: Record<string, { slug: string; alt: string }> = {
   "pancakes-2012": { slug: "sunday-pancakes", alt: "A stack of homemade pancakes with syrup and melting butter." },
   "rocker-1985": { slug: "cherrywood-rocker", alt: "A handmade cherrywood rocking chair." },
   "letter-1952": { slug: "montreal-letter", alt: "A handwritten letter from Montreal with its stamped envelope." },
-  "letters-1952": { slug: "montreal-letter", alt: "A handwritten Montreal letter beside a fountain pen." },
   "dance-2007": { slug: "kitchen-dance", alt: "A couple slow-dancing barefoot in their kitchen." },
   "birthday-2018": { slug: "birthday-friends", alt: "Friends gathered around a birthday table, photographed with flash." },
   "table-2020": { slug: "kitchen-stories", alt: "A family sharing stories around the kitchen table." },
@@ -51,11 +49,11 @@ export const editorialPhotos: Record<string, { slug: string; alt: string }> = {
   "roadtrip-2003": { slug: "nova-scotia-drive", alt: "A coastal drive through Nova Scotia." },
   "porch-2025": { slug: "maine-coffee", alt: "Quiet coffee together on the Maine coast." },
   "umbrella-1965": { slug: "rainy-wedding", alt: "A couple beneath a red umbrella on a rainy wedding day." },
-  "umbrella-1998": { slug: "rainy-wedding", alt: "A couple beneath a red umbrella in the rain, an illustrative scene from their story." },
-  "orchard-2001": { slug: "lighthouse-family", alt: "A family together on the Maine coast, an illustrative photograph from their archive." },
+  "umbrella-1998": { slug: "rainy-doorway-1998", alt: "Generated illustrative scene of two people sharing a red umbrella in a Boston doorway in 1998.", generated: true },
+  "orchard-2001": { slug: "orchard-supper-2001", alt: "Generated illustrative scene of a wedding supper beneath orchard trees for the fictional Ellis family.", generated: true },
   "lemons-1998": { slug: "florentine-lemons", alt: "Three lemons in a handmade Florentine pottery bowl." },
   "workshop-2013": { slug: "quiet-woodshop", alt: "A quiet woodshop with a bandsaw and an empty chair." },
-  "portrait-margaret": { slug: "porch-margaret", alt: "A woman seated on a porch beside the Maine coast." },
+  "portrait-margaret": { slug: "margaret-cover-study", alt: "Generated bookplate illustration of an older woman's profile for Margaret's fictional capsule cover.", generated: true },
   "portrait-thomas": { slug: "thomas-workbench", alt: "A man working at a well-used workbench." },
   "portrait-sarah": { slug: "sarah-kitchen-window", alt: "A woman standing by the kitchen window." },
 };

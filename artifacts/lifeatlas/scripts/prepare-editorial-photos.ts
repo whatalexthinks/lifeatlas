@@ -4,6 +4,7 @@ import sharp from "sharp";
 
 const source = fileURLToPath(new URL("../../../attached_assets/", import.meta.url));
 const target = fileURLToPath(new URL("../public/media/editorial/", import.meta.url));
+const generatedSource = `${source}/generated_images`;
 const photos: Record<string, string> = {
   "1934_Portland_Harbor_Ferry_": "harbor-ferry",
   "1947_flour-dusted_kitchen_still_life_": "flour-kitchen",
@@ -82,6 +83,12 @@ const photos: Record<string, string> = {
   "Moss_Green_Family_Archive_Box_": "moss-green-box",
   "Quiet_Kiln_Glow_in_the_Garage_": "garage-kiln",
 };
+const generatedIllustrations = {
+  "ourlife-florence-balcony-2000.png": { slug: "florence-balcony-2000", width: 1440, height: 1080, smallWidth: 640, smallHeight: 480, position: "attention" },
+  "ourlife-orchard-supper-2001.png": { slug: "orchard-supper-2001", width: 1440, height: 1080, smallWidth: 640, smallHeight: 480, position: "attention" },
+  "ourlife-rainy-doorway-1998.png": { slug: "rainy-doorway-1998", width: 1440, height: 1080, smallWidth: 640, smallHeight: 480, position: "attention" },
+  "ourlife-margaret-cover-study.png": { slug: "margaret-cover-study", width: 900, height: 1125, smallWidth: 512, smallHeight: 640, position: "centre" },
+} as const;
 await mkdir(target, { recursive: true });
 const files = await readdir(source);
 await Promise.all(Object.entries(photos).map(async ([prefix, slug]) => {
@@ -91,4 +98,11 @@ await Promise.all(Object.entries(photos).map(async ([prefix, slug]) => {
   await input.clone().resize({ width: 1440, withoutEnlargement: true }).webp({ quality: 86, effort: 5 }).toFile(`${target}/${slug}.webp`);
   await input.clone().resize({ width: 640, withoutEnlargement: true }).webp({ quality: 80, effort: 5 }).toFile(`${target}/${slug}-small.webp`);
 }));
-console.log(`Optimized ${Object.keys(photos).length} supplied photos in two sizes.`);
+const generatedFiles = await readdir(generatedSource);
+await Promise.all(Object.entries(generatedIllustrations).map(async ([file, image]) => {
+  if (!generatedFiles.includes(file)) throw new Error(`Missing generated illustration: ${file}`);
+  const input = sharp(`${generatedSource}/${file}`).rotate();
+  await input.clone().resize({ width: image.width, height: image.height, fit: "cover", position: image.position, withoutEnlargement: true }).webp({ quality: 86, effort: 5 }).toFile(`${target}/${image.slug}.webp`);
+  await input.clone().resize({ width: image.smallWidth, height: image.smallHeight, fit: "cover", position: image.position, withoutEnlargement: true }).webp({ quality: 80, effort: 5 }).toFile(`${target}/${image.slug}-small.webp`);
+}));
+console.log(`Optimized ${Object.keys(photos).length} supplied photos and ${Object.keys(generatedIllustrations).length} generated illustrations.`);

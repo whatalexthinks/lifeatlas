@@ -4,14 +4,15 @@ import audioManifest from "./audio-manifest.json";
 import { editorialPhotoUrl, photoForPlate } from "@/lib/media/editorial-photos";
 
 /**
- * Sample media includes supplied photographs only. If no supplied photograph clearly
- * matches a sample memory, the UI shows an empty state rather than generated artwork.
+ * Sample media uses supplied photographs and clearly labeled generated illustrations.
+ * If no suitable image exists for a sample memory, the UI shows an empty state.
  *  - Audio is synthetic narration produced with the open Kokoro-82M model
  *    (Apache-2.0) by scripts/generate-sample-audio.py. It is NOT a real person's voice.
  */
 
 export const NO_PHOTO_NOTICE = "No photograph supplied for this sample story.";
 export const PHOTO_NOTICE = "Editorial photograph supplied for this sample archive. The family stories are fictional.";
+export const GENERATED_IMAGE_NOTICE = "Generated illustrative artwork for this fictional sample archive.";
 export const AUDIO_NOTICE = "Synthetic sample narration (open-source text-to-speech). Not a real person's voice.";
 
 const T = "2026-09-03T12:00:00.000Z";
@@ -46,7 +47,7 @@ const plate = (p: PlateSeed): MediaAsset => {
     placeId: p.placeId,
     contributorName: p.contributor ?? "Sample family",
     consent: { contributorAgreed: true, print: true, share: false },
-    sampleNotice: photo ? PHOTO_NOTICE : NO_PHOTO_NOTICE,
+    sampleNotice: photo ? (photo.generated ? GENERATED_IMAGE_NOTICE : PHOTO_NOTICE) : NO_PHOTO_NOTICE,
     createdAt: T,
     updatedAt: T,
   };

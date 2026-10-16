@@ -19,7 +19,7 @@ export function typographyClass(t: Capsule["theme"]["typography"]) {
   return t === "italic" ? "font-serif italic" : t === "modern" ? "font-sans font-medium tracking-[-0.035em]" : "font-serif";
 }
 
-/** A photograph stored by the user or supplied for a public sample. */
+/** An image stored by the user or assigned to a public sample. */
 function CoverImage({ cover, className }: { cover: Capsule["cover"]; className?: string }) {
   if (!cover.mediaId && cover.plateId) return <Plate id={cover.plateId} alt="" className={className} focalY={cover.focalY} />;
   return <MediaImage mediaId={cover.mediaId} className={className} focalY={cover.focalY} />;

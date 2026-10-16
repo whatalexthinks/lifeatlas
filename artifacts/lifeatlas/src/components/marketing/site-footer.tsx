@@ -89,7 +89,7 @@ export function SiteFooter() {
         </div>
         <div className="mt-8 grid gap-4 border-t border-night-line pt-8 text-[0.8125rem] leading-relaxed text-night-ink-3 md:grid-cols-[1fr_auto]">
           <p>
-            This is a preview build. The Ellis family is fictional, and photographs on this site are illustrative. Payments, emails, cloud storage, backups, printing and future delivery are not connected. Nothing on this site charges, sends, ships or
+            This is a preview build. The Ellis family is fictional, and all sample imagery is illustrative. Some images are generated artwork. Payments, emails, cloud storage, backups, printing and future delivery are not connected. Nothing on this site charges, sends, ships or
             stores anything beyond your own browser. {brand.name} is a working name; branding and trademark are pending.
           </p>
           <p className="font-mono text-[0.7rem] uppercase tracking-[0.18em] md:text-right">&copy; 2026 {brand.name} (preview)</p>

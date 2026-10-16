@@ -11,7 +11,6 @@ import { Segmented } from "@/components/ui/field";
 import { useCapsuleMemories, useDb } from "@/hooks/use-data";
 import { formatFuzzyDate, sortKey } from "@/lib/dates";
 import { cn } from "@/lib/utils";
-import { photoForPlate } from "@/lib/media/editorial-photos";
 
 interface Photo {
   asset: MediaAsset;
@@ -123,7 +122,7 @@ export function GalleryView({ capsule, scope, hrefFor, tone = "paper" }: { capsu
                     {formatFuzzyDate(current.asset.takenDate ?? current.memory.date)}
                     {current.asset.placeId || current.memory.placeId ? ` · ${places.find((p) => p.id === (current.asset.placeId ?? current.memory.placeId))?.name ?? ""}` : ""} · {current.asset.contributorName}
                   </p>
-                  {current.asset.sampleNotice ? <p className="mt-2 text-[0.75rem] text-[#c4bdb1]">{current.asset.source.kind === "plate" && photoForPlate(current.asset.source.plateId) ? "Editorial photograph supplied for this sample archive. The family stories are fictional." : current.asset.sampleNotice}</p> : null}
+                  {current.asset.sampleNotice ? <p className="mt-2 text-[0.75rem] text-[#c4bdb1]">{current.asset.sampleNotice}</p> : null}
                   <Link href={hrefFor(current.memory)} className="mt-4 inline-flex items-center gap-1.5 text-[0.9375rem] font-medium text-[#d7bc92] hover:underline" onClick={() => setIndex(null)}>
                     Read “{current.memory.title}” <ArrowUpRight className="size-4" />
                   </Link>

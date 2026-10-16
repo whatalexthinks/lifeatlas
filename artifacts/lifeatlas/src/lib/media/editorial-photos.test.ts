@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { media, NO_PHOTO_NOTICE, PHOTO_NOTICE } from "@/data/fixtures/media";
+import { GENERATED_IMAGE_NOTICE, media, NO_PHOTO_NOTICE, PHOTO_NOTICE } from "@/data/fixtures/media";
 import { extraMedia } from "@/data/fixtures/samples-couple-family";
 import { capsules } from "@/data/fixtures/capsules";
 import { extraCapsules } from "@/data/fixtures/samples-couple-family";
@@ -12,21 +12,30 @@ import { editorialPhotos, photoForPlate } from "./editorial-photos";
 const samplePlateAssets = [...media, ...extraMedia].filter((asset) => asset.source.kind === "plate");
 
 describe("sample photo integrity", () => {
-  it("maps every displayed sample photograph to a supplied, optimized image", () => {
+  it("maps every displayed sample image to an optimized asset", () => {
     for (const photo of Object.values(editorialPhotos)) {
       expect(existsSync(resolve(process.cwd(), "public", "media", "editorial", `${photo.slug}.webp`)), photo.slug).toBe(true);
     }
   });
 
-  it("labels supplied photographs and clearly identifies sample stories without a photo", () => {
+  it("labels supplied photographs, generated illustrations, and stories without a photo accurately", () => {
     const unmatchedScenes = new Set<string>();
     for (const asset of samplePlateAssets) {
       if (asset.source.kind !== "plate") continue;
       const photo = photoForPlate(asset.source.plateId);
-      expect(asset.sampleNotice).toBe(photo ? PHOTO_NOTICE : NO_PHOTO_NOTICE);
+      expect(asset.sampleNotice).toBe(photo ? (photo.generated ? GENERATED_IMAGE_NOTICE : PHOTO_NOTICE) : NO_PHOTO_NOTICE);
       if (!photo) unmatchedScenes.add(asset.source.plateId);
     }
     expect([...unmatchedScenes].sort()).toEqual([]);
+  });
+
+  it("uses distinct images for distinct sample scenes", () => {
+    const slugs = samplePlateAssets.flatMap((asset) => {
+      if (asset.source.kind !== "plate") return [];
+      const photo = photoForPlate(asset.source.plateId);
+      return photo ? [photo.slug] : [];
+    });
+    expect(new Set(slugs).size).toBe(slugs.length);
   });
 
   it("does not substitute generated artwork when a sample story has no matching photograph", async () => {

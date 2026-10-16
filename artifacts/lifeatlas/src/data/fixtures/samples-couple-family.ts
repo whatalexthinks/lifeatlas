@@ -1,5 +1,5 @@
 import type { Capsule, CapsuleMembership, FutureMessage, FuzzyDate, MediaAsset, Memory, MemoryAttribution, Place } from "@/domain/models";
-import { NO_PHOTO_NOTICE, PHOTO_NOTICE } from "./media";
+import { GENERATED_IMAGE_NOTICE, NO_PHOTO_NOTICE, PHOTO_NOTICE } from "./media";
 import { photoForPlate } from "@/lib/media/editorial-photos";
 
 /**
@@ -120,7 +120,9 @@ const plate = (id: string, plateId: string, capsuleId: string, caption: string, 
   placeId,
   contributorName: "Sample family",
   consent: { contributorAgreed: true, print: true, share: false },
-  sampleNotice: photoForPlate(plateId) ? PHOTO_NOTICE : NO_PHOTO_NOTICE,
+   sampleNotice: photoForPlate(plateId)
+     ? (photoForPlate(plateId)?.generated ? GENERATED_IMAGE_NOTICE : PHOTO_NOTICE)
+     : NO_PHOTO_NOTICE,
   createdAt: T,
   updatedAt: T,
 });
