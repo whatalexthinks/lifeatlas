@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "orchard-2001",
+    "origin": "AI-generated illustrative scene for a fictional sample archive; approved in the previous imagery pass",
+    "sourceSha256": "24fc499cf8e8019d8f243f45ae513e12332530ffa526d6417e2fbe55c14a8cea",
+    "prompt": "Fictional family archive scene: orchard-2001"
+  },
+  {
+    "slug": "umbrella-1998",
+    "origin": "AI-generated illustrative scene for a fictional sample archive; approved in the previous imagery pass",
+    "sourceSha256": "b108b29eb8d900bf4c03bf56e76b992d5ff92ea63c571364bf368cb4638e48b2",
+    "prompt": "Use case: photorealistic-natural. Create ONE standalone photograph for the fictional OurLifeCapsule sample archive. Reference1 is visual quality and family identity guidance: match its natural candid family-photo realism, quiet warm color, true skin texture, real fabric, ordinary imperfections, subtle grain and unforced expressions. Never glossy stock photography, CGI, airbrushed plastic skin, HDR, excessive sharpening, uncanny symmetry, text overlays, borders or collages. Period details and age must match scene. Keep important subject near center with enough surrounding room for responsive crops. Asset: umbrella-1998. Orientation: portrait 4:5. Scene: Sarah aged30 and Jonah31, Boston Newbury Street in autumn1998. A wavy light-brown-haired woman in a wool coat and a dark curly-haired man in a navy jacket laughing while sheltering close beneath one battered red umbrella by a brick doorway. Wet pavement and autumn leaves, incidental candid shot from a friend, natural body language, muted late1990s color film. No wedding attire, no text, period accurate street details."
+  },
+  {
+    "slug": "dock-2012",
+    "origin": "AI-generated illustrative scene for a fictional sample archive; approved in the previous imagery pass",
+    "sourceSha256": "7749b3aae2680f6dccf7378ded5630de99a9c54c98c3fadc594f56f6372a66d8",
+    "prompt": "Fictional family archive scene: dock-2012"
+  }
+]
