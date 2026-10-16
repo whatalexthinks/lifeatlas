@@ -6,6 +6,7 @@ import { ArrowRight, Check, Minus } from "lucide-react";
 import type { BillingInterval, Product } from "@/domain/models";
 import { defaultCatalog } from "@/data/product-catalog";
 import { annualSavings, plans, unitAmount, type PlanId } from "@/domain/commerce/plans";
+import { PrintPhoto } from "@/components/marketing/home/editorial";
 import { ButtonLink } from "@/components/ui/button";
 import { AddToBagButton } from "@/components/site/bag";
 import { cn, formatMoney } from "@/lib/utils";
@@ -91,14 +92,15 @@ export function PlanPricing({ className }: { className?: string }) {
 
 /** The two physical keepsakes, with how each one is made and shipped. */
 export function KeepsakePricing({ className }: { className?: string }) {
-  const items: { p: Product; href: string; action: string }[] = [
-    { p: product("keepsake_box"), href: "/physical-capsules", action: "See the physical capsule" },
-    { p: product("book"), href: "/physical-capsules#book", action: "See the legacy book" },
+  const items: { p: Product; href: string; action: string; photoSlug: string; photoAlt: string }[] = [
+    { p: product("keepsake_box"), href: "/physical-capsules", action: "See the physical capsule", photoSlug: "moss-green-box", photoAlt: "A moss-green family archive box with keepsakes inside" },
+    { p: product("book"), href: "/physical-capsules#book", action: "See the legacy book", photoSlug: "family-storybook", photoAlt: "An open family storybook beside its linen-bound cover" },
   ];
   return (
     <ul className={cn("grid gap-5 md:grid-cols-2", className)}>
-      {items.map(({ p, href, action }) => (
+      {items.map(({ p, href, action, photoSlug, photoAlt }) => (
         <li key={p.id} className="flex flex-col rounded-[22px] border border-line bg-surface/70 p-7">
+          <PrintPhoto slug={photoSlug} alt={photoAlt} className="mb-6 aspect-[16/10] rounded-[1px]" />
           <p className="catalog">Add-on · {p.fulfillment === "made_to_order" ? "Made to order" : "Ready-made kit"}</p>
           <h3 className="display-3 mt-3">{p.name}</h3>
           <p className="mt-2 text-[0.9375rem] text-ink-2">{p.tagline}</p>

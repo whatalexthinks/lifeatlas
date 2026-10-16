@@ -244,7 +244,7 @@ export default function HomePage() {
             {[
               { plate: "umbrella-1998", step: "Sarah answers “How did we meet?”", body: "She types it on her phone one evening, the rain, the red umbrella, the forty minutes in a doorway." },
               { plate: "bookshop-1998", step: "Jonah answers the same question", body: "His version starts with her laugh. Both answers are kept, side by side." },
-              { plate: "orchard-2001", step: "Their daughter adds the wedding", body: "Emma is invited free, and adds the orchard photograph Sarah had never seen." },
+              { plate: "lighthouse-1950s", step: "Their daughter adds a family photograph", body: "Emma finds a photograph from the Maine coast that Sarah had never thought to preserve." },
               { plate: "porch-2025", step: "A letter for their thirtieth", body: "They write to each other, to be opened in 2031, prepared now, with no false promise about delivery." },
             ].map((s, i) => (
               <li key={s.step} className="flex flex-col">

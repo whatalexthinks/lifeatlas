@@ -26,13 +26,20 @@ describe("sample photo integrity", () => {
       expect(asset.sampleNotice).toBe(photo ? PHOTO_NOTICE : NO_PHOTO_NOTICE);
       if (!photo) unmatchedScenes.add(asset.source.plateId);
     }
-    expect([...unmatchedScenes].sort()).toEqual(["dock-2012", "orchard-2001", "umbrella-1998"]);
+    expect([...unmatchedScenes].sort()).toEqual([]);
   });
 
   it("does not substitute generated artwork when a sample story has no matching photograph", async () => {
-    const missingPhoto = samplePlateAssets.find((asset) => asset.source.kind === "plate" && !photoForPlate(asset.source.plateId));
-    expect(missingPhoto).toBeDefined();
-    const result = await mockMedia.resolveUrl(missingPhoto!);
+    const sample = samplePlateAssets.find((asset) => asset.source.kind === "plate");
+    expect(sample).toBeDefined();
+    if (!sample || sample.source.kind !== "plate") throw new Error("Expected a sample plate asset");
+    const missingPhoto = {
+      ...sample,
+      id: "med_test_missing_photo",
+      source: { ...sample.source, plateId: "unmapped-test-scene" },
+      sampleNotice: NO_PHOTO_NOTICE,
+    };
+    const result = await mockMedia.resolveUrl(missingPhoto);
     expect(result.status).toBe("error");
     if (result.status === "error") expect(result.message).toContain("No photograph was supplied");
   });

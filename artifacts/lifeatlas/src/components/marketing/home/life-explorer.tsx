@@ -8,6 +8,7 @@ import { places } from "@/data/fixtures/places";
 import { chapterById } from "@/data/chapters";
 import { MemoryMap } from "@/components/map/memory-map";
 import { MediaImage } from "@/components/media/media-image";
+import { editorialPhotoUrl } from "@/lib/media/editorial-photos";
 import { decadesOf, journeyOrder, placesToPoints } from "@/lib/memory-utils";
 import { decadeOf, formatFuzzyDate, sortKey } from "@/lib/dates";
 import { cn } from "@/lib/utils";
@@ -77,7 +78,19 @@ export function LifeExplorer() {
                 )}
               >
                 <div className="relative size-[72px] shrink-0 overflow-hidden rounded-[10px]">
-                  {m.photoIds[0] ? <MediaImage mediaId={m.photoIds[0]} className="absolute inset-0" /> : <div className="absolute inset-0 bg-night-3" />}
+                  {m.photoIds[0] ? (
+                    <MediaImage mediaId={m.photoIds[0]} className="absolute inset-0" />
+                  ) : m.id === "mem_june" ? (
+                    <img
+                      src={editorialPhotoUrl("handmade-blue-bowl")}
+                      alt="Handmade blue pottery, an illustrative detail for this story"
+                      className="absolute inset-0 size-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-night-3" />
+                  )}
                 </div>
                 <div className="min-w-0">
                   <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#c8b28d]">

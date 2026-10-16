@@ -450,7 +450,7 @@ export const extraMemories: Memory[] = [
     placeId: "pl_acadia",
     chapter: "journeys",
     narrative:
-      "Leo was eight and had been fishing off the dock for three days without a bite. When the fish finally came he was so shocked he dropped the rod, grabbed the line with both hands, landed it, looked at it, and said 'Sorry', and let it go.\n\nDaniel wanted a photo. There isn't one. Leo says that's how it should be.",
+      "Leo was eight and had been fishing off the dock for three days without a bite. When the fish finally came he was so shocked he dropped the rod, grabbed the line with both hands, landed it, looked at it, and said 'Sorry', and let it go.\n\nDaniel wanted a photo. Priya caught the moment the fish slipped back into the water. Leo says that's how it should be.",
     peopleIds: ["per_leo", "per_daniel"],
     tags: ["Leo", "Summers"],
     photoIds: ["med_fam_dock"],

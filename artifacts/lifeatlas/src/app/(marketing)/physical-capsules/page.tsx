@@ -1,7 +1,6 @@
 import type { Metadata } from "@/lib/router/metadata";
 import { ButtonLink } from "@/components/ui/button";
 import { AddToBagButton } from "@/components/site/bag";
-import { BookObject } from "@/components/marketing/objects";
 import { ArrowLink, CheckList, Container, Eyebrow, FinalCta, Heading, PageIntro, PreviewNote, Section, Split } from "@/components/site/kit";
 import { defaultCatalog } from "@/data/product-catalog";
 import { plans } from "@/domain/commerce/plans";
@@ -137,9 +136,11 @@ export default function PhysicalCapsulesPage() {
           <Split
             reverse
             media={
-              <div className="grid place-items-center py-6">
-                <BookObject title="Margaret Ellis" subtitle="In Her Own Words" years="1940, " color="evergreen" size="lg" />
-              </div>
+              <PrintPhoto
+                slug="family-storybook"
+                alt="An open family storybook beside its linen-bound cover"
+                className="mx-auto aspect-[4/3] w-full max-w-[540px] rounded-[1px]"
+              />
             }
           >
             <Heading

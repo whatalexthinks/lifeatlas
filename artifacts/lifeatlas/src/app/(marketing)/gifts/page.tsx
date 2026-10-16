@@ -2,7 +2,8 @@ import type { Metadata } from "@/lib/router/metadata";
 import Link from "@/lib/router/link";
 import { ButtonLink } from "@/components/ui/button";
 import { FaqList } from "@/components/marketing/blocks";
-import { KeepsakeBox, SealedLetter } from "@/components/marketing/objects";
+import { SealedLetter } from "@/components/marketing/objects";
+import { PrintPhoto } from "@/components/marketing/home/editorial";
 import { ArrowLink, Container, FinalCta, Heading, Numbered, PageIntro, PreviewNote, Section } from "@/components/site/kit";
 import { Plate } from "@/components/media/media-image";
 import { defaultCatalog } from "@/data/product-catalog";
@@ -18,10 +19,10 @@ export const metadata: Metadata = {
 const p = (id: string) => defaultCatalog.find((x) => x.id === id)!;
 
 const occasions = [
-  { href: "/gifts/parents", plate: "kitchen-1950", title: "For a parent", body: "Before they were your parents, they were themselves." },
-  { href: "/gifts/grandparents", plate: "rocker-1985", title: "For a grandparent", body: "There's so much more you haven't asked." },
-  { href: "/couples", plate: "orchard-2001", title: "For an anniversary", body: "Your story, told by both of you." },
-  { href: "/gifts/holiday", plate: "table-2019", title: "For the holidays", body: "A seat at the table, a story worth keeping." },
+  { href: "/gifts/parents", photoSlug: "kneading-dough", photoAlt: "A mother and daughter making dough together in their kitchen.", title: "For a parent", body: "Before they were your parents, they were themselves." },
+  { href: "/gifts/grandparents", photoSlug: "cherrywood-rocker", photoAlt: "A handmade cherrywood rocking chair.", title: "For a grandparent", body: "There's so much more you haven't asked." },
+  { href: "/couples", photoSlug: "rainy-wedding", photoAlt: "A couple celebrating their wedding beneath a red umbrella in the rain.", title: "For an anniversary", body: "Your story, told by both of you." },
+  { href: "/gifts/holiday", photoSlug: "november-supper", photoAlt: "Three generations sharing a November supper.", title: "For the holidays", body: "A seat at the table, a story worth keeping." },
 ];
 
 const giftFaq: [string, React.ReactNode][] = [
@@ -38,11 +39,11 @@ export default function GiftsPage() {
     {
       id: "keepsake_box",
       visual: (
-        <div className="grid aspect-[4/3] place-items-center rounded-[16px] bg-ivory">
-          <div className="w-[62%]">
-            <KeepsakeBox finish="white_oak" engraving="For Mum · with love" />
-          </div>
-        </div>
+        <PrintPhoto
+          slug="walnut-memory-box"
+          alt="An open walnut keepsake box holding photographs, letters and family mementos"
+          className="aspect-[4/3] rounded-[16px]"
+        />
       ),
       line: "A keepsake kit to open together: prompt cards, photo sleeves, letter envelopes.",
       price: `${formatMoney(p("keepsake_box").price.amount)} add-on`,
@@ -139,7 +140,7 @@ export default function GiftsPage() {
             {occasions.map((o) => (
               <li key={o.href}>
                 <Link href={o.href} className="group block">
-                  <Plate id={o.plate} alt="" className="aspect-[4/5] rounded-[16px]" />
+                <PrintPhoto slug={o.photoSlug} alt={o.photoAlt} eager className="aspect-[4/5] rounded-[16px]" />
                   <h3 className="display-3 mt-4 !text-[1.25rem]">{o.title}</h3>
                   <p className="mt-1 text-[0.9375rem] text-ink-2">{o.body}</p>
                 </Link>
