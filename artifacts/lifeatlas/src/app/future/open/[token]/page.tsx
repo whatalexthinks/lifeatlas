@@ -15,7 +15,7 @@ import { describeInterval, todayIso } from "@/lib/dates";
 import { formatDate } from "@/lib/utils";
 
 export default function FutureOpenPage() {
-  const { token } = useParams<{ token: string }>();
+  const token = useParams<{ token: string }>().token ?? "";
   const hydrated = useHydrated();
   const [message, setMessage] = React.useState<FutureMessage | null>(null);
   const [error, setError] = React.useState<string | null>(null);

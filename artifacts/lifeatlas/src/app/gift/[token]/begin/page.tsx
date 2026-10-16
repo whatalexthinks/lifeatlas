@@ -14,7 +14,7 @@ import { starterQuestionIds } from "@/data/prompts/questions";
 
 /** The gift recipient's first question, creates their own capsule on the spot. */
 export default function GiftBegin() {
-  const { token } = useParams<{ token: string }>();
+  const token = useParams<{ token: string }>().token ?? "";
   const hydrated = useHydrated();
   const capsules = useDb((d) => d.capsules);
   const questions = useDb((d) => d.questions);

@@ -5,7 +5,8 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { marketingPages } from "@/data/marketing-pages";
 import { Container, FaqList } from "@/components/marketing/blocks";
 import { ButtonLink } from "@/components/ui/button";
-import { BookObject, KeepsakeBox, SealedLetter } from "@/components/marketing/objects";
+import { BookObject, SealedLetter } from "@/components/marketing/objects";
+import { PrintPhoto } from "@/components/marketing/home/editorial";
 import { HeroVignette } from "@/components/marketing/home/hero-vignette";
 import { LifeExplorer } from "@/components/marketing/home/life-explorer";
 
@@ -36,7 +37,7 @@ export default function MarketingPage() {
     {page.visual && <section className="la-page-feature"><Container>
       {page.visual === "map" ? <div className="la-explorer"><LifeExplorer /></div> : <div className="la-two-column">
         <div><p className="la-kicker">Made for the memories that matter</p><h2>{page.visual === "letter" ? <>A few words.<br /><em>A lasting connection.</em></> : page.visual === "book" || page.visual === "box" ? <>A personal edition.<br /><em>Made by you.</em></> : <>See what a beginning<br /><em>can become.</em></>}</h2><p>{page.visual === "letter" ? "Try the design experience and make something personal. Letters and gift invitations are local previews; nothing is automatically sent." : page.visual === "book" || page.visual === "box" ? "Open the designer, explore the details, and save a preview. Physical production, payments, and shipping are not yet available." : "Margaret’s fictional archive connects stories, voices, photographs, and places. Explore it at your own pace, then begin a collection of your own."}</p><Link href={cta[1]} className="la-link">{cta[0]} <ArrowUpRight size={16} /></Link>{key.startsWith("heirlooms") && <div className="mt-5"><Link href={page.visual === "box" ? "/heirlooms/book" : "/heirlooms/time-capsule"} className="la-link">{page.visual === "box" ? "Explore the life book" : "Explore the keepsake box"} <ArrowRight size={16} /></Link></div>}</div>
-        {page.visual === "archive" ? <HeroVignette /> : page.visual === "letter" ? <div className="la-envelope-stage"><SealedLetter to="Someone you love" openOn="A new beginning" /></div> : page.visual === "box" ? <KeepsakeBox /> : <div className="la-book-display"><BookObject title="Margaret Ellis" subtitle="The little things. The whole life." size="lg" color="evergreen" className="la-hero-book" /></div>}
+        {page.visual === "archive" ? <HeroVignette /> : page.visual === "letter" ? <div className="la-envelope-stage"><SealedLetter to="Someone you love" openOn="A new beginning" /></div> : page.visual === "box" ? <PrintPhoto slug="moss-green-box" alt="A moss-green archive box holding photographs and letters, with its lid beside it" eager className="aspect-[4/3] w-full" /> : <div className="la-book-display"><BookObject title="Margaret Ellis" subtitle="The little things. The whole life." size="lg" color="evergreen" className="la-hero-book" /></div>}
       </div>}
     </Container></section>}
     {page.questions && <Container><section className="la-page-faq"><h2>A few things to know.</h2><FaqList items={page.questions} /></section></Container>}

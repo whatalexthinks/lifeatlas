@@ -51,20 +51,18 @@ function mergeNewSampleCapsules(db: DemoDatabase, seed: DemoDatabase) {
   const arriving = seed.capsules.filter((c) => c.isSample && !have.has(c.id));
   if (!arriving.length) return;
   const ids = new Set(arriving.map((c) => c.id));
-  const byId = <T extends { id: string }>(current: T[], incoming: T[], keep: (x: T) => boolean = () => true) => {
+  const byId = <T extends { id: string }>(current: T[], incoming: T[], keep: (x: NoInfer<T>) => boolean = () => true) => {
     const present = new Set(current.map((x) => x.id));
     return [...current, ...incoming.filter((x) => keep(x) && !present.has(x.id))];
   };
-  const inArriving = (x: { capsuleId?: string }) => !!x.capsuleId && ids.has(x.capsuleId);
-
   db.capsules = [...db.capsules, ...arriving];
-  db.memberships = byId(db.memberships, seed.memberships, inArriving);
-  db.memories = byId(db.memories, seed.memories, inArriving);
-  db.media = byId(db.media, seed.media, inArriving);
-  db.futureMessages = byId(db.futureMessages, seed.futureMessages, inArriving);
-  db.assignments = byId(db.assignments, seed.assignments, inArriving);
-  db.contributions = byId(db.contributions, seed.contributions, inArriving);
-  db.invitations = byId(db.invitations, seed.invitations, inArriving);
+  db.memberships = byId(db.memberships, seed.memberships, (x) => !!x.capsuleId && ids.has(x.capsuleId));
+  db.memories = byId(db.memories, seed.memories, (x) => !!x.capsuleId && ids.has(x.capsuleId));
+  db.media = byId(db.media, seed.media, (x) => !!x.capsuleId && ids.has(x.capsuleId));
+  db.futureMessages = byId(db.futureMessages, seed.futureMessages, (x) => !!x.capsuleId && ids.has(x.capsuleId));
+  db.assignments = byId(db.assignments, seed.assignments, (x) => !!x.capsuleId && ids.has(x.capsuleId));
+  db.contributions = byId(db.contributions, seed.contributions, (x) => !!x.capsuleId && ids.has(x.capsuleId));
+  db.invitations = byId(db.invitations, seed.invitations, (x) => !!x.capsuleId && ids.has(x.capsuleId));
   const mediaIds = new Set(db.media.map((m) => m.id));
   db.transcripts = byId(db.transcripts, seed.transcripts, (t) => mediaIds.has(t.mediaId));
   // People and places are shared across capsules: add the ones that are missing.

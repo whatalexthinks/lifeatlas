@@ -139,6 +139,7 @@ export default function PhysicalCapsulesPage() {
               <PrintPhoto
                 slug="family-storybook"
                 alt="An open family storybook beside its linen-bound cover"
+                eager
                 className="mx-auto aspect-[4/3] w-full max-w-[540px] rounded-[1px]"
               />
             }

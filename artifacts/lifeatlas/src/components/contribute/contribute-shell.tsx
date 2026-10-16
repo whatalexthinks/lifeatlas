@@ -31,7 +31,7 @@ type State = { kind: "loading" } | { kind: "ok"; invitation: Invitation } | { ki
 
 /** Minimal, senior-friendly frame for invitation links. */
 export function ContributeShell({ children }: { children: React.ReactNode }) {
-  const { token } = useParams<{ token: string }>();
+  const token = useParams<{ token: string }>().token ?? "";
   const hydrated = useHydrated();
   const capsules = useDb((d) => d.capsules);
   const invitations = useDb((d) => d.invitations);

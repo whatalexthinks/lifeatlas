@@ -29,7 +29,7 @@ const occasionText: Record<Gift["occasion"], string> = {
 };
 
 export default function GiftOpening() {
-  const { token } = useParams<{ token: string }>();
+  const token = useParams<{ token: string }>().token ?? "";
   const router = useRouter();
   const hydrated = useHydrated();
   const reduced = usePrefersReducedMotion();

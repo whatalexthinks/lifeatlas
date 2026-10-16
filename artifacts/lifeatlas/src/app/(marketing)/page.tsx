@@ -1,9 +1,10 @@
 import type { Metadata } from "@/lib/router/metadata";
 import { ButtonLink } from "@/components/ui/button";
 import { FaqList } from "@/components/marketing/blocks";
-import { BookObject, KeepsakeBox, SealedLetter } from "@/components/marketing/objects";
+import { SealedLetter } from "@/components/marketing/objects";
 import { MobileStickyCta } from "@/components/marketing/site-header";
 import { Plate } from "@/components/media/media-image";
+import { PrintPhoto } from "@/components/marketing/home/editorial";
 import { ArrowLink, CheckList, Container, Eyebrow, FinalCta, Heading, JsonLd, Numbered, PreviewNote, Section, Split } from "@/components/site/kit";
 import { appConfig } from "@/lib/config";
 import { FutureMessagePreview, InvitationPreview, QuestionTry, StoryPreview, TimelinePreview, VoicePreview } from "@/components/site/previews";
@@ -268,13 +269,8 @@ export default function HomePage() {
         <Container size="wide">
           <Split
             media={
-              <div className="relative grid min-h-[360px] place-items-center rounded-[2px] bg-ivory p-8 sm:min-h-[460px]">
-                <div className="w-[62%] max-w-[330px]">
-                  <KeepsakeBox finish="linen_wrapped" engraving="Sarah & Jonah · 1998, " />
-                </div>
-                <div className="absolute bottom-8 right-8 hidden w-[32%] max-w-[180px] sm:block">
-                  <BookObject title="Our Story" subtitle="Sarah & Jonah" years="1998, " color="terracotta" size="sm" eyebrow="" />
-                </div>
+              <div className="rounded-[2px] bg-ivory p-4 sm:p-6">
+                <PrintPhoto slug="moss-green-box" alt="A moss-green archive box holding photographs and letters, with its lid beside it" eager className="aspect-[4/3] w-full" />
               </div>
             }
           >

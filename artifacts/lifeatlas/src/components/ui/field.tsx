@@ -178,7 +178,7 @@ export interface ChoiceOption<T extends string> {
 }
 
 /** Large, touch-friendly radio cards. */
-export function ChoiceCards<T extends string>({
+export function ChoiceCards<const T extends string>({
   value,
   onChange,
   options,
@@ -189,8 +189,8 @@ export function ChoiceCards<T extends string>({
   "aria-label": ariaLabel,
 }: {
   value: T | undefined;
-  onChange: (v: T) => void;
-  options: ChoiceOption<T>[];
+  onChange: (v: NoInfer<T>) => void;
+  options: readonly ChoiceOption<NoInfer<T>>[];
   name: string;
   columns?: 1 | 2 | 3 | 4;
   size?: "md" | "lg";
@@ -239,7 +239,7 @@ export function ChoiceCards<T extends string>({
 }
 
 /** Compact segmented control (single-choice), keyboard accessible as a radio group. */
-export function Segmented<T extends string>({
+export function Segmented<const T extends string>({
   value,
   onChange,
   options,
@@ -248,8 +248,8 @@ export function Segmented<T extends string>({
   className,
 }: {
   value: T;
-  onChange: (v: T) => void;
-  options: { value: T; label: React.ReactNode; icon?: React.ReactNode }[];
+  onChange: (v: NoInfer<T>) => void;
+  options: readonly { value: NoInfer<T>; label: React.ReactNode; icon?: React.ReactNode }[];
   label: string;
   size?: "sm" | "md";
   className?: string;

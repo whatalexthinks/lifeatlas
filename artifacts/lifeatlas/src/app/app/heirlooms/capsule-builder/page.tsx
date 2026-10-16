@@ -10,6 +10,7 @@ import { boxBlockers, fulfillmentFor } from "@/domain/commerce/fulfillment";
 import { isPrintEligible } from "@/domain/policies/permissions";
 import { PageHeader, Panel } from "@/components/studio/primitives";
 import { KeepsakeBox, boxFinishes } from "@/components/marketing/objects";
+import { PrintPhoto } from "@/components/marketing/home/editorial";
 import { MediaImage } from "@/components/media/media-image";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Badge, DemoNotice, Skeleton, toast } from "@/components/ui/feedback";
@@ -49,6 +50,7 @@ function CapsuleBuilder() {
   const [savedId, setSavedId] = React.useState<string | undefined>(() => heirlooms.find((h) => h.id === editingId && h.kind === "keepsake_box")?.id);
   const [busy, setBusy] = React.useState<null | "save" | "order">(null);
   const [lidOpen, setLidOpen] = React.useState(false);
+  const [previewMode, setPreviewMode] = React.useState<"photo" | "design">("photo");
   const existing = heirlooms.find((h) => h.id === editingId && h.kind === "keepsake_box");
   const [box, setBox] = React.useState<BoxConfiguration>(() =>
     existing?.box
@@ -161,19 +163,38 @@ function CapsuleBuilder() {
 
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
         <div className="min-w-0 xl:sticky xl:top-6 xl:self-start">
-          <div className="relative overflow-hidden rounded-[14px] bg-[radial-gradient(90%_70%_at_50%_25%,#f4efe4,#ddd3bf)] px-6 pb-8 pt-12">
-            <KeepsakeBox finish={box.finish} engraving={engravingPreview} open={lidOpen} className="max-w-[520px]" />
-            <div className="mt-2 flex items-center justify-center gap-3">
+          <div className="relative overflow-hidden rounded-[14px] bg-[radial-gradient(90%_70%_at_50%_25%,#f4efe4,#ddd3bf)] px-4 pb-6 pt-6 sm:px-6 sm:pb-8 sm:pt-8">
+            {previewMode === "photo" ? (
+              <div className="mx-auto max-w-[520px]">
+                <PrintPhoto slug="walnut-memory-box" alt="An open walnut keepsake box arranged with photographs, letters and a family book" eager className="aspect-[4/3] w-full" />
+                <p className="mt-3 text-center text-[0.8125rem] text-ink-3">Example box photograph. Switch to your design to preview the selected finish and engraving.</p>
+              </div>
+            ) : (
+              <KeepsakeBox finish={box.finish} engraving={engravingPreview} open={lidOpen} className="max-w-[520px]" />
+            )}
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
               <Segmented
-                label="Lid"
+                label="View"
                 size="sm"
-                value={lidOpen ? "open" : "closed"}
-                onChange={(v) => setLidOpen(v === "open")}
+                value={previewMode}
+                onChange={(v) => setPreviewMode(v === "design" ? "design" : "photo")}
                 options={[
-                  { value: "closed", label: "Closed" },
-                  { value: "open", label: "Open the lid" },
+                  { value: "photo", label: "Product image" },
+                  { value: "design", label: "Your design" },
                 ]}
               />
+              {previewMode === "design" ? (
+                <Segmented
+                  label="Lid"
+                  size="sm"
+                  value={lidOpen ? "open" : "closed"}
+                  onChange={(v) => setLidOpen(v === "open")}
+                  options={[
+                    { value: "closed", label: "Closed" },
+                    { value: "open", label: "Open the lid" },
+                  ]}
+                />
+              ) : null}
             </div>
           </div>
           <section className="card-paper mt-6 p-5 sm:p-6" aria-label="What's inside">
