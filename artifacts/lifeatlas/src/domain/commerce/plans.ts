@@ -34,20 +34,23 @@ export interface PlanEntitlements {
 
 export const plans: Record<PlanId, PlanEntitlements> = {
   preview: { id: "preview", capsules: 3, storageGb: 0, hosted: false, contributors: "unlimited", viewers: "unlimited", futureMessages: 3, keepsakeDiscountPct: 0, familyDirectory: true, export: true },
-  digital: { id: "digital", capsules: 1, storageGb: 25, hosted: true, contributors: "unlimited", viewers: "unlimited", futureMessages: 10, keepsakeDiscountPct: 0, familyDirectory: false, export: true },
-  family: { id: "family", capsules: 5, storageGb: 100, hosted: true, contributors: "unlimited", viewers: "unlimited", futureMessages: "unlimited", keepsakeDiscountPct: 10, familyDirectory: true, export: true },
+  digital: { id: "digital", capsules: 1, storageGb: 2, hosted: true, contributors: "unlimited", viewers: "unlimited", futureMessages: 10, keepsakeDiscountPct: 0, familyDirectory: false, export: true },
+  family: { id: "family", capsules: 5, storageGb: 10, hosted: true, contributors: "unlimited", viewers: "unlimited", futureMessages: "unlimited", keepsakeDiscountPct: 10, familyDirectory: true, export: true },
 };
 
 /** Launch price hypotheses in cents. The catalog starts from these; operations can change them. */
 export const launchPrices = {
-  digital: { year: 7900, month: 799 },
-  family: { year: 14900, month: 1499, rangeYear: [14900, 24900] as const },
-  physicalCapsule: 24900,
-  legacyBook: 11900,
+  digital: { year: 5900, month: 0 },
+  family: { year: 14900, month: 0, rangeYear: [14900, 14900] as const },
+  physicalCapsule: 22900,
+  legacyBook: 9900,
 } as const;
 
 /** Unit amount for a plan line, by billing interval. One-time products ignore the interval. */
 export function unitAmount(product: Product, interval: BillingInterval | undefined): number {
+  // One-time capsule ownership never triggers a recurring charge. Legacy intervals in
+  // saved demonstration carts are safely normalized to the fixed price.
+  if (product.price.interval === "one_time") return product.price.amount;
   if (product.kind === "plan" && interval === "month") {
     if (!product.monthly) throw new Error(`${product.name} has no monthly price`);
     return product.monthly.amount;
@@ -57,7 +60,7 @@ export function unitAmount(product: Product, interval: BillingInterval | undefin
 
 /** What a year costs when paid monthly, and how much paying annually saves (cents). */
 export function annualSavings(product: Product) {
-  if (!product.monthly) return null;
+  if (!product.monthly || product.price.interval === "one_time") return null;
   const monthlyYear = product.monthly.amount * 12;
   return { monthlyYear, saving: monthlyYear - product.price.amount, percent: Math.round(((monthlyYear - product.price.amount) / monthlyYear) * 100) };
 }
