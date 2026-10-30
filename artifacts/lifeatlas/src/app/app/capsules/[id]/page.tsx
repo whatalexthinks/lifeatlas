@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "@/lib/router/link";
-import { ArrowRight, AudioLines, Images, MapPin, MessageCircleQuestion, Users } from "lucide-react";
+import { ArrowRight, AudioLines, Images, MapPin, MessageCircleQuestion, Users, Sparkles, Trophy } from "lucide-react";
 import { useStudioCapsule } from "@/components/studio/capsule-frame";
 import { Panel } from "@/components/studio/primitives";
 import { MemoryCard } from "@/components/capsule/memory-card";
@@ -29,6 +29,10 @@ export default function CapsuleOverview() {
   const decades = decadesOf(approved);
   const chapterCounts = capsule.chapterOrder.map((id) => ({ ch: chapterFor(capsule, id), n: approved.filter((m) => m.chapter === id).length }));
   const max = Math.max(1, ...chapterCounts.map((c) => c.n));
+  const milestoneTargets = [1, 3, 7, 15, 30];
+  const nextTarget = milestoneTargets.find((n) => approved.length < n) ?? 50;
+  const previousTarget = [...milestoneTargets].reverse().find((n) => approved.length >= n) ?? 0;
+  const progress = Math.min(100, Math.round(((approved.length - previousTarget) / (nextTarget - previousTarget)) * 100));
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
@@ -68,6 +72,13 @@ export default function CapsuleOverview() {
       </div>
 
       <div className="space-y-6">
+        <Panel title="Your story journey" description="A gentle guide, not a competition. Every memory counts.">
+          <div className="flex items-center gap-3"><div className="grid size-11 shrink-0 place-items-center rounded-full bg-ivory"><Trophy className="size-5 text-evergreen" aria-hidden /></div><div><p className="font-serif text-[1.45rem] leading-tight">{approved.length === 0 ? "Your first memory awaits" : approved.length >= 30 ? "A growing family treasure" : `${approved.length} ${approved.length === 1 ? "memory" : "memories"} preserved`}</p><p className="text-[0.875rem] text-ink-3">{approved.length < nextTarget ? `${nextTarget - approved.length} until your next story milestone` : "Keep collecting at your own pace"}</p></div></div>
+          <div className="mt-5 h-2 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Progress toward the next story milestone"><div className="h-full rounded-full bg-evergreen transition-[width]" style={{ width: `${progress}%` }} /></div>
+          <div className="mt-2 flex justify-between text-[0.75rem] text-ink-3"><span>{previousTarget} stories</span><span>{nextTarget} stories</span></div>
+          <p className="mt-5 flex items-start gap-2 text-[0.875rem] text-ink-2"><Sparkles className="mt-0.5 size-4 shrink-0 text-evergreen" /> Try one small step today: record a favorite childhood memory, add a meaningful photograph, or answer a question together.</p>
+          <ButtonLink href={`/app/gather?capsule=${capsule.id}`} size="sm" className="mt-4">Add the next memory</ButtonLink>
+        </Panel>
         <Panel title="At a glance">
           <dl className="grid grid-cols-2 gap-6">
             {[
