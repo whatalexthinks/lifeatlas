@@ -3,9 +3,9 @@
 import * as React from "react";
 import Link from "@/lib/router/link";
 import { ArrowRight, Check, Minus } from "lucide-react";
-import type { BillingInterval, Product } from "@/domain/models";
+import type { Product } from "@/domain/models";
 import { defaultCatalog } from "@/data/product-catalog";
-import { annualSavings, plans, unitAmount, type PlanId } from "@/domain/commerce/plans";
+import { plans, type PlanId } from "@/domain/commerce/plans";
 import { PrintPhoto } from "@/components/marketing/home/editorial";
 import { ButtonLink } from "@/components/ui/button";
 import { AddToBagButton } from "@/components/site/bag";
@@ -20,72 +20,32 @@ const planIds: PlanId[] = ["preview", "digital", "family"];
 const product = (id: string) => defaultCatalog.find((p) => p.id === id)!;
 
 export function PlanPricing({ className }: { className?: string }) {
-  const [interval, setInterval] = React.useState<BillingInterval>("month");
-  const names: Record<PlanId, string> = { preview: "Start free", digital: "One capsule", family: "Family" };
-  const blurbs: Record<PlanId, string> = {
-    preview: "Try the whole thing in this browser. Nothing leaves your device.",
-    digital: "One person's or couple's story: guided questions, voice, photographs.",
-    family: `Up to ${plans.family.capsules} capsules for the whole family, in one place.`,
-  };
+  const cards = [
+    { id: "preview", name: "Explore the experience", description: "Try guided storytelling before purchasing. Demo data isn't a paid hosted archive.", cta: "Explore free", href: "/examples" },
+    { id: "digital", name: "One LifeCapsule", description: "A private story for yourself, a couple, or someone you love. One payment, no automatic renewal.", cta: "Choose one capsule", href: "/checkout/preview?product=digital" },
+    { id: "family", name: "Family Collection", description: "Up to five capsules for parents, children, couples, and family stories. Pay once.", cta: "Choose family", href: "/checkout/preview?product=family" },
+  ] as const;
   return (
     <div className={className}>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="inline-flex rounded-full border border-line-strong bg-surface p-1" role="radiogroup" aria-label="Billing">
-          {(["month", "year"] as const).map((i) => (
-            <button
-              key={i}
-              type="button"
-              role="radio"
-              aria-checked={interval === i}
-              onClick={() => setInterval(i)}
-              className={cn("min-h-10 rounded-full px-5 text-[0.9375rem] font-medium transition-colors", interval === i ? "bg-ink text-paper" : "text-ink-2 hover:text-ink")}
-            >
-              {i === "year" ? "Yearly" : "Monthly"}
-            </button>
-          ))}
-        </div>
-        <p className="text-[0.9375rem] text-ink-3">{interval === "month" ? "Billed each month. Switch to yearly to pay less over a year." : "Billed once a year."}</p>
-      </div>
-
+      <p className="max-w-3xl text-[1rem] leading-relaxed text-ink-2">One-time purchase. No subscription and no automatic renewal. Paid plans propose five years of hosted access with defined media allowances, starting only when payments and secure storage are connected. Export is always available.</p>
       <ul className="mt-8 grid gap-5 lg:grid-cols-3">
-        {planIds.map((id) => {
-          const p = product(id);
-          const featured = id === "digital";
-          const amount = id === "preview" ? 0 : unitAmount(p, interval);
-          const saving = id === "preview" ? null : annualSavings(p);
+        {cards.map((card) => {
+          const p = product(card.id);
+          const featured = card.id === "digital";
           return (
-            <li key={id} className={cn("relative flex flex-col rounded-[24px] border p-7 sm:p-8", featured ? "border-ink bg-surface shadow-[0_40px_80px_-50px_rgb(37_36_33/0.5)]" : "border-line bg-surface/70")}>
-              {featured ? <span className="absolute -top-3 left-7 rounded-full bg-oxblood px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-on-oxblood">Most people start here</span> : null}
-              <h3 className="display-3">{names[id]}</h3>
-              <p className="mt-2 text-[0.9375rem] text-ink-2">{blurbs[id]}</p>
-              <p className="mt-6 flex items-baseline gap-2">
-                <span className="font-sans text-[3rem] font-[450] leading-none tracking-[-0.05em]">{amount === 0 ? "Free" : formatMoney(amount)}</span>
-                <span className="text-[0.9375rem] text-ink-3">{id === "preview" ? "on this device" : interval === "year" ? "a year" : "a month"}</span>
-              </p>
-              {id !== "preview" && interval === "year" && saving ? (
-                <p className="mt-2 text-[0.875rem] text-evergreen">{formatMoney(p.price.amount)} billed yearly. Saves {formatMoney(saving.saving)} versus {formatMoney(saving.monthlyYear)} paid monthly.</p>
-              ) : null}
-              <p className="mt-2 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-ink-4">{id === "preview" ? "Local demo, nothing to pay" : "Test checkout · nothing is charged"}</p>
-              <ul className="mt-6 space-y-2.5">
-                {p.inclusions.map((x) => (
-                  <li key={x} className="flex gap-2.5 text-[0.9375rem] leading-snug">
-                    <Check className="mt-0.5 size-4 shrink-0 text-evergreen" aria-hidden />
-                    <span>{x}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto pt-8">
-                <ButtonLink href={id === "preview" ? "/app/capsules/new" : `/checkout/preview?product=${id}&interval=${interval}`} variant={featured ? "primary" : "secondary"} size="lg" block>
-                  {id === "preview" ? "Start free" : `Choose ${names[id]}`}
-                </ButtonLink>
-              </div>
+            <li key={card.id} className={cn("relative flex flex-col rounded-[24px] border p-7 sm:p-8", featured ? "border-ink bg-surface shadow-[0_40px_80px_-50px_rgb(37_36_33/0.5)]" : "border-line bg-surface/70")}>
+              {featured ? <span className="absolute -top-3 left-7 rounded-full bg-oxblood px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-on-oxblood">Recommended</span> : null}
+              <h3 className="display-3">{card.name}</h3>
+              <p className="mt-2 text-[0.9375rem] text-ink-2">{card.description}</p>
+              <p className="mt-6 flex items-baseline gap-2"><span className="font-sans text-[3rem] font-[450] leading-none tracking-[-0.05em]">{p.price.amount ? formatMoney(p.price.amount) : "Free"}</span><span className="text-[0.9375rem] text-ink-3">{p.price.amount ? "once" : "to explore"}</span></p>
+              <p className="mt-2 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-ink-4">{card.id === "preview" ? "No purchase" : "Secure payment not connected yet"}</p>
+              <ul className="mt-6 space-y-2.5">{p.inclusions.map((x) => <li key={x} className="flex gap-2.5 text-[0.9375rem] leading-snug"><Check className="mt-0.5 size-4 shrink-0 text-evergreen" aria-hidden /><span>{x}</span></li>)}</ul>
+              <div className="mt-auto pt-8"><ButtonLink href={card.href} variant={featured ? "primary" : "secondary"} size="lg" block>{card.cta}</ButtonLink></div>
             </li>
           );
         })}
       </ul>
-      <p className="mt-6 text-[0.9375rem] text-ink-2">
-        <span className="font-medium text-ink">The owner pays. Invited contributors are planned to join free.</span> Family invitations and shared access are not connected yet.
-      </p>
+      <p className="mt-6 text-[0.9375rem] text-ink-2"><span className="font-medium text-ink">The owner pays once. Invited contributors join free.</span> Shared-access authorization must be completed before public launch.</p>
     </div>
   );
 }

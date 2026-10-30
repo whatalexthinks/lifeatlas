@@ -11,7 +11,7 @@ import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: `${brand.name} pricing: start free on your device, then a Digital ${brand.product} or the Family Plan, yearly or monthly. Everyone you invite joins free. Optional physical keepsakes.`,
+  description: `${brand.name} pricing: start free on your device, then a Digital ${brand.product} or the Family Plan, for a one-time purchase. Everyone you invite joins free. Optional physical keepsakes.`,
   alternates: { canonical: "/pricing" },
 };
 
@@ -24,10 +24,10 @@ export default function PricingPage() {
         eyebrow="Pricing"
         title={
           <>
-            One capsule, or the whole family. <em>Monthly or yearly.</em>
+            One capsule, or the whole family. <em>Pay once.</em>
           </>
         }
-        lead="A membership gives you guided questions, voice recording and photo stories gathered into a private capsule. Choose One capsule for a single story, or Family for up to five. The owner pays; invited contributors are planned to join free. Start with a private account capsule."
+        lead="A one-time purchase unlocks a capsule with guided questions, voice recording and photo stories. Choose one capsule or five. Five-year hosting terms are proposed, never automatically renewed. Contributors should join free."
         note="Prices are test prices. Subscription checkout is not connected, no charge is made, and family invitations are not available yet. Printed books and keepsake boxes are separate optional purchases."
       />
 
@@ -87,10 +87,10 @@ export default function PricingPage() {
             className="mt-14"
             columns={4}
             items={[
-              { title: "Owners pay", body: "Whoever starts a capsule chooses its plan, billed monthly or yearly. Yearly costs less over twelve months." },
+              { title: "Owners pay", body: "The owner pays once for a fixed hosting term. There are no automatic renewals." },
               { title: "Contributors join free", body: "Family access is planned to be free, but invitations and shared access are not connected yet." },
               { title: "Download what you make", body: "Export your stories, photographs and recordings from this preview at any time." },
-              { title: "Gifts work the same way", body: "Give someone a year of their own capsule. They never pay to add stories or invite their family." },
+              { title: "Gifts work the same way", body: "Gift someone a capsule with a fixed hosting term. Invited contributors never need to pay." },
             ]}
           />
         </Container>
@@ -111,10 +111,10 @@ export default function PricingPage() {
             <div className="rounded-[22px] border border-line bg-surface p-7">
               <p className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-oxblood">Code {founders.code}</p>
               <h3 className="display-3 mt-3">
-                {founders.percentOff}% off your first year
+                {founders.percentOff}% off your capsule
               </h3>
               <p className="mt-3 text-[1rem] leading-relaxed text-ink-2">
-                For our first {founders.limits.maxRedemptions} members, on an annual plan. One use per person{founders.endsAt ? `, until ${new Date(founders.endsAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })}` : ""}.
+                For our first {founders.limits.maxRedemptions} eligible buyers, on a one-time capsule purchase. One use per person{founders.endsAt ? `, until ${new Date(founders.endsAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })}` : ""}.
               </p>
             </div>
             <div className="rounded-[22px] border border-line bg-surface p-7">
@@ -156,7 +156,7 @@ export default function PricingPage() {
             Start free. <em>Decide later.</em>
           </>
         }
-        lead="Everything you make in the preview can be downloaded, whatever you choose."
+        lead="Explore the workflow first, then purchase once when secure checkout is connected. Export stays available."
         primary={
           <ButtonLink href="/app/capsules/new" size="xl">
             Create a capsule

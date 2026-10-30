@@ -27,12 +27,12 @@ describe("quoteCart", () => {
       ],
       productCatalog,
     );
-    expect(q.subtotal).toBe(7900 + 2 * (11900 + 1200));
+    expect(q.subtotal).toBe(5900 + 2 * (9900 + 1200));
     expect(q.total).toBe(q.subtotal);
     expect(q.shipping).toBeNull();
     expect(q.tax).toBeNull();
     expect(q.hasPhysical).toBe(true);
-    expect(q.notes.join(" ")).toMatch(/Test prices/);
+    expect(q.notes.join(" ")).toMatch(/Proposed prices/);
   });
   it("throws for an unknown product", () => {
     expect(() => quoteCart([{ id: "x", productId: "nope", quantity: 1, extrasAmount: 0 }], productCatalog)).toThrow(/Unknown product/);
