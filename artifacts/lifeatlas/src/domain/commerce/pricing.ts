@@ -51,7 +51,7 @@ export function quoteCart(lines: CartLine[], catalog: Product[], adjust: QuoteAd
     if (!p) throw new PricingError(`Unknown product ${line.productId}`);
     if (p.availability === "not_available") throw new PricingError(`${p.name} isn't available`);
     if (p.kind === "physical") hasPhysical = true;
-    const interval = p.kind === "plan" ? (line.interval ?? "year") : undefined;
+    const interval = p.kind === "plan" && p.price.interval !== "one_time" ? (line.interval ?? "year") : undefined;
     let unit: number;
     try {
       unit = unitAmount(p, interval);
@@ -78,9 +78,9 @@ export function quoteCart(lines: CartLine[], catalog: Product[], adjust: QuoteAd
   if (adjust.discount) assertValidAmount(adjust.discount.amount, "discount");
   const afterDiscount = afterMember - discountAmount;
   const credit = Math.min(afterDiscount, Math.max(0, adjust.availableCredit ?? 0));
-  const notes = ["Test prices, no payment is collected in this preview."];
+  const notes = ["Proposed prices. No payment is collected while checkout is unconnected."];
   if (hasPhysical) notes.push("Shipping and tax will be calculated once fulfillment is connected.");
-  if (out.some((l) => l.interval === "month")) notes.push("Monthly plans renew each month until canceled; annual plans save about 17%.");
+  if (out.some((l) => l.interval === "month")) notes.push("Recurring plans are not available in this one-time catalog.");
   if (lines.some((l) => l.asGift)) notes.push("Gifted plans are one prepaid term and never renew automatically.");
   return {
     lines: out,
