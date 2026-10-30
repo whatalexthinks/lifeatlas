@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 const price = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id)!.price.amount);
-const monthlyPrice = (id: string) => formatMoney(defaultCatalog.find((p) => p.id === id)!.monthly!.amount);
+
 
 const faqs: [string, React.ReactNode][] = [
   ["What is a memory capsule?", "A private place for the story of a life or a relationship: written memories, recorded answers, photographs, dates and places. Explore it as a timeline or in chapters. Family invitations are still being built; the archive can become a printed book or physical keepsake."],
@@ -57,7 +57,7 @@ export default function HomePage() {
                 Bring photographs, voices, letters and memories together, with guided questions that show you where to start. {brand.name} gives you a place and a structure to build a private family capsule: digital, physical, or both.
               </p>
               <p className="hero-rise mt-4 max-w-xl text-[0.875rem] leading-relaxed text-ink-3 [--d:300ms]">
-                One digital capsule from {monthlyPrice("digital")} a month. Physical books and keepsake boxes are separate. Demo pricing only, no charge.
+                One digital capsule from {price("digital")}, paid once. No subscription. Physical keepsakes are separate. Payments are not yet connected.
               </p>
               <div className="hero-rise mt-9 flex flex-wrap items-center gap-x-6 gap-y-4 [--d:360ms]">
                 <ButtonLink href="/app/capsules/new" size="xl">
@@ -69,7 +69,7 @@ export default function HomePage() {
               </div>
               <div className="hero-rise mt-10 max-w-xl space-y-2 border-t border-line pt-5 [--d:480ms]">
                 <p className="text-[0.9375rem] text-ink-2"><span className="font-medium text-ink">The owner pays. Invited family are planned to join free.</span></p>
-                <p className="font-mono text-[0.62rem] uppercase leading-relaxed tracking-[0.16em] text-ink-3">One capsule from {monthlyPrice("digital")} a month. Test price only, checkout is not connected and nothing is charged. Sign in to save your capsule to your account. Family invitations are still being built.</p>
+                <p className="font-mono text-[0.62rem] uppercase leading-relaxed tracking-[0.16em] text-ink-3">A one-time capsule purchase, with no automatic renewal. Pricing and five-year hosted access terms are proposed; secure checkout is not connected yet.</p>
               </div>
             </div>
             <HeroCapsule />
@@ -328,7 +328,7 @@ export default function HomePage() {
                   Give someone <em>the beginning of their story.</em>
                 </>
               }
-              lead="A year of their own capsule, a physical kit to open together, or both, with a note from you. They choose when to begin; you can help, or simply listen."
+              lead="A capsule of their own, a physical kit to open together, or both, with a note from you. They choose when to begin; you can help, or simply listen."
             >
               <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
                 <ButtonLink href="/gifts/build" variant="light" size="lg">
@@ -369,10 +369,10 @@ export default function HomePage() {
               eyebrow="Pricing"
               title={
                 <>
-                  One owner pays monthly. <em>Family joins free.</em>
+                  One payment for your capsule. <em>Family joins free.</em>
                 </>
               }
-              lead="Start a private capsule with a free account. Monthly plan prices are test estimates; checkout is not connected, and no payment is charged. Family invitations are still being built."
+              lead="Explore the experience for free, then purchase a capsule once when secure checkout becomes available. Five-year hosting terms and media limits must be verified before paid launch."
             />
             <ArrowLink href="/pricing">Compare plans in detail</ArrowLink>
           </div>
